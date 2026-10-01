@@ -181,6 +181,137 @@ async function loadStudentDashboard() {
 }
 
 // ==========================================
+// LOAD TODAY'S REAL TIMETABLE
+// ==========================================
+
+const today = new Date();
+
+const dayNames = [
+    "Sunday",
+    "Monday",
+    "Tuesday",
+    "Wednesday",
+    "Thursday",
+    "Friday",
+    "Saturday"
+];
+
+const todayName = dayNames[today.getDay()];
+
+
+// Display today's actual date
+
+const todayDate =
+    document.getElementById("todayDate");
+
+if (todayDate) {
+
+    todayDate.textContent =
+        today.toLocaleDateString("en-GB", {
+            weekday: "long",
+            day: "numeric",
+            month: "long",
+            year: "numeric"
+        });
+
+}
+
+
+// Find timetable for student's class
+
+const {
+    data: timetable,
+    error: timetableError
+} = await supabaseClient
+    .from("timetable")
+    .select(`
+        start_time,
+        end_time,
+        teacher_name,
+        room,
+        subjects (
+            name
+        )
+    `)
+    .eq("class_name", student.class_name)
+    .eq("day_of_week", todayName)
+    .order("start_time", {
+        ascending: true
+    });
+
+
+const timetableContainer =
+    document.getElementById("todayTimetable");
+
+
+if (timetableError) {
+
+    console.error(timetableError);
+
+    timetableContainer.innerHTML =
+        "<p>Unable to load today's timetable.</p>";
+
+} else if (!timetable || timetable.length === 0) {
+
+    timetableContainer.innerHTML =
+        "<p>No lessons scheduled for today.</p>";
+
+} else {
+
+    timetableContainer.innerHTML = "";
+
+
+    timetable.forEach(lesson => {
+
+        const lessonElement =
+            document.createElement("div");
+
+        lessonElement.className = "lesson";
+
+
+        // Format time
+        const startTime =
+            lesson.start_time.substring(0, 5);
+
+
+        const endTime =
+            lesson.end_time.substring(0, 5);
+
+
+        lessonElement.innerHTML = `
+
+            <div class="lesson-time">
+                ${startTime}
+            </div>
+
+            <div class="lesson-line"></div>
+
+            <div class="lesson-info">
+
+                <strong>
+                    ${lesson.subjects?.name || "Subject"}
+                </strong>
+
+                <span>
+                    ${lesson.room || "Room TBA"}
+                    •
+                    ${lesson.teacher_name || "Teacher TBA"}
+                </span>
+
+            </div>
+
+        `;
+
+
+        timetableContainer.appendChild(
+            lessonElement
+        );
+
+    });
+
+}
+
+// ==========================================
 // LOAD REAL ACADEMIC AVERAGE
 // ==========================================
 
