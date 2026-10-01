@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>Login | Student Management Portal</title>
+
+    <link rel="stylesheet" href="css/login.css">
+
+</head>
+
+
+<body>
+
+    <div class="login-page">
+
+
+        <!-- LEFT SIDE -->
+
+        <div class="login-info">
+
+            <div class="brand">
+
+                <div class="logo-icon">
+                    S
+                </div>
+
+                <span>
+                    Student Portal
+                </span>
+
+            </div>
+
+
+            <div class="info-content">
+
+                <span class="small-title">
+                    WELCOME BACK
+                </span>
+
+                <h1>
+                    Your school,
+                    connected.
+                </h1>
+
+                <p>
+                    Access your academic information,
+                    announcements, assignments and
+                    school activities from one place.
+                </p>
+
+            </div>
+
+
+            <div class="info-footer">
+
+                <span>
+                    Admin
+                </span>
+
+                <span>
+                    Teacher
+                </span>
+
+                <span>
+                    Student
+                </span>
+
+                <span>
+                    Parent
+                </span>
+
+            </div>
+
+        </div>
+
+
+
+        <!-- RIGHT SIDE -->
+
+        <div class="login-section">
+
+            <div class="login-box">
+
+                <a href="index.html"
+                   class="back-link">
+                    ← Back to website
+                </a>
+
+
+                <div class="login-heading">
+
+                    <h2>
+                        Sign in
+                    </h2>
+
+                    <p>
+                        Enter your account details
+                        to continue.
+                    </p>
+
+                </div>
+
+
+                <form id="loginForm">
+
+                    <div class="form-group">
+
+                        <label for="email">
+                            Email address
+                        </label>
+
+                        <input
+                            type="email"
+                            id="email"
+                            placeholder="you@example.com"
+                            required
+                        >
+
+                    </div>
+
+
+                    <div class="form-group">
+
+                        <div class="password-label">
+
+                            <label for="password">
+                                Password
+                            </label>
+
+                            <a href="#">
+                                Forgot password?
+                            </a>
+
+                        </div>
+
+                        <input
+                            type="password"
+                            id="password"
+                            placeholder="Enter your password"
+                            required
+                        >
+
+                    </div>
+
+
+                    <div class="role-group">
+
+                        <label>
+                            Account type
+                        </label>
+
+                        <div class="role-options">
+
+                            <label class="role-option">
+
+                                <input
+                                    type="radio"
+                                    name="role"
+                                    value="student"
+                                    checked
+                                >
+
+                                <span>
+                                    Student
+                                </span>
+
+                            </label>
+
+
+                            <label class="role-option">
+
+                                <input
+                                    type="radio"
+                                    name="role"
+                                    value="teacher"
+                                >
+
+                                <span>
+                                    Teacher
+                                </span>
+
+                            </label>
+
+
+                            <label class="role-option">
+
+                                <input
+                                    type="radio"
+                                    name="role"
+                                    value="parent"
+                                >
+
+                                <span>
+                                    Parent
+                                </span>
+
+                            </label>
+
+
+                            <label class="role-option">
+
+                                <input
+                                    type="radio"
+                                    name="role"
+                                    value="admin"
+                                >
+
+                                <span>
+                                    Admin
+                                </span>
+
+                            </label>
+
+                        </div>
+
+                    </div>
+
+
+                    <button
+                        type="submit"
+                        class="login-submit">
+
+                        Sign in
+
+                    </button>
+
+                </form>
+
+
+                <p class="login-note">
+                    Having trouble signing in?
+                    Contact your school administrator.
+                </p>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <script src="js/main.js"></script>
+
+</body>
+
+</html>
