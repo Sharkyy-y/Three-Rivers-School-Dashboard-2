@@ -725,7 +725,8 @@ async function loadStudentDashboard() {
     // ======================================
 // UPCOMING ASSIGNMENTS
 // ======================================
-
+ console.log("ASSIGNMENTS CODE STARTED");
+    
 const assignmentsContainer =
     document.getElementById(
         "assignmentsContainer"
