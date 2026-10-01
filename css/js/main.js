@@ -138,22 +138,16 @@ if (loginForm) {
 
 async function loadStudentDashboard() {
 
-    // Check whether someone is logged in
     const {
         data: { user },
         error: userError
     } = await supabaseClient.auth.getUser();
 
-
     if (userError || !user) {
-
         window.location.href = "login.html";
-
         return;
     }
 
-
-    // Find this student's record
     const {
         data: student,
         error: studentError
@@ -163,18 +157,28 @@ async function loadStudentDashboard() {
         .eq("user_id", user.id)
         .single();
 
-
     if (studentError || !student) {
-
         console.error(studentError);
-
-        alert(
-            "Your student account is not linked to a student record."
-        );
-
+        alert("Student record not found.");
         return;
     }
 
+    // Real student name
+    const studentName =
+        document.getElementById("studentName");
+
+    if (studentName) {
+        studentName.textContent = student.full_name;
+    }
+
+    // Real student name in welcome message
+    const welcomeStudentName =
+        document.getElementById("welcomeStudentName");
+
+    if (welcomeStudentName) {
+        welcomeStudentName.textContent = student.full_name;
+    }
+}
 
     // ==========================================
     // DISPLAY REAL STUDENT INFORMATION
