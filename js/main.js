@@ -208,6 +208,238 @@ async function loadStudentDashboard() {
         "Loading student dashboard..."
     );
 
+    // ======================================
+// ANNOUNCEMENTS
+// ======================================
+
+const announcementsContainer =
+    document.getElementById(
+        "announcementsContainer"
+    );
+
+
+if (announcementsContainer) {
+
+    const {
+        data: announcements,
+        error: announcementsError
+    } =
+        await supabaseClient
+            .from("announcements")
+            .select(`
+                id,
+                title,
+                message,
+                target_role,
+                target_class,
+                created_at
+            `)
+            .order(
+                "created_at",
+                {
+                    ascending: false
+                }
+            )
+            .limit(5);
+
+
+    console.log(
+        "ANNOUNCEMENTS RESULT:",
+        announcements
+    );
+
+    console.log(
+        "ANNOUNCEMENTS ERROR:",
+        announcementsError
+    );
+
+
+    // ----------------------------------
+    // ERROR
+    // ----------------------------------
+
+    if (announcementsError) {
+
+        console.error(
+            "Announcements error:",
+            announcementsError
+        );
+
+        announcementsContainer.innerHTML =
+            `
+            <p>
+                Unable to load announcements.
+            </p>
+            `;
+
+    }
+
+
+    // ----------------------------------
+    // NO ANNOUNCEMENTS
+    // ----------------------------------
+
+    else if (
+        !announcements ||
+        announcements.length === 0
+    ) {
+
+        announcementsContainer.innerHTML =
+            `
+            <p>
+                No announcements available.
+            </p>
+            `;
+
+    }
+
+
+    // ----------------------------------
+    // DISPLAY ANNOUNCEMENTS
+    // ----------------------------------
+
+    else {
+
+        announcementsContainer.innerHTML =
+            "";
+
+
+        announcements.forEach(
+            function (announcement, index) {
+
+                const announcementElement =
+                    document.createElement(
+                        "div"
+                    );
+
+
+                announcementElement.className =
+                    "announcement";
+
+
+                // ----------------------------------
+                // ICON
+                // ----------------------------------
+
+                const icon =
+                    index === 0
+                        ? "!"
+                        : "★";
+
+
+                // ----------------------------------
+                // TIME
+                // ----------------------------------
+
+                const createdDate =
+                    new Date(
+                        announcement.created_at
+                    );
+
+
+                const now =
+                    new Date();
+
+
+                const difference =
+                    Math.floor(
+                        (
+                            now -
+                            createdDate
+                        ) /
+                        (
+                            1000 *
+                            60 *
+                            60
+                        )
+                    );
+
+
+                let postedText;
+
+
+                if (
+                    difference < 1
+                ) {
+
+                    postedText =
+                        "Posted just now";
+
+                } else if (
+                    difference === 1
+                ) {
+
+                    postedText =
+                        "Posted 1 hour ago";
+
+                } else if (
+                    difference < 24
+                ) {
+
+                    postedText =
+                        `Posted ${difference} hours ago`;
+
+                } else {
+
+                    const days =
+                        Math.floor(
+                            difference / 24
+                        );
+
+
+                    if (
+                        days === 1
+                    ) {
+
+                        postedText =
+                            "Posted yesterday";
+
+                    } else {
+
+                        postedText =
+                            `Posted ${days} days ago`;
+                    }
+                }
+
+
+                // ----------------------------------
+                // HTML
+                // ----------------------------------
+
+                announcementElement.innerHTML =
+                    `
+                    <div class="announcement-icon">
+                        ${icon}
+                    </div>
+
+                    <div>
+
+                        <strong>
+                            ${announcement.title}
+                        </strong>
+
+                        <p>
+                            ${announcement.message}
+                        </p>
+
+                        <small>
+                            ${postedText}
+                        </small>
+
+                    </div>
+                    `;
+
+
+                announcementsContainer.appendChild(
+                    announcementElement
+                );
+
+            }
+        );
+
+    }
+
+}
 
     // ======================================
     // GET CURRENT USER
