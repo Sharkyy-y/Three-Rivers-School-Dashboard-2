@@ -722,6 +722,248 @@ async function loadStudentDashboard() {
         }
     );
 
+    // ======================================
+// UPCOMING ASSIGNMENTS
+// ======================================
+
+const assignmentsContainer =
+    document.getElementById(
+        "assignmentsContainer"
+    );
+
+
+if (assignmentsContainer) {
+
+    const todayDate =
+        new Date()
+            .toISOString()
+            .split("T")[0];
+
+
+    const {
+        data: assignments,
+        error: assignmentsError
+    } =
+        await supabaseClient
+            .from("assignments")
+            .select(`
+                id,
+                title,
+                description,
+                due_date,
+                subjects (
+                    name
+                )
+            `)
+            .eq(
+                "class_name",
+                student.class_name
+            )
+            .gte(
+                "due_date",
+                todayDate
+            )
+            .order(
+                "due_date",
+                {
+                    ascending: true
+                }
+            );
+
+
+    // ----------------------------------
+    // ERROR
+    // ----------------------------------
+
+    if (assignmentsError) {
+
+        console.error(
+            "Assignments error:",
+            assignmentsError
+        );
+
+        assignmentsContainer.innerHTML =
+            `
+            <p>
+                Unable to load assignments.
+            </p>
+            `;
+
+    }
+
+
+    // ----------------------------------
+    // NO ASSIGNMENTS
+    // ----------------------------------
+
+    else if (
+        !assignments ||
+        assignments.length === 0
+    ) {
+
+        assignmentsContainer.innerHTML =
+            `
+            <p>
+                No upcoming assignments.
+            </p>
+            `;
+
+    }
+
+
+    // ----------------------------------
+    // DISPLAY ASSIGNMENTS
+    // ----------------------------------
+
+    else {
+
+        assignmentsContainer.innerHTML =
+            "";
+
+
+        assignments.forEach(
+            function (assignment) {
+
+                const assignmentElement =
+                    document.createElement(
+                        "div"
+                    );
+
+
+                assignmentElement.className =
+                    "assignment";
+
+
+                // Subject name
+                const subjectName =
+                    assignment.subjects &&
+                    assignment.subjects.name
+                        ? assignment.subjects.name
+                        : "Subject";
+
+
+                // First letter for icon
+                const iconLetter =
+                    subjectName
+                        .charAt(0)
+                        .toUpperCase();
+
+
+                // Calculate due date
+                const dueDate =
+                    new Date(
+                        assignment.due_date +
+                        "T00:00:00"
+                    );
+
+
+                const today =
+                    new Date();
+
+                today.setHours(
+                    0,
+                    0,
+                    0,
+                    0
+                );
+
+
+                const difference =
+                    Math.ceil(
+                        (
+                            dueDate -
+                            today
+                        ) /
+                        (
+                            1000 *
+                            60 *
+                            60 *
+                            24
+                        )
+                    );
+
+
+                let dueText;
+
+
+                if (
+                    difference === 0
+                ) {
+
+                    dueText =
+                        "Today";
+
+                } else if (
+                    difference === 1
+                ) {
+
+                    dueText =
+                        "Tomorrow";
+
+                } else if (
+                    difference > 1 &&
+                    difference < 7
+                ) {
+
+                    dueText =
+                        dueDate.toLocaleDateString(
+                            "en-GB",
+                            {
+                                weekday:
+                                    "long"
+                            }
+                        );
+
+                } else {
+
+                    dueText =
+                        dueDate.toLocaleDateString(
+                            "en-GB",
+                            {
+                                day:
+                                    "numeric",
+
+                                month:
+                                    "short"
+                            }
+                        );
+                }
+
+
+                assignmentElement.innerHTML =
+                    `
+                    <div class="assignment-icon">
+                        ${iconLetter}
+                    </div>
+
+                    <div class="assignment-info">
+
+                        <strong>
+                            ${assignment.title}
+                        </strong>
+
+                        <span>
+                            ${subjectName}
+                        </span>
+
+                    </div>
+
+                    <div class="due-date">
+                        ${dueText}
+                    </div>
+                    `;
+
+
+                assignmentsContainer.appendChild(
+                    assignmentElement
+                );
+
+            }
+        );
+
+    }
+
+}
 
     console.log(
         "Student dashboard loaded successfully."
