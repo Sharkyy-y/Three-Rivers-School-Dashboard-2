@@ -645,3 +645,142 @@ body {
     }
 
 }
+
+/* ==========================================
+   ASSIGNMENTS PAGE
+   ========================================== */
+
+.assignments-page-container {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+
+.assignment-page-card {
+    display: flex;
+    gap: 18px;
+    padding: 20px;
+    border: 1px solid #e5e7eb;
+    border-radius: 14px;
+    background: #ffffff;
+    transition: transform 0.2s ease,
+                box-shadow 0.2s ease;
+}
+
+
+.assignment-page-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.06);
+}
+
+
+.assignment-page-icon {
+    width: 48px;
+    height: 48px;
+    min-width: 48px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 12px;
+
+    background: #f1f5f9;
+
+    font-size: 18px;
+    font-weight: 700;
+}
+
+
+.assignment-page-main {
+    flex: 1;
+    min-width: 0;
+}
+
+
+.assignment-page-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 20px;
+}
+
+
+.assignment-page-header h3 {
+    margin: 0 0 5px 0;
+    font-size: 17px;
+}
+
+
+.assignment-page-header span {
+    font-size: 13px;
+    color: #6b7280;
+}
+
+
+.assignment-due {
+    white-space: nowrap;
+    padding: 6px 10px;
+    border-radius: 8px;
+    font-size: 12px !important;
+    font-weight: 600;
+}
+
+
+.assignment-normal {
+    background: #f1f5f9;
+    color: #475569 !important;
+}
+
+
+.assignment-soon {
+    background: #fff7ed;
+    color: #c2410c !important;
+}
+
+
+.assignment-today {
+    background: #fef2f2;
+    color: #dc2626 !important;
+}
+
+
+.assignment-overdue {
+    background: #fee2e2;
+    color: #b91c1c !important;
+}
+
+
+.assignment-description {
+    margin: 12px 0 8px 0;
+    color: #4b5563;
+    font-size: 14px;
+    line-height: 1.6;
+}
+
+
+.assignment-date {
+    font-size: 12px;
+    color: #9ca3af;
+}
+
+
+@media (max-width: 700px) {
+
+    .assignment-page-card {
+        padding: 16px;
+    }
+
+
+    .assignment-page-header {
+        flex-direction: column;
+        gap: 10px;
+    }
+
+
+    .assignment-due {
+        align-self: flex-start;
+    }
+
+}
