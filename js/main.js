@@ -1422,3 +1422,409 @@ if (
     loadStudentProfile();
 
 }
+
+// ==========================================
+// STUDENT GRADES
+// ==========================================
+
+async function loadStudentGrades() {
+
+    console.log("Loading student grades...");
+
+    // GET CURRENT USER
+    const {
+        data: {
+            user
+        },
+        error: userError
+    } = await supabaseClient.auth.getUser();
+
+    if (userError || !user) {
+
+        console.error(
+            "Grades user error:",
+            userError
+        );
+
+        window.location.href = "login.html";
+
+        return;
+    }
+
+
+    // GET STUDENT
+    const {
+        data: student,
+        error: studentError
+    } = await supabaseClient
+        .from("students")
+        .select("*")
+        .eq("user_id", user.id)
+        .single();
+
+    if (studentError || !student) {
+
+        console.error(
+            "Grades student error:",
+            studentError
+        );
+
+        return;
+    }
+
+
+    // STUDENT NAME
+    const gradesStudentName =
+        document.getElementById(
+            "gradesStudentName"
+        );
+
+    if (gradesStudentName) {
+
+        gradesStudentName.textContent =
+            student.full_name;
+    }
+
+
+    // PROFILE INITIAL
+    const gradesInitial =
+        document.getElementById(
+            "gradesInitial"
+        );
+
+    if (gradesInitial) {
+
+        gradesInitial.textContent =
+            student.full_name
+                .charAt(0)
+                .toUpperCase();
+    }
+
+
+    // ======================================
+    // GET GRADES
+    // ======================================
+
+    const {
+        data: grades,
+        error: gradesError
+    } = await supabaseClient
+        .from("grades")
+        .select(`
+            id,
+            assessment,
+            score,
+            max_score,
+            created_at,
+            subjects (
+                name,
+                code
+            )
+        `)
+        .eq(
+            "student_id",
+            student.id
+        )
+        .order(
+            "created_at",
+            {
+                ascending: false
+            }
+        );
+
+
+    console.log(
+        "GRADES RESULT:",
+        grades
+    );
+
+    console.log(
+        "GRADES ERROR:",
+        gradesError
+    );
+
+
+    const gradesContainer =
+        document.getElementById(
+            "gradesContainer"
+        );
+
+
+    if (gradesError) {
+
+        console.error(
+            gradesError
+        );
+
+        if (gradesContainer) {
+
+            gradesContainer.innerHTML =
+                "<p>Unable to load grades.</p>";
+        }
+
+        return;
+    }
+
+
+    // ======================================
+    // NO GRADES
+    // ======================================
+
+    if (
+        !grades ||
+        grades.length === 0
+    ) {
+
+        if (gradesContainer) {
+
+            gradesContainer.innerHTML = `
+                <div class="empty-state">
+
+                    <h3>
+                        No grades available
+                    </h3>
+
+                    <p>
+                        Your assessment results
+                        will appear here once
+                        they are added.
+                    </p>
+
+                </div>
+            `;
+        }
+
+        document.getElementById(
+            "gradesAverage"
+        ).textContent = "—";
+
+        document.getElementById(
+            "assessmentCount"
+        ).textContent = "0";
+
+        document.getElementById(
+            "highestScore"
+        ).textContent = "—";
+
+        return;
+    }
+
+
+    // ======================================
+    // CALCULATE SUMMARY
+    // ======================================
+
+    let totalScore = 0;
+
+    let totalMaximum = 0;
+
+    let highestPercentage = 0;
+
+
+    grades.forEach(function (grade) {
+
+        const score =
+            Number(grade.score);
+
+        const maxScore =
+            Number(grade.max_score);
+
+
+        totalScore += score;
+
+        totalMaximum += maxScore;
+
+
+        if (maxScore > 0) {
+
+            const percentage =
+                (score / maxScore) * 100;
+
+            if (
+                percentage >
+                highestPercentage
+            ) {
+
+                highestPercentage =
+                    percentage;
+            }
+        }
+
+    });
+
+
+    let overallAverage = 0;
+
+
+    if (totalMaximum > 0) {
+
+        overallAverage =
+            (totalScore / totalMaximum) * 100;
+    }
+
+
+    // ======================================
+    // UPDATE SUMMARY
+    // ======================================
+
+    const gradesAverage =
+        document.getElementById(
+            "gradesAverage"
+        );
+
+    if (gradesAverage) {
+
+        gradesAverage.textContent =
+            Math.round(
+                overallAverage
+            ) + "%";
+    }
+
+
+    const assessmentCount =
+        document.getElementById(
+            "assessmentCount"
+        );
+
+    if (assessmentCount) {
+
+        assessmentCount.textContent =
+            grades.length;
+    }
+
+
+    const highestScore =
+        document.getElementById(
+            "highestScore"
+        );
+
+    if (highestScore) {
+
+        highestScore.textContent =
+            Math.round(
+                highestPercentage
+            ) + "%";
+    }
+
+
+    // ======================================
+    // DISPLAY GRADES
+    // ======================================
+
+    if (!gradesContainer) {
+        return;
+    }
+
+
+    gradesContainer.innerHTML = "";
+
+
+    grades.forEach(function (grade) {
+
+        const gradeElement =
+            document.createElement("div");
+
+
+        gradeElement.className =
+            "grade-row";
+
+
+        const subjectName =
+            grade.subjects &&
+            grade.subjects.name
+                ? grade.subjects.name
+                : "Subject";
+
+
+        const subjectCode =
+            grade.subjects &&
+            grade.subjects.code
+                ? grade.subjects.code
+                : "";
+
+
+        const score =
+            Number(grade.score);
+
+
+        const maxScore =
+            Number(grade.max_score);
+
+
+        let percentage = 0;
+
+
+        if (maxScore > 0) {
+
+            percentage =
+                (score / maxScore) * 100;
+        }
+
+
+        gradeElement.innerHTML = `
+
+            <div class="grade-subject">
+
+                <strong>
+                    ${subjectName}
+                </strong>
+
+                <span>
+                    ${subjectCode}
+                </span>
+
+            </div>
+
+
+            <div class="grade-assessment">
+
+                ${grade.assessment}
+
+            </div>
+
+
+            <div class="grade-score">
+
+                ${score} / ${maxScore}
+
+            </div>
+
+
+            <div class="grade-percentage">
+
+                ${Math.round(
+                    percentage
+                )}%
+
+            </div>
+
+        `;
+
+
+        gradesContainer.appendChild(
+            gradeElement
+        );
+
+    });
+
+
+    console.log(
+        "Student grades loaded successfully."
+    );
+
+}
+
+
+// ==========================================
+// START GRADES PAGE
+// ==========================================
+
+if (
+    window.location.pathname.includes(
+        "grades.html"
+    )
+) {
+
+    loadStudentGrades();
+
+}
