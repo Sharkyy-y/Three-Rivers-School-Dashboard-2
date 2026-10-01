@@ -2235,3 +2235,412 @@ if (
     loadStudentAttendance();
 
 }
+
+// ==========================================
+// FULL STUDENT TIMETABLE
+// ==========================================
+
+async function loadFullTimetable() {
+
+    console.log("Loading full timetable...");
+
+
+    // GET CURRENT USER
+    const {
+        data: {
+            user
+        },
+        error: userError
+    } = await supabaseClient.auth.getUser();
+
+
+    if (userError || !user) {
+
+        console.error(
+            "Timetable user error:",
+            userError
+        );
+
+        window.location.href =
+            "login.html";
+
+        return;
+    }
+
+
+    // GET STUDENT
+    const {
+        data: student,
+        error: studentError
+    } = await supabaseClient
+        .from("students")
+        .select("*")
+        .eq(
+            "user_id",
+            user.id
+        )
+        .single();
+
+
+    if (studentError || !student) {
+
+        console.error(
+            "Timetable student error:",
+            studentError
+        );
+
+        return;
+    }
+
+
+    // ======================================
+    // STUDENT NAME
+    // ======================================
+
+    const timetableStudentName =
+        document.getElementById(
+            "timetableStudentName"
+        );
+
+
+    if (timetableStudentName) {
+
+        timetableStudentName.textContent =
+            student.full_name;
+    }
+
+
+    // ======================================
+    // PROFILE INITIAL
+    // ======================================
+
+    const timetableInitial =
+        document.getElementById(
+            "timetableInitial"
+        );
+
+
+    if (timetableInitial) {
+
+        timetableInitial.textContent =
+            student.full_name
+                .charAt(0)
+                .toUpperCase();
+    }
+
+
+    // ======================================
+    // GET TIMETABLE
+    // ======================================
+
+    const {
+        data: timetable,
+        error: timetableError
+    } = await supabaseClient
+        .from("timetable")
+        .select(`
+            id,
+            class_name,
+            teacher_name,
+            room,
+            day_of_week,
+            start_time,
+            end_time,
+            subjects (
+                name,
+                code
+            )
+        `)
+        .eq(
+            "class_name",
+            student.class_name
+        )
+        .order(
+            "start_time",
+            {
+                ascending: true
+            }
+        );
+
+
+    console.log(
+        "TIMETABLE RESULT:",
+        timetable
+    );
+
+
+    console.log(
+        "TIMETABLE ERROR:",
+        timetableError
+    );
+
+
+    const timetableContainer =
+        document.getElementById(
+            "timetableContainer"
+        );
+
+
+    // ======================================
+    // ERROR
+    // ======================================
+
+    if (timetableError) {
+
+        console.error(
+            timetableError
+        );
+
+        if (timetableContainer) {
+
+            timetableContainer.innerHTML =
+                "<p>Unable to load timetable.</p>";
+        }
+
+        return;
+    }
+
+
+    // ======================================
+    // NO TIMETABLE
+    // ======================================
+
+    if (
+        !timetable ||
+        timetable.length === 0
+    ) {
+
+        if (timetableContainer) {
+
+            timetableContainer.innerHTML = `
+                <div class="empty-state">
+
+                    <h3>
+                        No timetable available
+                    </h3>
+
+                    <p>
+                        Your weekly timetable
+                        will appear here once
+                        lessons are added.
+                    </p>
+
+                </div>
+            `;
+        }
+
+        return;
+    }
+
+
+    // ======================================
+    // DAYS
+    // ======================================
+
+    const days = [
+        "Monday",
+        "Tuesday",
+        "Wednesday",
+        "Thursday",
+        "Friday"
+    ];
+
+
+    // ======================================
+    // CREATE WEEK
+    // ======================================
+
+    if (!timetableContainer) {
+        return;
+    }
+
+
+    timetableContainer.innerHTML = "";
+
+
+    days.forEach(
+        function (day) {
+
+
+            const dayLessons =
+                timetable.filter(
+                    function (lesson) {
+
+                        return (
+                            lesson.day_of_week ===
+                            day
+                        );
+
+                    }
+                );
+
+
+            const daySection =
+                document.createElement(
+                    "div"
+                );
+
+
+            daySection.className =
+                "timetable-day";
+
+
+            let lessonsHTML = "";
+
+
+            if (
+                dayLessons.length === 0
+            ) {
+
+                lessonsHTML = `
+                    <div class="no-lessons">
+                        No lessons scheduled
+                    </div>
+                `;
+
+            } else {
+
+
+                dayLessons.forEach(
+                    function (lesson) {
+
+
+                        const subjectName =
+                            lesson.subjects &&
+                            lesson.subjects.name
+                                ? lesson.subjects.name
+                                : "Subject";
+
+
+                        const subjectCode =
+                            lesson.subjects &&
+                            lesson.subjects.code
+                                ? lesson.subjects.code
+                                : "";
+
+
+                        const teacher =
+                            lesson.teacher_name ||
+                            "Teacher TBA";
+
+
+                        const room =
+                            lesson.room ||
+                            "Room TBA";
+
+
+                        const startTime =
+                            lesson.start_time
+                                ? lesson.start_time
+                                    .substring(
+                                        0,
+                                        5
+                                    )
+                                : "";
+
+
+                        const endTime =
+                            lesson.end_time
+                                ? lesson.end_time
+                                    .substring(
+                                        0,
+                                        5
+                                    )
+                                : "";
+
+
+                        lessonsHTML += `
+
+                            <div class="timetable-lesson">
+
+
+                                <div class="lesson-time">
+
+                                    <strong>
+                                        ${startTime}
+                                    </strong>
+
+                                    <span>
+                                        ${endTime}
+                                    </span>
+
+                                </div>
+
+
+                                <div class="lesson-details">
+
+                                    <strong>
+                                        ${subjectName}
+                                    </strong>
+
+                                    <span>
+                                        ${subjectCode}
+                                    </span>
+
+                                    <small>
+                                        ${teacher}
+                                        •
+                                        ${room}
+                                    </small>
+
+                                </div>
+
+
+                            </div>
+
+                        `;
+
+                    }
+                );
+
+            }
+
+
+            daySection.innerHTML = `
+
+                <div class="timetable-day-header">
+
+                    <h3>
+                        ${day}
+                    </h3>
+
+                </div>
+
+
+                <div class="timetable-lessons">
+
+                    ${lessonsHTML}
+
+                </div>
+
+            `;
+
+
+            timetableContainer.appendChild(
+                daySection
+            );
+
+        }
+    );
+
+
+    console.log(
+        "Full timetable loaded successfully."
+    );
+
+}
+
+
+// ==========================================
+// START FULL TIMETABLE PAGE
+// ==========================================
+
+if (
+    window.location.pathname.includes(
+        "timetable.html"
+    )
+) {
+
+    loadFullTimetable();
+
+}
