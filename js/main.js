@@ -1227,3 +1227,198 @@ if (
     loadStudentDashboard();
 
 }
+
+// ==========================================
+// STUDENT PROFILE
+// ==========================================
+
+async function loadStudentProfile() {
+
+    console.log(
+        "Loading student profile..."
+    );
+
+
+    // GET CURRENT USER
+    const {
+        data: {
+            user
+        },
+        error: userError
+    } =
+        await supabaseClient.auth.getUser();
+
+
+    // USER NOT LOGGED IN
+    if (
+        userError ||
+        !user
+    ) {
+
+        console.error(
+            "Profile user error:",
+            userError
+        );
+
+        window.location.href =
+            "login.html";
+
+        return;
+    }
+
+
+    // GET STUDENT
+    const {
+        data: student,
+        error: studentError
+    } =
+        await supabaseClient
+            .from("students")
+            .select("*")
+            .eq(
+                "user_id",
+                user.id
+            )
+            .single();
+
+
+    if (
+        studentError ||
+        !student
+    ) {
+
+        console.error(
+            "Profile student error:",
+            studentError
+        );
+
+        return;
+    }
+
+
+    console.log(
+        "Profile student:",
+        student
+    );
+
+
+    // ======================================
+    // FULL NAME
+    // ======================================
+
+    const profileFullName =
+        document.getElementById(
+            "profileFullName"
+        );
+
+    if (profileFullName) {
+
+        profileFullName.textContent =
+            student.full_name;
+    }
+
+
+    // ======================================
+    // ADMISSION NUMBER
+    // ======================================
+
+    const profileAdmissionNumber =
+        document.getElementById(
+            "profileAdmissionNumber"
+        );
+
+    if (profileAdmissionNumber) {
+
+        profileAdmissionNumber.textContent =
+            student.admission_number;
+    }
+
+
+    // ======================================
+    // CLASS
+    // ======================================
+
+    const profileClass =
+        document.getElementById(
+            "profileClass"
+        );
+
+    if (profileClass) {
+
+        profileClass.textContent =
+            student.class_name;
+    }
+
+
+    // ======================================
+    // EMAIL
+    // ======================================
+
+    const profileEmail =
+        document.getElementById(
+            "profileEmail"
+        );
+
+    if (profileEmail) {
+
+        profileEmail.textContent =
+            student.email ||
+            user.email ||
+            "Not available";
+    }
+
+
+    // ======================================
+    // TOP NAME
+    // ======================================
+
+    const topStudentName =
+        document.getElementById(
+            "topStudentName"
+        );
+
+    if (topStudentName) {
+
+        topStudentName.textContent =
+            student.full_name;
+    }
+
+
+    // ======================================
+    // PROFILE INITIAL
+    // ======================================
+
+    const profileInitial =
+        document.getElementById(
+            "profileInitial"
+        );
+
+    if (profileInitial) {
+
+        profileInitial.textContent =
+            student.full_name
+                .charAt(0)
+                .toUpperCase();
+    }
+
+
+    console.log(
+        "Student profile loaded successfully."
+    );
+
+}
+
+
+// ==========================================
+// START PROFILE PAGE
+// ==========================================
+
+if (
+    window.location.pathname.includes(
+        "profile.html"
+    )
+) {
+
+    loadStudentProfile();
+
+}
