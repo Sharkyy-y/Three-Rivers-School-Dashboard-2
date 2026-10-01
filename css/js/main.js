@@ -1,28 +1,5 @@
-const loginForm = document.getElementById("loginForm");
-
-if (loginForm) {
-
-    loginForm.addEventListener("submit", function(event) {
-
-        event.preventDefault();
-
-        const email =
-            document.getElementById("email").value;
-
-        const role =
-            document.querySelector(
-                'input[name="role"]:checked'
-            ).value;
-
-        alert(
-            `Login system coming soon!\n\nEmail: ${email}\nAccount: ${role}`
-        );
-
-    });
-
-}
-
-const SUPABASE_URL = "https://deurewdqzvlioopuhikx.supabase.co";
+const SUPABASE_URL =
+    "https://deurewdqzvlioopuhikx.supabase.co";
 
 const SUPABASE_KEY =
     "sb_publishable_k2TUtDnGrc0Bupc7kmYEOQ__-vaiMig";
@@ -34,73 +11,123 @@ const supabaseClient = window.supabase.createClient(
 
 
 // ==========================================
-// LOGIN
+// LOGIN FORM
 // ==========================================
 
-async function loginUser() {
+const loginForm = document.getElementById("loginForm");
 
-    const email = document.getElementById("email").value.trim();
-    const password = document.getElementById("password").value;
+if (loginForm) {
 
-    const message = document.getElementById("login-message");
+    loginForm.addEventListener("submit", async function (event) {
 
-    if (!email || !password) {
-        message.textContent = "Please enter your email and password.";
-        return;
-    }
+        event.preventDefault();
 
-    message.textContent = "Signing in...";
+        const email =
+            document.getElementById("email").value.trim();
 
-    const { data, error } =
-        await supabaseClient.auth.signInWithPassword({
-            email: email,
-            password: password
-        });
+        const password =
+            document.getElementById("password").value;
 
-    if (error) {
-        console.error(error);
+        const selectedRole =
+            document.querySelector(
+                'input[name="role"]:checked'
+            ).value;
 
-        message.textContent = error.message;
-        return;
-    }
-
-    // Login successful
-    window.location.href = "student-dashboard.html";
-}
+        const message =
+            document.getElementById("login-message");
 
 
-// ==========================================
-// LOGOUT
-// ==========================================
-
-async function logoutUser() {
-
-    const { error } =
-        await supabaseClient.auth.signOut();
-
-    if (error) {
-        console.error(error);
-        return;
-    }
-
-    window.location.href = "login.html";
-}
+        message.textContent = "Signing in...";
 
 
-// ==========================================
-// PROTECT STUDENT DASHBOARD
-// ==========================================
+        // Login with Supabase
+        const { data, error } =
+            await supabaseClient.auth.signInWithPassword({
+                email: email,
+                password: password
+            });
 
-async function checkStudentLogin() {
 
-    const {
-        data: { user }
-    } = await supabaseClient.auth.getUser();
+        if (error) {
 
-    if (!user) {
-        window.location.href = "login.html";
-        return null;
-    }
+            console.error(error);
 
-    return user;
+            message.textContent =
+                "Login failed: " + error.message;
+
+            return;
+        }
+
+
+        // Get the user's profile
+        const { data: profile, error: profileError } =
+            await supabaseClient
+                .from("profiles")
+                .select("*")
+                .eq("id", data.user.id)
+                .single();
+
+
+        if (profileError) {
+
+            console.error(profileError);
+
+            message.textContent =
+                "Your account exists, but your profile could not be found.";
+
+            await supabaseClient.auth.signOut();
+
+            return;
+        }
+
+
+        // Check that selected account type
+        // matches the actual account role
+        if (profile.role !== selectedRole) {
+
+            message.textContent =
+                "The selected account type does not match this account.";
+
+            await supabaseClient.auth.signOut();
+
+            return;
+        }
+
+
+        // Save role for later use
+        localStorage.setItem(
+            "userRole",
+            profile.role
+        );
+
+
+        // Save user ID
+        localStorage.setItem(
+            "userId",
+            data.user.id
+        );
+
+
+        // Redirect based on role
+
+        if (profile.role === "student") {
+
+            window.location.href =
+                "student-dashboard.html";
+
+        } else {
+
+            // For now, all other roles go here.
+            // We will build their dashboards later.
+
+            alert(
+                profile.role +
+                " dashboard will be added next."
+            );
+
+            await supabaseClient.auth.signOut();
+        }
+
+    });
+
 }
