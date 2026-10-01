@@ -2631,22 +2631,24 @@ if (
 }
 
 // ==========================================
-// FULL ASSIGNMENTS PAGE
+// FULL ASSIGNMENTS PAGE WITH SUBMISSIONS
 // ==========================================
 
 async function loadAssignmentsPage() {
 
     console.log("Loading assignments page...");
 
-
+    // ------------------------------------------
     // GET CURRENT USER
+    // ------------------------------------------
 
     const {
         data: {
             user
         },
         error: userError
-    } = await supabaseClient.auth.getUser();
+    } =
+        await supabaseClient.auth.getUser();
 
 
     if (userError || !user) {
@@ -2656,13 +2658,16 @@ async function loadAssignmentsPage() {
             userError
         );
 
-        window.location.href = "login.html";
+        window.location.href =
+            "login.html";
 
         return;
     }
 
 
+    // ------------------------------------------
     // GET STUDENT
+    // ------------------------------------------
 
     const {
         data: student,
@@ -2686,7 +2691,9 @@ async function loadAssignmentsPage() {
     }
 
 
+    // ------------------------------------------
     // STUDENT NAME
+    // ------------------------------------------
 
     const studentName =
         document.getElementById(
@@ -2701,7 +2708,9 @@ async function loadAssignmentsPage() {
     }
 
 
-    // INITIAL
+    // ------------------------------------------
+    // STUDENT INITIAL
+    // ------------------------------------------
 
     const initial =
         document.getElementById(
@@ -2718,7 +2727,9 @@ async function loadAssignmentsPage() {
     }
 
 
+    // ------------------------------------------
     // GET ASSIGNMENTS
+    // ------------------------------------------
 
     const {
         data: assignments,
@@ -2749,12 +2760,13 @@ async function loadAssignmentsPage() {
 
 
     console.log(
-        "ASSIGNMENTS PAGE RESULT:",
+        "ASSIGNMENTS RESULT:",
         assignments
     );
 
+
     console.log(
-        "ASSIGNMENTS PAGE ERROR:",
+        "ASSIGNMENTS ERROR:",
         assignmentsError
     );
 
@@ -2770,7 +2782,9 @@ async function loadAssignmentsPage() {
     }
 
 
+    // ------------------------------------------
     // ERROR
+    // ------------------------------------------
 
     if (assignmentsError) {
 
@@ -2785,7 +2799,9 @@ async function loadAssignmentsPage() {
     }
 
 
+    // ------------------------------------------
     // NO ASSIGNMENTS
+    // ------------------------------------------
 
     if (
         !assignments ||
@@ -2829,7 +2845,9 @@ async function loadAssignmentsPage() {
     }
 
 
-    // DATE
+    // ------------------------------------------
+    // TODAY
+    // ------------------------------------------
 
     const today =
         new Date();
@@ -2842,13 +2860,9 @@ async function loadAssignmentsPage() {
     );
 
 
-    // TOTAL
-
-    const totalAssignments =
-        assignments.length;
-
-
-    // UPCOMING
+    // ------------------------------------------
+    // SUMMARY COUNTS
+    // ------------------------------------------
 
     let upcomingCount = 0;
 
@@ -2893,7 +2907,9 @@ async function loadAssignmentsPage() {
     );
 
 
+    // ------------------------------------------
     // UPDATE SUMMARY
+    // ------------------------------------------
 
     const totalElement =
         document.getElementById(
@@ -2903,7 +2919,7 @@ async function loadAssignmentsPage() {
     if (totalElement) {
 
         totalElement.textContent =
-            totalAssignments;
+            assignments.length;
 
     }
 
@@ -2934,12 +2950,60 @@ async function loadAssignmentsPage() {
     }
 
 
+    // ------------------------------------------
+    // GET STUDENT SUBMISSIONS
+    // ------------------------------------------
+
+    const {
+        data: submissions,
+        error: submissionsError
+    } =
+        await supabaseClient
+            .from("submissions")
+            .select(`
+                id,
+                assignment_id,
+                submission_text,
+                submitted_at,
+                status
+            `)
+            .eq(
+                "student_id",
+                student.id
+            );
+
+
+    console.log(
+        "SUBMISSIONS RESULT:",
+        submissions
+    );
+
+
+    console.log(
+        "SUBMISSIONS ERROR:",
+        submissionsError
+    );
+
+
+    if (submissionsError) {
+
+        console.error(
+            submissionsError
+        );
+
+    }
+
+
+    // ------------------------------------------
     // CLEAR CONTAINER
+    // ------------------------------------------
 
     container.innerHTML = "";
 
 
-    // CREATE ASSIGNMENTS
+    // ------------------------------------------
+    // CREATE ASSIGNMENT CARDS
+    // ------------------------------------------
 
     assignments.forEach(
         function (assignment) {
@@ -2955,7 +3019,9 @@ async function loadAssignmentsPage() {
                 "assignment-page-card";
 
 
+            // ----------------------------------
             // SUBJECT
+            // ----------------------------------
 
             const subjectName =
                 assignment.subjects &&
@@ -2971,7 +3037,9 @@ async function loadAssignmentsPage() {
                     : "";
 
 
-            // DATE
+            // ----------------------------------
+            // DUE DATE
+            // ----------------------------------
 
             const dueDate =
                 new Date(
@@ -2994,8 +3062,6 @@ async function loadAssignmentsPage() {
                     )
                 );
 
-
-            // DUE TEXT
 
             let dueText;
 
@@ -3071,7 +3137,28 @@ async function loadAssignmentsPage() {
             }
 
 
-            // CARD
+            // ----------------------------------
+            // FIND EXISTING SUBMISSION
+            // ----------------------------------
+
+            const existingSubmission =
+                submissions
+                    ? submissions.find(
+                        function (submission) {
+
+                            return (
+                                submission.assignment_id ===
+                                assignment.id
+                            );
+
+                        }
+                    )
+                    : null;
+
+
+            // ----------------------------------
+            // CARD HTML
+            // ----------------------------------
 
             assignmentElement.innerHTML = `
 
@@ -3086,6 +3173,7 @@ async function loadAssignmentsPage() {
 
                 <div class="assignment-page-main">
 
+
                     <div class="assignment-page-header">
 
                         <div>
@@ -3096,12 +3184,14 @@ async function loadAssignmentsPage() {
 
                             <span>
                                 ${subjectName}
+
                                 ${
                                     subjectCode
                                         ? " • " +
                                           subjectCode
                                         : ""
                                 }
+
                             </span>
 
                         </div>
@@ -3129,6 +3219,7 @@ async function loadAssignmentsPage() {
                     <div class="assignment-date">
 
                         Due:
+
                         ${dueDate.toLocaleDateString(
                             "en-GB",
                             {
@@ -3140,6 +3231,115 @@ async function loadAssignmentsPage() {
                         )}
 
                     </div>
+
+
+                    <div class="assignment-submit-area">
+
+
+                        ${
+                            existingSubmission
+                                ? `
+
+                                    <div class="submission-status">
+
+                                        <strong>
+                                            ✓ Submitted
+                                        </strong>
+
+                                        <span>
+                                            ${new Date(
+                                                existingSubmission.submitted_at
+                                            ).toLocaleDateString(
+                                                "en-GB",
+                                                {
+                                                    day: "numeric",
+                                                    month: "long",
+                                                    year: "numeric"
+                                                }
+                                            )}
+                                        </span>
+
+                                    </div>
+
+                                    <button
+                                        type="button"
+                                        class="assignment-submit-button"
+                                        onclick="openSubmissionForm('${assignment.id}')"
+                                    >
+                                        Edit Submission
+                                    </button>
+
+                                `
+                                : `
+
+                                    <button
+                                        type="button"
+                                        class="assignment-submit-button"
+                                        onclick="openSubmissionForm('${assignment.id}')"
+                                    >
+                                        Submit Work
+                                    </button>
+
+                                `
+                        }
+
+
+                    </div>
+
+
+                    <div
+                        id="submission-form-${assignment.id}"
+                        class="submission-form"
+                        style="display: none;"
+                    >
+
+                        <textarea
+                            id="submission-text-${assignment.id}"
+                            placeholder="Type your answer or submission here..."
+                        ></textarea>
+
+
+                        <label class="submission-file-label">
+
+                            Attach a file
+
+                            <input
+                                type="file"
+                                id="submission-file-${assignment.id}"
+                            >
+
+                        </label>
+
+
+                        <div class="submission-form-actions">
+
+                            <button
+                                type="button"
+                                class="submission-cancel-button"
+                                onclick="closeSubmissionForm('${assignment.id}')"
+                            >
+                                Cancel
+                            </button>
+
+
+                            <button
+                                type="button"
+                                class="assignment-submit-button"
+                                onclick="submitAssignment('${assignment.id}', '${student.id}', '${user.id}')"
+                            >
+                                Submit Assignment
+                            </button>
+
+                        </div>
+
+
+                        <p
+                            id="submission-message-${assignment.id}"
+                            class="submission-message"
+                        ></p>
+
+                    </div>
+
 
                 </div>
 
@@ -3162,19 +3362,364 @@ async function loadAssignmentsPage() {
 
 
 // ==========================================
-// START ASSIGNMENTS PAGE
+// OPEN SUBMISSION FORM
 // ==========================================
 
-if (
-    window.location.pathname.includes(
-        "assignments.html"
-    )
+function openSubmissionForm(
+    assignmentId
 ) {
 
-    loadAssignmentsPage();
+    const form =
+        document.getElementById(
+            "submission-form-" +
+            assignmentId
+        );
+
+
+    if (!form) {
+        return;
+    }
+
+
+    form.style.display =
+        "block";
+
+
+    form.scrollIntoView({
+        behavior: "smooth",
+        block: "center"
+    });
 
 }
 
+
+// ==========================================
+// CLOSE SUBMISSION FORM
+// ==========================================
+
+function closeSubmissionForm(
+    assignmentId
+) {
+
+    const form =
+        document.getElementById(
+            "submission-form-" +
+            assignmentId
+        );
+
+
+    if (!form) {
+        return;
+    }
+
+
+    form.style.display =
+        "none";
+
+}
+
+
+// ==========================================
+// SUBMIT ASSIGNMENT
+// ==========================================
+
+async function submitAssignment(
+    assignmentId,
+    studentId,
+    userId
+) {
+
+    console.log(
+        "Submitting assignment:",
+        assignmentId
+    );
+
+
+    const textArea =
+        document.getElementById(
+            "submission-text-" +
+            assignmentId
+        );
+
+
+    const fileInput =
+        document.getElementById(
+            "submission-file-" +
+            assignmentId
+        );
+
+
+    const message =
+        document.getElementById(
+            "submission-message-" +
+            assignmentId
+        );
+
+
+    const text =
+        textArea
+            ? textArea.value.trim()
+            : "";
+
+
+    const file =
+        fileInput &&
+        fileInput.files.length > 0
+            ? fileInput.files[0]
+            : null;
+
+
+    // ------------------------------------------
+    // VALIDATION
+    // ------------------------------------------
+
+    if (!text && !file) {
+
+        if (message) {
+
+            message.textContent =
+                "Please type an answer or attach a file.";
+
+            message.className =
+                "submission-message error";
+
+        }
+
+        return;
+    }
+
+
+    if (message) {
+
+        message.textContent =
+            "Submitting...";
+
+        message.className =
+            "submission-message";
+
+    }
+
+
+    // ------------------------------------------
+    // FILE UPLOAD
+    // ------------------------------------------
+
+    let filePath = null;
+
+
+    if (file) {
+
+        const fileExtension =
+            file.name.includes(".")
+                ? file.name
+                    .split(".")
+                    .pop()
+                    .toLowerCase()
+                : "";
+
+
+        const safeFileName =
+            Date.now() +
+            "-" +
+            Math.random()
+                .toString(36)
+                .substring(2, 8) +
+            (
+                fileExtension
+                    ? "." + fileExtension
+                    : ""
+            );
+
+
+        filePath =
+            userId +
+            "/" +
+            assignmentId +
+            "/" +
+            safeFileName;
+
+
+        const {
+            error: uploadError
+        } =
+            await supabaseClient
+                .storage
+                .from(
+                    "assignment-submissions"
+                )
+                .upload(
+                    filePath,
+                    file
+                );
+
+
+        if (uploadError) {
+
+            console.error(
+                "File upload error:",
+                uploadError
+            );
+
+
+            if (message) {
+
+                message.textContent =
+                    "The file could not be uploaded.";
+
+                message.className =
+                    "submission-message error";
+
+            }
+
+            return;
+        }
+
+    }
+
+
+    // ------------------------------------------
+    // CHECK FOR EXISTING SUBMISSION
+    // ------------------------------------------
+
+    const {
+        data: existingSubmission,
+        error: existingError
+    } =
+        await supabaseClient
+            .from("submissions")
+            .select("id")
+            .eq(
+                "assignment_id",
+                assignmentId
+            )
+            .eq(
+                "student_id",
+                studentId
+            )
+            .maybeSingle();
+
+
+    if (existingError) {
+
+        console.error(
+            "Existing submission error:",
+            existingError
+        );
+
+    }
+
+
+    // ------------------------------------------
+    // SAVE SUBMISSION
+    // ------------------------------------------
+
+    const submissionData = {
+
+        assignment_id:
+            assignmentId,
+
+        student_id:
+            studentId,
+
+        submission_text:
+            text || null,
+
+        submitted_at:
+            new Date().toISOString(),
+
+        status:
+            "submitted"
+
+    };
+
+
+    let submissionError;
+
+
+    if (existingSubmission) {
+
+        const {
+            error
+        } =
+            await supabaseClient
+                .from("submissions")
+                .update(
+                    submissionData
+                )
+                .eq(
+                    "id",
+                    existingSubmission.id
+                );
+
+
+        submissionError =
+            error;
+
+    } else {
+
+        const {
+            error
+        } =
+            await supabaseClient
+                .from("submissions")
+                .insert(
+                    submissionData
+                );
+
+
+        submissionError =
+            error;
+
+    }
+
+
+    if (submissionError) {
+
+        console.error(
+            "Submission error:",
+            submissionError
+        );
+
+
+        if (message) {
+
+            message.textContent =
+                "Your submission could not be saved.";
+
+            message.className =
+                "submission-message error";
+
+        }
+
+        return;
+    }
+
+
+    // ------------------------------------------
+    // SUCCESS
+    // ------------------------------------------
+
+    if (message) {
+
+        message.textContent =
+            "Assignment submitted successfully!";
+
+        message.className =
+            "submission-message success";
+
+    }
+
+
+    setTimeout(
+        function () {
+
+            loadAssignmentsPage();
+
+        },
+        1200
+    );
+
+}
 // ==========================================
 // FULL ANNOUNCEMENTS PAGE
 // ==========================================
