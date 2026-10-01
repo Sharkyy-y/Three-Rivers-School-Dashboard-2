@@ -3174,3 +3174,314 @@ if (
     loadAssignmentsPage();
 
 }
+
+// ==========================================
+// FULL ANNOUNCEMENTS PAGE
+// ==========================================
+
+async function loadAnnouncementsPage() {
+
+    console.log("Loading announcements page...");
+
+
+    // GET CURRENT USER
+
+    const {
+        data: {
+            user
+        },
+        error: userError
+    } =
+        await supabaseClient.auth.getUser();
+
+
+    if (userError || !user) {
+
+        console.error(
+            "Announcements user error:",
+            userError
+        );
+
+        window.location.href =
+            "login.html";
+
+        return;
+    }
+
+
+    // GET STUDENT
+
+    const {
+        data: student,
+        error: studentError
+    } =
+        await supabaseClient
+            .from("students")
+            .select("*")
+            .eq("user_id", user.id)
+            .single();
+
+
+    if (studentError || !student) {
+
+        console.error(
+            "Announcements student error:",
+            studentError
+        );
+
+        return;
+    }
+
+
+    // STUDENT NAME
+
+    const studentName =
+        document.getElementById(
+            "announcementsStudentName"
+        );
+
+    if (studentName) {
+
+        studentName.textContent =
+            student.full_name;
+
+    }
+
+
+    // INITIAL
+
+    const initial =
+        document.getElementById(
+            "announcementsInitial"
+        );
+
+    if (initial) {
+
+        initial.textContent =
+            student.full_name
+                .charAt(0)
+                .toUpperCase();
+
+    }
+
+
+    // GET ANNOUNCEMENTS
+
+    const {
+        data: announcements,
+        error: announcementsError
+    } =
+        await supabaseClient
+            .from("announcements")
+            .select(`
+                id,
+                title,
+                message,
+                target_role,
+                target_class,
+                created_at
+            `)
+            .order(
+                "created_at",
+                {
+                    ascending: false
+                }
+            );
+
+
+    console.log(
+        "ANNOUNCEMENTS PAGE RESULT:",
+        announcements
+    );
+
+
+    console.log(
+        "ANNOUNCEMENTS PAGE ERROR:",
+        announcementsError
+    );
+
+
+    const container =
+        document.getElementById(
+            "announcementsPageContainer"
+        );
+
+
+    if (!container) {
+        return;
+    }
+
+
+    // ERROR
+
+    if (announcementsError) {
+
+        console.error(
+            announcementsError
+        );
+
+        container.innerHTML =
+            "<p>Unable to load announcements.</p>";
+
+        return;
+    }
+
+
+    // NO ANNOUNCEMENTS
+
+    if (
+        !announcements ||
+        announcements.length === 0
+    ) {
+
+        container.innerHTML = `
+
+            <div class="empty-state">
+
+                <h3>
+                    No announcements
+                </h3>
+
+                <p>
+                    There are currently no school
+                    announcements.
+                </p>
+
+            </div>
+
+        `;
+
+        return;
+    }
+
+
+    // CLEAR CONTAINER
+
+    container.innerHTML = "";
+
+
+    // CREATE ANNOUNCEMENTS
+
+    announcements.forEach(
+        function (announcement, index) {
+
+
+            const announcementElement =
+                document.createElement(
+                    "div"
+                );
+
+
+            announcementElement.className =
+                "announcement-page-card";
+
+
+            // DATE
+
+            const createdDate =
+                new Date(
+                    announcement.created_at
+                );
+
+
+            const formattedDate =
+                createdDate.toLocaleDateString(
+                    "en-GB",
+                    {
+                        weekday: "long",
+                        day: "numeric",
+                        month: "long",
+                        year: "numeric"
+                    }
+                );
+
+
+            const formattedTime =
+                createdDate.toLocaleTimeString(
+                    "en-GB",
+                    {
+                        hour: "2-digit",
+                        minute: "2-digit"
+                    }
+                );
+
+
+            // ICON
+
+            const icon =
+                index === 0
+                    ? "!"
+                    : "★";
+
+
+            announcementElement.innerHTML = `
+
+                <div class="announcement-page-icon">
+
+                    ${icon}
+
+                </div>
+
+
+                <div class="announcement-page-content">
+
+                    <div class="announcement-page-header">
+
+                        <div>
+
+                            <h3>
+                                ${announcement.title}
+                            </h3>
+
+                        </div>
+
+
+                        <span>
+                            ${formattedDate}
+                        </span>
+
+                    </div>
+
+
+                    <p>
+                        ${announcement.message}
+                    </p>
+
+
+                    <small>
+                        Posted at ${formattedTime}
+                    </small>
+
+                </div>
+
+            `;
+
+
+            container.appendChild(
+                announcementElement
+            );
+
+        }
+    );
+
+
+    console.log(
+        "Announcements page loaded successfully."
+    );
+
+}
+
+
+// ==========================================
+// START ANNOUNCEMENTS PAGE
+// ==========================================
+
+if (
+    window.location.pathname.includes(
+        "announcements.html"
+    )
+) {
+
+    loadAnnouncementsPage();
+
+}
