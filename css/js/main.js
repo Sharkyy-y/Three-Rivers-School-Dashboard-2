@@ -180,6 +180,63 @@ async function loadStudentDashboard() {
     }
 }
 
+// ==========================================
+// LOAD REAL ACADEMIC AVERAGE
+// ==========================================
+
+const {
+    data: grades,
+    error: gradesError
+} = await supabaseClient
+    .from("grades")
+    .select("score, max_score")
+    .eq("student_id", student.id);
+
+
+if (gradesError) {
+
+    console.error(gradesError);
+
+    document.getElementById("academicAverage").textContent =
+        "Unavailable";
+
+    return;
+}
+
+
+// Calculate average
+let totalScore = 0;
+let totalMaxScore = 0;
+
+grades.forEach(grade => {
+
+    totalScore += Number(grade.score);
+    totalMaxScore += Number(grade.max_score);
+
+});
+
+
+let average = 0;
+
+if (totalMaxScore > 0) {
+
+    average =
+        (totalScore / totalMaxScore) * 100;
+
+}
+
+
+// Display average
+const academicAverage =
+    document.getElementById("academicAverage");
+
+if (academicAverage) {
+
+    academicAverage.textContent =
+        Math.round(average) + "%";
+
+}
+
     // ==========================================
     // DISPLAY REAL STUDENT INFORMATION
     // ==========================================
