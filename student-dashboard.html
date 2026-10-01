@@ -273,79 +273,33 @@
 
 </div>
 
-            <!-- ANNOUNCEMENTS -->
-            <section class="dashboard-card announcements">
+<!-- ANNOUNCEMENTS -->
+<section class="dashboard-card announcements">
 
-                <div class="card-header">
+    <div class="card-header">
 
-                    <div>
-                        <h3>Latest Announcements</h3>
-                        <p>Important information from your school</p>
-                    </div>
+        <div>
+            <h3>Latest Announcements</h3>
+            <p>Important information from your school</p>
+        </div>
 
-                    <a href="#">
-                        View all
-                    </a>
-
-                </div>
-
-
-                <div class="announcement">
-
-                    <div class="announcement-icon">
-                        !
-                    </div>
-
-                    <div>
-
-                        <strong>
-                            School Assembly
-                        </strong>
-
-                        <p>
-                            All students are expected to attend
-                            tomorrow's morning assembly.
-                        </p>
-
-                        <small>
-                            Posted 2 hours ago
-                        </small>
-
-                    </div>
-
-                </div>
-
-
-                <div class="announcement">
-
-                    <div class="announcement-icon">
-                        ★
-                    </div>
-
-                    <div>
-
-                        <strong>
-                            Sports Day Registration
-                        </strong>
-
-                        <p>
-                            Registration for Sports Day closes
-                            this Friday.
-                        </p>
-
-                        <small>
-                            Posted yesterday
-                        </small>
-
-                    </div>
-
-                </div>
-
-            </section>
-
-        </main>
+        <a href="#">
+            View all
+        </a>
 
     </div>
+
+
+    <!-- REAL ANNOUNCEMENTS LOAD HERE -->
+    <div id="announcementsContainer">
+
+        <p class="loading-message">
+            Loading announcements...
+        </p>
+
+    </div>
+
+</section>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="js/main.js"></script>
