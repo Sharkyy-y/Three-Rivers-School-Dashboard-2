@@ -771,6 +771,15 @@ if (assignmentsContainer) {
                 }
             );
 
+    console.log(
+    "ASSIGNMENTS RESULT:",
+    assignments
+);
+
+console.log(
+    "ASSIGNMENTS ERROR:",
+    assignmentsError
+);
 
     // ----------------------------------
     // ERROR
