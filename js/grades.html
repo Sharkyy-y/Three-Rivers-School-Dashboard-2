@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Grades | Student Management Portal</title>
+
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/dashboard.css">
+
+</head>
+
+<body>
+
+    <div class="dashboard-layout">
+
+        <!-- SIDEBAR -->
+        <aside class="sidebar">
+
+            <div class="sidebar-logo">
+                <h2>Student Portal</h2>
+                <span>Student Management</span>
+            </div>
+
+            <nav class="sidebar-nav">
+
+                <a href="student-dashboard.html">
+                    Dashboard
+                </a>
+
+                <a href="timetable.html">
+                    Timetable
+                </a>
+
+                <a href="assignments.html">
+                    Assignments
+                </a>
+
+                <a href="grades.html" class="active">
+                    Grades
+                </a>
+
+                <a href="attendance.html">
+                    Attendance
+                </a>
+
+                <a href="#">
+                    Announcements
+                </a>
+
+                <a href="profile.html">
+                    My Profile
+                </a>
+
+            </nav>
+
+            <div class="sidebar-bottom">
+
+                <button
+                    id="logoutButton"
+                    type="button"
+                >
+                    Sign out
+                </button>
+
+            </div>
+
+        </aside>
+
+
+        <!-- MAIN CONTENT -->
+        <main class="main-content">
+
+            <!-- TOP BAR -->
+            <header class="topbar">
+
+                <div>
+
+                    <p class="school-name">
+                        Student Management Portal
+                    </p>
+
+                    <h1>
+                        My Grades
+                    </h1>
+
+                </div>
+
+
+                <div class="student-profile">
+
+                    <div class="profile-avatar">
+
+                        <span id="gradesInitial">
+                            -
+                        </span>
+
+                    </div>
+
+                    <div class="profile-details">
+
+                        <strong id="gradesStudentName">
+                            Loading...
+                        </strong>
+
+                        <small>
+                            Student
+                        </small>
+
+                    </div>
+
+                </div>
+
+            </header>
+
+
+            <!-- ACADEMIC SUMMARY -->
+            <section class="stats-grid">
+
+                <div class="stat-card">
+
+                    <div class="stat-content">
+
+                        <span>
+                            Overall Average
+                        </span>
+
+                        <strong id="gradesAverage">
+                            Loading...
+                        </strong>
+
+                    </div>
+
+                </div>
+
+
+                <div class="stat-card">
+
+                    <div class="stat-content">
+
+                        <span>
+                            Assessments
+                        </span>
+
+                        <strong id="assessmentCount">
+                            Loading...
+                        </strong>
+
+                    </div>
+
+                </div>
+
+
+                <div class="stat-card">
+
+                    <div class="stat-content">
+
+                        <span>
+                            Highest Score
+                        </span>
+
+                        <strong id="highestScore">
+                            Loading...
+                        </strong>
+
+                    </div>
+
+                </div>
+
+            </section>
+
+
+            <!-- GRADES TABLE -->
+            <section class="dashboard-card">
+
+                <div class="card-header">
+
+                    <div>
+
+                        <h3>
+                            Academic Results
+                        </h3>
+
+                        <p>
+                            Your latest assessment results
+                        </p>
+
+                    </div>
+
+                </div>
+
+
+                <div
+                    id="gradesContainer"
+                    class="grades-container"
+                >
+
+                    <p class="loading-message">
+                        Loading grades...
+                    </p>
+
+                </div>
+
+            </section>
+
+        </main>
+
+    </div>
+
+
+    <!-- SUPABASE -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+    <!-- MAIN JAVASCRIPT -->
+    <script src="js/main.js"></script>
+
+</body>
+
+</html>
