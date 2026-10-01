@@ -902,3 +902,169 @@ body {
     }
 
 }
+
+/* ==========================================
+   ASSIGNMENT SUBMISSIONS
+   ========================================== */
+
+.assignment-submit-area {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-top: 18px;
+}
+
+
+.assignment-submit-button {
+    border: none;
+    border-radius: 9px;
+    padding: 10px 16px;
+
+    background: #111827;
+    color: #ffffff;
+
+    font-size: 13px;
+    font-weight: 600;
+
+    cursor: pointer;
+
+    transition:
+        transform 0.2s ease,
+        opacity 0.2s ease;
+}
+
+
+.assignment-submit-button:hover {
+    transform: translateY(-1px);
+    opacity: 0.9;
+}
+
+
+.submission-status {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+
+.submission-status strong {
+    color: #15803d;
+    font-size: 13px;
+}
+
+
+.submission-status span {
+    color: #9ca3af;
+    font-size: 12px;
+}
+
+
+.submission-form {
+    margin-top: 18px;
+    padding: 18px;
+
+    border: 1px solid #e5e7eb;
+    border-radius: 12px;
+
+    background: #f8fafc;
+}
+
+
+.submission-form textarea {
+    width: 100%;
+    min-height: 130px;
+
+    padding: 12px;
+
+    border: 1px solid #d1d5db;
+    border-radius: 9px;
+
+    resize: vertical;
+
+    font-family: inherit;
+    font-size: 14px;
+
+    box-sizing: border-box;
+
+    outline: none;
+}
+
+
+.submission-form textarea:focus {
+    border-color: #9ca3af;
+}
+
+
+.submission-file-label {
+    display: block;
+
+    margin-top: 14px;
+
+    font-size: 13px;
+    font-weight: 600;
+}
+
+
+.submission-file-label input {
+    display: block;
+    margin-top: 8px;
+
+    font-size: 13px;
+}
+
+
+.submission-form-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+
+    margin-top: 16px;
+}
+
+
+.submission-cancel-button {
+    border: 1px solid #d1d5db;
+    border-radius: 9px;
+
+    padding: 10px 16px;
+
+    background: #ffffff;
+    color: #374151;
+
+    font-size: 13px;
+    font-weight: 600;
+
+    cursor: pointer;
+}
+
+
+.submission-message {
+    margin: 12px 0 0;
+
+    font-size: 13px;
+}
+
+
+.submission-message.success {
+    color: #15803d;
+}
+
+
+.submission-message.error {
+    color: #dc2626;
+}
+
+
+@media (max-width: 700px) {
+
+    .assignment-submit-area {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+
+
+    .submission-form-actions {
+        justify-content: flex-start;
+    }
+
+}
