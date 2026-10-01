@@ -237,6 +237,67 @@ if (academicAverage) {
 
 }
 
+// ==========================================
+// LOAD REAL ATTENDANCE
+// ==========================================
+
+const {
+    data: attendance,
+    error: attendanceError
+} = await supabaseClient
+    .from("attendance")
+    .select("status")
+    .eq("student_id", student.id);
+
+
+if (attendanceError) {
+
+    console.error(attendanceError);
+
+    document.getElementById(
+        "attendancePercentage"
+    ).textContent = "Unavailable";
+
+} else {
+
+    const totalDays = attendance.length;
+
+    const presentDays = attendance.filter(
+        record => record.status === "present"
+    ).length;
+
+    const lateDays = attendance.filter(
+        record => record.status === "late"
+    ).length;
+
+
+    let attendancePercentage = 0;
+
+
+    if (totalDays > 0) {
+
+        // Treat late as attended
+        attendancePercentage =
+            ((presentDays + lateDays) / totalDays) * 100;
+
+    }
+
+
+    const attendanceElement =
+        document.getElementById(
+            "attendancePercentage"
+        );
+
+
+    if (attendanceElement) {
+
+        attendanceElement.textContent =
+            Math.round(attendancePercentage) + "%";
+
+    }
+
+}
+
     // ==========================================
     // DISPLAY REAL STUDENT INFORMATION
     // ==========================================
