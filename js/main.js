@@ -2629,3 +2629,548 @@ if (
     loadFullTimetable();
 
 }
+
+// ==========================================
+// FULL ASSIGNMENTS PAGE
+// ==========================================
+
+async function loadAssignmentsPage() {
+
+    console.log("Loading assignments page...");
+
+
+    // GET CURRENT USER
+
+    const {
+        data: {
+            user
+        },
+        error: userError
+    } = await supabaseClient.auth.getUser();
+
+
+    if (userError || !user) {
+
+        console.error(
+            "Assignments user error:",
+            userError
+        );
+
+        window.location.href = "login.html";
+
+        return;
+    }
+
+
+    // GET STUDENT
+
+    const {
+        data: student,
+        error: studentError
+    } =
+        await supabaseClient
+            .from("students")
+            .select("*")
+            .eq("user_id", user.id)
+            .single();
+
+
+    if (studentError || !student) {
+
+        console.error(
+            "Assignments student error:",
+            studentError
+        );
+
+        return;
+    }
+
+
+    // STUDENT NAME
+
+    const studentName =
+        document.getElementById(
+            "assignmentsStudentName"
+        );
+
+    if (studentName) {
+
+        studentName.textContent =
+            student.full_name;
+
+    }
+
+
+    // INITIAL
+
+    const initial =
+        document.getElementById(
+            "assignmentsInitial"
+        );
+
+    if (initial) {
+
+        initial.textContent =
+            student.full_name
+                .charAt(0)
+                .toUpperCase();
+
+    }
+
+
+    // GET ASSIGNMENTS
+
+    const {
+        data: assignments,
+        error: assignmentsError
+    } =
+        await supabaseClient
+            .from("assignments")
+            .select(`
+                id,
+                title,
+                description,
+                due_date,
+                subjects (
+                    name,
+                    code
+                )
+            `)
+            .eq(
+                "class_name",
+                student.class_name
+            )
+            .order(
+                "due_date",
+                {
+                    ascending: true
+                }
+            );
+
+
+    console.log(
+        "ASSIGNMENTS PAGE RESULT:",
+        assignments
+    );
+
+    console.log(
+        "ASSIGNMENTS PAGE ERROR:",
+        assignmentsError
+    );
+
+
+    const container =
+        document.getElementById(
+            "assignmentsPageContainer"
+        );
+
+
+    if (!container) {
+        return;
+    }
+
+
+    // ERROR
+
+    if (assignmentsError) {
+
+        console.error(
+            assignmentsError
+        );
+
+        container.innerHTML =
+            "<p>Unable to load assignments.</p>";
+
+        return;
+    }
+
+
+    // NO ASSIGNMENTS
+
+    if (
+        !assignments ||
+        assignments.length === 0
+    ) {
+
+        container.innerHTML = `
+
+            <div class="empty-state">
+
+                <h3>
+                    No assignments yet
+                </h3>
+
+                <p>
+                    Your assignments will appear
+                    here when they are added.
+                </p>
+
+            </div>
+
+        `;
+
+
+        document.getElementById(
+            "totalAssignments"
+        ).textContent = "0";
+
+
+        document.getElementById(
+            "upcomingAssignments"
+        ).textContent = "0";
+
+
+        document.getElementById(
+            "todayAssignments"
+        ).textContent = "0";
+
+
+        return;
+    }
+
+
+    // DATE
+
+    const today =
+        new Date();
+
+    today.setHours(
+        0,
+        0,
+        0,
+        0
+    );
+
+
+    // TOTAL
+
+    const totalAssignments =
+        assignments.length;
+
+
+    // UPCOMING
+
+    let upcomingCount = 0;
+
+    let todayCount = 0;
+
+
+    assignments.forEach(
+        function (assignment) {
+
+            const dueDate =
+                new Date(
+                    assignment.due_date +
+                    "T00:00:00"
+                );
+
+
+            dueDate.setHours(
+                0,
+                0,
+                0,
+                0
+            );
+
+
+            if (dueDate >= today) {
+
+                upcomingCount++;
+
+            }
+
+
+            if (
+                dueDate.getTime() ===
+                today.getTime()
+            ) {
+
+                todayCount++;
+
+            }
+
+        }
+    );
+
+
+    // UPDATE SUMMARY
+
+    const totalElement =
+        document.getElementById(
+            "totalAssignments"
+        );
+
+    if (totalElement) {
+
+        totalElement.textContent =
+            totalAssignments;
+
+    }
+
+
+    const upcomingElement =
+        document.getElementById(
+            "upcomingAssignments"
+        );
+
+    if (upcomingElement) {
+
+        upcomingElement.textContent =
+            upcomingCount;
+
+    }
+
+
+    const todayElement =
+        document.getElementById(
+            "todayAssignments"
+        );
+
+    if (todayElement) {
+
+        todayElement.textContent =
+            todayCount;
+
+    }
+
+
+    // CLEAR CONTAINER
+
+    container.innerHTML = "";
+
+
+    // CREATE ASSIGNMENTS
+
+    assignments.forEach(
+        function (assignment) {
+
+
+            const assignmentElement =
+                document.createElement(
+                    "div"
+                );
+
+
+            assignmentElement.className =
+                "assignment-page-card";
+
+
+            // SUBJECT
+
+            const subjectName =
+                assignment.subjects &&
+                assignment.subjects.name
+                    ? assignment.subjects.name
+                    : "Subject";
+
+
+            const subjectCode =
+                assignment.subjects &&
+                assignment.subjects.code
+                    ? assignment.subjects.code
+                    : "";
+
+
+            // DATE
+
+            const dueDate =
+                new Date(
+                    assignment.due_date +
+                    "T00:00:00"
+                );
+
+
+            const difference =
+                Math.ceil(
+                    (
+                        dueDate -
+                        today
+                    ) /
+                    (
+                        1000 *
+                        60 *
+                        60 *
+                        24
+                    )
+                );
+
+
+            // DUE TEXT
+
+            let dueText;
+
+            let dueClass =
+                "assignment-normal";
+
+
+            if (difference < 0) {
+
+                dueText =
+                    "Past due";
+
+                dueClass =
+                    "assignment-overdue";
+
+            }
+
+            else if (
+                difference === 0
+            ) {
+
+                dueText =
+                    "Due today";
+
+                dueClass =
+                    "assignment-today";
+
+            }
+
+            else if (
+                difference === 1
+            ) {
+
+                dueText =
+                    "Due tomorrow";
+
+                dueClass =
+                    "assignment-soon";
+
+            }
+
+            else if (
+                difference < 7
+            ) {
+
+                dueText =
+                    "Due " +
+                    dueDate.toLocaleDateString(
+                        "en-GB",
+                        {
+                            weekday: "long"
+                        }
+                    );
+
+                dueClass =
+                    "assignment-soon";
+
+            }
+
+            else {
+
+                dueText =
+                    "Due " +
+                    dueDate.toLocaleDateString(
+                        "en-GB",
+                        {
+                            day: "numeric",
+                            month: "short",
+                            year: "numeric"
+                        }
+                    );
+
+            }
+
+
+            // CARD
+
+            assignmentElement.innerHTML = `
+
+                <div class="assignment-page-icon">
+
+                    ${subjectName
+                        .charAt(0)
+                        .toUpperCase()}
+
+                </div>
+
+
+                <div class="assignment-page-main">
+
+                    <div class="assignment-page-header">
+
+                        <div>
+
+                            <h3>
+                                ${assignment.title}
+                            </h3>
+
+                            <span>
+                                ${subjectName}
+                                ${
+                                    subjectCode
+                                        ? " • " +
+                                          subjectCode
+                                        : ""
+                                }
+                            </span>
+
+                        </div>
+
+
+                        <span
+                            class="assignment-due ${dueClass}"
+                        >
+                            ${dueText}
+                        </span>
+
+                    </div>
+
+
+                    <p class="assignment-description">
+
+                        ${
+                            assignment.description ||
+                            "No description provided."
+                        }
+
+                    </p>
+
+
+                    <div class="assignment-date">
+
+                        Due:
+                        ${dueDate.toLocaleDateString(
+                            "en-GB",
+                            {
+                                weekday: "long",
+                                day: "numeric",
+                                month: "long",
+                                year: "numeric"
+                            }
+                        )}
+
+                    </div>
+
+                </div>
+
+            `;
+
+
+            container.appendChild(
+                assignmentElement
+            );
+
+        }
+    );
+
+
+    console.log(
+        "Assignments page loaded successfully."
+    );
+
+}
+
+
+// ==========================================
+// START ASSIGNMENTS PAGE
+// ==========================================
+
+if (
+    window.location.pathname.includes(
+        "assignments.html"
+    )
+) {
+
+    loadAssignmentsPage();
+
+}
