@@ -2237,13 +2237,12 @@ if (
 }
 
 // ==========================================
-// FULL STUDENT TIMETABLE
+// FULL STUDENT TIMETABLE - GRID
 // ==========================================
 
 async function loadFullTimetable() {
 
     console.log("Loading full timetable...");
-
 
     // GET CURRENT USER
     const {
@@ -2253,7 +2252,6 @@ async function loadFullTimetable() {
         error: userError
     } = await supabaseClient.auth.getUser();
 
-
     if (userError || !user) {
 
         console.error(
@@ -2261,8 +2259,7 @@ async function loadFullTimetable() {
             userError
         );
 
-        window.location.href =
-            "login.html";
+        window.location.href = "login.html";
 
         return;
     }
@@ -2275,10 +2272,7 @@ async function loadFullTimetable() {
     } = await supabaseClient
         .from("students")
         .select("*")
-        .eq(
-            "user_id",
-            user.id
-        )
+        .eq("user_id", user.id)
         .single();
 
 
@@ -2293,15 +2287,11 @@ async function loadFullTimetable() {
     }
 
 
-    // ======================================
     // STUDENT NAME
-    // ======================================
-
     const timetableStudentName =
         document.getElementById(
             "timetableStudentName"
         );
-
 
     if (timetableStudentName) {
 
@@ -2310,15 +2300,11 @@ async function loadFullTimetable() {
     }
 
 
-    // ======================================
     // PROFILE INITIAL
-    // ======================================
-
     const timetableInitial =
         document.getElementById(
             "timetableInitial"
         );
-
 
     if (timetableInitial) {
 
@@ -2329,10 +2315,7 @@ async function loadFullTimetable() {
     }
 
 
-    // ======================================
     // GET TIMETABLE
-    // ======================================
-
     const {
         data: timetable,
         error: timetableError
@@ -2368,7 +2351,6 @@ async function loadFullTimetable() {
         timetable
     );
 
-
     console.log(
         "TIMETABLE ERROR:",
         timetableError
@@ -2381,53 +2363,45 @@ async function loadFullTimetable() {
         );
 
 
-    // ======================================
-    // ERROR
-    // ======================================
+    if (!timetableContainer) {
+        return;
+    }
 
+
+    // ERROR
     if (timetableError) {
 
         console.error(
             timetableError
         );
 
-        if (timetableContainer) {
-
-            timetableContainer.innerHTML =
-                "<p>Unable to load timetable.</p>";
-        }
+        timetableContainer.innerHTML =
+            "<p>Unable to load timetable.</p>";
 
         return;
     }
 
 
-    // ======================================
-    // NO TIMETABLE
-    // ======================================
-
+    // NO DATA
     if (
         !timetable ||
         timetable.length === 0
     ) {
 
-        if (timetableContainer) {
+        timetableContainer.innerHTML = `
+            <div class="empty-state">
 
-            timetableContainer.innerHTML = `
-                <div class="empty-state">
+                <h3>
+                    No timetable available
+                </h3>
 
-                    <h3>
-                        No timetable available
-                    </h3>
+                <p>
+                    Your weekly timetable will
+                    appear here once lessons are added.
+                </p>
 
-                    <p>
-                        Your weekly timetable
-                        will appear here once
-                        lessons are added.
-                    </p>
-
-                </div>
-            `;
-        }
+            </div>
+        `;
 
         return;
     }
@@ -2446,186 +2420,197 @@ async function loadFullTimetable() {
     ];
 
 
-    // ======================================
-    // CREATE WEEK
-    // ======================================
-
-    if (!timetableContainer) {
-        return;
-    }
-
-
     timetableContainer.innerHTML = "";
 
 
-    days.forEach(
-        function (day) {
+    // ======================================
+    // CREATE EACH DAY ROW
+    // ======================================
+
+    days.forEach(function (day) {
+
+        const dayLessons =
+            timetable.filter(
+                function (lesson) {
+
+                    return (
+                        lesson.day_of_week ===
+                        day
+                    );
+
+                }
+            );
 
 
-            const dayLessons =
-                timetable.filter(
-                    function (lesson) {
+        const dayRow =
+            document.createElement(
+                "div"
+            );
 
-                        return (
-                            lesson.day_of_week ===
-                            day
-                        );
-
-                    }
-                );
+        dayRow.className =
+            "timetable-grid-row";
 
 
-            const daySection =
-                document.createElement(
-                    "div"
-                );
+        // DAY NAME
+        const dayColumn =
+            document.createElement(
+                "div"
+            );
+
+        dayColumn.className =
+            "timetable-grid-day";
+
+        dayColumn.innerHTML = `
+            <h3>
+                ${day}
+            </h3>
+        `;
 
 
-            daySection.className =
-                "timetable-day";
+        // LESSONS AREA
+        const lessonsColumn =
+            document.createElement(
+                "div"
+            );
+
+        lessonsColumn.className =
+            "timetable-grid-lessons";
 
 
-            let lessonsHTML = "";
+        if (
+            dayLessons.length === 0
+        ) {
 
-
-            if (
-                dayLessons.length === 0
-            ) {
-
-                lessonsHTML = `
-                    <div class="no-lessons">
-                        No lessons scheduled
-                    </div>
-                `;
-
-            } else {
-
-
-                dayLessons.forEach(
-                    function (lesson) {
-
-
-                        const subjectName =
-                            lesson.subjects &&
-                            lesson.subjects.name
-                                ? lesson.subjects.name
-                                : "Subject";
-
-
-                        const subjectCode =
-                            lesson.subjects &&
-                            lesson.subjects.code
-                                ? lesson.subjects.code
-                                : "";
-
-
-                        const teacher =
-                            lesson.teacher_name ||
-                            "Teacher TBA";
-
-
-                        const room =
-                            lesson.room ||
-                            "Room TBA";
-
-
-                        const startTime =
-                            lesson.start_time
-                                ? lesson.start_time
-                                    .substring(
-                                        0,
-                                        5
-                                    )
-                                : "";
-
-
-                        const endTime =
-                            lesson.end_time
-                                ? lesson.end_time
-                                    .substring(
-                                        0,
-                                        5
-                                    )
-                                : "";
-
-
-                        lessonsHTML += `
-
-                            <div class="timetable-lesson">
-
-
-                                <div class="lesson-time">
-
-                                    <strong>
-                                        ${startTime}
-                                    </strong>
-
-                                    <span>
-                                        ${endTime}
-                                    </span>
-
-                                </div>
-
-
-                                <div class="lesson-details">
-
-                                    <strong>
-                                        ${subjectName}
-                                    </strong>
-
-                                    <span>
-                                        ${subjectCode}
-                                    </span>
-
-                                    <small>
-                                        ${teacher}
-                                        •
-                                        ${room}
-                                    </small>
-
-                                </div>
-
-
-                            </div>
-
-                        `;
-
-                    }
-                );
-
-            }
-
-
-            daySection.innerHTML = `
-
-                <div class="timetable-day-header">
-
-                    <h3>
-                        ${day}
-                    </h3>
-
+            lessonsColumn.innerHTML = `
+                <div class="no-lessons">
+                    No lessons scheduled
                 </div>
-
-
-                <div class="timetable-lessons">
-
-                    ${lessonsHTML}
-
-                </div>
-
             `;
 
+        } else {
 
-            timetableContainer.appendChild(
-                daySection
+            dayLessons.forEach(
+                function (lesson) {
+
+                    const lessonCard =
+                        document.createElement(
+                            "div"
+                        );
+
+                    lessonCard.className =
+                        "timetable-grid-card";
+
+
+                    const subjectName =
+                        lesson.subjects &&
+                        lesson.subjects.name
+                            ? lesson.subjects.name
+                            : "Subject";
+
+
+                    const subjectCode =
+                        lesson.subjects &&
+                        lesson.subjects.code
+                            ? lesson.subjects.code
+                            : "";
+
+
+                    const teacher =
+                        lesson.teacher_name ||
+                        "Teacher TBA";
+
+
+                    const room =
+                        lesson.room ||
+                        "Room TBA";
+
+
+                    const startTime =
+                        lesson.start_time
+                            ? lesson.start_time
+                                .substring(
+                                    0,
+                                    5
+                                )
+                            : "";
+
+
+                    const endTime =
+                        lesson.end_time
+                            ? lesson.end_time
+                                .substring(
+                                    0,
+                                    5
+                                )
+                            : "";
+
+
+                    lessonCard.innerHTML = `
+
+                        <div class="grid-lesson-time">
+
+                            <strong>
+                                ${startTime}
+                            </strong>
+
+                            <span>
+                                ${endTime}
+                            </span>
+
+                        </div>
+
+
+                        <div class="grid-lesson-info">
+
+                            <strong>
+                                ${subjectName}
+                            </strong>
+
+                            ${
+                                subjectCode
+                                    ? `<span>${subjectCode}</span>`
+                                    : ""
+                            }
+
+                            <small>
+                                ${teacher}
+                                •
+                                ${room}
+                            </small>
+
+                        </div>
+
+                    `;
+
+
+                    lessonsColumn.appendChild(
+                        lessonCard
+                    );
+
+                }
             );
 
         }
-    );
+
+
+        dayRow.appendChild(
+            dayColumn
+        );
+
+        dayRow.appendChild(
+            lessonsColumn
+        );
+
+
+        timetableContainer.appendChild(
+            dayRow
+        );
+
+    });
 
 
     console.log(
-        "Full timetable loaded successfully."
+        "Grid timetable loaded successfully."
     );
 
 }
