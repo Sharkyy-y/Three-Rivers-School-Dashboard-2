@@ -131,3 +131,92 @@ if (loginForm) {
     });
 
 }
+
+// ==========================================
+// STUDENT DASHBOARD
+// ==========================================
+
+async function loadStudentDashboard() {
+
+    // Check whether someone is logged in
+    const {
+        data: { user },
+        error: userError
+    } = await supabaseClient.auth.getUser();
+
+
+    if (userError || !user) {
+
+        window.location.href = "login.html";
+
+        return;
+    }
+
+
+    // Find this student's record
+    const {
+        data: student,
+        error: studentError
+    } = await supabaseClient
+        .from("students")
+        .select("*")
+        .eq("user_id", user.id)
+        .single();
+
+
+    if (studentError || !student) {
+
+        console.error(studentError);
+
+        alert(
+            "Your student account is not linked to a student record."
+        );
+
+        return;
+    }
+
+
+    // ==========================================
+    // DISPLAY REAL STUDENT INFORMATION
+    // ==========================================
+
+    const studentName =
+        document.getElementById("studentName");
+
+    const studentClass =
+        document.getElementById("studentClass");
+
+    const studentAdmission =
+        document.getElementById("studentAdmission");
+
+
+    if (studentName) {
+        studentName.textContent =
+            student.full_name;
+    }
+
+
+    if (studentClass) {
+        studentClass.textContent =
+            student.class_name;
+    }
+
+
+    if (studentAdmission) {
+        studentAdmission.textContent =
+            student.admission_number;
+    }
+}
+
+
+// ==========================================
+// RUN DASHBOARD
+// ==========================================
+
+if (
+    window.location.pathname.includes(
+        "student-dashboard.html"
+    )
+) {
+    loadStudentDashboard();
+}
