@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>
+        Assignments | Student Management Portal
+    </title>
+
+    <link
+        rel="stylesheet"
+        href="css/style.css"
+    >
+
+    <link
+        rel="stylesheet"
+        href="css/dashboard.css"
+    >
+</head>
+
+
+<body>
+
+    <div class="dashboard-layout">
+
+
+        <!-- SIDEBAR -->
+
+        <aside class="sidebar">
+
+            <div class="sidebar-logo">
+
+                <h2>
+                    Student Portal
+                </h2>
+
+                <span>
+                    Student Management
+                </span>
+
+            </div>
+
+
+            <nav class="sidebar-nav">
+
+                <a href="student-dashboard.html">
+                    Dashboard
+                </a>
+
+                <a href="timetable.html">
+                    Timetable
+                </a>
+
+                <a
+                    href="assignments.html"
+                    class="active"
+                >
+                    Assignments
+                </a>
+
+                <a href="grades.html">
+                    Grades
+                </a>
+
+                <a href="attendance.html">
+                    Attendance
+                </a>
+
+                <a href="#">
+                    Announcements
+                </a>
+
+                <a href="profile.html">
+                    My Profile
+                </a>
+
+            </nav>
+
+
+            <div class="sidebar-bottom">
+
+                <button
+                    id="logoutButton"
+                    type="button"
+                >
+                    Sign out
+                </button>
+
+            </div>
+
+        </aside>
+
+
+
+        <!-- MAIN CONTENT -->
+
+        <main class="main-content">
+
+
+            <!-- TOPBAR -->
+
+            <header class="topbar">
+
+                <div>
+
+                    <p class="school-name">
+                        Student Management Portal
+                    </p>
+
+                    <h1>
+                        My Assignments
+                    </h1>
+
+                </div>
+
+
+                <div class="student-profile">
+
+                    <div class="profile-avatar">
+
+                        <span id="assignmentsInitial">
+                            -
+                        </span>
+
+                    </div>
+
+
+                    <div class="profile-details">
+
+                        <strong
+                            id="assignmentsStudentName"
+                        >
+                            Loading...
+                        </strong>
+
+                        <small>
+                            Student
+                        </small>
+
+                    </div>
+
+                </div>
+
+            </header>
+
+
+
+            <!-- SUMMARY -->
+
+            <section class="stats-grid">
+
+
+                <div class="stat-card">
+
+                    <div class="stat-card-top">
+
+                        <span>
+                            Total Assignments
+                        </span>
+
+                    </div>
+
+                    <strong
+                        id="totalAssignments"
+                    >
+                        —
+                    </strong>
+
+                </div>
+
+
+
+                <div class="stat-card">
+
+                    <div class="stat-card-top">
+
+                        <span>
+                            Upcoming
+                        </span>
+
+                    </div>
+
+                    <strong
+                        id="upcomingAssignments"
+                    >
+                        —
+                    </strong>
+
+                </div>
+
+
+
+                <div class="stat-card">
+
+                    <div class="stat-card-top">
+
+                        <span>
+                            Due Today
+                        </span>
+
+                    </div>
+
+                    <strong
+                        id="todayAssignments"
+                    >
+                        —
+                    </strong>
+
+                </div>
+
+
+            </section>
+
+
+
+            <!-- ASSIGNMENTS -->
+
+            <section class="dashboard-card">
+
+                <div class="card-header">
+
+                    <div>
+
+                        <h3>
+                            All Assignments
+                        </h3>
+
+                        <p>
+                            Keep track of your school work
+                        </p>
+
+                    </div>
+
+                </div>
+
+
+                <div
+                    id="assignmentsPageContainer"
+                    class="assignments-page-container"
+                >
+
+                    <p class="loading-message">
+                        Loading assignments...
+                    </p>
+
+                </div>
+
+            </section>
+
+
+        </main>
+
+    </div>
+
+
+
+    <!-- SUPABASE -->
+
+    <script
+        src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"
+    ></script>
+
+
+    <!-- MAIN JS -->
+
+    <script src="js/main.js"></script>
+
+</body>
+
+</html>
