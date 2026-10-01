@@ -1828,3 +1828,410 @@ if (
     loadStudentGrades();
 
 }
+
+// ==========================================
+// STUDENT ATTENDANCE
+// ==========================================
+
+async function loadStudentAttendance() {
+
+    console.log("Loading student attendance...");
+
+    // GET CURRENT USER
+    const {
+        data: {
+            user
+        },
+        error: userError
+    } = await supabaseClient.auth.getUser();
+
+    if (userError || !user) {
+
+        console.error(
+            "Attendance user error:",
+            userError
+        );
+
+        window.location.href = "login.html";
+
+        return;
+    }
+
+
+    // GET STUDENT
+    const {
+        data: student,
+        error: studentError
+    } = await supabaseClient
+        .from("students")
+        .select("*")
+        .eq("user_id", user.id)
+        .single();
+
+    if (studentError || !student) {
+
+        console.error(
+            "Attendance student error:",
+            studentError
+        );
+
+        return;
+    }
+
+
+    // ======================================
+    // STUDENT NAME
+    // ======================================
+
+    const attendanceStudentName =
+        document.getElementById(
+            "attendanceStudentName"
+        );
+
+    if (attendanceStudentName) {
+
+        attendanceStudentName.textContent =
+            student.full_name;
+    }
+
+
+    // ======================================
+    // PROFILE INITIAL
+    // ======================================
+
+    const attendanceInitial =
+        document.getElementById(
+            "attendanceInitial"
+        );
+
+    if (attendanceInitial) {
+
+        attendanceInitial.textContent =
+            student.full_name
+                .charAt(0)
+                .toUpperCase();
+    }
+
+
+    // ======================================
+    // GET ATTENDANCE
+    // ======================================
+
+    const {
+        data: attendance,
+        error: attendanceError
+    } = await supabaseClient
+        .from("attendance")
+        .select(`
+            id,
+            date,
+            status
+        `)
+        .eq(
+            "student_id",
+            student.id
+        )
+        .order(
+            "date",
+            {
+                ascending: false
+            }
+        );
+
+
+    console.log(
+        "ATTENDANCE RESULT:",
+        attendance
+    );
+
+    console.log(
+        "ATTENDANCE ERROR:",
+        attendanceError
+    );
+
+
+    const attendanceContainer =
+        document.getElementById(
+            "attendanceContainer"
+        );
+
+
+    // ======================================
+    // ERROR
+    // ======================================
+
+    if (attendanceError) {
+
+        console.error(
+            attendanceError
+        );
+
+        if (attendanceContainer) {
+
+            attendanceContainer.innerHTML =
+                "<p>Unable to load attendance.</p>";
+        }
+
+        return;
+    }
+
+
+    // ======================================
+    // CALCULATE TOTALS
+    // ======================================
+
+    const totalDays =
+        attendance
+            ? attendance.length
+            : 0;
+
+
+    const presentDays =
+        attendance
+            ? attendance.filter(
+                function (record) {
+
+                    return record.status === "present";
+
+                }
+            ).length
+            : 0;
+
+
+    const lateDays =
+        attendance
+            ? attendance.filter(
+                function (record) {
+
+                    return record.status === "late";
+
+                }
+            ).length
+            : 0;
+
+
+    const absentDays =
+        attendance
+            ? attendance.filter(
+                function (record) {
+
+                    return record.status === "absent";
+
+                }
+            ).length
+            : 0;
+
+
+    // ======================================
+    // ATTENDANCE PERCENTAGE
+    // ======================================
+
+    let attendancePercentage = 0;
+
+
+    if (totalDays > 0) {
+
+        attendancePercentage =
+            (
+                (presentDays + lateDays) /
+                totalDays
+            ) * 100;
+    }
+
+
+    // ======================================
+    // UPDATE SUMMARY
+    // ======================================
+
+    const attendancePercentageElement =
+        document.getElementById(
+            "attendancePercentage"
+        );
+
+    if (attendancePercentageElement) {
+
+        attendancePercentageElement.textContent =
+            Math.round(
+                attendancePercentage
+            ) + "%";
+    }
+
+
+    const presentDaysElement =
+        document.getElementById(
+            "presentDays"
+        );
+
+    if (presentDaysElement) {
+
+        presentDaysElement.textContent =
+            presentDays;
+    }
+
+
+    const lateDaysElement =
+        document.getElementById(
+            "lateDays"
+        );
+
+    if (lateDaysElement) {
+
+        lateDaysElement.textContent =
+            lateDays;
+    }
+
+
+    const absentDaysElement =
+        document.getElementById(
+            "absentDays"
+        );
+
+    if (absentDaysElement) {
+
+        absentDaysElement.textContent =
+            absentDays;
+    }
+
+
+    // ======================================
+    // NO RECORDS
+    // ======================================
+
+    if (
+        !attendance ||
+        attendance.length === 0
+    ) {
+
+        if (attendanceContainer) {
+
+            attendanceContainer.innerHTML = `
+                <div class="empty-state">
+
+                    <h3>
+                        No attendance records
+                    </h3>
+
+                    <p>
+                        Your attendance history
+                        will appear here once
+                        records are added.
+                    </p>
+
+                </div>
+            `;
+        }
+
+        return;
+    }
+
+
+    // ======================================
+    // DISPLAY ATTENDANCE
+    // ======================================
+
+    if (!attendanceContainer) {
+        return;
+    }
+
+
+    attendanceContainer.innerHTML = "";
+
+
+    attendance.forEach(
+        function (record) {
+
+            const attendanceElement =
+                document.createElement(
+                    "div"
+                );
+
+
+            attendanceElement.className =
+                "attendance-row";
+
+
+            // FORMAT DATE
+            const recordDate =
+                new Date(
+                    record.date +
+                    "T00:00:00"
+                );
+
+
+            const formattedDate =
+                recordDate.toLocaleDateString(
+                    "en-GB",
+                    {
+                        weekday: "long",
+                        day: "numeric",
+                        month: "long",
+                        year: "numeric"
+                    }
+                );
+
+
+            // STATUS
+            let statusText =
+                record.status;
+
+
+            statusText =
+                statusText
+                    .charAt(0)
+                    .toUpperCase() +
+                statusText
+                    .slice(1);
+
+
+            attendanceElement.innerHTML = `
+
+                <div class="attendance-date">
+
+                    <strong>
+                        ${formattedDate}
+                    </strong>
+
+                </div>
+
+
+                <div class="attendance-status">
+
+                    <span
+                        class="attendance-badge ${record.status}"
+                    >
+                        ${statusText}
+                    </span>
+
+                </div>
+
+            `;
+
+
+            attendanceContainer.appendChild(
+                attendanceElement
+            );
+
+        }
+    );
+
+
+    console.log(
+        "Student attendance loaded successfully."
+    );
+
+}
+
+
+// ==========================================
+// START ATTENDANCE PAGE
+// ==========================================
+
+if (
+    window.location.pathname.includes(
+        "attendance.html"
+    )
+) {
+
+    loadStudentAttendance();
+
+}
