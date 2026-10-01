@@ -45,20 +45,31 @@ if (loginForm) {
                 );
 
             const selectedRole =
-                roleInput ? roleInput.value : "student";
+                roleInput
+                    ? roleInput.value
+                    : "student";
 
             const message =
-                document.getElementById("login-message");
+                document.getElementById(
+                    "login-message"
+                );
+
 
             if (message) {
                 message.textContent =
                     "Signing in...";
             }
 
-            console.log("Login started");
+
+            console.log(
+                "Login started..."
+            );
 
 
-            // SIGN IN
+            // ----------------------------------
+            // SIGN IN WITH SUPABASE
+            // ----------------------------------
+
             const {
                 data,
                 error
@@ -80,21 +91,30 @@ if (loginForm) {
             );
 
 
+            // ----------------------------------
             // LOGIN ERROR
+            // ----------------------------------
+
             if (error) {
+
+                console.error(
+                    "Login error:",
+                    error
+                );
 
                 if (message) {
                     message.textContent =
                         error.message;
                 }
 
-                console.error(error);
-
                 return;
             }
 
 
-            // GET PROFILE
+            // ----------------------------------
+            // GET USER PROFILE
+            // ----------------------------------
+
             const {
                 data: profile,
                 error: profileError
@@ -102,7 +122,10 @@ if (loginForm) {
                 await supabaseClient
                     .from("profiles")
                     .select("*")
-                    .eq("id", data.user.id)
+                    .eq(
+                        "id",
+                        data.user.id
+                    )
                     .single();
 
 
@@ -128,8 +151,14 @@ if (loginForm) {
             );
 
 
-            // CHECK ROLE
-            if (profile.role !== selectedRole) {
+            // ----------------------------------
+            // CHECK ACCOUNT TYPE
+            // ----------------------------------
+
+            if (
+                profile.role !==
+                selectedRole
+            ) {
 
                 if (message) {
                     message.textContent =
@@ -142,7 +171,10 @@ if (loginForm) {
             }
 
 
-            // SUCCESS
+            // ----------------------------------
+            // LOGIN SUCCESS
+            // ----------------------------------
+
             console.log(
                 "Login successful!"
             );
@@ -154,7 +186,10 @@ if (loginForm) {
             }
 
 
-            // GO TO DASHBOARD
+            // ----------------------------------
+            // GO TO STUDENT DASHBOARD
+            // ----------------------------------
+
             window.location.href =
                 "student-dashboard.html";
 
@@ -164,7 +199,7 @@ if (loginForm) {
 
 
 // ==========================================
-// STUDENT DASHBOARD
+// LOAD STUDENT DASHBOARD
 // ==========================================
 
 async function loadStudentDashboard() {
@@ -174,15 +209,23 @@ async function loadStudentDashboard() {
     );
 
 
+    // ======================================
     // GET CURRENT USER
+    // ======================================
+
     const {
-        data: { user },
+        data: {
+            user
+        },
         error: userError
     } =
         await supabaseClient.auth.getUser();
 
 
-    if (userError || !user) {
+    if (
+        userError ||
+        !user
+    ) {
 
         console.error(
             "User error:",
@@ -203,7 +246,7 @@ async function loadStudentDashboard() {
 
 
     // ======================================
-    // GET STUDENT
+    // GET STUDENT RECORD
     // ======================================
 
     const {
@@ -213,11 +256,17 @@ async function loadStudentDashboard() {
         await supabaseClient
             .from("students")
             .select("*")
-            .eq("user_id", user.id)
+            .eq(
+                "user_id",
+                user.id
+            )
             .single();
 
 
-    if (studentError || !student) {
+    if (
+        studentError ||
+        !student
+    ) {
 
         console.error(
             "Student error:",
@@ -247,6 +296,7 @@ async function loadStudentDashboard() {
             "studentName"
         );
 
+
     if (studentName) {
 
         studentName.textContent =
@@ -255,13 +305,14 @@ async function loadStudentDashboard() {
 
 
     // ======================================
-    // WELCOME NAME
+    // WELCOME STUDENT NAME
     // ======================================
 
     const welcomeStudentName =
         document.getElementById(
             "welcomeStudentName"
         );
+
 
     if (welcomeStudentName) {
 
@@ -273,6 +324,12 @@ async function loadStudentDashboard() {
     // ======================================
     // ACADEMIC AVERAGE
     // ======================================
+
+    const academicAverage =
+        document.getElementById(
+            "academicAverage"
+        );
+
 
     const {
         data: grades,
@@ -289,12 +346,6 @@ async function loadStudentDashboard() {
             );
 
 
-    const academicAverage =
-        document.getElementById(
-            "academicAverage"
-        );
-
-
     if (gradesError) {
 
         console.error(
@@ -303,6 +354,7 @@ async function loadStudentDashboard() {
         );
 
         if (academicAverage) {
+
             academicAverage.textContent =
                 "Unavailable";
         }
@@ -310,17 +362,22 @@ async function loadStudentDashboard() {
     } else {
 
         let totalScore = 0;
+
         let totalMaxScore = 0;
 
 
         grades.forEach(
-            grade => {
+            function (grade) {
 
                 totalScore +=
-                    Number(grade.score);
+                    Number(
+                        grade.score
+                    );
 
                 totalMaxScore +=
-                    Number(grade.max_score);
+                    Number(
+                        grade.max_score
+                    );
 
             }
         );
@@ -329,7 +386,9 @@ async function loadStudentDashboard() {
         let average = 0;
 
 
-        if (totalMaxScore > 0) {
+        if (
+            totalMaxScore > 0
+        ) {
 
             average =
                 (
@@ -342,7 +401,9 @@ async function loadStudentDashboard() {
         if (academicAverage) {
 
             academicAverage.textContent =
-                Math.round(average) + "%";
+                Math.round(
+                    average
+                ) + "%";
         }
     }
 
@@ -350,6 +411,12 @@ async function loadStudentDashboard() {
     // ======================================
     // ATTENDANCE
     // ======================================
+
+    const attendanceElement =
+        document.getElementById(
+            "attendancePercentage"
+        );
+
 
     const {
         data: attendance,
@@ -362,12 +429,6 @@ async function loadStudentDashboard() {
                 "student_id",
                 student.id
             );
-
-
-    const attendanceElement =
-        document.getElementById(
-            "attendancePercentage"
-        );
 
 
     if (attendanceError) {
@@ -391,22 +452,36 @@ async function loadStudentDashboard() {
 
         const presentDays =
             attendance.filter(
-                record =>
-                    record.status === "present"
+                function (record) {
+
+                    return (
+                        record.status ===
+                        "present"
+                    );
+
+                }
             ).length;
 
 
         const lateDays =
             attendance.filter(
-                record =>
-                    record.status === "late"
+                function (record) {
+
+                    return (
+                        record.status ===
+                        "late"
+                    );
+
+                }
             ).length;
 
 
         let attendancePercentage = 0;
 
 
-        if (totalDays > 0) {
+        if (
+            totalDays > 0
+        ) {
 
             attendancePercentage =
                 (
@@ -430,7 +505,7 @@ async function loadStudentDashboard() {
 
 
     // ======================================
-    // TODAY'S TIMETABLE
+    // TODAY'S DATE
     // ======================================
 
     const today =
@@ -475,7 +550,26 @@ async function loadStudentDashboard() {
     }
 
 
-    // GET TIMETABLE
+    // ======================================
+    // TODAY'S TIMETABLE
+    // ======================================
+
+    const timetableContainer =
+        document.getElementById(
+            "todayTimetable"
+        );
+
+
+    if (!timetableContainer) {
+
+        console.log(
+            "Timetable container not found."
+        );
+
+        return;
+    }
+
+
     const {
         data: timetable,
         error: timetableError
@@ -507,16 +601,9 @@ async function loadStudentDashboard() {
             );
 
 
-    const timetableContainer =
-        document.getElementById(
-            "todayTimetable"
-        );
-
-
-    if (!timetableContainer) {
-        return;
-    }
-
+    // --------------------------------------
+    // TIMETABLE ERROR
+    // --------------------------------------
 
     if (timetableError) {
 
@@ -526,11 +613,19 @@ async function loadStudentDashboard() {
         );
 
         timetableContainer.innerHTML =
-            "<p>Unable to load today's timetable.</p>";
+            `
+            <p>
+                Unable to load today's timetable.
+            </p>
+            `;
 
         return;
     }
 
+
+    // --------------------------------------
+    // NO LESSONS
+    // --------------------------------------
 
     if (
         !timetable ||
@@ -538,17 +633,26 @@ async function loadStudentDashboard() {
     ) {
 
         timetableContainer.innerHTML =
-            "<p>No lessons scheduled for today.</p>";
+            `
+            <p>
+                No lessons scheduled for today.
+            </p>
+            `;
 
         return;
     }
 
 
-    timetableContainer.innerHTML = "";
+    // --------------------------------------
+    // DISPLAY LESSONS
+    // --------------------------------------
+
+    timetableContainer.innerHTML =
+        "";
 
 
     timetable.forEach(
-        lesson => {
+        function (lesson) {
 
             const lessonElement =
                 document.createElement(
@@ -562,16 +666,35 @@ async function loadStudentDashboard() {
 
             const startTime =
                 lesson.start_time
-                    .substring(0, 5);
+                    ? lesson.start_time.substring(
+                        0,
+                        5
+                    )
+                    : "";
 
 
-            const endTime =
-                lesson.end_time
-                    .substring(0, 5);
+            const subjectName =
+                lesson.subjects &&
+                lesson.subjects.name
+                    ? lesson.subjects.name
+                    : "Subject";
 
 
-            lessonElement.innerHTML = `
+            const room =
+                lesson.room
+                    ? lesson.room
+                    : "Room TBA";
 
+
+            const teacher =
+                lesson.teacher_name
+                    ? lesson.teacher_name
+                    : "Teacher TBA";
+
+
+            lessonElement.innerHTML =
+
+                `
                 <div class="lesson-time">
                     ${startTime}
                 </div>
@@ -581,27 +704,15 @@ async function loadStudentDashboard() {
                 <div class="lesson-info">
 
                     <strong>
-                        ${
-                            lesson.subjects?.name ||
-                            "Subject"
-                        }
+                        ${subjectName}
                     </strong>
 
                     <span>
-                        ${
-                            lesson.room ||
-                            "Room TBA"
-                        }
-                        •
-                        ${
-                            lesson.teacher_name ||
-                            "Teacher TBA"
-                        }
+                        ${room} • ${teacher}
                     </span>
 
                 </div>
-
-            `;
+                `;
 
 
             timetableContainer.appendChild(
@@ -611,11 +722,16 @@ async function loadStudentDashboard() {
         }
     );
 
+
+    console.log(
+        "Student dashboard loaded successfully."
+    );
+
 }
 
 
 // ==========================================
-// START DASHBOARD
+// START STUDENT DASHBOARD
 // ==========================================
 
 if (
