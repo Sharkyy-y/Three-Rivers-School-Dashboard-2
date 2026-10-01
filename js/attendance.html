@@ -1,1 +1,289 @@
+<!DOCTYPE html>
+<html lang="en">
 
+<head>
+
+    <meta charset="UTF-8">
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>Attendance | Student Management Portal</title>
+
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/dashboard.css">
+
+</head>
+
+
+<body>
+
+    <div class="dashboard-layout">
+
+
+        <!-- SIDEBAR -->
+
+        <aside class="sidebar">
+
+            <div class="sidebar-logo">
+
+                <h2>
+                    Student Portal
+                </h2>
+
+                <span>
+                    Student Management
+                </span>
+
+            </div>
+
+
+            <nav class="sidebar-nav">
+
+                <a href="student-dashboard.html">
+                    Dashboard
+                </a>
+
+                <a href="timetable.html">
+                    Timetable
+                </a>
+
+                <a href="assignments.html">
+                    Assignments
+                </a>
+
+                <a href="grades.html">
+                    Grades
+                </a>
+
+                <a
+                    href="attendance.html"
+                    class="active"
+                >
+                    Attendance
+                </a>
+
+                <a href="#">
+                    Announcements
+                </a>
+
+                <a href="profile.html">
+                    My Profile
+                </a>
+
+            </nav>
+
+
+            <div class="sidebar-bottom">
+
+                <button
+                    id="logoutButton"
+                    type="button"
+                >
+                    Sign out
+                </button>
+
+            </div>
+
+        </aside>
+
+
+
+        <!-- MAIN CONTENT -->
+
+        <main class="main-content">
+
+
+            <!-- TOP BAR -->
+
+            <header class="topbar">
+
+                <div>
+
+                    <p class="school-name">
+                        Student Management Portal
+                    </p>
+
+                    <h1>
+                        Attendance
+                    </h1>
+
+                </div>
+
+
+                <div class="student-profile">
+
+                    <div class="profile-avatar">
+
+                        <span id="attendanceInitial">
+                            -
+                        </span>
+
+                    </div>
+
+
+                    <div class="profile-details">
+
+                        <strong id="attendanceStudentName">
+                            Loading...
+                        </strong>
+
+                        <small>
+                            Student
+                        </small>
+
+                    </div>
+
+                </div>
+
+            </header>
+
+
+
+            <!-- ATTENDANCE SUMMARY -->
+
+            <section class="stats-grid">
+
+
+                <!-- OVERALL -->
+
+                <div class="stat-card">
+
+                    <div class="stat-content">
+
+                        <span>
+                            Attendance
+                        </span>
+
+                        <strong
+                            id="attendancePercentage"
+                        >
+                            Loading...
+                        </strong>
+
+                    </div>
+
+                </div>
+
+
+
+                <!-- PRESENT -->
+
+                <div class="stat-card">
+
+                    <div class="stat-content">
+
+                        <span>
+                            Present
+                        </span>
+
+                        <strong id="presentDays">
+                            Loading...
+                        </strong>
+
+                    </div>
+
+                </div>
+
+
+
+                <!-- LATE -->
+
+                <div class="stat-card">
+
+                    <div class="stat-content">
+
+                        <span>
+                            Late
+                        </span>
+
+                        <strong id="lateDays">
+                            Loading...
+                        </strong>
+
+                    </div>
+
+                </div>
+
+
+
+                <!-- ABSENT -->
+
+                <div class="stat-card">
+
+                    <div class="stat-content">
+
+                        <span>
+                            Absent
+                        </span>
+
+                        <strong id="absentDays">
+                            Loading...
+                        </strong>
+
+                    </div>
+
+                </div>
+
+            </section>
+
+
+
+            <!-- ATTENDANCE HISTORY -->
+
+            <section class="dashboard-card">
+
+
+                <div class="card-header">
+
+                    <div>
+
+                        <h3>
+                            Attendance History
+                        </h3>
+
+                        <p>
+                            Your recent attendance records
+                        </p>
+
+                    </div>
+
+                </div>
+
+
+
+                <div
+                    id="attendanceContainer"
+                    class="attendance-container"
+                >
+
+                    <p class="loading-message">
+                        Loading attendance...
+                    </p>
+
+                </div>
+
+
+            </section>
+
+
+        </main>
+
+    </div>
+
+
+
+    <!-- SUPABASE -->
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+
+    <!-- YOUR JAVASCRIPT -->
+
+    <script src="js/main.js"></script>
+
+
+</body>
+
+</html>
