@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>My Profile | Student Management Portal</title>
+
+    <link
+        rel="stylesheet"
+        href="css/style.css"
+    >
+
+    <link
+        rel="stylesheet"
+        href="css/dashboard.css"
+    >
+
+</head>
+
+
+<body>
+
+    <div class="dashboard-layout">
+
+
+        <!-- SIDEBAR -->
+        <aside class="sidebar">
+
+            <div class="sidebar-logo">
+
+                <h2>
+                    Student Portal
+                </h2>
+
+                <span>
+                    Student Management
+                </span>
+
+            </div>
+
+
+            <nav class="sidebar-nav">
+
+                <a href="student-dashboard.html">
+                    Dashboard
+                </a>
+
+                <a href="#">
+                    Timetable
+                </a>
+
+                <a href="#">
+                    Assignments
+                </a>
+
+                <a href="#">
+                    Grades
+                </a>
+
+                <a href="#">
+                    Attendance
+                </a>
+
+                <a href="#">
+                    Announcements
+                </a>
+
+                <a
+                    href="profile.html"
+                    class="active"
+                >
+                    My Profile
+                </a>
+
+            </nav>
+
+
+            <div class="sidebar-bottom">
+
+                <button
+                    id="logoutButton"
+                    type="button"
+                >
+                    Sign out
+                </button>
+
+            </div>
+
+        </aside>
+
+
+        <!-- MAIN CONTENT -->
+        <main class="main-content">
+
+
+            <!-- TOP BAR -->
+            <header class="topbar">
+
+                <div>
+
+                    <p class="school-name">
+                        Student Management Portal
+                    </p>
+
+                    <h1>
+                        My Profile
+                    </h1>
+
+                </div>
+
+
+                <div class="student-profile">
+
+                    <div class="profile-avatar">
+                        <span id="profileInitial">
+                            -
+                        </span>
+                    </div>
+
+                    <div class="profile-details">
+
+                        <strong id="topStudentName">
+                            Loading...
+                        </strong>
+
+                        <small>
+                            Student
+                        </small>
+
+                    </div>
+
+                </div>
+
+            </header>
+
+
+            <!-- PROFILE CARD -->
+            <section class="dashboard-card">
+
+                <div class="card-header">
+
+                    <div>
+
+                        <h3>
+                            Student Information
+                        </h3>
+
+                        <p>
+                            Your registered school information
+                        </p>
+
+                    </div>
+
+                </div>
+
+
+                <div class="profile-grid">
+
+
+                    <div class="profile-field">
+
+                        <span>
+                            Full Name
+                        </span>
+
+                        <strong id="profileFullName">
+                            Loading...
+                        </strong>
+
+                    </div>
+
+
+                    <div class="profile-field">
+
+                        <span>
+                            Admission Number
+                        </span>
+
+                        <strong id="profileAdmissionNumber">
+                            Loading...
+                        </strong>
+
+                    </div>
+
+
+                    <div class="profile-field">
+
+                        <span>
+                            Class
+                        </span>
+
+                        <strong id="profileClass">
+                            Loading...
+                        </strong>
+
+                    </div>
+
+
+                    <div class="profile-field">
+
+                        <span>
+                            Email Address
+                        </span>
+
+                        <strong id="profileEmail">
+                            Loading...
+                        </strong>
+
+                    </div>
+
+
+                    <div class="profile-field">
+
+                        <span>
+                            Account Type
+                        </span>
+
+                        <strong>
+                            Student
+                        </strong>
+
+                    </div>
+
+
+                </div>
+
+            </section>
+
+
+        </main>
+
+    </div>
+
+
+    <!-- SUPABASE -->
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+    <script src="js/main.js"></script>
+
+</body>
+
+</html>
