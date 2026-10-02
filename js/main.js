@@ -186,15 +186,20 @@ if (loginForm) {
             }
 
 
-            // ----------------------------------
-            // GO TO STUDENT DASHBOARD
-            // ----------------------------------
+           // ----------------------------------
+// GO TO CORRECT DASHBOARD
+// ----------------------------------
 
-            window.location.href =
-                "student-dashboard.html";
+if (profile.role === "admin") {
 
-        }
-    );
+    window.location.href =
+        "admin-conduct.html";
+
+} else {
+
+    window.location.href =
+        "student-dashboard.html";
+
 }
 
 
