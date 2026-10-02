@@ -1912,3 +1912,121 @@ body {
     }
 
 }
+
+/* ==========================================
+   GRADE SECTION ACCENTS
+========================================== */
+
+.grade-section {
+    position: relative;
+}
+
+
+/* TOP ACCENT LINE */
+
+.grade-section::before {
+    content: "";
+
+    position: absolute;
+
+    top: 0;
+    left: 0;
+    right: 0;
+
+    height: 4px;
+
+    background: #dfe5ec;
+}
+
+
+/* OPENER */
+
+.grade-section:nth-child(1)::before {
+    background: #4f7cff;
+}
+
+
+/* MID-TERM */
+
+.grade-section:nth-child(2)::before {
+    background: #7b61ff;
+}
+
+
+/* END-TERM */
+
+.grade-section:nth-child(3)::before {
+    background: #19a974;
+}
+
+
+/* INTERNAL TESTS */
+
+.grade-section:nth-child(4)::before {
+    background: #f0a500;
+}
+
+
+/* ==========================================
+   SECTION HEADER IMPROVEMENT
+========================================== */
+
+.grade-section-header {
+    padding: 24px 26px;
+    background: #ffffff;
+}
+
+
+.grade-section-header h3 {
+    font-size: 20px;
+    letter-spacing: -0.02em;
+}
+
+
+.grade-section-header p {
+    margin-top: 6px;
+}
+
+
+/* ==========================================
+   SECTION AVERAGE
+========================================== */
+
+.grade-section-average {
+    padding: 20px 26px;
+}
+
+
+.grade-section-average strong {
+    padding: 8px 13px;
+
+    border-radius: 10px;
+
+    background: #f1f4f8;
+
+    font-size: 18px;
+}
+
+
+/* ==========================================
+   GRADE ROW IMPROVEMENT
+========================================== */
+
+.grade-row {
+    min-height: 68px;
+}
+
+
+.grade-assessment {
+    font-weight: 500;
+}
+
+
+.grade-score {
+    font-variant-numeric: tabular-nums;
+}
+
+
+.grade-percentage {
+    font-variant-numeric: tabular-nums;
+}
