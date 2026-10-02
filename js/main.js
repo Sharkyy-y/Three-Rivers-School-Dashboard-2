@@ -204,242 +204,8 @@ if (loginForm) {
 
 async function loadStudentDashboard() {
 
-    console.log(
-        "Loading student dashboard..."
-    );
+    console.log("Loading student dashboard...");
 
-    // ======================================
-// ANNOUNCEMENTS
-// ======================================
-
-const announcementsContainer =
-    document.getElementById(
-        "announcementsContainer"
-    );
-
-
-if (announcementsContainer) {
-
-    const {
-        data: announcements,
-        error: announcementsError
-    } =
-        await supabaseClient
-            .from("announcements")
-            .select(`
-                id,
-                title,
-                message,
-                target_role,
-                target_class,
-                created_at
-            `)
-            .order(
-                "created_at",
-                {
-                    ascending: false
-                }
-            )
-            .limit(5);
-
-
-    console.log(
-        "ANNOUNCEMENTS RESULT:",
-        announcements
-    );
-
-    console.log(
-        "ANNOUNCEMENTS ERROR:",
-        announcementsError
-    );
-
-
-    // ----------------------------------
-    // ERROR
-    // ----------------------------------
-
-    if (announcementsError) {
-
-        console.error(
-            "Announcements error:",
-            announcementsError
-        );
-
-        announcementsContainer.innerHTML =
-            `
-            <p>
-                Unable to load announcements.
-            </p>
-            `;
-
-    }
-
-
-    // ----------------------------------
-    // NO ANNOUNCEMENTS
-    // ----------------------------------
-
-    else if (
-        !announcements ||
-        announcements.length === 0
-    ) {
-
-        announcementsContainer.innerHTML =
-            `
-            <p>
-                No announcements available.
-            </p>
-            `;
-
-    }
-
-
-    // ----------------------------------
-    // DISPLAY ANNOUNCEMENTS
-    // ----------------------------------
-
-    else {
-
-        announcementsContainer.innerHTML =
-            "";
-
-
-        announcements.forEach(
-            function (announcement, index) {
-
-                const announcementElement =
-                    document.createElement(
-                        "div"
-                    );
-
-
-                announcementElement.className =
-                    "announcement";
-
-
-                // ----------------------------------
-                // ICON
-                // ----------------------------------
-
-                const icon =
-                    index === 0
-                        ? "!"
-                        : "★";
-
-
-                // ----------------------------------
-                // TIME
-                // ----------------------------------
-
-                const createdDate =
-                    new Date(
-                        announcement.created_at
-                    );
-
-
-                const now =
-                    new Date();
-
-
-                const difference =
-                    Math.floor(
-                        (
-                            now -
-                            createdDate
-                        ) /
-                        (
-                            1000 *
-                            60 *
-                            60
-                        )
-                    );
-
-
-                let postedText;
-
-
-                if (
-                    difference < 1
-                ) {
-
-                    postedText =
-                        "Posted just now";
-
-                } else if (
-                    difference === 1
-                ) {
-
-                    postedText =
-                        "Posted 1 hour ago";
-
-                } else if (
-                    difference < 24
-                ) {
-
-                    postedText =
-                        `Posted ${difference} hours ago`;
-
-                } else {
-
-                    const days =
-                        Math.floor(
-                            difference / 24
-                        );
-
-
-                    if (
-                        days === 1
-                    ) {
-
-                        postedText =
-                            "Posted yesterday";
-
-                    } else {
-
-                        postedText =
-                            `Posted ${days} days ago`;
-                    }
-                }
-
-
-                // ----------------------------------
-                // HTML
-                // ----------------------------------
-
-                announcementElement.innerHTML =
-                    `
-                    <div class="announcement-icon">
-                        ${icon}
-                    </div>
-
-                    <div>
-
-                        <strong>
-                            ${announcement.title}
-                        </strong>
-
-                        <p>
-                            ${announcement.message}
-                        </p>
-
-                        <small>
-                            ${postedText}
-                        </small>
-
-                    </div>
-                    `;
-
-
-                announcementsContainer.appendChild(
-                    announcementElement
-                );
-
-            }
-        );
-
-    }
-
-}
 
     // ======================================
     // GET CURRENT USER
@@ -450,31 +216,20 @@ if (announcementsContainer) {
             user
         },
         error: userError
-    } =
-        await supabaseClient.auth.getUser();
+    } = await supabaseClient.auth.getUser();
 
 
-    if (
-        userError ||
-        !user
-    ) {
+    if (userError || !user) {
 
-        console.error(
-            "User error:",
-            userError
-        );
+        console.error("User error:", userError);
 
-        window.location.href =
-            "login.html";
+        window.location.href = "login.html";
 
         return;
     }
 
 
-    console.log(
-        "Logged in user:",
-        user
-    );
+    console.log("Logged in user:", user);
 
 
     // ======================================
@@ -484,39 +239,24 @@ if (announcementsContainer) {
     const {
         data: student,
         error: studentError
-    } =
-        await supabaseClient
-            .from("students")
-            .select("*")
-            .eq(
-                "user_id",
-                user.id
-            )
-            .single();
+    } = await supabaseClient
+        .from("students")
+        .select("*")
+        .eq("user_id", user.id)
+        .single();
 
 
-    if (
-        studentError ||
-        !student
-    ) {
+    if (studentError || !student) {
 
-        console.error(
-            "Student error:",
-            studentError
-        );
+        console.error("Student error:", studentError);
 
-        alert(
-            "Student record not found."
-        );
+        alert("Student record not found.");
 
         return;
     }
 
 
-    console.log(
-        "Student:",
-        student
-    );
+    console.log("Student:", student);
 
 
     // ======================================
@@ -524,32 +264,99 @@ if (announcementsContainer) {
     // ======================================
 
     const studentName =
-        document.getElementById(
-            "studentName"
-        );
+        document.getElementById("studentName");
+
+    const welcomeStudentName =
+        document.getElementById("welcomeStudentName");
+
+    const studentInitial =
+        document.getElementById("studentInitial");
 
 
     if (studentName) {
 
         studentName.textContent =
-            student.full_name;
+            student.full_name || "Student";
     }
-
-
-    // ======================================
-    // WELCOME STUDENT NAME
-    // ======================================
-
-    const welcomeStudentName =
-        document.getElementById(
-            "welcomeStudentName"
-        );
 
 
     if (welcomeStudentName) {
 
         welcomeStudentName.textContent =
-            student.full_name;
+            student.full_name || "Student";
+    }
+
+
+    if (studentInitial) {
+
+        studentInitial.textContent =
+            student.full_name
+                ? student.full_name.charAt(0).toUpperCase()
+                : "S";
+    }
+
+
+    // ======================================
+    // CURRENT DATE
+    // ======================================
+
+    const today = new Date();
+
+
+    const dayNames = [
+        "Sunday",
+        "Monday",
+        "Tuesday",
+        "Wednesday",
+        "Thursday",
+        "Friday",
+        "Saturday"
+    ];
+
+
+    const todayName =
+        dayNames[today.getDay()];
+
+
+    const formattedDate =
+        today.toLocaleDateString(
+            "en-GB",
+            {
+                day: "numeric",
+                month: "long",
+                year: "numeric"
+            }
+        );
+
+
+    const dashboardDay =
+        document.getElementById("dashboardDay");
+
+    const dashboardDate =
+        document.getElementById("dashboardDate");
+
+    const todayDateElement =
+        document.getElementById("todayDate");
+
+
+    if (dashboardDay) {
+
+        dashboardDay.textContent =
+            todayName;
+    }
+
+
+    if (dashboardDate) {
+
+        dashboardDate.textContent =
+            formattedDate;
+    }
+
+
+    if (todayDateElement) {
+
+        todayDateElement.textContent =
+            formattedDate;
     }
 
 
@@ -558,32 +365,21 @@ if (announcementsContainer) {
     // ======================================
 
     const academicAverage =
-        document.getElementById(
-            "academicAverage"
-        );
+        document.getElementById("academicAverage");
 
 
     const {
         data: grades,
         error: gradesError
-    } =
-        await supabaseClient
-            .from("grades")
-            .select(
-                "score, max_score"
-            )
-            .eq(
-                "student_id",
-                student.id
-            );
+    } = await supabaseClient
+        .from("grades")
+        .select("score, max_score")
+        .eq("student_id", student.id);
 
 
     if (gradesError) {
 
-        console.error(
-            "Grades error:",
-            gradesError
-        );
+        console.error("Grades error:", gradesError);
 
         if (academicAverage) {
 
@@ -594,23 +390,17 @@ if (announcementsContainer) {
     } else {
 
         let totalScore = 0;
-
         let totalMaxScore = 0;
 
 
-        grades.forEach(
+        (grades || []).forEach(
             function (grade) {
 
                 totalScore +=
-                    Number(
-                        grade.score
-                    );
+                    Number(grade.score) || 0;
 
                 totalMaxScore +=
-                    Number(
-                        grade.max_score
-                    );
-
+                    Number(grade.max_score) || 0;
             }
         );
 
@@ -618,24 +408,17 @@ if (announcementsContainer) {
         let average = 0;
 
 
-        if (
-            totalMaxScore > 0
-        ) {
+        if (totalMaxScore > 0) {
 
             average =
-                (
-                    totalScore /
-                    totalMaxScore
-                ) * 100;
+                (totalScore / totalMaxScore) * 100;
         }
 
 
         if (academicAverage) {
 
             academicAverage.textContent =
-                Math.round(
-                    average
-                ) + "%";
+                Math.round(average) + "%";
         }
     }
 
@@ -653,14 +436,10 @@ if (announcementsContainer) {
     const {
         data: attendance,
         error: attendanceError
-    } =
-        await supabaseClient
-            .from("attendance")
-            .select("status")
-            .eq(
-                "student_id",
-                student.id
-            );
+    } = await supabaseClient
+        .from("attendance")
+        .select("status")
+        .eq("student_id", student.id);
 
 
     if (attendanceError) {
@@ -678,32 +457,28 @@ if (announcementsContainer) {
 
     } else {
 
+        const records =
+            attendance || [];
+
+
         const totalDays =
-            attendance.length;
+            records.length;
 
 
         const presentDays =
-            attendance.filter(
+            records.filter(
                 function (record) {
 
-                    return (
-                        record.status ===
-                        "present"
-                    );
-
+                    return record.status === "present";
                 }
             ).length;
 
 
         const lateDays =
-            attendance.filter(
+            records.filter(
                 function (record) {
 
-                    return (
-                        record.status ===
-                        "late"
-                    );
-
+                    return record.status === "late";
                 }
             ).length;
 
@@ -711,16 +486,11 @@ if (announcementsContainer) {
         let attendancePercentage = 0;
 
 
-        if (
-            totalDays > 0
-        ) {
+        if (totalDays > 0) {
 
             attendancePercentage =
                 (
-                    (
-                        presentDays +
-                        lateDays
-                    ) /
+                    (presentDays + lateDays) /
                     totalDays
                 ) * 100;
         }
@@ -737,52 +507,6 @@ if (announcementsContainer) {
 
 
     // ======================================
-    // TODAY'S DATE
-    // ======================================
-
-    const today =
-        new Date();
-
-
-    const dayNames = [
-        "Sunday",
-        "Monday",
-        "Tuesday",
-        "Wednesday",
-        "Thursday",
-        "Friday",
-        "Saturday"
-    ];
-
-
-    const todayName =
-        dayNames[
-            today.getDay()
-        ];
-
-
-    const todayDate =
-        document.getElementById(
-            "todayDate"
-        );
-
-
-    if (todayDate) {
-
-        todayDate.textContent =
-            today.toLocaleDateString(
-                "en-GB",
-                {
-                    weekday: "long",
-                    day: "numeric",
-                    month: "long",
-                    year: "numeric"
-                }
-            );
-    }
-
-
-    // ======================================
     // TODAY'S TIMETABLE
     // ======================================
 
@@ -792,21 +516,12 @@ if (announcementsContainer) {
         );
 
 
-    if (!timetableContainer) {
+    if (timetableContainer) {
 
-        console.log(
-            "Timetable container not found."
-        );
-
-        return;
-    }
-
-
-    const {
-        data: timetable,
-        error: timetableError
-    } =
-        await supabaseClient
+        const {
+            data: timetable,
+            error: timetableError
+        } = await supabaseClient
             .from("timetable")
             .select(`
                 start_time,
@@ -833,151 +548,137 @@ if (announcementsContainer) {
             );
 
 
-    // --------------------------------------
-    // TIMETABLE ERROR
-    // --------------------------------------
+        if (timetableError) {
 
-    if (timetableError) {
+            console.error(
+                "Timetable error:",
+                timetableError
+            );
 
-        console.error(
-            "Timetable error:",
-            timetableError
-        );
-
-        timetableContainer.innerHTML =
-            `
-            <p>
-                Unable to load today's timetable.
-            </p>
+            timetableContainer.innerHTML = `
+                <p>
+                    Unable to load today's timetable.
+                </p>
             `;
 
-        return;
-    }
+        } else if (
+            !timetable ||
+            timetable.length === 0
+        ) {
 
-
-    // --------------------------------------
-    // NO LESSONS
-    // --------------------------------------
-
-    if (
-        !timetable ||
-        timetable.length === 0
-    ) {
-
-        timetableContainer.innerHTML =
-            `
-            <p>
-                No lessons scheduled for today.
-            </p>
+            timetableContainer.innerHTML = `
+                <p>
+                    No lessons scheduled for today.
+                </p>
             `;
 
-        return;
-    }
+        } else {
+
+            timetableContainer.innerHTML = "";
 
 
-    // --------------------------------------
-    // DISPLAY LESSONS
-    // --------------------------------------
+            timetable.forEach(
+                function (lesson) {
 
-    timetableContainer.innerHTML =
-        "";
-
-
-    timetable.forEach(
-        function (lesson) {
-
-            const lessonElement =
-                document.createElement(
-                    "div"
-                );
+                    const lessonElement =
+                        document.createElement("div");
 
 
-            lessonElement.className =
-                "lesson";
+                    lessonElement.className =
+                        "lesson";
 
 
-            const startTime =
-                lesson.start_time
-                    ? lesson.start_time.substring(
-                        0,
-                        5
-                    )
-                    : "";
+                    const startTime =
+                        lesson.start_time
+                            ? lesson.start_time.substring(
+                                0,
+                                5
+                            )
+                            : "";
 
 
-            const subjectName =
-                lesson.subjects &&
-                lesson.subjects.name
-                    ? lesson.subjects.name
-                    : "Subject";
+                    const subjectName =
+                        lesson.subjects &&
+                        lesson.subjects.name
+                            ? lesson.subjects.name
+                            : "Subject";
 
 
-            const room =
-                lesson.room
-                    ? lesson.room
-                    : "Room TBA";
+                    const room =
+                        lesson.room ||
+                        "Room TBA";
 
 
-            const teacher =
-                lesson.teacher_name
-                    ? lesson.teacher_name
-                    : "Teacher TBA";
+                    const teacher =
+                        lesson.teacher_name ||
+                        "Teacher TBA";
 
 
-            lessonElement.innerHTML =
+                    lessonElement.innerHTML = `
+                        <div class="lesson-time">
+                            ${startTime}
+                        </div>
 
-                `
-                <div class="lesson-time">
-                    ${startTime}
-                </div>
+                        <div class="lesson-line"></div>
 
-                <div class="lesson-line"></div>
+                        <div class="lesson-info">
 
-                <div class="lesson-info">
+                            <strong>
+                                ${subjectName}
+                            </strong>
 
-                    <strong>
-                        ${subjectName}
-                    </strong>
+                            <span>
+                                ${room} • ${teacher}
+                            </span>
 
-                    <span>
-                        ${room} • ${teacher}
-                    </span>
-
-                </div>
-                `;
+                        </div>
+                    `;
 
 
-            timetableContainer.appendChild(
-                lessonElement
+                    timetableContainer.appendChild(
+                        lessonElement
+                    );
+
+                }
             );
 
         }
-    );
+
+    }
+
 
     // ======================================
-// UPCOMING ASSIGNMENTS
-// ======================================
- console.log("ASSIGNMENTS CODE STARTED");
-    
-const assignmentsContainer =
-    document.getElementById(
-        "assignmentsContainer"
+    // UPCOMING ASSIGNMENTS
+    // ======================================
+
+    console.log(
+        "ASSIGNMENTS CODE STARTED"
     );
 
 
-if (assignmentsContainer) {
-
-    const todayDate =
-        new Date()
-            .toISOString()
-            .split("T")[0];
+    const assignmentsContainer =
+        document.getElementById(
+            "assignmentsContainer"
+        );
 
 
-    const {
-        data: assignments,
-        error: assignmentsError
-    } =
-        await supabaseClient
+    const upcomingAssignmentsCount =
+        document.getElementById(
+            "upcomingAssignmentsCount"
+        );
+
+
+    if (assignmentsContainer) {
+
+        const todayISO =
+            today.toISOString()
+                .split("T")[0];
+
+
+        const {
+            data: assignments,
+            error: assignmentsError
+        } = await supabaseClient
             .from("assignments")
             .select(`
                 id,
@@ -994,7 +695,7 @@ if (assignmentsContainer) {
             )
             .gte(
                 "due_date",
-                todayDate
+                todayISO
             )
             .order(
                 "due_date",
@@ -1003,209 +704,507 @@ if (assignmentsContainer) {
                 }
             );
 
-    console.log(
-    "ASSIGNMENTS RESULT:",
-    assignments
-);
 
-console.log(
-    "ASSIGNMENTS ERROR:",
-    assignmentsError
-);
+        console.log(
+            "ASSIGNMENTS RESULT:",
+            assignments
+        );
 
-    // ----------------------------------
-    // ERROR
-    // ----------------------------------
 
-    if (assignmentsError) {
-
-        console.error(
-            "Assignments error:",
+        console.log(
+            "ASSIGNMENTS ERROR:",
             assignmentsError
         );
 
-        assignmentsContainer.innerHTML =
-            `
-            <p>
-                Unable to load assignments.
-            </p>
+
+        if (assignmentsError) {
+
+            console.error(
+                "Assignments error:",
+                assignmentsError
+            );
+
+
+            assignmentsContainer.innerHTML = `
+                <p>
+                    Unable to load assignments.
+                </p>
             `;
 
-    }
+
+            if (upcomingAssignmentsCount) {
+
+                upcomingAssignmentsCount.textContent =
+                    "—";
+            }
+
+        } else {
+
+            const assignmentList =
+                assignments || [];
 
 
-    // ----------------------------------
-    // NO ASSIGNMENTS
-    // ----------------------------------
+            // Update assignment number
+            if (upcomingAssignmentsCount) {
 
-    else if (
-        !assignments ||
-        assignments.length === 0
-    ) {
-
-        assignmentsContainer.innerHTML =
-            `
-            <p>
-                No upcoming assignments.
-            </p>
-            `;
-
-    }
+                upcomingAssignmentsCount.textContent =
+                    assignmentList.length;
+            }
 
 
-    // ----------------------------------
-    // DISPLAY ASSIGNMENTS
-    // ----------------------------------
+            if (
+                assignmentList.length === 0
+            ) {
 
-    else {
+                assignmentsContainer.innerHTML = `
+                    <p>
+                        No upcoming assignments.
+                    </p>
+                `;
 
-        assignmentsContainer.innerHTML =
-            "";
+            } else {
 
-
-        assignments.forEach(
-            function (assignment) {
-
-                const assignmentElement =
-                    document.createElement(
-                        "div"
-                    );
+                assignmentsContainer.innerHTML =
+                    "";
 
 
-                assignmentElement.className =
-                    "assignment";
+                assignmentList.forEach(
+                    function (assignment) {
+
+                        const assignmentElement =
+                            document.createElement(
+                                "div"
+                            );
 
 
-                // Subject name
-                const subjectName =
-                    assignment.subjects &&
-                    assignment.subjects.name
-                        ? assignment.subjects.name
-                        : "Subject";
+                        assignmentElement.className =
+                            "assignment";
 
 
-                // First letter for icon
-                const iconLetter =
-                    subjectName
-                        .charAt(0)
-                        .toUpperCase();
+                        const subjectName =
+                            assignment.subjects &&
+                            assignment.subjects.name
+                                ? assignment.subjects.name
+                                : "Subject";
 
 
-                // Calculate due date
-                const dueDate =
-                    new Date(
-                        assignment.due_date +
-                        "T00:00:00"
-                    );
+                        const iconLetter =
+                            subjectName
+                                .charAt(0)
+                                .toUpperCase();
 
 
-                const today =
-                    new Date();
-
-                today.setHours(
-                    0,
-                    0,
-                    0,
-                    0
-                );
+                        const dueDate =
+                            new Date(
+                                assignment.due_date +
+                                "T00:00:00"
+                            );
 
 
-                const difference =
-                    Math.ceil(
-                        (
-                            dueDate -
-                            today
-                        ) /
-                        (
-                            1000 *
-                            60 *
-                            60 *
-                            24
-                        )
-                    );
+                        const todayForDueDate =
+                            new Date();
 
 
-                let dueText;
-
-
-                if (
-                    difference === 0
-                ) {
-
-                    dueText =
-                        "Today";
-
-                } else if (
-                    difference === 1
-                ) {
-
-                    dueText =
-                        "Tomorrow";
-
-                } else if (
-                    difference > 1 &&
-                    difference < 7
-                ) {
-
-                    dueText =
-                        dueDate.toLocaleDateString(
-                            "en-GB",
-                            {
-                                weekday:
-                                    "long"
-                            }
+                        todayForDueDate.setHours(
+                            0,
+                            0,
+                            0,
+                            0
                         );
 
-                } else {
 
-                    dueText =
-                        dueDate.toLocaleDateString(
-                            "en-GB",
-                            {
-                                day:
-                                    "numeric",
+                        const difference =
+                            Math.ceil(
+                                (
+                                    dueDate -
+                                    todayForDueDate
+                                ) /
+                                (
+                                    1000 *
+                                    60 *
+                                    60 *
+                                    24
+                                )
+                            );
 
-                                month:
-                                    "short"
-                            }
+
+                        let dueText;
+
+
+                        if (difference === 0) {
+
+                            dueText = "Today";
+
+                        } else if (
+                            difference === 1
+                        ) {
+
+                            dueText = "Tomorrow";
+
+                        } else if (
+                            difference > 1 &&
+                            difference < 7
+                        ) {
+
+                            dueText =
+                                dueDate.toLocaleDateString(
+                                    "en-GB",
+                                    {
+                                        weekday:
+                                            "long"
+                                    }
+                                );
+
+                        } else {
+
+                            dueText =
+                                dueDate.toLocaleDateString(
+                                    "en-GB",
+                                    {
+                                        day:
+                                            "numeric",
+
+                                        month:
+                                            "short"
+                                    }
+                                );
+                        }
+
+
+                        assignmentElement.innerHTML = `
+                            <div class="assignment-icon">
+                                ${iconLetter}
+                            </div>
+
+                            <div class="assignment-info">
+
+                                <strong>
+                                    ${assignment.title}
+                                </strong>
+
+                                <span>
+                                    ${subjectName}
+                                </span>
+
+                            </div>
+
+                            <div class="due-date">
+                                ${dueText}
+                            </div>
+                        `;
+
+
+                        assignmentsContainer.appendChild(
+                            assignmentElement
                         );
-                }
 
-
-                assignmentElement.innerHTML =
-                    `
-                    <div class="assignment-icon">
-                        ${iconLetter}
-                    </div>
-
-                    <div class="assignment-info">
-
-                        <strong>
-                            ${assignment.title}
-                        </strong>
-
-                        <span>
-                            ${subjectName}
-                        </span>
-
-                    </div>
-
-                    <div class="due-date">
-                        ${dueText}
-                    </div>
-                    `;
-
-
-                assignmentsContainer.appendChild(
-                    assignmentElement
+                    }
                 );
 
             }
-        );
+
+        }
 
     }
 
-}
+
+    // ======================================
+    // ANNOUNCEMENTS
+    // ======================================
+
+    const announcementsContainer =
+        document.getElementById(
+            "announcementsContainer"
+        );
+
+
+    const notificationCount =
+        document.getElementById(
+            "notificationCount"
+        );
+
+
+    if (announcementsContainer) {
+
+        const {
+            data: announcements,
+            error: announcementsError
+        } = await supabaseClient
+            .from("announcements")
+            .select(`
+                id,
+                title,
+                message,
+                target_role,
+                target_class,
+                created_at
+            `)
+            .order(
+                "created_at",
+                {
+                    ascending: false
+                }
+            )
+            .limit(5);
+
+
+        console.log(
+            "ANNOUNCEMENTS RESULT:",
+            announcements
+        );
+
+
+        console.log(
+            "ANNOUNCEMENTS ERROR:",
+            announcementsError
+        );
+
+
+        if (announcementsError) {
+
+            console.error(
+                "Announcements error:",
+                announcementsError
+            );
+
+
+            announcementsContainer.innerHTML = `
+                <p>
+                    Unable to load announcements.
+                </p>
+            `;
+
+
+            if (notificationCount) {
+
+                notificationCount.textContent =
+                    "0";
+            }
+
+        } else {
+
+            const announcementList =
+                announcements || [];
+
+
+            // Show number of recent announcements
+            if (notificationCount) {
+
+                notificationCount.textContent =
+                    announcementList.length;
+            }
+
+
+            if (
+                announcementList.length === 0
+            ) {
+
+                announcementsContainer.innerHTML = `
+                    <p>
+                        No announcements available.
+                    </p>
+                `;
+
+            } else {
+
+                announcementsContainer.innerHTML =
+                    "";
+
+
+                announcementList.forEach(
+                    function (
+                        announcement,
+                        index
+                    ) {
+
+                        const announcementElement =
+                            document.createElement(
+                                "div"
+                            );
+
+
+                        announcementElement.className =
+                            "announcement";
+
+
+                        const icon =
+                            index === 0
+                                ? "!"
+                                : "★";
+
+
+                        const createdDate =
+                            new Date(
+                                announcement.created_at
+                            );
+
+
+                        const now =
+                            new Date();
+
+
+                        const difference =
+                            Math.floor(
+                                (
+                                    now -
+                                    createdDate
+                                ) /
+                                (
+                                    1000 *
+                                    60 *
+                                    60
+                                )
+                            );
+
+
+                        let postedText;
+
+
+                        if (
+                            difference < 1
+                        ) {
+
+                            postedText =
+                                "Posted just now";
+
+                        } else if (
+                            difference === 1
+                        ) {
+
+                            postedText =
+                                "Posted 1 hour ago";
+
+                        } else if (
+                            difference < 24
+                        ) {
+
+                            postedText =
+                                `Posted ${difference} hours ago`;
+
+                        } else {
+
+                            const days =
+                                Math.floor(
+                                    difference / 24
+                                );
+
+
+                            if (
+                                days === 1
+                            ) {
+
+                                postedText =
+                                    "Posted yesterday";
+
+                            } else {
+
+                                postedText =
+                                    `Posted ${days} days ago`;
+                            }
+
+                        }
+
+
+                        announcementElement.innerHTML = `
+                            <div class="announcement-icon">
+                                ${icon}
+                            </div>
+
+                            <div>
+
+                                <strong>
+                                    ${announcement.title}
+                                </strong>
+
+                                <p>
+                                    ${announcement.message}
+                                </p>
+
+                                <small>
+                                    ${postedText}
+                                </small>
+
+                            </div>
+                        `;
+
+
+                        announcementsContainer.appendChild(
+                            announcementElement
+                        );
+
+                    }
+                );
+
+            }
+
+        }
+
+    }
+
+
+    // ======================================
+    // CONDUCT
+    // ======================================
+
+    const conductStatus =
+        document.getElementById(
+            "conductStatus"
+        );
+
+
+    if (conductStatus) {
+
+        const {
+            data: conduct,
+            error: conductError
+        } = await supabaseClient
+            .from("conduct")
+            .select("*")
+            .eq(
+                "student_id",
+                student.id
+            )
+            .order(
+                "created_at",
+                {
+                    ascending: false
+                }
+            )
+            .limit(1);
+
+
+        if (
+            !conductError &&
+            conduct &&
+            conduct.length > 0
+        ) {
+
+            const latestConduct =
+                conduct[0];
+
+
+            conductStatus.textContent =
+                latestConduct.status ||
+                latestConduct.conduct_status ||
+                latestConduct.rating ||
+                "Recorded";
+
+        } else {
+
+            // Don't break the dashboard if the
+            // conduct table has different columns
+            // or no record exists yet.
+
+            conductStatus.textContent =
+                "No record";
+        }
+
+    }
+
+
+    // ======================================
+    // FINISHED
+    // ======================================
 
     console.log(
         "Student dashboard loaded successfully."
