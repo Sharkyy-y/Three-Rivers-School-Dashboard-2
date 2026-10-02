@@ -2100,3 +2100,75 @@ body {
     }
 
 }
+
+/* ==========================================
+   SECTION AVERAGE BADGE
+========================================== */
+
+.grade-section-average {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+}
+
+
+.section-average-label {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+
+.section-average-label span {
+    font-size: 13px;
+    font-weight: 700;
+    color: #303949;
+}
+
+
+.section-average-label small {
+    font-size: 11px;
+    color: #929aaa;
+}
+
+
+/* AVERAGE BADGE */
+
+.grade-section-average strong {
+    min-width: 70px;
+
+    padding: 8px 12px;
+
+    border-radius: 9px;
+
+    text-align: center;
+
+    font-size: 15px;
+}
+
+
+/* PERFORMANCE COLORS */
+
+.grade-section-average strong.grade-excellent {
+    background: #e8f7ee;
+    color: #16834a;
+}
+
+
+.grade-section-average strong.grade-good {
+    background: #edf4ff;
+    color: #2867c7;
+}
+
+
+.grade-section-average strong.grade-average {
+    background: #fff6df;
+    color: #a56a00;
+}
+
+
+.grade-section-average strong.grade-low {
+    background: #ffeded;
+    color: #c03939;
+}
