@@ -2352,6 +2352,31 @@ if (attendanceProgressFill) {
         safePercentage + "%";
 }
 
+// UPDATE PRESENT, LATE, AND ABSENT SUMMARY CARDS
+const presentDaysElement = document.getElementById("presentDays");
+const lateDaysElement = document.getElementById("lateDays");
+const absentDaysElement = document.getElementById("absentDays");
+
+if (presentDaysElement) {
+    presentDaysElement.textContent = presentDays;
+}
+
+if (lateDaysElement) {
+    lateDaysElement.textContent = lateDays;
+}
+
+if (absentDaysElement) {
+    absentDaysElement.textContent = absentDays;
+}
+
+console.log("ATTENDANCE SUMMARY:", {
+    totalDays: totalDays,
+    present: presentDays,
+    late: lateDays,
+    absent: absentDays,
+    percentage: Math.round(attendancePercentage) + "%"
+});
+    
 // ======================================
 // UPDATE PRESENT, LATE AND ABSENT CARDS
 // ======================================
