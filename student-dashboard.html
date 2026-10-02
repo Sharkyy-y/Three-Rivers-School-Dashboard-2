@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>Student Dashboard | Student Management Portal</title>
+    <title>Student Dashboard | Three Rivers Academy</title>
 
     <link rel="stylesheet" href="css/dashboard.css">
 </head>
@@ -14,7 +14,8 @@
 
     <div class="dashboard-layout">
 
-        <!-- SIDEBAR -->
+        <!-- ================= SIDEBAR ================= -->
+
         <aside class="sidebar">
 
             <div class="sidebar-logo">
@@ -24,48 +25,49 @@
 
             <nav class="sidebar-nav">
 
-                <a href="#" class="nav-item active">
+                <a href="student-dashboard.html" class="nav-item active">
                     <span>⌂</span>
                     Dashboard
                 </a>
 
-                <a href="#" class="nav-item">
+                <a href="timetable.html" class="nav-item">
                     <span>▣</span>
                     Timetable
                 </a>
 
-                <a href="#" class="nav-item">
+                <a href="assignments.html" class="nav-item">
                     <span>✓</span>
                     Assignments
                 </a>
 
-                <a href="#" class="nav-item">
+                <a href="grades.html" class="nav-item">
                     <span>◈</span>
                     Grades
                 </a>
 
-                <a href="#" class="nav-item">
+                <a href="attendance.html" class="nav-item">
                     <span>◷</span>
                     Attendance
                 </a>
 
-                <a href="#" class="nav-item">
+                <a href="announcements.html" class="nav-item">
                     <span>▤</span>
                     Announcements
                 </a>
 
-                <a href="#" class="nav-item">
+                <a href="events.html" class="nav-item">
                     <span>◫</span>
                     Events
                 </a>
 
             </nav>
 
+
             <div class="sidebar-bottom">
 
-                <a href="#" class="nav-item">
+                <a href="profile.html" class="nav-item">
                     <span>⚙</span>
-                    Settings
+                    Profile
                 </a>
 
                 <a href="login.html" class="logout">
@@ -78,44 +80,64 @@
         </aside>
 
 
-        <!-- MAIN CONTENT -->
+        <!-- ================= MAIN CONTENT ================= -->
+
         <main class="main-content">
 
-            <!-- TOP BAR -->
+
+            <!-- ================= TOP BAR ================= -->
+
             <header class="topbar">
 
                 <div>
+
                     <p class="school-name">
-                        Student Management Portal
+                        Three Rivers Academy
                     </p>
 
                     <h1>
                         Student Dashboard
                     </h1>
+
                 </div>
+
 
                 <div class="student-profile">
 
                     <div class="notification">
                         ♢
-                        <span>2</span>
+                        <span id="notificationCount">0</span>
                     </div>
 
-                    <div class="profile-avatar">
-                        M
+
+                    <div
+                        class="profile-avatar"
+                        id="studentInitial"
+                    >
+                        S
                     </div>
 
-                   <div class="profile-details">
-    <strong id="studentName">Loading...</strong>
-    <small>Student</small>
-</div>
+
+                    <div class="profile-details">
+
+                        <strong id="studentName">
+                            Loading...
+                        </strong>
+
+                        <small>
+                            Student
+                        </small>
+
+                    </div>
 
                 </div>
 
             </header>
 
 
-            <!-- WELCOME -->
+
+            <!-- ================= WELCOME ================= -->
+
             <section class="welcome-card">
 
                 <div>
@@ -124,27 +146,46 @@
                         WELCOME BACK
                     </p>
 
+
                     <h2>
-                      Good morning, <span id="welcomeStudentName">Loading...</span> 👋
+                        Good morning,
+                        <span id="welcomeStudentName">
+                            Loading...
+                        </span>
+                        👋
                     </h2>
 
+
                     <p>
-                        Here's what's happening with your school
-                        work today.
+                        Here's what's happening with your
+                        school work today.
                     </p>
 
                 </div>
 
+
                 <div class="date-box">
-                    <strong>Wednesday</strong>
-                    <span>30 September 2026</span>
+
+                    <strong id="dashboardDay">
+                        Loading...
+                    </strong>
+
+                    <span id="dashboardDate">
+                        Loading...
+                    </span>
+
                 </div>
 
             </section>
 
 
-            <!-- STATISTICS -->
+
+            <!-- ================= STATISTICS ================= -->
+
             <section class="stats-grid">
+
+
+                <!-- ACADEMIC AVERAGE -->
 
                 <div class="stat-card">
 
@@ -153,13 +194,26 @@
                     </div>
 
                     <div>
-                        <span>Academic Average</span>
-                       <strong id="academicAverage">Loading...</strong>
-                        <small>Current average</small>
+
+                        <span>
+                            Academic Average
+                        </span>
+
+                        <strong id="academicAverage">
+                            Loading...
+                        </strong>
+
+                        <small>
+                            Current average
+                        </small>
+
                     </div>
 
                 </div>
 
+
+
+                <!-- ATTENDANCE -->
 
                 <div class="stat-card">
 
@@ -168,13 +222,26 @@
                     </div>
 
                     <div>
-                        <span>Attendance</span>
-                        <strong id="attendancePercentage">Loading...</strong>
-                        <small>Current attendance</small>
+
+                        <span>
+                            Attendance
+                        </span>
+
+                        <strong id="attendancePercentage">
+                            Loading...
+                        </strong>
+
+                        <small>
+                            Current attendance
+                        </small>
+
                     </div>
 
                 </div>
 
+
+
+                <!-- ASSIGNMENTS -->
 
                 <div class="stat-card">
 
@@ -183,13 +250,26 @@
                     </div>
 
                     <div>
-                        <span>Assignments</span>
-                        <strong>3</strong>
-                        <small>Due soon</small>
+
+                        <span>
+                            Assignments
+                        </span>
+
+                        <strong id="upcomingAssignmentsCount">
+                            Loading...
+                        </strong>
+
+                        <small>
+                            Due soon
+                        </small>
+
                     </div>
 
                 </div>
 
+
+
+                <!-- CONDUCT -->
 
                 <div class="stat-card">
 
@@ -198,9 +278,19 @@
                     </div>
 
                     <div>
-                        <span>Conduct</span>
-                        <strong>Excellent</strong>
-                        <small>Current status</small>
+
+                        <span>
+                            Conduct
+                        </span>
+
+                        <strong id="conductStatus">
+                            Loading...
+                        </strong>
+
+                        <small>
+                            Current status
+                        </small>
+
                     </div>
 
                 </div>
@@ -208,98 +298,139 @@
             </section>
 
 
-            <!-- MAIN GRID -->
+
+            <!-- ================= MAIN GRID ================= -->
+
             <section class="content-grid">
 
 
-                <!-- TODAY'S TIMETABLE -->
-<div class="dashboard-card">
+                <!-- ================= TODAY'S TIMETABLE ================= -->
 
-    <div class="card-header">
+                <div class="dashboard-card">
 
-        <div>
-            <h3>Today's Timetable</h3>
+                    <div class="card-header">
 
-            <p id="todayDate">
-                Loading...
-            </p>
-        </div>
+                        <div>
 
-        <a href="timetable.html">
-            View all
-        </a>
+                            <h3>
+                                Today's Timetable
+                            </h3>
+
+                            <p id="todayDate">
+                                Loading...
+                            </p>
+
+                        </div>
+
+
+                        <a href="timetable.html">
+                            View all
+                        </a>
+
+                    </div>
+
+
+                    <div id="todayTimetable">
+
+                        <p class="loading-message">
+                            Loading today's timetable...
+                        </p>
+
+                    </div>
+
+                </div>
+
+
+
+                <!-- ================= ASSIGNMENTS ================= -->
+
+                <div class="dashboard-card">
+
+                    <div class="card-header">
+
+                        <div>
+
+                            <h3>
+                                Upcoming Assignments
+                            </h3>
+
+                            <p>
+                                Keep up with your work
+                            </p>
+
+                        </div>
+
+
+                        <a href="assignments.html">
+                            View all
+                        </a>
+
+                    </div>
+
+
+                    <div id="assignmentsContainer">
+
+                        <p class="loading-message">
+                            Loading assignments...
+                        </p>
+
+                    </div>
+
+                </div>
+
+
+
+                <!-- ================= ANNOUNCEMENTS ================= -->
+
+                <section class="dashboard-card announcements">
+
+                    <div class="card-header">
+
+                        <div>
+
+                            <h3>
+                                Latest Announcements
+                            </h3>
+
+                            <p>
+                                Important information from your school
+                            </p>
+
+                        </div>
+
+
+                        <a href="announcements.html">
+                            View all
+                        </a>
+
+                    </div>
+
+
+                    <div id="announcementsContainer">
+
+                        <p class="loading-message">
+                            Loading announcements...
+                        </p>
+
+                    </div>
+
+                </section>
+
+            </section>
+
+        </main>
 
     </div>
 
 
-    <!-- REAL TIMETABLE LESSONS WILL LOAD HERE -->
 
-    <div id="todayTimetable">
+    <!-- ================= SUPABASE ================= -->
 
-        <p class="loading-message">
-            Loading today's timetable...
-        </p>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
-    </div>
+    <!-- MAIN JAVASCRIPT — LOAD ONCE -->
+    <script src="js/main.js"></script>
 
-</div>
-
-
-                <!-- ASSIGNMENTS -->
-<div class="dashboard-card">
-
-    <div class="card-header">
-
-        <div>
-            <h3>Upcoming Assignments</h3>
-            <p>Keep up with your work</p>
-        </div>
-
-        <a href="assignments.html">View all</a>
-
-    </div>
-
-
-    <!-- REAL ASSIGNMENTS LOAD HERE -->
-    <div id="assignmentsContainer">
-
-        <p class="loading-message">
-            Loading assignments...
-        </p>
-
-    </div>
-
-</div>
-
-<!-- ANNOUNCEMENTS -->
-<section class="dashboard-card announcements">
-
-    <div class="card-header">
-
-        <div>
-            <h3>Latest Announcements</h3>
-            <p>Important information from your school</p>
-        </div>
-
-        <a href="announcements.html">View all</a>
-
-    </div>
-
-
-    <!-- REAL ANNOUNCEMENTS LOAD HERE -->
-    <div id="announcementsContainer">
-
-        <p class="loading-message">
-            Loading announcements...
-        </p>
-
-    </div>
-
-</section>
-
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="js/main.js"></script>
-    
 </body>
 
 </html>
