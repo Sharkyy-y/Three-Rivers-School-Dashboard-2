@@ -1472,7 +1472,6 @@ async function loadStudentGrades() {
         return;
     }
 
-
     // ======================================
     // STUDENT NAME
     // ======================================
@@ -2074,6 +2073,16 @@ function getGradeClass(percentage) {
     console.log(
         "Student grades loaded successfully."
     );
+
+}
+
+if (
+    window.location.pathname.includes(
+        "grades.html"
+    )
+) {
+
+    loadStudentGrades();
 
 }
 
