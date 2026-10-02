@@ -4030,3 +4030,8 @@ if (
     loadAnnouncementsPage();
 
 }
+
+// Automatically load assignments when assignments page opens
+if (document.getElementById("assignmentsPageContainer")) {
+    loadAssignmentsPage();
+}
