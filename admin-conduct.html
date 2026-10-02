@@ -6,8 +6,9 @@
 
     <title>Conduct Management | Three Rivers Academy</title>
 
-    <style>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
+    <style>
         * {
             box-sizing: border-box;
             margin: 0;
@@ -20,29 +21,33 @@
             color: #1f2937;
         }
 
-        .layout {
-            display: flex;
-            min-height: 100vh;
-        }
-
         /* SIDEBAR */
 
         .sidebar {
-            width: 250px;
-            background: white;
-            border-right: 1px solid #e5e7eb;
-            padding: 25px 15px;
             position: fixed;
-            top: 0;
-            bottom: 0;
             left: 0;
+            top: 0;
+            width: 250px;
+            height: 100vh;
+            background: #ffffff;
+            border-right: 1px solid #e5e7eb;
+            padding: 24px 16px;
+            z-index: 100;
         }
 
         .logo {
-            font-size: 20px;
-            font-weight: 700;
-            margin-bottom: 35px;
-            padding-left: 12px;
+            padding: 0 14px 30px;
+        }
+
+        .logo h2 {
+            font-size: 21px;
+            color: #111827;
+        }
+
+        .logo p {
+            margin-top: 5px;
+            color: #6b7280;
+            font-size: 13px;
         }
 
         .nav {
@@ -54,12 +59,18 @@
         .nav a {
             text-decoration: none;
             color: #4b5563;
-            padding: 13px 15px;
-            border-radius: 10px;
+            padding: 12px 14px;
+            border-radius: 9px;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            gap: 11px;
+            transition: 0.2s;
         }
 
         .nav a:hover {
             background: #f3f4f6;
+            color: #111827;
         }
 
         .nav a.active {
@@ -68,40 +79,91 @@
             font-weight: 600;
         }
 
+        .nav-icon {
+            width: 20px;
+            text-align: center;
+        }
+
+        .logout {
+            position: absolute;
+            bottom: 25px;
+            left: 16px;
+            right: 16px;
+        }
+
+        .logout a {
+            text-decoration: none;
+            color: #ef4444;
+            padding: 12px 14px;
+            display: block;
+            border-radius: 9px;
+        }
+
+        .logout a:hover {
+            background: #fef2f2;
+        }
+
         /* MAIN */
 
         .main {
             margin-left: 250px;
-            width: calc(100% - 250px);
-            padding: 35px;
+            padding: 35px 40px;
+            min-height: 100vh;
         }
 
-        .header {
+        .topbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
             margin-bottom: 30px;
         }
 
-        .header h1 {
-            font-size: 30px;
-            margin-bottom: 8px;
+        .page-title h1 {
+            font-size: 28px;
+            color: #111827;
         }
 
-        .header p {
+        .page-title p {
             color: #6b7280;
+            margin-top: 7px;
+            font-size: 14px;
+        }
+
+        .admin-badge {
+            background: #eef2ff;
+            color: #4f46e5;
+            padding: 9px 15px;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: 600;
+        }
+
+        /* CARDS */
+
+        .card {
+            background: #ffffff;
+            border-radius: 14px;
+            border: 1px solid #e5e7eb;
+            padding: 25px;
+            margin-bottom: 25px;
+        }
+
+        .card-header {
+            margin-bottom: 22px;
+        }
+
+        .card-header h2 {
+            font-size: 19px;
+            color: #111827;
+        }
+
+        .card-header p {
+            color: #6b7280;
+            font-size: 13px;
+            margin-top: 5px;
         }
 
         /* FORM */
-
-        .card {
-            background: white;
-            border: 1px solid #e5e7eb;
-            border-radius: 16px;
-            padding: 28px;
-            margin-bottom: 30px;
-        }
-
-        .card h2 {
-            margin-bottom: 20px;
-        }
 
         .form-grid {
             display: grid;
@@ -109,30 +171,39 @@
             gap: 20px;
         }
 
-        .field {
+        .form-group {
             display: flex;
             flex-direction: column;
-            gap: 8px;
         }
 
-        .field.full {
+        .form-group.full {
             grid-column: 1 / -1;
         }
 
         label {
+            font-size: 13px;
             font-weight: 600;
-            font-size: 14px;
+            margin-bottom: 8px;
+            color: #374151;
         }
 
         input,
         select,
         textarea {
             width: 100%;
-            padding: 12px;
             border: 1px solid #d1d5db;
-            border-radius: 9px;
+            border-radius: 8px;
+            padding: 11px 12px;
             font-size: 14px;
-            font-family: inherit;
+            outline: none;
+            background: white;
+        }
+
+        input:focus,
+        select:focus,
+        textarea:focus {
+            border-color: #6366f1;
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.08);
         }
 
         textarea {
@@ -140,107 +211,116 @@
             resize: vertical;
         }
 
-        input:focus,
-        select:focus,
-        textarea:focus {
-            outline: none;
-            border-color: #4f46e5;
-        }
-
-        .button-row {
+        .buttons {
             margin-top: 20px;
             display: flex;
-            gap: 12px;
+            gap: 10px;
         }
 
-        button {
+        .btn {
             border: none;
-            padding: 12px 20px;
-            border-radius: 9px;
+            border-radius: 8px;
+            padding: 11px 18px;
+            font-size: 14px;
             cursor: pointer;
             font-weight: 600;
         }
 
-        .primary {
+        .btn-primary {
             background: #4f46e5;
             color: white;
         }
 
-        .primary:hover {
+        .btn-primary:hover {
             background: #4338ca;
         }
 
-        .secondary {
+        .btn-secondary {
             background: #f3f4f6;
             color: #374151;
         }
 
-        /* RECORDS */
-
-        .records {
-            background: white;
-            border: 1px solid #e5e7eb;
-            border-radius: 16px;
-            padding: 28px;
+        .btn-secondary:hover {
+            background: #e5e7eb;
         }
 
-        .records h2 {
+        /* MESSAGE */
+
+        #message {
+            display: none;
             margin-bottom: 20px;
-        }
-
-        .record {
-            border-bottom: 1px solid #edf0f4;
-            padding: 18px 0;
-        }
-
-        .record:last-child {
-            border-bottom: none;
-        }
-
-        .record-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .record-title {
-            font-weight: 700;
-        }
-
-        .positive {
-            color: #15803d;
-        }
-
-        .negative {
-            color: #dc2626;
-        }
-
-        .record-info {
-            margin-top: 6px;
-            color: #6b7280;
+            padding: 12px 15px;
+            border-radius: 8px;
             font-size: 14px;
         }
 
-        .record-points {
+        /* TABLE */
+
+        .table-wrapper {
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th {
+            text-align: left;
+            font-size: 12px;
+            color: #6b7280;
+            text-transform: uppercase;
+            padding: 12px;
+            border-bottom: 1px solid #e5e7eb;
+        }
+
+        td {
+            padding: 15px 12px;
+            border-bottom: 1px solid #f0f1f3;
+            font-size: 14px;
+        }
+
+        .type-positive {
+            color: #16a34a;
+            font-weight: 600;
+        }
+
+        .type-negative {
+            color: #dc2626;
+            font-weight: 600;
+        }
+
+        .points-positive {
+            color: #16a34a;
             font-weight: 700;
         }
 
-        .message {
-            margin-top: 15px;
-            padding: 12px;
-            border-radius: 8px;
-            display: none;
+        .points-negative {
+            color: #dc2626;
+            font-weight: 700;
         }
 
-        .success {
-            background: #ecfdf5;
-            color: #166534;
+        .empty {
+            text-align: center;
+            padding: 30px;
+            color: #9ca3af;
         }
 
-        .error {
-            background: #fef2f2;
-            color: #991b1b;
+        /* LOADING */
+
+        #loading {
+            position: fixed;
+            inset: 0;
+            background: #f5f7fb;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 999;
+            font-size: 15px;
+            color: #6b7280;
         }
+
+        /* MOBILE */
 
         @media (max-width: 800px) {
 
@@ -250,126 +330,154 @@
 
             .main {
                 margin-left: 210px;
-                width: calc(100% - 210px);
-                padding: 20px;
+                padding: 25px;
             }
 
             .form-grid {
                 grid-template-columns: 1fr;
             }
 
-            .field.full {
+            .form-group.full {
                 grid-column: auto;
             }
         }
-
     </style>
 </head>
 
 <body>
 
-<div class="layout">
+<div id="loading">
+    Checking administrator access...
+</div>
 
-    <!-- SIDEBAR -->
+<!-- SIDEBAR -->
 
-    <aside class="sidebar">
+<aside class="sidebar">
 
-        <div class="logo">
-            Three Rivers Academy
-        </div>
+    <div class="logo">
+        <h2>Three Rivers Academy</h2>
+        <p>School Portal</p>
+    </div>
 
-        <nav class="nav">
+    <nav class="nav">
 
-            <a href="student-dashboard.html">
-                Dashboard
-            </a>
+        <a href="student-dashboard.html">
+            <span class="nav-icon">⌂</span>
+            Dashboard
+        </a>
 
-            <a href="timetable.html">
-                Timetable
-            </a>
+        <a href="timetable.html">
+            <span class="nav-icon">◷</span>
+            Timetable
+        </a>
 
-            <a href="assignments.html">
-                Assignments
-            </a>
+        <a href="assignments.html">
+            <span class="nav-icon">✓</span>
+            Assignments
+        </a>
 
-            <a href="grades.html">
-                Grades
-            </a>
+        <a href="grades.html">
+            <span class="nav-icon">▣</span>
+            Grades
+        </a>
 
-            <a href="attendance.html">
-                Attendance
-            </a>
+        <a href="attendance.html">
+            <span class="nav-icon">◉</span>
+            Attendance
+        </a>
 
-            <a href="conduct.html">
-                Conduct
-            </a>
+        <a href="conduct.html">
+            <span class="nav-icon">★</span>
+            Conduct
+        </a>
 
-            <a href="admin-conduct.html" class="active">
-                Manage Conduct
-            </a>
+        <a href="announcements.html">
+            <span class="nav-icon">●</span>
+            Announcements
+        </a>
 
-            <a href="announcements.html">
-                Announcements
-            </a>
+        <a href="events.html">
+            <span class="nav-icon">□</span>
+            Events
+        </a>
 
-            <a href="profile.html">
-                Profile
-            </a>
+        <a href="profile.html">
+            <span class="nav-icon">○</span>
+            Profile
+        </a>
 
-        </nav>
+        <a href="admin-conduct.html" class="active">
+            <span class="nav-icon">⚙</span>
+            Conduct Management
+        </a>
 
-    </aside>
+    </nav>
+
+    <div class="logout">
+        <a href="#" id="logoutButton">
+            ↪ &nbsp; Sign out
+        </a>
+    </div>
+
+</aside>
 
 
-    <!-- MAIN -->
+<!-- MAIN -->
 
-    <main class="main">
+<main class="main">
 
-        <div class="header">
+    <div class="topbar">
 
+        <div class="page-title">
             <h1>Conduct Management</h1>
-
-            <p>
-                Add and manage positive and negative conduct records.
-            </p>
-
+            <p>Manage student behaviour and conduct records.</p>
         </div>
 
+        <div class="admin-badge">
+            Administrator
+        </div>
 
-        <!-- ADD CONDUCT -->
+    </div>
 
-        <section class="card">
 
-            <h2>
-                Add Conduct Record
-            </h2>
+    <div id="message"></div>
+
+
+    <!-- ADD RECORD -->
+
+    <section class="card">
+
+        <div class="card-header">
+            <h2>Add Conduct Record</h2>
+            <p>Record positive behaviour or an area where a student needs improvement.</p>
+        </div>
+
+        <form id="conductForm">
 
             <div class="form-grid">
 
-                <div class="field">
+                <div class="form-group">
 
-                    <label for="studentSelect">
+                    <label for="student">
                         Student
                     </label>
 
-                    <select id="studentSelect">
-
+                    <select id="student" required>
                         <option value="">
-                            Loading students...
+                            Select a student
                         </option>
-
                     </select>
 
                 </div>
 
 
-                <div class="field">
+                <div class="form-group">
 
-                    <label for="conductType">
+                    <label for="type">
                         Conduct Type
                     </label>
 
-                    <select id="conductType">
+                    <select id="type" required>
 
                         <option value="positive">
                             Positive
@@ -384,46 +492,48 @@
                 </div>
 
 
-                <div class="field">
+                <div class="form-group">
 
-                    <label for="conductTitle">
+                    <label for="title">
                         Conduct / Behaviour
                     </label>
 
                     <input
                         type="text"
-                        id="conductTitle"
+                        id="title"
                         placeholder="e.g. Helped another student"
+                        required
                     >
 
                 </div>
 
 
-                <div class="field">
+                <div class="form-group">
 
-                    <label for="conductPoints">
+                    <label for="points">
                         Points
                     </label>
 
                     <input
                         type="number"
-                        id="conductPoints"
+                        id="points"
                         min="1"
-                        placeholder="e.g. 5"
+                        placeholder="e.g. 10"
+                        required
                     >
 
                 </div>
 
 
-                <div class="field full">
+                <div class="form-group full">
 
-                    <label for="conductDescription">
+                    <label for="description">
                         Description / Comment
                     </label>
 
                     <textarea
-                        id="conductDescription"
-                        placeholder="Explain what happened..."
+                        id="description"
+                        placeholder="Add more information about this conduct record..."
                     ></textarea>
 
                 </div>
@@ -431,431 +541,533 @@
             </div>
 
 
-            <div class="button-row">
+            <div class="buttons">
 
                 <button
-                    class="primary"
-                    onclick="addConductRecord()"
+                    type="submit"
+                    class="btn btn-primary"
                 >
                     Add Conduct Record
                 </button>
 
                 <button
-                    class="secondary"
-                    onclick="clearForm()"
+                    type="button"
+                    class="btn btn-secondary"
+                    id="clearButton"
                 >
                     Clear
                 </button>
 
             </div>
 
+        </form>
 
-            <div
-                id="message"
-                class="message"
-            ></div>
-
-        </section>
+    </section>
 
 
-        <!-- RECORDS -->
+    <!-- RECORDS -->
 
-        <section class="records">
+    <section class="card">
 
-            <h2>
-                Recent Conduct Records
-            </h2>
+        <div class="card-header">
 
-            <div id="recordsContainer">
+            <h2>Recent Conduct Records</h2>
 
-                Loading records...
+            <p>
+                Conduct records across all students.
+            </p>
 
-            </div>
-
-        </section>
-
-    </main>
-
-</div>
+        </div>
 
 
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+        <div class="table-wrapper">
+
+            <table>
+
+                <thead>
+
+                    <tr>
+                        <th>Student</th>
+                        <th>Type</th>
+                        <th>Conduct</th>
+                        <th>Points</th>
+                        <th>Description</th>
+                        <th>Date</th>
+                    </tr>
+
+                </thead>
+
+                <tbody id="recordsBody">
+
+                    <tr>
+                        <td colspan="6" class="empty">
+                            Loading records...
+                        </td>
+                    </tr>
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </section>
+
+</main>
+
 
 <script>
 
-const SUPABASE_URL =
-    "https://deurewdqzvlioopuhikx.supabase.co";
+    const SUPABASE_URL =
+        "https://deurewdqzvlioopuhikx.supabase.co";
 
-const SUPABASE_KEY =
-    "sb_publishable_k2TUtDnGrc0Bupc7kmYEOQ__-vaiMig";
+    const SUPABASE_KEY =
+        "sb_publishable_k2TUtDnGrc0Bupc7kmYEOQ__-vaiMig";
 
-const supabaseClient =
-    window.supabase.createClient(
-        SUPABASE_URL,
-        SUPABASE_KEY
-    );
-
-
-/* ==========================================
-   LOAD STUDENTS
-========================================== */
-
-async function loadStudents() {
-
-    const select =
-        document.getElementById(
-            "studentSelect"
+    const supabaseClient =
+        window.supabase.createClient(
+            SUPABASE_URL,
+            SUPABASE_KEY
         );
 
 
-    const {
-        data: students,
-        error
-    } = await supabaseClient
-        .from("students")
-        .select("id, name")
-        .order("name");
-
-
-    if (error) {
-
-        console.error(
-            "Student loading error:",
-            error
-        );
-
-        select.innerHTML =
-            `<option value="">
-                Could not load students
-            </option>`;
-
-        return;
-    }
-
-
-    select.innerHTML =
-        `<option value="">
-            Select a student
-        </option>`;
-
-
-    students.forEach(student => {
-
-        const option =
-            document.createElement("option");
-
-        option.value =
-            student.id;
-
-        option.textContent =
-            student.name;
-
-        select.appendChild(option);
-
-    });
-
-}
-
-
-/* ==========================================
-   ADD CONDUCT RECORD
-========================================== */
-
-async function addConductRecord() {
-
-    const studentId =
-        document.getElementById(
-            "studentSelect"
-        ).value;
-
-
-    const type =
-        document.getElementById(
-            "conductType"
-        ).value;
-
-
-    const title =
-        document.getElementById(
-            "conductTitle"
-        ).value.trim();
-
-
-    const points =
-        Number(
-            document.getElementById(
-                "conductPoints"
-            ).value
-        );
-
-
-    const description =
-        document.getElementById(
-            "conductDescription"
-        ).value.trim();
-
+    const loading =
+        document.getElementById("loading");
 
     const message =
-        document.getElementById(
-            "message"
-        );
+        document.getElementById("message");
+
+    const studentSelect =
+        document.getElementById("student");
+
+    const conductForm =
+        document.getElementById("conductForm");
+
+    const clearButton =
+        document.getElementById("clearButton");
+
+    const recordsBody =
+        document.getElementById("recordsBody");
 
 
-    if (
-        !studentId ||
-        !title ||
-        !points
-    ) {
+    /* SHOW MESSAGE */
 
-        showMessage(
-            "Please select a student, enter a conduct behaviour and enter points.",
-            "error"
-        );
+    function showMessage(text, success = true) {
 
-        return;
+        message.textContent = text;
+
+        message.style.display = "block";
+
+        if (success) {
+
+            message.style.background = "#ecfdf5";
+            message.style.color = "#047857";
+
+        } else {
+
+            message.style.background = "#fef2f2";
+            message.style.color = "#b91c1c";
+
+        }
+
+        setTimeout(() => {
+
+            message.style.display = "none";
+
+        }, 4000);
     }
 
 
-    const {
-        error
-    } = await supabaseClient
-        .from("conduct_records")
-        .insert({
+    /* CHECK ADMIN */
 
-            student_id: studentId,
+    async function checkAdmin() {
 
-            type: type,
+        const {
+            data: {
+                user
+            },
+            error
+        } = await supabaseClient.auth.getUser();
 
-            title: title,
 
-            description: description,
+        if (error || !user) {
 
-            points: points
+            window.location.href = "login.html";
+
+            return false;
+        }
+
+
+        const {
+            data: profile,
+            error: profileError
+        } = await supabaseClient
+            .from("profiles")
+            .select("id, full_name, email, role")
+            .eq("id", user.id)
+            .single();
+
+
+        if (
+            profileError ||
+            !profile ||
+            profile.role !== "admin"
+        ) {
+
+            alert("You do not have administrator access.");
+
+            window.location.href =
+                "student-dashboard.html";
+
+            return false;
+        }
+
+
+        return true;
+    }
+
+
+    /* LOAD STUDENTS */
+
+    async function loadStudents() {
+
+        const {
+            data,
+            error
+        } = await supabaseClient
+            .from("students")
+            .select("id, name")
+            .order("name", {
+                ascending: true
+            });
+
+
+        if (error) {
+
+            console.error(
+                "Student loading error:",
+                error
+            );
+
+            showMessage(
+                "Could not load students.",
+                false
+            );
+
+            return;
+        }
+
+
+        studentSelect.innerHTML =
+            '<option value="">Select a student</option>';
+
+
+        data.forEach(student => {
+
+            const option =
+                document.createElement("option");
+
+            option.value = student.id;
+
+            option.textContent = student.name;
+
+            studentSelect.appendChild(option);
 
         });
+    }
 
 
-    if (error) {
+    /* LOAD CONDUCT RECORDS */
 
-        console.error(
-            "Conduct insert error:",
+    async function loadRecords() {
+
+        recordsBody.innerHTML = `
+            <tr>
+                <td colspan="6" class="empty">
+                    Loading records...
+                </td>
+            </tr>
+        `;
+
+
+        const {
+            data,
             error
-        );
-
-        showMessage(
-            "Could not add the conduct record.",
-            "error"
-        );
-
-        return;
-    }
-
-
-    showMessage(
-        "Conduct record added successfully.",
-        "success"
-    );
-
-
-    clearForm();
+        } = await supabaseClient
+            .from("conduct_records")
+            .select(`
+                id,
+                type,
+                title,
+                description,
+                points,
+                created_at,
+                students (
+                    name
+                )
+            `)
+            .order("created_at", {
+                ascending: false
+            });
 
 
-    loadRecords();
+        if (error) {
 
-}
+            console.error(
+                "Conduct loading error:",
+                error
+            );
 
+            recordsBody.innerHTML = `
+                <tr>
+                    <td colspan="6" class="empty">
+                        Could not load conduct records.
+                    </td>
+                </tr>
+            `;
 
-/* ==========================================
-   LOAD RECENT RECORDS
-========================================== */
-
-async function loadRecords() {
-
-    const container =
-        document.getElementById(
-            "recordsContainer"
-        );
-
-
-    const {
-        data: records,
-        error
-    } = await supabaseClient
-        .from("conduct_records")
-        .select(`
-            *,
-            students (
-                name
-            )
-        `)
-        .order("created_at", {
-            ascending: false
-        })
-        .limit(30);
+            return;
+        }
 
 
-    if (error) {
+        if (!data || data.length === 0) {
 
-        console.error(
-            "Records loading error:",
-            error
-        );
+            recordsBody.innerHTML = `
+                <tr>
+                    <td colspan="6" class="empty">
+                        No conduct records yet.
+                    </td>
+                </tr>
+            `;
 
-        container.innerHTML =
-            "Could not load conduct records.";
-
-        return;
-    }
-
-
-    if (!records.length) {
-
-        container.innerHTML =
-            "No conduct records yet.";
-
-        return;
-    }
+            return;
+        }
 
 
-    container.innerHTML =
-        records.map(record => {
-
-            const isPositive =
-                record.type === "positive";
+        recordsBody.innerHTML = "";
 
 
-            return `
+        data.forEach(record => {
 
-                <div class="record">
-
-                    <div class="record-header">
-
-                        <div>
-
-                            <div class="record-title
-                                ${isPositive
-                                    ? "positive"
-                                    : "negative"}">
-
-                                ${record.title}
-
-                            </div>
-
-                            <div class="record-info">
-
-                                Student:
-                                ${record.students?.name || "Unknown"}
-
-                            </div>
-
-                        </div>
+            const row =
+                document.createElement("tr");
 
 
-                        <div class="record-points
-                            ${isPositive
-                                ? "positive"
-                                : "negative"}">
-
-                            ${isPositive ? "+" : "-"}
-                            ${record.points}
-
-                        </div>
-
-                    </div>
+            const studentName =
+                record.students?.name ||
+                "Unknown student";
 
 
-                    <div class="record-info">
+            const date =
+                new Date(
+                    record.created_at
+                ).toLocaleDateString();
 
-                        ${record.description || ""}
 
-                    </div>
+            const typeClass =
+                record.type === "positive"
+                    ? "type-positive"
+                    : "type-negative";
 
-                </div>
+
+            const pointsClass =
+                record.type === "positive"
+                    ? "points-positive"
+                    : "points-negative";
+
+
+            const pointsText =
+                record.type === "positive"
+                    ? `+${record.points}`
+                    : `-${record.points}`;
+
+
+            row.innerHTML = `
+
+                <td>
+                    ${studentName}
+                </td>
+
+                <td class="${typeClass}">
+                    ${record.type}
+                </td>
+
+                <td>
+                    ${record.title}
+                </td>
+
+                <td class="${pointsClass}">
+                    ${pointsText}
+                </td>
+
+                <td>
+                    ${record.description || "-"}
+                </td>
+
+                <td>
+                    ${date}
+                </td>
 
             `;
 
-        }).join("");
 
-}
+            recordsBody.appendChild(row);
 
+        });
 
-/* ==========================================
-   CLEAR FORM
-========================================== */
-
-function clearForm() {
-
-    document.getElementById(
-        "studentSelect"
-    ).value = "";
+    }
 
 
-    document.getElementById(
-        "conductType"
-    ).value = "positive";
+    /* ADD RECORD */
+
+    conductForm.addEventListener(
+        "submit",
+        async function(event) {
+
+            event.preventDefault();
 
 
-    document.getElementById(
-        "conductTitle"
-    ).value = "";
+            const studentId =
+                studentSelect.value;
+
+            const type =
+                document.getElementById("type").value;
+
+            const title =
+                document.getElementById("title").value.trim();
+
+            const points =
+                parseInt(
+                    document.getElementById("points").value,
+                    10
+                );
+
+            const description =
+                document
+                    .getElementById("description")
+                    .value
+                    .trim();
 
 
-    document.getElementById(
-        "conductPoints"
-    ).value = "";
+            if (!studentId || !title || !points) {
+
+                showMessage(
+                    "Please complete all required fields.",
+                    false
+                );
+
+                return;
+            }
 
 
-    document.getElementById(
-        "conductDescription"
-    ).value = "";
+            const {
+                error
+            } = await supabaseClient
+                .from("conduct_records")
+                .insert({
 
-}
+                    student_id: studentId,
+
+                    type: type,
+
+                    title: title,
+
+                    description:
+                        description || null,
+
+                    points: points
+
+                });
 
 
-/* ==========================================
-   MESSAGE
-========================================== */
+            if (error) {
 
-function showMessage(
-    text,
-    type
-) {
+                console.error(
+                    "Insert error:",
+                    error
+                );
 
-    const message =
-        document.getElementById(
-            "message"
+                showMessage(
+                    "Could not add conduct record: " +
+                    error.message,
+                    false
+                );
+
+                return;
+            }
+
+
+            showMessage(
+                "Conduct record added successfully."
+            );
+
+
+            conductForm.reset();
+
+
+            await loadRecords();
+
+        }
+    );
+
+
+    /* CLEAR FORM */
+
+    clearButton.addEventListener(
+        "click",
+        function() {
+
+            conductForm.reset();
+
+        }
+    );
+
+
+    /* LOGOUT */
+
+    document
+        .getElementById("logoutButton")
+        .addEventListener(
+            "click",
+            async function(event) {
+
+                event.preventDefault();
+
+                await supabaseClient.auth.signOut();
+
+                window.location.href =
+                    "login.html";
+
+            }
         );
 
 
-    message.textContent =
-        text;
+    /* START PAGE */
+
+    async function startPage() {
+
+        const isAdmin =
+            await checkAdmin();
 
 
-    message.className =
-        "message " + type;
+        if (!isAdmin) {
+
+            return;
+
+        }
 
 
-    message.style.display =
-        "block";
+        await loadStudents();
+
+        await loadRecords();
 
 
-    setTimeout(() => {
-
-        message.style.display =
+        loading.style.display =
             "none";
-
-    }, 4000);
-
-}
+    }
 
 
-/* ==========================================
-   START
-========================================== */
-
-loadStudents();
-
-loadRecords();
+    startPage();
 
 </script>
 
