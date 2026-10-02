@@ -2027,17 +2027,28 @@ function getGradeClass(percentage) {
                 </div>
 
 
-                <div class="grade-section-average">
+               <div class="grade-section-average">
 
-                    <span>
-                        ${title} Average
-                    </span>
+    <div class="section-average-label">
 
-                    <strong>
-                        ${sectionAverage.toFixed(1)}%
-                    </strong>
+        <span>
+            ${title} Average
+        </span>
 
-                </div>
+        <small>
+            Based on ${sectionGrades.length}
+            assessment${sectionGrades.length === 1 ? "" : "s"}
+        </small>
+
+    </div>
+
+    <strong class="${getGradeClass(sectionAverage)}">
+
+        ${sectionAverage.toFixed(1)}%
+
+    </strong>
+
+</div>
 
             </div>
 
