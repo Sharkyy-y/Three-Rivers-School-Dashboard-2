@@ -2322,56 +2322,35 @@ async function loadStudentAttendance() {
     // UPDATE SUMMARY
     // ======================================
 
-    const attendancePercentageElement =
-        document.getElementById(
-            "attendancePercentage"
-        );
+   const attendancePercentageElement =
+    document.getElementById(
+        "attendancePercentage"
+    );
 
-    if (attendancePercentageElement) {
+if (attendancePercentageElement) {
 
-        attendancePercentageElement.textContent =
-            Math.round(
-                attendancePercentage
-            ) + "%";
-    }
+    attendancePercentageElement.textContent =
+        Math.round(attendancePercentage) + "%";
+}
 
 
-    const presentDaysElement =
-        document.getElementById(
-            "presentDays"
-        );
+// UPDATE ATTENDANCE PROGRESS BAR
 
-    if (presentDaysElement) {
+const attendanceProgressFill =
+    document.getElementById(
+        "attendanceProgressFill"
+    );
 
-        presentDaysElement.textContent =
-            presentDays;
-    }
+if (attendanceProgressFill) {
 
+    const safePercentage = Math.max(
+        0,
+        Math.min(attendancePercentage, 100)
+    );
 
-    const lateDaysElement =
-        document.getElementById(
-            "lateDays"
-        );
-
-    if (lateDaysElement) {
-
-        lateDaysElement.textContent =
-            lateDays;
-    }
-
-
-    const absentDaysElement =
-        document.getElementById(
-            "absentDays"
-        );
-
-    if (absentDaysElement) {
-
-        absentDaysElement.textContent =
-            absentDays;
-    }
-
-
+    attendanceProgressFill.style.width =
+        safePercentage + "%";
+}
     // ======================================
     // NO RECORDS
     // ======================================
