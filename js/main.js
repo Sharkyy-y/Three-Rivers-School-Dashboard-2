@@ -1805,6 +1805,23 @@ async function loadStudentGrades() {
     // CREATE SECTION
     // ======================================
 
+function getGradeClass(percentage) {
+
+    if (percentage >= 80) {
+        return "grade-excellent";
+    }
+
+    if (percentage >= 70) {
+        return "grade-good";
+    }
+
+    if (percentage >= 50) {
+        return "grade-average";
+    }
+
+    return "grade-low";
+}
+    
     function createGradeSection(
         title,
         sectionGrades
@@ -1934,7 +1951,7 @@ async function loadStudentGrades() {
                         </div>
 
 
-                        <div class="grade-percentage">
+                       <div class="grade-percentage ${getGradeClass(percentage)}">
 
                             ${Math.round(
                                 percentage
