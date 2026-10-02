@@ -1535,3 +1535,252 @@ body {
 
     color: #b91c1c;
 }
+
+/* ==========================================
+   GRADES PAGE
+========================================== */
+
+.grades-container {
+    display: flex;
+    flex-direction: column;
+    gap: 28px;
+}
+
+
+/* ==========================================
+   GRADE SECTION
+========================================== */
+
+.grade-section {
+    background: #ffffff;
+    border: 1px solid #e8ebf0;
+    border-radius: 18px;
+    overflow: hidden;
+    box-shadow: 0 4px 18px rgba(0, 0, 0, 0.04);
+}
+
+
+/* ==========================================
+   SECTION HEADER
+========================================== */
+
+.grade-section-header {
+    padding: 22px 24px;
+    border-bottom: 1px solid #edf0f4;
+    background: #fafbfc;
+}
+
+.grade-section-header h3 {
+    margin: 0;
+    font-size: 19px;
+    font-weight: 700;
+    color: #172033;
+}
+
+.grade-section-header p {
+    margin: 5px 0 0;
+    font-size: 13px;
+    color: #7b8494;
+}
+
+
+/* ==========================================
+   TABLE HEADER
+========================================== */
+
+.grade-table-header {
+    display: grid;
+    grid-template-columns: 1.4fr 1.4fr 0.8fr 0.8fr;
+    padding: 13px 24px;
+    background: #f6f7f9;
+    border-bottom: 1px solid #edf0f4;
+}
+
+.grade-table-header span {
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: #8a93a3;
+}
+
+
+/* ==========================================
+   GRADE ROW
+========================================== */
+
+.grade-row {
+    display: grid;
+    grid-template-columns: 1.4fr 1.4fr 0.8fr 0.8fr;
+    align-items: center;
+    padding: 18px 24px;
+    border-bottom: 1px solid #f0f2f5;
+    transition: background 0.2s ease;
+}
+
+.grade-row:last-child {
+    border-bottom: none;
+}
+
+.grade-row:hover {
+    background: #fafbfc;
+}
+
+
+/* ==========================================
+   SUBJECT
+========================================== */
+
+.grade-subject {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.grade-subject strong {
+    font-size: 14px;
+    color: #172033;
+}
+
+.grade-subject span {
+    font-size: 11px;
+    color: #929aaa;
+}
+
+
+/* ==========================================
+   ASSESSMENT
+========================================== */
+
+.grade-assessment {
+    font-size: 13px;
+    color: #596273;
+}
+
+
+/* ==========================================
+   SCORE
+========================================== */
+
+.grade-score {
+    font-size: 14px;
+    font-weight: 600;
+    color: #303949;
+}
+
+
+/* ==========================================
+   PERCENTAGE
+========================================== */
+
+.grade-percentage {
+    justify-self: start;
+    min-width: 58px;
+    padding: 7px 10px;
+    border-radius: 8px;
+    text-align: center;
+    font-size: 13px;
+    font-weight: 700;
+}
+
+
+/* ==========================================
+   PERFORMANCE COLORS
+========================================== */
+
+.grade-excellent {
+    background: #e8f7ee;
+    color: #16834a;
+}
+
+.grade-good {
+    background: #edf4ff;
+    color: #2867c7;
+}
+
+.grade-average {
+    background: #fff6df;
+    color: #a56a00;
+}
+
+.grade-low {
+    background: #ffeded;
+    color: #c03939;
+}
+
+
+/* ==========================================
+   SECTION AVERAGE
+========================================== */
+
+.grade-section-average {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    padding: 18px 24px;
+
+    background: #f8fafc;
+
+    border-top: 1px solid #edf0f4;
+}
+
+.grade-section-average span {
+    font-size: 13px;
+    font-weight: 600;
+    color: #596273;
+}
+
+.grade-section-average strong {
+    font-size: 20px;
+    font-weight: 800;
+    color: #172033;
+}
+
+
+/* ==========================================
+   LOADING MESSAGE
+========================================== */
+
+.loading-message {
+    padding: 30px;
+    text-align: center;
+    color: #7b8494;
+}
+
+
+/* ==========================================
+   MOBILE
+========================================== */
+
+@media (max-width: 800px) {
+
+    .grade-table-header {
+        display: none;
+    }
+
+    .grade-row {
+        grid-template-columns: 1fr auto;
+        gap: 12px;
+        padding: 18px;
+    }
+
+    .grade-subject {
+        grid-column: 1;
+    }
+
+    .grade-assessment {
+        grid-column: 1;
+    }
+
+    .grade-score {
+        grid-column: 1;
+    }
+
+    .grade-percentage {
+        grid-column: 2;
+        grid-row: 1 / span 3;
+        align-self: center;
+    }
+
+}
