@@ -1473,11 +1473,12 @@ async function loadStudentGrades() {
     }
 
 
+    // ======================================
     // STUDENT NAME
+    // ======================================
+
     const gradesStudentName =
-        document.getElementById(
-            "gradesStudentName"
-        );
+        document.getElementById("gradesStudentName");
 
     if (gradesStudentName) {
 
@@ -1486,11 +1487,12 @@ async function loadStudentGrades() {
     }
 
 
+    // ======================================
     // PROFILE INITIAL
+    // ======================================
+
     const gradesInitial =
-        document.getElementById(
-            "gradesInitial"
-        );
+        document.getElementById("gradesInitial");
 
     if (gradesInitial) {
 
@@ -1521,16 +1523,10 @@ async function loadStudentGrades() {
                 code
             )
         `)
-        .eq(
-            "student_id",
-            student.id
-        )
-        .order(
-            "created_at",
-            {
-                ascending: false
-            }
-        );
+        .eq("student_id", student.id)
+        .order("created_at", {
+            ascending: false
+        });
 
 
     console.log(
@@ -1552,9 +1548,7 @@ async function loadStudentGrades() {
 
     if (gradesError) {
 
-        console.error(
-            gradesError
-        );
+        console.error(gradesError);
 
         if (gradesContainer) {
 
@@ -1594,30 +1588,44 @@ async function loadStudentGrades() {
             `;
         }
 
-        document.getElementById(
-            "gradesAverage"
-        ).textContent = "—";
+        const gradesAverage =
+            document.getElementById(
+                "gradesAverage"
+            );
 
-        document.getElementById(
-            "assessmentCount"
-        ).textContent = "0";
+        const assessmentCount =
+            document.getElementById(
+                "assessmentCount"
+            );
 
-        document.getElementById(
-            "highestScore"
-        ).textContent = "—";
+        const highestScore =
+            document.getElementById(
+                "highestScore"
+            );
+
+
+        if (gradesAverage) {
+            gradesAverage.textContent = "—";
+        }
+
+        if (assessmentCount) {
+            assessmentCount.textContent = "0";
+        }
+
+        if (highestScore) {
+            highestScore.textContent = "—";
+        }
 
         return;
     }
 
 
     // ======================================
-    // CALCULATE SUMMARY
+    // CALCULATE OVERALL SUMMARY
     // ======================================
 
     let totalScore = 0;
-
     let totalMaximum = 0;
-
     let highestPercentage = 0;
 
 
@@ -1639,6 +1647,7 @@ async function loadStudentGrades() {
 
             const percentage =
                 (score / maxScore) * 100;
+
 
             if (
                 percentage >
@@ -1664,7 +1673,7 @@ async function loadStudentGrades() {
 
 
     // ======================================
-    // UPDATE SUMMARY
+    // UPDATE OVERALL SUMMARY
     // ======================================
 
     const gradesAverage =
@@ -1675,9 +1684,7 @@ async function loadStudentGrades() {
     if (gradesAverage) {
 
         gradesAverage.textContent =
-            Math.round(
-                overallAverage
-            ) + "%";
+            overallAverage.toFixed(1) + "%";
     }
 
 
@@ -1708,124 +1715,348 @@ async function loadStudentGrades() {
 
 
     // ======================================
-    // DISPLAY GRADES
+    // GRADE SECTIONS
     // ======================================
 
-    if (!gradesContainer) {
-        return;
-    }
+    const sections = {
+
+        opener: {
+            title: "Opener Exams",
+            grades: []
+        },
+
+        midterm: {
+            title: "Midterm Exams",
+            grades: []
+        },
+
+        endterm: {
+            title: "End Term Exams",
+            grades: []
+        },
+
+        internal: {
+            title: "Subject Internal Tests",
+            grades: []
+        }
+
+    };
 
 
-    gradesContainer.innerHTML = "";
-
+    // ======================================
+    // CLASSIFY ASSESSMENTS
+    // ======================================
 
     grades.forEach(function (grade) {
 
-        const gradeElement =
-            document.createElement("div");
+        const assessment =
+            String(
+                grade.assessment || ""
+            ).toLowerCase();
 
 
-        gradeElement.className =
-            "grade-row";
+        if (
+            assessment.includes("opener") ||
+            assessment.includes("opening")
+        ) {
+
+            sections.opener.grades.push(
+                grade
+            );
+
+        }
+
+        else if (
+            assessment.includes("midterm") ||
+            assessment.includes("mid-term") ||
+            assessment.includes("mid term")
+        ) {
+
+            sections.midterm.grades.push(
+                grade
+            );
+
+        }
+
+        else if (
+            assessment.includes("end term") ||
+            assessment.includes("end-term") ||
+            assessment.includes("endterm")
+        ) {
+
+            sections.endterm.grades.push(
+                grade
+            );
+
+        }
+
+        else {
+
+            sections.internal.grades.push(
+                grade
+            );
+
+        }
+
+    });
 
 
-        const subjectName =
-            grade.subjects &&
-            grade.subjects.name
-                ? grade.subjects.name
-                : "Subject";
+    // ======================================
+    // CREATE SECTION
+    // ======================================
 
+    function createGradeSection(
+        title,
+        sectionGrades
+    ) {
 
-        const subjectCode =
-            grade.subjects &&
-            grade.subjects.code
-                ? grade.subjects.code
-                : "";
+        if (
+            !sectionGrades ||
+            sectionGrades.length === 0
+        ) {
 
-
-        const score =
-            Number(grade.score);
-
-
-        const maxScore =
-            Number(grade.max_score);
-
-
-        let percentage = 0;
-
-
-        if (maxScore > 0) {
-
-            percentage =
-                (score / maxScore) * 100;
+            return "";
         }
 
 
-        gradeElement.innerHTML = `
+        let sectionScore = 0;
 
-            <div class="grade-subject">
-
-                <strong>
-                    ${subjectName}
-                </strong>
-
-                <span>
-                    ${subjectCode}
-                </span>
-
-            </div>
+        let sectionMaximum = 0;
 
 
-            <div class="grade-assessment">
+        sectionGrades.forEach(
+            function (grade) {
 
-                ${grade.assessment}
+                sectionScore +=
+                    Number(
+                        grade.score
+                    );
 
-            </div>
+                sectionMaximum +=
+                    Number(
+                        grade.max_score
+                    );
+
+            }
+        );
 
 
-            <div class="grade-score">
-
-                ${score} / ${maxScore}
-
-            </div>
+        let sectionAverage = 0;
 
 
-            <div class="grade-percentage">
+        if (
+            sectionMaximum > 0
+        ) {
 
-                ${Math.round(
-                    percentage
-                )}%
+            sectionAverage =
+                (
+                    sectionScore /
+                    sectionMaximum
+                ) * 100;
+        }
+
+
+        let rows = "";
+
+
+        sectionGrades.forEach(
+            function (grade) {
+
+                const subjectName =
+                    grade.subjects &&
+                    grade.subjects.name
+                        ? grade.subjects.name
+                        : "Subject";
+
+
+                const subjectCode =
+                    grade.subjects &&
+                    grade.subjects.code
+                        ? grade.subjects.code
+                        : "";
+
+
+                const score =
+                    Number(
+                        grade.score
+                    );
+
+
+                const maxScore =
+                    Number(
+                        grade.max_score
+                    );
+
+
+                let percentage = 0;
+
+
+                if (
+                    maxScore > 0
+                ) {
+
+                    percentage =
+                        (
+                            score /
+                            maxScore
+                        ) * 100;
+                }
+
+
+                rows += `
+
+                    <div class="grade-row">
+
+                        <div class="grade-subject">
+
+                            <strong>
+                                ${subjectName}
+                            </strong>
+
+                            <span>
+                                ${subjectCode}
+                            </span>
+
+                        </div>
+
+
+                        <div class="grade-assessment">
+
+                            ${grade.assessment}
+
+                        </div>
+
+
+                        <div class="grade-score">
+
+                            ${score} / ${maxScore}
+
+                        </div>
+
+
+                        <div class="grade-percentage">
+
+                            ${Math.round(
+                                percentage
+                            )}%
+
+                        </div>
+
+                    </div>
+
+                `;
+
+            }
+        );
+
+
+        return `
+
+            <div class="grade-section">
+
+                <div class="grade-section-header">
+
+                    <div>
+
+                        <h3>
+                            ${title}
+                        </h3>
+
+                        <p>
+                            ${sectionGrades.length}
+                            assessment${sectionGrades.length === 1 ? "" : "s"}
+                        </p>
+
+                    </div>
+
+                </div>
+
+
+                <div class="grade-table-header">
+
+                    <span>
+                        Subject
+                    </span>
+
+                    <span>
+                        Assessment
+                    </span>
+
+                    <span>
+                        Score
+                    </span>
+
+                    <span>
+                        Percentage
+                    </span>
+
+                </div>
+
+
+                <div class="grade-section-rows">
+
+                    ${rows}
+
+                </div>
+
+
+                <div class="grade-section-average">
+
+                    <span>
+                        ${title} Average
+                    </span>
+
+                    <strong>
+                        ${sectionAverage.toFixed(1)}%
+                    </strong>
+
+                </div>
 
             </div>
 
         `;
 
+    }
 
-        gradesContainer.appendChild(
-            gradeElement
-        );
 
-    });
+    // ======================================
+    // DISPLAY GRADES
+    // ======================================
+
+    if (!gradesContainer) {
+
+        return;
+    }
+
+
+    gradesContainer.innerHTML = `
+
+        ${createGradeSection(
+            sections.opener.title,
+            sections.opener.grades
+        )}
+
+        ${createGradeSection(
+            sections.midterm.title,
+            sections.midterm.grades
+        )}
+
+        ${createGradeSection(
+            sections.endterm.title,
+            sections.endterm.grades
+        )}
+
+        ${createGradeSection(
+            sections.internal.title,
+            sections.internal.grades
+        )}
+
+    `;
 
 
     console.log(
         "Student grades loaded successfully."
     );
-
-}
-
-
-// ==========================================
-// START GRADES PAGE
-// ==========================================
-
-if (
-    window.location.pathname.includes(
-        "grades.html"
-    )
-) {
-
-    loadStudentGrades();
 
 }
 
