@@ -1950,13 +1950,24 @@ function getGradeClass(percentage) {
                         </div>
 
 
-                       <div class="grade-percentage ${getGradeClass(percentage)}">
+                       <div class="grade-percentage-wrapper">
 
-                            ${Math.round(
-                                percentage
-                            )}%
+    <div class="grade-percentage-bar">
 
-                        </div>
+        <div
+            class="grade-percentage-fill ${getGradeClass(percentage)}"
+            style="width: ${Math.min(percentage, 100)}%"
+        ></div>
+
+    </div>
+
+    <div class="grade-percentage ${getGradeClass(percentage)}">
+
+        ${Math.round(percentage)}%
+
+    </div>
+
+</div>
 
                     </div>
 
