@@ -1,159 +1,877 @@
 <!DOCTYPE html>
+
 <html lang="en">
 
 <head>
 
-    <meta charset="UTF-8">
+```
+<meta charset="UTF-8">
 
-    <meta
-        name="viewport"
-        content="width=device-width, initial-scale=1.0"
-    >
+<meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+>
 
-    <title>My Profile | Student Management Portal</title>
+<title>My Profile | Student Management Portal</title>
 
-    <link
-        rel="stylesheet"
-        href="css/style.css"
-    >
+<link
+    rel="stylesheet"
+    href="css/style.css"
+>
 
-    <link
-        rel="stylesheet"
-        href="css/dashboard.css"
-    >
+<link
+    rel="stylesheet"
+    href="css/dashboard.css"
+>
+
+<style>
+
+    /* ==========================================
+       PROFILE PAGE
+    ========================================== */
+
+    .profile-hero {
+
+        position: relative;
+
+        overflow: hidden;
+
+        padding: 0;
+
+        border-radius: 18px;
+
+        background:
+            linear-gradient(
+                135deg,
+                #2563eb,
+                #4f46e5,
+                #7c3aed
+            );
+
+        color: white;
+
+        margin-bottom: 24px;
+
+    }
+
+
+    .profile-hero-background {
+
+        position: absolute;
+
+        inset: 0;
+
+        opacity: 0.15;
+
+        background:
+            radial-gradient(
+                circle at 85% 20%,
+                white 0,
+                transparent 30%
+            ),
+            radial-gradient(
+                circle at 15% 90%,
+                white 0,
+                transparent 25%
+            );
+
+    }
+
+
+    .profile-hero-content {
+
+        position: relative;
+
+        z-index: 1;
+
+        display: flex;
+
+        align-items: center;
+
+        gap: 28px;
+
+        padding: 35px;
+
+    }
+
+
+    /* STUDENT PHOTO */
+
+    .student-photo-wrapper {
+
+        flex-shrink: 0;
+
+        position: relative;
+
+    }
+
+
+    .student-photo {
+
+        width: 125px;
+
+        height: 125px;
+
+        border-radius: 50%;
+
+        background: rgba(255,255,255,0.18);
+
+        border: 5px solid rgba(255,255,255,0.85);
+
+        display: flex;
+
+        align-items: center;
+
+        justify-content: center;
+
+        overflow: hidden;
+
+        box-shadow:
+            0 10px 30px rgba(0,0,0,0.18);
+
+    }
+
+
+    .student-photo img {
+
+        width: 100%;
+
+        height: 100%;
+
+        object-fit: cover;
+
+        display: none;
+
+    }
+
+
+    .student-photo-placeholder {
+
+        font-size: 42px;
+
+        font-weight: 700;
+
+        color: white;
+
+    }
+
+
+    .photo-camera {
+
+        position: absolute;
+
+        right: 2px;
+
+        bottom: 2px;
+
+        width: 38px;
+
+        height: 38px;
+
+        border-radius: 50%;
+
+        border: 3px solid white;
+
+        background: #111827;
+
+        color: white;
+
+        display: flex;
+
+        align-items: center;
+
+        justify-content: center;
+
+        font-size: 16px;
+
+    }
+
+
+    .profile-hero-info h2 {
+
+        margin: 0 0 7px;
+
+        font-size: 30px;
+
+        font-weight: 700;
+
+    }
+
+
+    .profile-hero-info p {
+
+        margin: 0 0 15px;
+
+        opacity: 0.9;
+
+        font-size: 15px;
+
+    }
+
+
+    .profile-badges {
+
+        display: flex;
+
+        flex-wrap: wrap;
+
+        gap: 9px;
+
+    }
+
+
+    .profile-badge {
+
+        display: inline-flex;
+
+        align-items: center;
+
+        padding: 7px 12px;
+
+        border-radius: 999px;
+
+        background: rgba(255,255,255,0.17);
+
+        border: 1px solid rgba(255,255,255,0.25);
+
+        font-size: 13px;
+
+    }
+
+
+    /* INFORMATION AREA */
+
+    .profile-information {
+
+        display: grid;
+
+        grid-template-columns:
+            repeat(2, minmax(0, 1fr));
+
+        gap: 18px;
+
+    }
+
+
+    .profile-info-card {
+
+        position: relative;
+
+        padding: 22px;
+
+        border-radius: 15px;
+
+        background: white;
+
+        border: 1px solid #e5e7eb;
+
+        box-shadow:
+            0 5px 18px rgba(15,23,42,0.05);
+
+        transition:
+            transform 0.2s ease,
+            box-shadow 0.2s ease;
+
+    }
+
+
+    .profile-info-card:hover {
+
+        transform: translateY(-2px);
+
+        box-shadow:
+            0 9px 24px rgba(15,23,42,0.09);
+
+    }
+
+
+    .profile-info-icon {
+
+        width: 42px;
+
+        height: 42px;
+
+        display: flex;
+
+        align-items: center;
+
+        justify-content: center;
+
+        border-radius: 12px;
+
+        background: #eff6ff;
+
+        color: #2563eb;
+
+        font-size: 18px;
+
+        margin-bottom: 15px;
+
+    }
+
+
+    .profile-info-label {
+
+        display: block;
+
+        margin-bottom: 6px;
+
+        color: #64748b;
+
+        font-size: 13px;
+
+        font-weight: 600;
+
+    }
+
+
+    .profile-info-value {
+
+        display: block;
+
+        color: #111827;
+
+        font-size: 16px;
+
+        font-weight: 700;
+
+        word-break: break-word;
+
+    }
+
+
+    /* ACCOUNT CARD */
+
+    .profile-account-card {
+
+        margin-top: 24px;
+
+        padding: 24px;
+
+        border-radius: 16px;
+
+        background: #f8fafc;
+
+        border: 1px solid #e2e8f0;
+
+    }
+
+
+    .profile-account-header {
+
+        display: flex;
+
+        align-items: center;
+
+        gap: 12px;
+
+        margin-bottom: 18px;
+
+    }
+
+
+    .profile-account-header h3 {
+
+        margin: 0;
+
+        font-size: 18px;
+
+    }
+
+
+    .profile-account-header p {
+
+        margin: 4px 0 0;
+
+        color: #64748b;
+
+        font-size: 13px;
+
+    }
+
+
+    .account-status {
+
+        display: inline-flex;
+
+        align-items: center;
+
+        gap: 7px;
+
+        padding: 7px 12px;
+
+        border-radius: 999px;
+
+        background: #ecfdf5;
+
+        color: #047857;
+
+        font-size: 13px;
+
+        font-weight: 700;
+
+    }
+
+
+    .account-status-dot {
+
+        width: 7px;
+
+        height: 7px;
+
+        border-radius: 50%;
+
+        background: #10b981;
+
+    }
+
+
+    /* RESPONSIVE */
+
+    @media (max-width: 700px) {
+
+        .profile-hero-content {
+
+            flex-direction: column;
+
+            text-align: center;
+
+            padding: 30px 20px;
+
+        }
+
+
+        .profile-badges {
+
+            justify-content: center;
+
+        }
+
+
+        .profile-information {
+
+            grid-template-columns: 1fr;
+
+        }
+
+    }
+
+
+    @media (max-width: 480px) {
+
+        .student-photo {
+
+            width: 105px;
+
+            height: 105px;
+
+        }
+
+
+        .profile-hero-info h2 {
+
+            font-size: 24px;
+
+        }
+
+    }
+
+</style>
+```
 
 </head>
 
-
 <body>
 
-    <div class="dashboard-layout">
+```
+<div class="dashboard-layout">
 
 
-        <!-- SIDEBAR -->
-        <aside class="sidebar">
+    <!-- SIDEBAR -->
 
-            <div class="sidebar-logo">
+    <aside class="sidebar">
 
-                <h2>
-                    Student Portal
-                </h2>
+        <div class="sidebar-logo">
 
-                <span>
-                    Student Management
-                </span>
+            <h2>
+                Student Portal
+            </h2>
 
-            </div>
+            <span>
+                Student Management
+            </span>
+
+        </div>
 
 
-            <nav class="sidebar-nav">
+        <nav class="sidebar-nav">
 
-                <a href="student-dashboard.html">
-                    Dashboard
-                </a>
+            <a href="student-dashboard.html">
+                Dashboard
+            </a>
 
-                <a href="#">
-                    Timetable
-                </a>
+            <a href="timetable.html">
+                Timetable
+            </a>
 
-                <a href="#">
-                    Assignments
-                </a>
+            <a href="assignments.html">
+                Assignments
+            </a>
 
-                <a href="#">
-                    Grades
-                </a>
+            <a href="grades.html">
+                Grades
+            </a>
 
-                <a href="#">
-                    Attendance
-                </a>
+            <a href="attendance.html">
+                Attendance
+            </a>
 
-                <a href="#">
-                    Announcements
-                </a>
+            <a href="announcements.html">
+                Announcements
+            </a>
 
-                <a
-                    href="profile.html"
-                    class="active"
-                >
+            <a
+                href="profile.html"
+                class="active"
+            >
+                My Profile
+            </a>
+
+        </nav>
+
+
+        <div class="sidebar-bottom">
+
+            <button
+                id="logoutButton"
+                type="button"
+            >
+                Sign out
+            </button>
+
+        </div>
+
+    </aside>
+
+
+    <!-- MAIN CONTENT -->
+
+    <main class="main-content">
+
+
+        <!-- TOPBAR -->
+
+        <header class="topbar">
+
+            <div>
+
+                <p class="school-name">
+                    Student Management Portal
+                </p>
+
+                <h1>
                     My Profile
-                </a>
-
-            </nav>
-
-
-            <div class="sidebar-bottom">
-
-                <button
-                    id="logoutButton"
-                    type="button"
-                >
-                    Sign out
-                </button>
+                </h1>
 
             </div>
 
-        </aside>
+
+            <div class="student-profile">
+
+                <div class="profile-avatar">
+
+                    <span id="profileInitial">
+                        -
+                    </span>
+
+                </div>
+
+                <div class="profile-details">
+
+                    <strong id="topStudentName">
+                        Loading...
+                    </strong>
+
+                    <small>
+                        Student
+                    </small>
+
+                </div>
+
+            </div>
+
+        </header>
 
 
-        <!-- MAIN CONTENT -->
-        <main class="main-content">
+        <!-- PROFILE HERO -->
+
+        <section class="profile-hero">
+
+            <div class="profile-hero-background"></div>
 
 
-            <!-- TOP BAR -->
-            <header class="topbar">
+            <div class="profile-hero-content">
+
+
+                <!-- PHOTO -->
+
+                <div class="student-photo-wrapper">
+
+                    <div class="student-photo">
+
+                        <img
+                            id="studentProfilePhoto"
+                            src=""
+                            alt="Student profile photo"
+                        >
+
+                        <span
+                            id="studentPhotoPlaceholder"
+                            class="student-photo-placeholder"
+                        >
+                            -
+                        </span>
+
+                    </div>
+
+
+                    <div class="photo-camera">
+                        📷
+                    </div>
+
+                </div>
+
+
+                <!-- BASIC DETAILS -->
+
+                <div class="profile-hero-info">
+
+                    <h2 id="profileHeroName">
+                        Loading...
+                    </h2>
+
+                    <p>
+                        Student Profile
+                    </p>
+
+
+                    <div class="profile-badges">
+
+                        <span class="profile-badge">
+
+                            🎓
+
+                            <span id="profileHeroClass">
+                                Loading...
+                            </span>
+
+                        </span>
+
+
+                        <span class="profile-badge">
+
+                            🪪
+
+                            <span id="profileHeroAdmission">
+                                Loading...
+                            </span>
+
+                        </span>
+
+
+                        <span class="profile-badge">
+
+                            👤 Student
+                            
+                        </span>
+
+                    </div>
+
+                </div>
+
+
+            </div>
+
+        </section>
+
+
+        <!-- INFORMATION -->
+
+        <section class="dashboard-card">
+
+            <div class="card-header">
 
                 <div>
 
-                    <p class="school-name">
-                        Student Management Portal
+                    <h3>
+                        Student Information
+                    </h3>
+
+                    <p>
+                        Your registered school information
                     </p>
 
-                    <h1>
-                        My Profile
-                    </h1>
+                </div>
+
+            </div>
+
+
+            <div class="profile-information">
+
+
+                <!-- FULL NAME -->
+
+                <div class="profile-info-card">
+
+                    <div class="profile-info-icon">
+                        👤
+                    </div>
+
+                    <span class="profile-info-label">
+                        Full Name
+                    </span>
+
+                    <strong
+                        id="profileFullName"
+                        class="profile-info-value"
+                    >
+                        Loading...
+                    </strong>
 
                 </div>
 
 
-                <div class="student-profile">
+                <!-- ADMISSION NUMBER -->
 
-                    <div class="profile-avatar">
-                        <span id="profileInitial">
-                            -
+                <div class="profile-info-card">
+
+                    <div class="profile-info-icon">
+                        🪪
+                    </div>
+
+                    <span class="profile-info-label">
+                        Admission Number
+                    </span>
+
+                    <strong
+                        id="profileAdmissionNumber"
+                        class="profile-info-value"
+                    >
+                        Loading...
+                    </strong>
+
+                </div>
+
+
+                <!-- CLASS -->
+
+                <div class="profile-info-card">
+
+                    <div class="profile-info-icon">
+                        🎓
+                    </div>
+
+                    <span class="profile-info-label">
+                        Class
+                    </span>
+
+                    <strong
+                        id="profileClass"
+                        class="profile-info-value"
+                    >
+                        Loading...
+                    </strong>
+
+                </div>
+
+
+                <!-- EMAIL -->
+
+                <div class="profile-info-card">
+
+                    <div class="profile-info-icon">
+                        ✉️
+                    </div>
+
+                    <span class="profile-info-label">
+                        Email Address
+                    </span>
+
+                    <strong
+                        id="profileEmail"
+                        class="profile-info-value"
+                    >
+                        Loading...
+                    </strong>
+
+                </div>
+
+
+                <!-- ACCOUNT TYPE -->
+
+                <div class="profile-info-card">
+
+                    <div class="profile-info-icon">
+                        🔐
+                    </div>
+
+                    <span class="profile-info-label">
+                        Account Type
+                    </span>
+
+                    <strong
+                        class="profile-info-value"
+                    >
+                        Student
+                    </strong>
+
+                </div>
+
+
+                <!-- ACCOUNT STATUS -->
+
+                <div class="profile-info-card">
+
+                    <div class="profile-info-icon">
+                        ✓
+                    </div>
+
+                    <span class="profile-info-label">
+                        Account Status
+                    </span>
+
+                    <strong class="profile-info-value">
+
+                        <span class="account-status">
+
+                            <span class="account-status-dot"></span>
+
+                            Active
+
                         </span>
-                    </div>
 
-                    <div class="profile-details">
-
-                        <strong id="topStudentName">
-                            Loading...
-                        </strong>
-
-                        <small>
-                            Student
-                        </small>
-
-                    </div>
+                    </strong>
 
                 </div>
 
-            </header>
+
+            </div>
 
 
-            <!-- PROFILE CARD -->
-            <section class="dashboard-card">
+            <!-- ACCOUNT INFORMATION -->
 
-                <div class="card-header">
+            <div class="profile-account-card">
+
+                <div class="profile-account-header">
 
                     <div>
 
                         <h3>
-                            Student Information
+                            Account Information
                         </h3>
 
                         <p>
-                            Your registered school information
+                            Your student portal account
                         </p>
 
                     </div>
@@ -161,89 +879,37 @@
                 </div>
 
 
-                <div class="profile-grid">
+                <p style="
+                    margin: 0;
+                    color: #64748b;
+                    line-height: 1.7;
+                ">
+
+                    This information is managed by your
+                    school administrator. If any of your
+                    details are incorrect, please contact
+                    the school administration.
+
+                </p>
+
+            </div>
+
+        </section>
 
 
-                    <div class="profile-field">
+    </main>
 
-                        <span>
-                            Full Name
-                        </span>
-
-                        <strong id="profileFullName">
-                            Loading...
-                        </strong>
-
-                    </div>
+</div>
 
 
-                    <div class="profile-field">
+<!-- SUPABASE -->
 
-                        <span>
-                            Admission Number
-                        </span>
+<script
+    src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"
+></script>
 
-                        <strong id="profileAdmissionNumber">
-                            Loading...
-                        </strong>
-
-                    </div>
-
-
-                    <div class="profile-field">
-
-                        <span>
-                            Class
-                        </span>
-
-                        <strong id="profileClass">
-                            Loading...
-                        </strong>
-
-                    </div>
-
-
-                    <div class="profile-field">
-
-                        <span>
-                            Email Address
-                        </span>
-
-                        <strong id="profileEmail">
-                            Loading...
-                        </strong>
-
-                    </div>
-
-
-                    <div class="profile-field">
-
-                        <span>
-                            Account Type
-                        </span>
-
-                        <strong>
-                            Student
-                        </strong>
-
-                    </div>
-
-
-                </div>
-
-            </section>
-
-
-        </main>
-
-    </div>
-
-
-    <!-- SUPABASE -->
-
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-
-    <script src="js/main.js"></script>
+<script src="js/main.js"></script>
+```
 
 </body>
 
