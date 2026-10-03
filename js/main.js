@@ -1871,14 +1871,12 @@ console.log(
 // ==========================================
 
 if (
-window.location.pathname.includes(
-"profile.html"
-)
+    window.location.pathname.includes(
+        "profile.html"
+    )
 ) {
 
-```
-loadStudentProfile();
-```
+    loadStudentProfile();
 
 }
 
@@ -1910,8 +1908,6 @@ async function loadStudentGrades() {
 
         return;
     }
-
-
     // GET STUDENT
     const {
         data: student,
