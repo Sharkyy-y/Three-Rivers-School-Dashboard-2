@@ -201,7 +201,10 @@ if (profile.role === "admin") {
         "student-dashboard.html";
 
 }
-
+            
+        }
+    );
+}
 
 // ==========================================
 // LOAD STUDENT DASHBOARD
