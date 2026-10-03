@@ -1238,200 +1238,650 @@ if (
 
 }
 
-// ==========================================
-// STUDENT PROFILE
-// ==========================================
-
 async function loadStudentProfile() {
 
-    console.log(
-        "Loading student profile..."
+```
+console.log(
+    "Loading student profile..."
+);
+
+
+// ==========================================
+// GET CURRENT USER
+// ==========================================
+
+const {
+    data: {
+        user
+    },
+    error: userError
+} =
+    await supabaseClient.auth.getUser();
+
+
+if (
+    userError ||
+    !user
+) {
+
+    console.error(
+        "Profile user error:",
+        userError
     );
 
+    window.location.href =
+        "login.html";
 
-    // GET CURRENT USER
-    const {
-        data: {
-            user
-        },
-        error: userError
-    } =
-        await supabaseClient.auth.getUser();
+    return;
+}
 
 
-    // USER NOT LOGGED IN
-    if (
-        userError ||
-        !user
-    ) {
+// ==========================================
+// GET STUDENT
+// ==========================================
 
-        console.error(
-            "Profile user error:",
-            userError
-        );
-
-        window.location.href =
-            "login.html";
-
-        return;
-    }
-
-
-    // GET STUDENT
-    const {
-        data: student,
-        error: studentError
-    } =
-        await supabaseClient
-            .from("students")
-            .select("*")
-            .eq(
-                "user_id",
-                user.id
-            )
-            .single();
+const {
+    data: student,
+    error: studentError
+} =
+    await supabaseClient
+        .from("students")
+        .select("*")
+        .eq(
+            "user_id",
+            user.id
+        )
+        .single();
 
 
-    if (
-        studentError ||
-        !student
-    ) {
+if (
+    studentError ||
+    !student
+) {
 
-        console.error(
-            "Profile student error:",
-            studentError
-        );
-
-        return;
-    }
-
-
-    console.log(
-        "Profile student:",
-        student
+    console.error(
+        "Profile student error:",
+        studentError
     );
 
-
-    // ======================================
-    // FULL NAME
-    // ======================================
-
-    const profileFullName =
-        document.getElementById(
-            "profileFullName"
-        );
-
-    if (profileFullName) {
-
-        profileFullName.textContent =
-            student.full_name;
-    }
+    return;
+}
 
 
-    // ======================================
-    // ADMISSION NUMBER
-    // ======================================
-
-    const profileAdmissionNumber =
-        document.getElementById(
-            "profileAdmissionNumber"
-        );
-
-    if (profileAdmissionNumber) {
-
-        profileAdmissionNumber.textContent =
-            student.admission_number;
-    }
+console.log(
+    "Profile student:",
+    student
+);
 
 
-    // ======================================
-    // CLASS
-    // ======================================
+// ==========================================
+// FULL NAME
+// ==========================================
 
-    const profileClass =
-        document.getElementById(
-            "profileClass"
-        );
-
-    if (profileClass) {
-
-        profileClass.textContent =
-            student.class_name;
-    }
-
-
-    // ======================================
-    // EMAIL
-    // ======================================
-
-    const profileEmail =
-        document.getElementById(
-            "profileEmail"
-        );
-
-    if (profileEmail) {
-
-        profileEmail.textContent =
-            student.email ||
-            user.email ||
-            "Not available";
-    }
-
-
-    // ======================================
-    // TOP NAME
-    // ======================================
-
-    const topStudentName =
-        document.getElementById(
-            "topStudentName"
-        );
-
-    if (topStudentName) {
-
-        topStudentName.textContent =
-            student.full_name;
-    }
-
-
-    // ======================================
-    // PROFILE INITIAL
-    // ======================================
-
-    const profileInitial =
-        document.getElementById(
-            "profileInitial"
-        );
-
-    if (profileInitial) {
-
-        profileInitial.textContent =
-            student.full_name
-                .charAt(0)
-                .toUpperCase();
-    }
-
-
-    console.log(
-        "Student profile loaded successfully."
+const profileFullName =
+    document.getElementById(
+        "profileFullName"
     );
+
+if (profileFullName) {
+
+    profileFullName.textContent =
+        student.full_name;
 
 }
 
+
+// ==========================================
+// ADMISSION NUMBER
+// ==========================================
+
+const profileAdmissionNumber =
+    document.getElementById(
+        "profileAdmissionNumber"
+    );
+
+if (profileAdmissionNumber) {
+
+    profileAdmissionNumber.textContent =
+        student.admission_number;
+
+}
+
+
+// ==========================================
+// CLASS
+// ==========================================
+
+const profileClass =
+    document.getElementById(
+        "profileClass"
+    );
+
+if (profileClass) {
+
+    profileClass.textContent =
+        student.class_name;
+
+}
+
+
+// ==========================================
+// EMAIL
+// ==========================================
+
+const profileEmail =
+    document.getElementById(
+        "profileEmail"
+    );
+
+if (profileEmail) {
+
+    profileEmail.textContent =
+        student.email ||
+        user.email ||
+        "Not available";
+
+}
+
+
+// ==========================================
+// TOP NAME
+// ==========================================
+
+const topStudentName =
+    document.getElementById(
+        "topStudentName"
+    );
+
+if (topStudentName) {
+
+    topStudentName.textContent =
+        student.full_name;
+
+}
+
+
+// ==========================================
+// PROFILE INITIAL
+// ==========================================
+
+const profileInitial =
+    document.getElementById(
+        "profileInitial"
+    );
+
+if (profileInitial) {
+
+    profileInitial.textContent =
+        student.full_name
+            .charAt(0)
+            .toUpperCase();
+
+}
+
+
+// ==========================================
+// PROFILE HERO NAME
+// ==========================================
+
+const profileHeroName =
+    document.getElementById(
+        "profileHeroName"
+    );
+
+if (profileHeroName) {
+
+    profileHeroName.textContent =
+        student.full_name;
+
+}
+
+
+// ==========================================
+// PROFILE HERO CLASS
+// ==========================================
+
+const profileHeroClass =
+    document.getElementById(
+        "profileHeroClass"
+    );
+
+if (profileHeroClass) {
+
+    profileHeroClass.textContent =
+        student.class_name ||
+        "Student";
+
+}
+
+
+// ==========================================
+// PROFILE HERO ADMISSION
+// ==========================================
+
+const profileHeroAdmission =
+    document.getElementById(
+        "profileHeroAdmission"
+    );
+
+if (profileHeroAdmission) {
+
+    profileHeroAdmission.textContent =
+        student.admission_number ||
+        "Student";
+
+}
+
+
+// ==========================================
+// PROFILE PHOTO
+// ==========================================
+
+const photo =
+    document.getElementById(
+        "studentProfilePhoto"
+    );
+
+const placeholder =
+    document.getElementById(
+        "studentPhotoPlaceholder"
+    );
+
+
+if (
+    student.profile_photo_url &&
+    photo
+) {
+
+    photo.src =
+        student.profile_photo_url;
+
+    photo.style.display =
+        "block";
+
+
+    if (placeholder) {
+
+        placeholder.style.display =
+            "none";
+
+    }
+
+}
+
+else {
+
+    if (photo) {
+
+        photo.style.display =
+            "none";
+
+    }
+
+
+    if (placeholder) {
+
+        placeholder.textContent =
+            student.full_name
+                .charAt(0)
+                .toUpperCase();
+
+        placeholder.style.display =
+            "block";
+
+    }
+
+}
+
+
+// ==========================================
+// PROFILE PHOTO UPLOAD
+// ==========================================
+
+const cameraButton =
+    document.querySelector(
+        ".photo-camera"
+    );
+
+
+if (cameraButton) {
+
+    cameraButton.style.cursor =
+        "pointer";
+
+
+    cameraButton.onclick =
+        function () {
+
+            const existingInput =
+                document.getElementById(
+                    "profilePhotoInput"
+                );
+
+
+            if (existingInput) {
+
+                existingInput.click();
+
+                return;
+
+            }
+
+
+            const input =
+                document.createElement(
+                    "input"
+                );
+
+
+            input.type =
+                "file";
+
+            input.id =
+                "profilePhotoInput";
+
+            input.accept =
+                "image/jpeg,image/png,image/webp";
+
+            input.style.display =
+                "none";
+
+
+            document.body.appendChild(
+                input
+            );
+
+
+            input.addEventListener(
+                "change",
+                async function () {
+
+                    const file =
+                        input.files[0];
+
+
+                    if (!file) {
+
+                        return;
+
+                    }
+
+
+                    // ----------------------------------
+                    // CHECK FILE TYPE
+                    // ----------------------------------
+
+                    const allowedTypes = [
+                        "image/jpeg",
+                        "image/png",
+                        "image/webp"
+                    ];
+
+
+                    if (
+                        !allowedTypes.includes(
+                            file.type
+                        )
+                    ) {
+
+                        alert(
+                            "Please select a JPG, PNG, or WEBP image."
+                        );
+
+                        return;
+
+                    }
+
+
+                    // ----------------------------------
+                    // CHECK FILE SIZE
+                    // ----------------------------------
+
+                    const maxSize =
+                        5 *
+                        1024 *
+                        1024;
+
+
+                    if (
+                        file.size >
+                        maxSize
+                    ) {
+
+                        alert(
+                            "Please choose an image smaller than 5 MB."
+                        );
+
+                        return;
+
+                    }
+
+
+                    console.log(
+                        "Uploading profile photo..."
+                    );
+
+
+                    cameraButton.textContent =
+                        "⏳";
+
+
+                    cameraButton.style.pointerEvents =
+                        "none";
+
+
+                    try {
+
+                        // ----------------------------------
+                        // CREATE UNIQUE FILE NAME
+                        // ----------------------------------
+
+                        const fileExtension =
+                            file.name
+                                .split(".")
+                                .pop()
+                                .toLowerCase();
+
+
+                        const filePath =
+                            user.id +
+                            "/" +
+                            Date.now() +
+                            "." +
+                            fileExtension;
+
+
+                        // ----------------------------------
+                        // UPLOAD TO SUPABASE STORAGE
+                        // ----------------------------------
+
+                        const {
+                            error: uploadError
+                        } =
+                            await supabaseClient
+                                .storage
+                                .from(
+                                    "student-profile-photos"
+                                )
+                                .upload(
+                                    filePath,
+                                    file,
+                                    {
+                                        cacheControl:
+                                            "3600",
+
+                                        upsert:
+                                            false
+                                    }
+                                );
+
+
+                        if (uploadError) {
+
+                            console.error(
+                                "Photo upload error:",
+                                uploadError
+                            );
+
+                            alert(
+                                "Unable to upload your photo. Please try again."
+                            );
+
+                            return;
+
+                        }
+
+
+                        // ----------------------------------
+                        // GET PUBLIC URL
+                        // ----------------------------------
+
+                        const {
+                            data: publicUrlData
+                        } =
+                            supabaseClient
+                                .storage
+                                .from(
+                                    "student-profile-photos"
+                                )
+                                .getPublicUrl(
+                                    filePath
+                                );
+
+
+                        const photoUrl =
+                            publicUrlData
+                                .publicUrl;
+
+
+                        // ----------------------------------
+                        // SAVE URL TO STUDENT
+                        // ----------------------------------
+
+                        const {
+                            error: updateError
+                        } =
+                            await supabaseClient
+                                .from(
+                                    "students"
+                                )
+                                .update({
+                                    profile_photo_url:
+                                        photoUrl
+                                })
+                                .eq(
+                                    "id",
+                                    student.id
+                                );
+
+
+                        if (updateError) {
+
+                            console.error(
+                                "Profile photo database error:",
+                                updateError
+                            );
+
+                            alert(
+                                "The photo uploaded, but we couldn't save it to your profile."
+                            );
+
+                            return;
+
+                        }
+
+
+                        // ----------------------------------
+                        // DISPLAY NEW PHOTO
+                        // ----------------------------------
+
+                        if (photo) {
+
+                            photo.src =
+                                photoUrl;
+
+                            photo.style.display =
+                                "block";
+
+                        }
+
+
+                        if (placeholder) {
+
+                            placeholder.style.display =
+                                "none";
+
+                        }
+
+
+                        console.log(
+                            "Profile photo updated successfully."
+                        );
+
+
+                        alert(
+                            "Profile photo updated successfully!"
+                        );
+
+                    }
+
+                    catch (error) {
+
+                        console.error(
+                            "Profile photo error:",
+                            error
+                        );
+
+                        alert(
+                            "Something went wrong while uploading your photo."
+                        );
+
+                    }
+
+                    finally {
+
+                        cameraButton.textContent =
+                            "📷";
+
+                        cameraButton.style.pointerEvents =
+                            "auto";
+
+                    }
+
+                }
+            );
+
+
+            input.click();
+
+        };
+
+}
+
+
+console.log(
+    "Student profile loaded successfully."
+);
+```
+
+}
 
 // ==========================================
 // START PROFILE PAGE
 // ==========================================
 
 if (
-    window.location.pathname.includes(
-        "profile.html"
-    )
+window.location.pathname.includes(
+"profile.html"
+)
 ) {
 
-    loadStudentProfile();
+```
+loadStudentProfile();
+```
 
 }
+
 
 // ==========================================
 // STUDENT GRADES
