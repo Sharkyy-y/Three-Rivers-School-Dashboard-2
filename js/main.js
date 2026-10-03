@@ -1238,43 +1238,42 @@ if (
 
 }
 
+
 async function loadStudentProfile() {
 
-```
-console.log(
-    "Loading student profile..."
-);
-
-
-// ==========================================
-// GET CURRENT USER
-// ==========================================
-
-const {
-    data: {
-        user
-    },
-    error: userError
-} =
-    await supabaseClient.auth.getUser();
-
-
-if (
-    userError ||
-    !user
-) {
-
-    console.error(
-        "Profile user error:",
-        userError
+    console.log(
+        "Loading student profile..."
     );
 
-    window.location.href =
-        "login.html";
 
-    return;
-}
+    // ==========================================
+    // GET CURRENT USER
+    // ==========================================
 
+    const {
+        data: {
+            user
+        },
+        error: userError
+    } =
+        await supabaseClient.auth.getUser();
+
+
+    if (
+        userError ||
+        !user
+    ) {
+
+        console.error(
+            "Profile user error:",
+            userError
+        );
+
+        window.location.href =
+            "login.html";
+
+        return;
+    }
 
 // ==========================================
 // GET STUDENT
