@@ -683,36 +683,39 @@ async function loadStudentDashboard() {
                 .split("T")[0];
 
 
-        const {
-            data: assignments,
-            error: assignmentsError
-        } = await supabaseClient
-            .from("assignments")
-            .select(`
-                id,
-                title,
-                description,
-                due_date,
-                subjects (
-                    name
-                )
-            `)
-            .eq(
-                "class_name",
-                student.class_name
-            )
-            .gte(
-                "due_date",
-                todayISO
-            )
-            .order(
-                "due_date",
-                {
-                    ascending: true
-                }
-            );
+        const todayString =
+    new Date().toISOString().split("T")[0];
 
-
+const {
+    data: assignments,
+    error: assignmentsError
+} =
+    await supabaseClient
+        .from("assignments")
+        .select(`
+            id,
+            title,
+            description,
+            due_date,
+            subjects (
+                name,
+                code
+            )
+        `)
+        .eq(
+            "class_name",
+            student.class_name
+        )
+        .gte(
+            "due_date",
+            todayString
+        )
+        .order(
+            "due_date",
+            {
+                ascending: true
+            }
+        );
         console.log(
             "ASSIGNMENTS RESULT:",
             assignments
