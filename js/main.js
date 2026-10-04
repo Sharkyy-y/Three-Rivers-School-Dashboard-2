@@ -4824,57 +4824,80 @@ async function loadAdminStudents() {
 
     studentsContainer.innerHTML = "";
 
-    students.forEach(student => {
+   students.forEach(student => {
 
-        const card =
-            document.createElement("div");
+    const card = document.createElement("div");
 
-        card.className = "student-admin-card";
+    card.className = "student-admin-card";
 
-        card.innerHTML = `
-            <div class="student-admin-info">
+    const initials = student.full_name
+        ? student.full_name
+            .split(" ")
+            .map(name => name.charAt(0))
+            .slice(0, 2)
+            .join("")
+            .toUpperCase()
+        : "S";
 
-                <div class="student-admin-avatar">
-                    ${student.full_name
-                        ? student.full_name.charAt(0).toUpperCase()
-                        : "S"}
-                </div>
+    const photo = student.profile_photo_url
+        ? `
+            <img
+                src="${student.profile_photo_url}"
+                alt="${student.full_name || "Student"}"
+                class="student-admin-photo"
+            >
+        `
+        : `
+            <div class="student-admin-avatar">
+                ${initials}
+            </div>
+        `;
 
-                <div>
-                    <h3>
-                        ${student.full_name || "Unnamed Student"}
-                    </h3>
+    card.innerHTML = `
 
-                    <p>
-                        Admission:
+        <div class="student-admin-info">
+
+            ${photo}
+
+            <div class="student-admin-details">
+
+                <h3>
+                    ${student.full_name || "Unnamed Student"}
+                </h3>
+
+                <div class="student-meta">
+
+                    <span>
+                        <strong>Admission:</strong>
                         ${student.admission_number || "—"}
-                    </p>
+                    </span>
 
-                    <p>
-                        Class:
+                    <span>
+                        <strong>Class:</strong>
                         ${student.class_name || "—"}
-                    </p>
+                    </span>
 
-                    <p>
-                        Email:
-                        ${student.email || "—"}
-                    </p>
                 </div>
+
+                <p>
+                    ${student.email || "No email available"}
+                </p>
 
             </div>
 
-            <button
-                class="edit-student-button"
-                onclick="openEditStudentModal('${student.id}')"
-            >
-                Edit
-            </button>
-        `;
+        </div>
 
-        studentsContainer.appendChild(card);
-    });
-}
+        <button
+            class="edit-student-button"
+            onclick="openEditStudentModal('${student.id}')">
 
+            Edit
+
+        </button>
+    `;
+
+    studentsContainer.appendChild(card);
+});
 
 // ==========================================
 // OPEN EDIT STUDENT MODAL
