@@ -1861,7 +1861,6 @@ if (cameraButton) {
 console.log(
     "Student profile loaded successfully."
 );
-```
 
 }
 
