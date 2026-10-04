@@ -3018,3 +3018,52 @@ body {
         width: 100%;
     }
 }
+
+/* ==========================================
+   ADMIN STUDENTS - SIDEBAR LAYOUT FIX
+========================================== */
+
+.admin-students-page {
+    margin-left: 250px;
+    width: calc(100% - 250px);
+    box-sizing: border-box;
+    padding: 30px;
+    min-height: 100vh;
+}
+
+/* Make search box stay inside the page */
+
+.students-toolbar {
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
+}
+
+.student-search-wrapper {
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.student-search-wrapper input {
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
+}
+
+/* Keep student cards inside available space */
+
+#studentsContainer {
+    width: 100%;
+    box-sizing: border-box;
+}
+
+/* Smaller screens */
+
+@media (max-width: 1000px) {
+
+    .admin-students-page {
+        margin-left: 0;
+        width: 100%;
+        padding: 20px;
+    }
+}
