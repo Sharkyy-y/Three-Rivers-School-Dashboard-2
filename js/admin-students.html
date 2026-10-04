@@ -1,0 +1,445 @@
+```html
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Manage Students</title>
+
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/dashboard.css">
+
+</head>
+
+
+<body>
+
+<div class="dashboard-layout">
+
+
+    <!-- ============================= -->
+    <!-- SIDEBAR -->
+    <!-- ============================= -->
+
+    <aside class="sidebar">
+
+        <div class="sidebar-logo">
+
+            <h2>Student Portal</h2>
+
+            <p>Administration</p>
+
+        </div>
+
+
+        <nav class="sidebar-nav">
+
+            <a href="admin-dashboard.html">
+                🏠 Dashboard
+            </a>
+
+            <a href="admin-students.html" class="active">
+                👥 Students
+            </a>
+
+            <a href="#">
+                👨‍🏫 Teachers
+            </a>
+
+            <a href="#">
+                📚 Classes
+            </a>
+
+            <a href="#">
+                📊 Grades
+            </a>
+
+            <a href="#">
+                ✅ Attendance
+            </a>
+
+            <a href="#">
+                📝 Assignments
+            </a>
+
+            <a href="#">
+                ⚠️ Conduct
+            </a>
+
+            <a href="#">
+                📢 Announcements
+            </a>
+
+        </nav>
+
+
+        <button
+            id="logoutButton"
+            class="logout-button">
+
+            Logout
+
+        </button>
+
+    </aside>
+
+
+
+    <!-- ============================= -->
+    <!-- MAIN CONTENT -->
+    <!-- ============================= -->
+
+    <main class="dashboard-main">
+
+
+        <!-- HEADER -->
+
+        <header class="dashboard-header">
+
+            <div>
+
+                <h1>Students</h1>
+
+                <p>
+                    View and manage student information
+                </p>
+
+            </div>
+
+
+            <div class="admin-user">
+
+                <div class="avatar">
+                    A
+                </div>
+
+                <div>
+
+                    <strong>
+                        Administrator
+                    </strong>
+
+                    <small>
+                        Administrator
+                    </small>
+
+                </div>
+
+            </div>
+
+        </header>
+
+
+
+        <!-- ============================= -->
+        <!-- STUDENT MANAGEMENT -->
+        <!-- ============================= -->
+
+        <section class="dashboard-section">
+
+
+            <div class="section-header">
+
+                <div>
+
+                    <h2>
+                        Student Directory
+                    </h2>
+
+                    <p>
+                        Search for a student to view or edit their information.
+                    </p>
+
+                </div>
+
+
+                <button
+                    id="addStudentButton"
+                    class="primary-button">
+
+                    + Add Student
+
+                </button>
+
+            </div>
+
+
+
+            <!-- SEARCH -->
+
+            <div class="student-search">
+
+                <input
+                    type="text"
+                    id="studentSearch"
+                    placeholder="Search by name, admission number or class..."
+                    autocomplete="off"
+                >
+
+            </div>
+
+
+
+            <!-- STUDENT COUNT -->
+
+            <div class="student-count">
+
+                <span id="studentCount">
+                    Loading students...
+                </span>
+
+            </div>
+
+
+
+            <!-- STUDENT LIST -->
+
+            <div
+                id="studentsContainer"
+                class="students-container">
+
+                <p>
+                    Loading students...
+                </p>
+
+            </div>
+
+
+        </section>
+
+
+    </main>
+
+</div>
+
+
+
+<!-- ============================= -->
+<!-- EDIT STUDENT MODAL -->
+<!-- ============================= -->
+
+<div
+    id="studentModal"
+    class="student-modal">
+
+
+    <div class="student-modal-content">
+
+
+        <div class="student-modal-header">
+
+            <div>
+
+                <h2 id="modalTitle">
+                    Edit Student
+                </h2>
+
+                <p>
+                    Update the student's information below.
+                </p>
+
+            </div>
+
+
+            <button
+                id="closeStudentModal"
+                class="modal-close">
+
+                ×
+
+            </button>
+
+        </div>
+
+
+
+        <!-- FORM -->
+
+        <form id="studentForm">
+
+
+            <input
+                type="hidden"
+                id="studentId"
+            >
+
+
+            <div class="form-grid">
+
+
+                <!-- FULL NAME -->
+
+                <div class="form-group">
+
+                    <label for="studentFullName">
+                        Full Name
+                    </label>
+
+                    <input
+                        type="text"
+                        id="studentFullName"
+                        required
+                    >
+
+                </div>
+
+
+
+                <!-- ADMISSION NUMBER -->
+
+                <div class="form-group">
+
+                    <label for="studentAdmissionNumber">
+                        Admission Number
+                    </label>
+
+                    <input
+                        type="text"
+                        id="studentAdmissionNumber"
+                    >
+
+                </div>
+
+
+
+                <!-- CLASS -->
+
+                <div class="form-group">
+
+                    <label for="studentClass">
+                        Class
+                    </label>
+
+                    <input
+                        type="text"
+                        id="studentClass"
+                    >
+
+                </div>
+
+
+
+                <!-- EMAIL -->
+
+                <div class="form-group">
+
+                    <label for="studentEmail">
+                        Email
+                    </label>
+
+                    <input
+                        type="email"
+                        id="studentEmail"
+                    >
+
+                </div>
+
+
+
+                <!-- PHONE -->
+
+                <div class="form-group">
+
+                    <label for="studentPhone">
+                        Phone Number
+                    </label>
+
+                    <input
+                        type="text"
+                        id="studentPhone"
+                    >
+
+                </div>
+
+
+
+                <!-- GENDER -->
+
+                <div class="form-group">
+
+                    <label for="studentGender">
+                        Gender
+                    </label>
+
+                    <select id="studentGender">
+
+                        <option value="">
+                            Select gender
+                        </option>
+
+                        <option value="Male">
+                            Male
+                        </option>
+
+                        <option value="Female">
+                            Female
+                        </option>
+
+                    </select>
+
+                </div>
+
+
+            </div>
+
+
+
+            <!-- MESSAGE -->
+
+            <div
+                id="studentFormMessage"
+                class="form-message">
+            </div>
+
+
+
+            <!-- ACTIONS -->
+
+            <div class="modal-actions">
+
+                <button
+                    type="button"
+                    id="cancelStudentButton"
+                    class="secondary-button">
+
+                    Cancel
+
+                </button>
+
+
+                <button
+                    type="submit"
+                    class="primary-button">
+
+                    Save Changes
+
+                </button>
+
+            </div>
+
+
+        </form>
+
+
+    </div>
+
+</div>
+
+
+
+<!-- ============================= -->
+<!-- SUPABASE -->
+<!-- ============================= -->
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<script src="main.js"></script>
+
+
+</body>
+
+</html>
+```
