@@ -71,108 +71,245 @@
 
 
         <!-- MAIN CONTENT -->
-        <main class="dashboard-main">
+       
+       <main class="admin-dashboard-page">
 
-            <header class="dashboard-header">
+    <!-- HEADER -->
+    <section class="admin-dashboard-header">
 
-                <div>
-                    <h1>Admin Dashboard</h1>
-                    <p>Manage your school's student information</p>
+        <h1>Admin Dashboard</h1>
+
+        <p>
+            Manage your school, students, teachers and academic records
+            from one place.
+        </p>
+
+    </section>
+
+
+    <!-- STATISTICS -->
+    <section class="admin-stats-grid">
+
+        <div class="admin-stat-card">
+
+            <div class="admin-stat-icon">
+                S
+            </div>
+
+            <div>
+                <h2 id="totalStudents">0</h2>
+                <p>Total Students</p>
+            </div>
+
+        </div>
+
+
+        <div class="admin-stat-card">
+
+            <div class="admin-stat-icon">
+                T
+            </div>
+
+            <div>
+                <h2 id="totalTeachers">0</h2>
+                <p>Total Teachers</p>
+            </div>
+
+        </div>
+
+
+        <div class="admin-stat-card">
+
+            <div class="admin-stat-icon">
+                C
+            </div>
+
+            <div>
+                <h2 id="totalClasses">0</h2>
+                <p>Classes</p>
+            </div>
+
+        </div>
+
+
+        <div class="admin-stat-card">
+
+            <div class="admin-stat-icon">
+                A
+            </div>
+
+            <div>
+                <h2 id="totalAnnouncements">0</h2>
+                <p>Announcements</p>
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- QUICK ACTIONS -->
+    <section class="admin-dashboard-section">
+
+        <div class="admin-section-header">
+
+            <div>
+                <h2>Quick Actions</h2>
+                <p>
+                    Common administrative tasks
+                </p>
+            </div>
+
+        </div>
+
+
+        <div class="admin-quick-actions">
+
+            <a
+                href="admin-students.html"
+                class="admin-action-card">
+
+                <div class="admin-action-icon">
+                    S
                 </div>
 
-                <div class="admin-user">
-                    <div class="avatar">A</div>
-
-                    <div>
-                        <strong id="adminName">Administrator</strong>
-                        <small>Administrator</small>
-                    </div>
-                </div>
-
-            </header>
-
-
-            <!-- WELCOME -->
-            <section class="welcome-card">
-
-                <h2>Welcome to the Admin Portal 👋</h2>
+                <h3>Manage Students</h3>
 
                 <p>
-                    From here you can manage students, teachers,
-                    classes, grades, attendance and other school information.
+                    View, search and edit student information.
                 </p>
 
-            </section>
+            </a>
 
 
-            <!-- STATISTICS -->
-            <section class="stats-grid">
+            <a
+                href="#"
+                class="admin-action-card">
 
-                <div class="dashboard-card">
-                    <span>👥</span>
-                    <h3 id="totalStudents">0</h3>
-                    <p>Total Students</p>
+                <div class="admin-action-icon">
+                    T
                 </div>
 
-                <div class="dashboard-card">
-                    <span>👨‍🏫</span>
-                    <h3 id="totalTeachers">0</h3>
-                    <p>Total Teachers</p>
+                <h3>Manage Teachers</h3>
+
+                <p>
+                    Manage teachers and their school information.
+                </p>
+
+            </a>
+
+
+            <a
+                href="#"
+                class="admin-action-card">
+
+                <div class="admin-action-icon">
+                    G
                 </div>
 
-                <div class="dashboard-card">
-                    <span>📚</span>
-                    <h3 id="totalClasses">0</h3>
-                    <p>Total Classes</p>
+                <h3>Grades</h3>
+
+                <p>
+                    Manage student academic performance.
+                </p>
+
+            </a>
+
+
+            <a
+                href="#"
+                class="admin-action-card">
+
+                <div class="admin-action-icon">
+                    A
                 </div>
 
-                <div class="dashboard-card">
-                    <span>📢</span>
-                    <h3 id="totalAnnouncements">0</h3>
-                    <p>Announcements</p>
+                <h3>Announcements</h3>
+
+                <p>
+                    Create and manage school announcements.
+                </p>
+
+            </a>
+
+        </div>
+
+    </section>
+
+
+    <!-- RECENT ACTIVITY -->
+    <section class="admin-dashboard-section">
+
+        <div class="admin-section-header">
+
+            <div>
+                <h2>Recent Activity</h2>
+
+                <p>
+                    Latest activity across the school portal
+                </p>
+            </div>
+
+        </div>
+
+
+        <div class="admin-activity-list">
+
+            <div class="admin-activity-item">
+
+                <div class="admin-activity-dot"></div>
+
+                <div>
+                    <strong>
+                        Student management
+                    </strong>
+
+                    <span>
+                        Use the Students section to update student records.
+                    </span>
                 </div>
 
-            </section>
+            </div>
 
 
-            <!-- QUICK ACTIONS -->
-            <section class="dashboard-section">
+            <div class="admin-activity-item">
 
-                <div class="section-header">
-                    <div>
-                        <h2>Quick Actions</h2>
-                        <p>Common administrative tasks</p>
-                    </div>
+                <div class="admin-activity-dot"></div>
+
+                <div>
+                    <strong>
+                        Academic records
+                    </strong>
+
+                    <span>
+                        Grades and attendance can be managed from the portal.
+                    </span>
                 </div>
 
-
-                <div class="quick-actions">
-
-                    <a href="admin-students.html" class="quick-action">
-                        <span>👥</span>
-                        <strong>Manage Students</strong>
-                        <small>View and edit student information</small>
-                    </a>
+            </div>
 
 
-                    <a href="#" class="quick-action">
-                        <span>👨‍🏫</span>
-                        <strong>Manage Teachers</strong>
-                        <small>Add and manage teachers</small>
-                    </a>
+            <div class="admin-activity-item">
 
+                <div class="admin-activity-dot"></div>
 
-                    <a href="#" class="quick-action">
-                        <span>📢</span>
-                        <strong>Announcements</strong>
-                        <small>Create school announcements</small>
-                    </a>
+                <div>
+                    <strong>
+                        School communication
+                    </strong>
 
+                    <span>
+                        Announcements keep students and staff informed.
+                    </span>
                 </div>
 
-            </section>
+            </div>
 
-        </main>
+        </div>
+
+    </section>
+
+</main>
 
     </div>
 
