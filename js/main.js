@@ -193,7 +193,7 @@ if (loginForm) {
 if (profile.role === "admin") {
 
     window.location.href =
-        "admin-conduct.html";
+        "admin-dashboard.html";
 
 } else {
 
