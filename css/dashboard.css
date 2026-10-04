@@ -2721,3 +2721,280 @@ body {
         align-items: flex-start;
     }
 }
+
+/* ==========================================
+   ADMIN DASHBOARD - GREEN THEME
+========================================== */
+
+.admin-dashboard-page {
+    padding: 30px;
+    background: #f5f7f6;
+    min-height: 100vh;
+}
+
+/* ==========================================
+   ADMIN HEADER
+========================================== */
+
+.admin-dashboard-header {
+    background: linear-gradient(
+        135deg,
+        #0f5132,
+        #198754
+    );
+    color: white;
+    padding: 30px;
+    border-radius: 20px;
+    margin-bottom: 25px;
+    box-shadow: 0 10px 30px rgba(25, 135, 84, 0.18);
+}
+
+.admin-dashboard-header h1 {
+    margin: 0;
+    font-size: 30px;
+    font-weight: 700;
+}
+
+.admin-dashboard-header p {
+    margin: 8px 0 0;
+    opacity: 0.88;
+    font-size: 14px;
+}
+
+/* ==========================================
+   STATISTICS
+========================================== */
+
+.admin-stats-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 18px;
+    margin-bottom: 28px;
+}
+
+.admin-stat-card {
+    background: white;
+    border-radius: 16px;
+    padding: 22px;
+    border: 1px solid #e5ebe7;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    transition: 0.2s ease;
+}
+
+.admin-stat-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.06);
+}
+
+.admin-stat-icon {
+    width: 52px;
+    height: 52px;
+    border-radius: 14px;
+    background: #e8f5ee;
+    color: #198754;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 22px;
+    font-weight: 700;
+}
+
+.admin-stat-card h2 {
+    margin: 0;
+    font-size: 26px;
+    color: #17201b;
+}
+
+.admin-stat-card p {
+    margin: 4px 0 0;
+    color: #7b847f;
+    font-size: 13px;
+}
+
+/* ==========================================
+   DASHBOARD SECTIONS
+========================================== */
+
+.admin-dashboard-section {
+    background: white;
+    border-radius: 18px;
+    padding: 24px;
+    border: 1px solid #e5ebe7;
+    margin-bottom: 24px;
+}
+
+.admin-section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.admin-section-header h2 {
+    margin: 0;
+    font-size: 19px;
+    color: #17201b;
+}
+
+.admin-section-header p {
+    margin: 5px 0 0;
+    color: #7b847f;
+    font-size: 13px;
+}
+
+/* ==========================================
+   QUICK ACTIONS
+========================================== */
+
+.admin-quick-actions {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 15px;
+}
+
+.admin-action-card {
+    border: 1px solid #e5ebe7;
+    background: #fbfcfb;
+    border-radius: 14px;
+    padding: 20px;
+    text-decoration: none;
+    color: #17201b;
+    transition: 0.2s ease;
+}
+
+.admin-action-card:hover {
+    border-color: #198754;
+    background: #f3faf6;
+    transform: translateY(-2px);
+}
+
+.admin-action-icon {
+    width: 42px;
+    height: 42px;
+    border-radius: 11px;
+    background: #e8f5ee;
+    color: #198754;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 13px;
+    font-weight: 700;
+}
+
+.admin-action-card h3 {
+    margin: 0 0 5px;
+    font-size: 15px;
+}
+
+.admin-action-card p {
+    margin: 0;
+    color: #7b847f;
+    font-size: 12px;
+    line-height: 1.5;
+}
+
+/* ==========================================
+   RECENT ACTIVITY
+========================================== */
+
+.admin-activity-list {
+    display: flex;
+    flex-direction: column;
+}
+
+.admin-activity-item {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 15px 0;
+    border-bottom: 1px solid #edf0ee;
+}
+
+.admin-activity-item:last-child {
+    border-bottom: none;
+}
+
+.admin-activity-dot {
+    width: 10px;
+    height: 10px;
+    background: #198754;
+    border-radius: 50%;
+}
+
+.admin-activity-item strong {
+    font-size: 14px;
+}
+
+.admin-activity-item span {
+    display: block;
+    margin-top: 3px;
+    font-size: 12px;
+    color: #858d88;
+}
+
+/* ==========================================
+   SIDEBAR GREEN THEME
+========================================== */
+
+.sidebar {
+    background: #10251a !important;
+}
+
+.sidebar a {
+    color: #cbd8d0 !important;
+}
+
+.sidebar a:hover {
+    background: rgba(25, 135, 84, 0.18) !important;
+    color: white !important;
+}
+
+.sidebar a.active {
+    background: #198754 !important;
+    color: white !important;
+}
+
+.sidebar .logo,
+.sidebar .brand {
+    color: white !important;
+}
+
+/* ==========================================
+   ADMIN RESPONSIVE
+========================================== */
+
+@media (max-width: 1000px) {
+
+    .admin-stats-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .admin-quick-actions {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 650px) {
+
+    .admin-dashboard-page {
+        padding: 18px;
+    }
+
+    .admin-stats-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .admin-quick-actions {
+        grid-template-columns: 1fr;
+    }
+
+    .admin-dashboard-header {
+        padding: 22px;
+    }
+
+    .admin-dashboard-header h1 {
+        font-size: 24px;
+    }
+}
