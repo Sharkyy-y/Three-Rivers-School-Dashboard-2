@@ -3408,3 +3408,114 @@ body {
     }
 
 }
+
+/* ==========================================
+   ADMIN STUDENT CARD - ENHANCED
+========================================== */
+
+.student-admin-card {
+    min-height: 82px;
+}
+
+.student-admin-info {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    min-width: 0;
+}
+
+.student-admin-avatar,
+.student-admin-photo {
+    width: 52px;
+    height: 52px;
+    min-width: 52px;
+    border-radius: 50%;
+}
+
+.student-admin-avatar {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #e8f5ee;
+    color: #198754;
+    font-size: 17px;
+    font-weight: 700;
+}
+
+.student-admin-photo {
+    object-fit: cover;
+    border: 2px solid #e8f5ee;
+}
+
+.student-admin-details {
+    min-width: 0;
+}
+
+.student-admin-details h3 {
+    margin: 0 0 7px;
+    font-size: 15px;
+    color: #17201b;
+}
+
+.student-meta {
+    display: flex;
+    gap: 16px;
+    flex-wrap: wrap;
+    margin-bottom: 5px;
+}
+
+.student-meta span {
+    font-size: 12px;
+    color: #68736d;
+}
+
+.student-meta strong {
+    color: #344139;
+}
+
+.student-admin-details p {
+    margin: 0;
+    font-size: 12px;
+    color: #8a938e;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    max-width: 450px;
+}
+
+.edit-student-button {
+    flex-shrink: 0;
+    background: #e8f5ee;
+    color: #198754;
+    border: none;
+    padding: 9px 15px;
+    border-radius: 9px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+.edit-student-button:hover {
+    background: #198754;
+    color: white;
+}
+
+@media (max-width: 600px) {
+
+    .student-admin-card {
+        align-items: flex-start;
+    }
+
+    .student-admin-info {
+        align-items: flex-start;
+    }
+
+    .student-meta {
+        flex-direction: column;
+        gap: 3px;
+    }
+
+    .student-admin-details p {
+        max-width: 180px;
+    }
+}
