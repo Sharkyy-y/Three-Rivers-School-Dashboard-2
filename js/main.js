@@ -4774,3 +4774,359 @@ if (
 if (document.getElementById("assignmentsPageContainer")) {
     loadAssignmentsPage();
 }
+
+// ==========================================
+// ADMIN - STUDENT MANAGEMENT
+// ==========================================
+
+async function loadAdminStudents() {
+
+    const studentsContainer =
+        document.getElementById("studentsContainer");
+
+    const studentCount =
+        document.getElementById("studentCount");
+
+    if (!studentsContainer) return;
+
+    studentsContainer.innerHTML =
+        "<p>Loading students...</p>";
+
+    const { data: students, error } =
+        await supabaseClient
+            .from("students")
+            .select("*")
+            .order("full_name", { ascending: true });
+
+    if (error) {
+
+        console.error(
+            "ADMIN STUDENTS ERROR:",
+            error
+        );
+
+        studentsContainer.innerHTML =
+            "<p>Unable to load students.</p>";
+
+        return;
+    }
+
+    studentCount.textContent =
+        `${students.length} student${students.length === 1 ? "" : "s"}`;
+
+    if (students.length === 0) {
+
+        studentsContainer.innerHTML =
+            "<p>No students found.</p>";
+
+        return;
+    }
+
+    studentsContainer.innerHTML = "";
+
+    students.forEach(student => {
+
+        const card =
+            document.createElement("div");
+
+        card.className = "student-admin-card";
+
+        card.innerHTML = `
+            <div class="student-admin-info">
+
+                <div class="student-admin-avatar">
+                    ${student.full_name
+                        ? student.full_name.charAt(0).toUpperCase()
+                        : "S"}
+                </div>
+
+                <div>
+                    <h3>
+                        ${student.full_name || "Unnamed Student"}
+                    </h3>
+
+                    <p>
+                        Admission:
+                        ${student.admission_number || "—"}
+                    </p>
+
+                    <p>
+                        Class:
+                        ${student.class_name || "—"}
+                    </p>
+
+                    <p>
+                        Email:
+                        ${student.email || "—"}
+                    </p>
+                </div>
+
+            </div>
+
+            <button
+                class="edit-student-button"
+                onclick="openEditStudentModal('${student.id}')"
+            >
+                Edit
+            </button>
+        `;
+
+        studentsContainer.appendChild(card);
+    });
+}
+
+
+// ==========================================
+// OPEN EDIT STUDENT MODAL
+// ==========================================
+
+async function openEditStudentModal(studentId) {
+
+    const { data: student, error } =
+        await supabaseClient
+            .from("students")
+            .select("*")
+            .eq("id", studentId)
+            .single();
+
+    if (error) {
+
+        console.error(
+            "STUDENT LOAD ERROR:",
+            error
+        );
+
+        alert("Unable to load student.");
+
+        return;
+    }
+
+    document.getElementById("studentId").value =
+        student.id;
+
+    document.getElementById("studentFullName").value =
+        student.full_name || "";
+
+    document.getElementById("studentAdmissionNumber").value =
+        student.admission_number || "";
+
+    document.getElementById("studentClass").value =
+        student.class_name || "";
+
+    document.getElementById("studentEmail").value =
+        student.email || "";
+
+    // Only fill these if the fields exist
+    const phoneInput =
+        document.getElementById("studentPhone");
+
+    if (phoneInput) {
+        phoneInput.value =
+            student.phone || "";
+    }
+
+    const genderInput =
+        document.getElementById("studentGender");
+
+    if (genderInput) {
+        genderInput.value =
+            student.gender || "";
+    }
+
+    document.getElementById("studentModal")
+        .classList.add("active");
+}
+
+
+// ==========================================
+// CLOSE STUDENT MODAL
+// ==========================================
+
+function closeStudentModal() {
+
+    const modal =
+        document.getElementById("studentModal");
+
+    if (modal) {
+        modal.classList.remove("active");
+    }
+}
+
+
+// ==========================================
+// SAVE STUDENT
+// ==========================================
+
+const studentForm =
+    document.getElementById("studentForm");
+
+if (studentForm) {
+
+    studentForm.addEventListener(
+        "submit",
+        async function(event) {
+
+            event.preventDefault();
+
+            const studentId =
+                document.getElementById("studentId").value;
+
+            const message =
+                document.getElementById("studentFormMessage");
+
+            const updatedStudent = {
+
+                full_name:
+                    document.getElementById(
+                        "studentFullName"
+                    ).value.trim(),
+
+                admission_number:
+                    document.getElementById(
+                        "studentAdmissionNumber"
+                    ).value.trim(),
+
+                class_name:
+                    document.getElementById(
+                        "studentClass"
+                    ).value.trim(),
+
+                email:
+                    document.getElementById(
+                        "studentEmail"
+                    ).value.trim()
+            };
+
+
+            // Add optional fields only if they exist
+            const phoneInput =
+                document.getElementById("studentPhone");
+
+            if (phoneInput) {
+                updatedStudent.phone =
+                    phoneInput.value.trim();
+            }
+
+            const genderInput =
+                document.getElementById("studentGender");
+
+            if (genderInput) {
+                updatedStudent.gender =
+                    genderInput.value;
+            }
+
+
+            message.textContent =
+                "Saving...";
+
+            const { error } =
+                await supabaseClient
+                    .from("students")
+                    .update(updatedStudent)
+                    .eq("id", studentId);
+
+            if (error) {
+
+                console.error(
+                    "STUDENT UPDATE ERROR:",
+                    error
+                );
+
+                message.textContent =
+                    "Error saving student.";
+
+                return;
+            }
+
+            message.textContent =
+                "Student updated successfully.";
+
+            await loadAdminStudents();
+
+            setTimeout(() => {
+                closeStudentModal();
+            }, 700);
+        }
+    );
+}
+
+
+// ==========================================
+// SEARCH STUDENTS
+// ==========================================
+
+const studentSearch =
+    document.getElementById("studentSearch");
+
+if (studentSearch) {
+
+    studentSearch.addEventListener(
+        "input",
+        async function() {
+
+            const search =
+                this.value.trim().toLowerCase();
+
+            const cards =
+                document.querySelectorAll(
+                    ".student-admin-card"
+                );
+
+            cards.forEach(card => {
+
+                const text =
+                    card.textContent.toLowerCase();
+
+                card.style.display =
+                    text.includes(search)
+                        ? ""
+                        : "none";
+            });
+        }
+    );
+}
+
+
+// ==========================================
+// ADMIN STUDENTS PAGE STARTUP
+// ==========================================
+
+if (
+    window.location.pathname.includes(
+        "admin-students.html"
+    )
+) {
+    loadAdminStudents();
+}
+
+
+// ==========================================
+// MODAL BUTTONS
+// ==========================================
+
+const closeStudentButton =
+    document.getElementById(
+        "closeStudentModal"
+    );
+
+if (closeStudentButton) {
+
+    closeStudentButton.addEventListener(
+        "click",
+        closeStudentModal
+    );
+}
+
+
+const cancelStudentButton =
+    document.getElementById(
+        "cancelStudentButton"
+    );
+
+if (cancelStudentButton) {
+
+    cancelStudentButton.addEventListener(
+        "click",
+        closeStudentModal
+    );
+}
