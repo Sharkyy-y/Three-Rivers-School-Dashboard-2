@@ -1,0 +1,188 @@
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Admin Portal</title>
+
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/dashboard.css">
+</head>
+
+<body>
+
+    <div class="dashboard-layout">
+
+        <!-- SIDEBAR -->
+        <aside class="sidebar">
+
+            <div class="sidebar-logo">
+                <h2>Student Portal</h2>
+                <p>Administration</p>
+            </div>
+
+            <nav class="sidebar-nav">
+
+                <a href="admin-dashboard.html" class="active">
+                    🏠 Dashboard
+                </a>
+
+                <a href="admin-students.html">
+                    👥 Students
+                </a>
+
+                <a href="#">
+                    👨‍🏫 Teachers
+                </a>
+
+                <a href="#">
+                    📚 Classes
+                </a>
+
+                <a href="#">
+                    📊 Grades
+                </a>
+
+                <a href="#">
+                    ✅ Attendance
+                </a>
+
+                <a href="#">
+                    📝 Assignments
+                </a>
+
+                <a href="#">
+                    ⚠️ Conduct
+                </a>
+
+                <a href="#">
+                    📢 Announcements
+                </a>
+
+            </nav>
+
+            <button id="logoutButton" class="logout-button">
+                Logout
+            </button>
+
+        </aside>
+
+
+        <!-- MAIN CONTENT -->
+        <main class="dashboard-main">
+
+            <header class="dashboard-header">
+
+                <div>
+                    <h1>Admin Dashboard</h1>
+                    <p>Manage your school's student information</p>
+                </div>
+
+                <div class="admin-user">
+                    <div class="avatar">A</div>
+
+                    <div>
+                        <strong id="adminName">Administrator</strong>
+                        <small>Administrator</small>
+                    </div>
+                </div>
+
+            </header>
+
+
+            <!-- WELCOME -->
+            <section class="welcome-card">
+
+                <h2>Welcome to the Admin Portal 👋</h2>
+
+                <p>
+                    From here you can manage students, teachers,
+                    classes, grades, attendance and other school information.
+                </p>
+
+            </section>
+
+
+            <!-- STATISTICS -->
+            <section class="stats-grid">
+
+                <div class="dashboard-card">
+                    <span>👥</span>
+                    <h3 id="totalStudents">0</h3>
+                    <p>Total Students</p>
+                </div>
+
+                <div class="dashboard-card">
+                    <span>👨‍🏫</span>
+                    <h3 id="totalTeachers">0</h3>
+                    <p>Total Teachers</p>
+                </div>
+
+                <div class="dashboard-card">
+                    <span>📚</span>
+                    <h3 id="totalClasses">0</h3>
+                    <p>Total Classes</p>
+                </div>
+
+                <div class="dashboard-card">
+                    <span>📢</span>
+                    <h3 id="totalAnnouncements">0</h3>
+                    <p>Announcements</p>
+                </div>
+
+            </section>
+
+
+            <!-- QUICK ACTIONS -->
+            <section class="dashboard-section">
+
+                <div class="section-header">
+                    <div>
+                        <h2>Quick Actions</h2>
+                        <p>Common administrative tasks</p>
+                    </div>
+                </div>
+
+
+                <div class="quick-actions">
+
+                    <a href="admin-students.html" class="quick-action">
+                        <span>👥</span>
+                        <strong>Manage Students</strong>
+                        <small>View and edit student information</small>
+                    </a>
+
+
+                    <a href="#" class="quick-action">
+                        <span>👨‍🏫</span>
+                        <strong>Manage Teachers</strong>
+                        <small>Add and manage teachers</small>
+                    </a>
+
+
+                    <a href="#" class="quick-action">
+                        <span>📢</span>
+                        <strong>Announcements</strong>
+                        <small>Create school announcements</small>
+                    </a>
+
+                </div>
+
+            </section>
+
+        </main>
+
+    </div>
+
+
+    <!-- SUPABASE -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+    <!-- YOUR MAIN JAVASCRIPT -->
+    <script src="main.js"></script>
+
+</body>
+</html>
+```
