@@ -94,24 +94,83 @@
 
 <main class="admin-students-page">
 
-    <div class="students-page-header">
+    <!-- PAGE HEADER -->
+    <div class="students-hero">
 
-        <div>
-            <h1>Students</h1>
-            <p>Manage student information and records.</p>
+        <div class="students-hero-left">
+
+            <div class="students-icon">
+                S
+            </div>
+
+            <div>
+                <h1>Students</h1>
+                <p>
+                    View and manage student information
+                </p>
+            </div>
+
         </div>
 
-        <button
-            class="add-student-button"
-            id="addStudentButton">
-            + Add Student
-        </button>
+
+        <div class="administrator-badge">
+
+            <div class="administrator-avatar">
+                A
+            </div>
+
+            <div>
+                <strong>Administrator</strong>
+                <span>Administrator</span>
+            </div>
+
+        </div>
 
     </div>
 
-    <div class="students-toolbar">
 
-        <div class="student-search-wrapper">
+    <!-- STUDENT DIRECTORY -->
+    <section class="student-directory-card">
+
+        <div class="directory-header">
+
+            <div>
+
+                <div class="directory-title">
+
+                    <div class="directory-icon">
+                        S
+                    </div>
+
+                    <div>
+                        <h2>Student Directory</h2>
+
+                        <p>
+                            Search for a student to view or edit
+                            their information.
+                        </p>
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <button
+                class="add-student-button"
+                id="addStudentButton">
+
+                + Add Student
+
+            </button>
+
+        </div>
+
+
+        <!-- SEARCH -->
+        <div class="student-search-box">
+
+            <span class="search-icon">⌕</span>
 
             <input
                 type="text"
@@ -121,18 +180,41 @@
 
         </div>
 
-        <div
-            class="student-count"
-            id="studentCount">
-            Loading students...
+
+        <!-- STUDENT COUNT -->
+        <div class="student-directory-summary">
+
+            <div>
+
+                <strong id="studentCount">
+                    Loading students...
+                </strong>
+
+                <span>
+                    registered students
+                </span>
+
+            </div>
+
         </div>
 
-    </div>
 
-    <div id="studentsContainer"></div>
+        <!-- STUDENTS -->
+        <div id="studentsContainer">
+
+            <div class="students-loading">
+
+                <div class="loading-circle"></div>
+
+                <span>Loading students...</span>
+
+            </div>
+
+        </div>
+
+    </section>
 
 </main>
-    
     <main class="dashboard-main">
 
 
