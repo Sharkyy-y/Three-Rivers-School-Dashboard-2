@@ -2998,3 +2998,23 @@ body {
         font-size: 24px;
     }
 }
+
+/* ==========================================
+   ADMIN DASHBOARD - SIDEBAR FIX
+========================================== */
+
+.admin-dashboard-page {
+    margin-left: 250px;
+    width: calc(100% - 250px);
+    box-sizing: border-box;
+}
+
+/* Keep dashboard content clear of sidebar */
+
+@media (max-width: 1000px) {
+
+    .admin-dashboard-page {
+        margin-left: 0;
+        width: 100%;
+    }
+}
