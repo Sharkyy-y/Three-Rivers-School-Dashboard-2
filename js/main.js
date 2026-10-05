@@ -5810,3 +5810,732 @@ if (adminAnnouncementsContainer) {
 
 }
 
+// ==========================================
+// ADMIN ATTENDANCE
+// ==========================================
+
+async function loadAdminAttendance() {
+
+    const container =
+        document.getElementById(
+            "adminAttendanceContainer"
+        );
+
+    if (!container) {
+        return;
+    }
+
+    container.innerHTML =
+        "<p>Loading student attendance...</p>";
+
+
+    // ======================================
+    // GET ALL STUDENTS
+    // ======================================
+
+    const {
+        data: students,
+        error: studentsError
+    } =
+        await supabaseClient
+            .from("students")
+            .select(`
+                id,
+                full_name,
+                admission_number,
+                class_name
+            `)
+            .order(
+                "full_name",
+                {
+                    ascending: true
+                }
+            );
+
+
+    if (studentsError) {
+
+        console.error(
+            "ADMIN ATTENDANCE STUDENTS ERROR:",
+            studentsError
+        );
+
+        container.innerHTML =
+            "<p>Unable to load students.</p>";
+
+        return;
+    }
+
+
+    if (
+        !students ||
+        students.length === 0
+    ) {
+
+        container.innerHTML =
+            "<p>No students found.</p>";
+
+        return;
+    }
+
+
+    // ======================================
+    // GET ALL ATTENDANCE
+    // ======================================
+
+    const {
+        data: attendance,
+        error: attendanceError
+    } =
+        await supabaseClient
+            .from("attendance")
+            .select(`
+                id,
+                student_id,
+                date,
+                status
+            `)
+            .order(
+                "date",
+                {
+                    ascending: false
+                }
+            );
+
+
+    if (attendanceError) {
+
+        console.error(
+            "ADMIN ATTENDANCE ERROR:",
+            attendanceError
+        );
+
+        container.innerHTML =
+            "<p>Unable to load attendance records.</p>";
+
+        return;
+    }
+
+
+    console.log(
+        "ADMIN ATTENDANCE STUDENTS:",
+        students
+    );
+
+    console.log(
+        "ADMIN ATTENDANCE RECORDS:",
+        attendance
+    );
+
+
+    // ======================================
+    // TODAY
+    // ======================================
+
+    const today =
+        new Date()
+            .toISOString()
+            .split("T")[0];
+
+
+    // ======================================
+    // COUNTERS
+    // ======================================
+
+    let totalAttendancePercentage = 0;
+
+    let studentsWithAttendance = 0;
+
+    let presentToday = 0;
+
+    let absentToday = 0;
+
+
+    // ======================================
+    // CLEAR CONTAINER
+    // ======================================
+
+    container.innerHTML = "";
+
+
+    // ======================================
+    // CREATE STUDENT CARDS
+    // ======================================
+
+    students.forEach(
+        function (student) {
+
+            const studentAttendance =
+                attendance.filter(
+                    function (record) {
+
+                        return (
+                            record.student_id ===
+                            student.id
+                        );
+
+                    }
+                );
+
+
+            // ----------------------------------
+            // COUNTS
+            // ----------------------------------
+
+            let present = 0;
+
+            let late = 0;
+
+            let absent = 0;
+
+
+            studentAttendance.forEach(
+                function (record) {
+
+                    const status =
+                        String(
+                            record.status
+                        ).toLowerCase();
+
+
+                    if (
+                        status === "present"
+                    ) {
+
+                        present++;
+
+                    }
+
+                    else if (
+                        status === "late"
+                    ) {
+
+                        late++;
+
+                    }
+
+                    else if (
+                        status === "absent"
+                    ) {
+
+                        absent++;
+
+                    }
+
+
+                    // TODAY
+
+                    if (
+                        record.date ===
+                        today
+                    ) {
+
+                        if (
+                            status === "present" ||
+                            status === "late"
+                        ) {
+
+                            presentToday++;
+
+                        }
+
+                        else if (
+                            status === "absent"
+                        ) {
+
+                            absentToday++;
+
+                        }
+
+                    }
+
+                }
+            );
+
+
+            // ----------------------------------
+            // TOTAL DAYS
+            // ----------------------------------
+
+            const totalDays =
+                present +
+                late +
+                absent;
+
+
+            // ----------------------------------
+            // ATTENDANCE PERCENTAGE
+            // ----------------------------------
+
+            const attendancePercentage =
+                totalDays > 0
+                    ? Math.round(
+                        (
+                            (
+                                present +
+                                late
+                            ) /
+                            totalDays
+                        ) *
+                        100
+                    )
+                    : 0;
+
+
+            if (totalDays > 0) {
+
+                totalAttendancePercentage +=
+                    attendancePercentage;
+
+                studentsWithAttendance++;
+
+            }
+
+
+            // ----------------------------------
+            // INITIALS
+            // ----------------------------------
+
+            const initials =
+                student.full_name
+                    ? student.full_name
+                        .split(" ")
+                        .map(
+                            function (name) {
+                                return name
+                                    .charAt(0);
+                            }
+                        )
+                        .slice(0, 2)
+                        .join("")
+                        .toUpperCase()
+                    : "S";
+
+
+            // ----------------------------------
+            // CARD
+            // ----------------------------------
+
+            const card =
+                document.createElement(
+                    "div"
+                );
+
+
+            card.className =
+                "admin-attendance-card";
+
+
+            card.dataset.search =
+                (
+                    student.full_name +
+                    " " +
+                    (student.admission_number || "") +
+                    " " +
+                    (student.class_name || "")
+                ).toLowerCase();
+
+
+            card.innerHTML = `
+
+                <div class="admin-attendance-student">
+
+                    <div class="admin-attendance-avatar">
+
+                        ${initials}
+
+                    </div>
+
+
+                    <div class="admin-attendance-student-info">
+
+                        <h3>
+                            ${student.full_name || "Unnamed Student"}
+                        </h3>
+
+                        <p>
+                            Admission:
+                            ${student.admission_number || "—"}
+                        </p>
+
+                        <span>
+                            Class:
+                            ${student.class_name || "—"}
+                        </span>
+
+                    </div>
+
+                </div>
+
+
+                <div class="admin-attendance-percentage">
+
+                    <strong>
+                        ${attendancePercentage}%
+                    </strong>
+
+                    <span>
+                        Attendance
+                    </span>
+
+                </div>
+
+
+                <div class="admin-attendance-stats">
+
+                    <div class="attendance-mini-stat present">
+
+                        <strong>
+                            ${present}
+                        </strong>
+
+                        <span>
+                            Present
+                        </span>
+
+                    </div>
+
+
+                    <div class="attendance-mini-stat late">
+
+                        <strong>
+                            ${late}
+                        </strong>
+
+                        <span>
+                            Late
+                        </span>
+
+                    </div>
+
+
+                    <div class="attendance-mini-stat absent">
+
+                        <strong>
+                            ${absent}
+                        </strong>
+
+                        <span>
+                            Absent
+                        </span>
+
+                    </div>
+
+
+                    <div class="attendance-mini-stat total">
+
+                        <strong>
+                            ${totalDays}
+                        </strong>
+
+                        <span>
+                            Days
+                        </span>
+
+                    </div>
+
+                </div>
+
+
+                <button
+                    type="button"
+                    class="view-attendance-button"
+                    onclick="viewStudentAttendance('${student.id}')"
+                >
+
+                    View Details
+
+                </button>
+
+            `;
+
+
+            container.appendChild(
+                card
+            );
+
+        }
+    );
+
+
+    // ======================================
+    // UPDATE OVERVIEW
+    // ======================================
+
+    const studentCountElement =
+        document.getElementById(
+            "adminAttendanceStudentCount"
+        );
+
+
+    if (studentCountElement) {
+
+        studentCountElement.textContent =
+            students.length;
+
+    }
+
+
+    const averageElement =
+        document.getElementById(
+            "adminAverageAttendance"
+        );
+
+
+    const average =
+        studentsWithAttendance > 0
+            ? Math.round(
+                totalAttendancePercentage /
+                studentsWithAttendance
+            )
+            : 0;
+
+
+    if (averageElement) {
+
+        averageElement.textContent =
+            average + "%";
+
+    }
+
+
+    const presentTodayElement =
+        document.getElementById(
+            "adminPresentToday"
+        );
+
+
+    if (presentTodayElement) {
+
+        presentTodayElement.textContent =
+            presentToday;
+
+    }
+
+
+    const absentTodayElement =
+        document.getElementById(
+            "adminAbsentToday"
+        );
+
+
+    if (absentTodayElement) {
+
+        absentTodayElement.textContent =
+            absentToday;
+
+    }
+
+
+    console.log(
+        "Admin attendance loaded successfully."
+    );
+
+}
+
+
+// ==========================================
+// VIEW STUDENT ATTENDANCE DETAILS
+// ==========================================
+
+async function viewStudentAttendance(
+    studentId
+) {
+
+    console.log(
+        "Viewing attendance for:",
+        studentId
+    );
+
+
+    const {
+        data: student,
+        error: studentError
+    } =
+        await supabaseClient
+            .from("students")
+            .select(`
+                id,
+                full_name,
+                admission_number,
+                class_name
+            `)
+            .eq(
+                "id",
+                studentId
+            )
+            .single();
+
+
+    if (studentError) {
+
+        console.error(
+            "STUDENT ATTENDANCE ERROR:",
+            studentError
+        );
+
+        return;
+    }
+
+
+    const {
+        data: records,
+        error: attendanceError
+    } =
+        await supabaseClient
+            .from("attendance")
+            .select(`
+                id,
+                date,
+                status
+            `)
+            .eq(
+                "student_id",
+                studentId
+            )
+            .order(
+                "date",
+                {
+                    ascending: false
+                }
+            );
+
+
+    if (attendanceError) {
+
+        console.error(
+            "STUDENT ATTENDANCE RECORD ERROR:",
+            attendanceError
+        );
+
+        return;
+    }
+
+
+    let details = "";
+
+
+    if (
+        !records ||
+        records.length === 0
+    ) {
+
+        details =
+            "No attendance records found.";
+
+    }
+
+    else {
+
+        details =
+            records
+                .map(
+                    function (record) {
+
+                        const formattedDate =
+                            new Date(
+                                record.date +
+                                "T00:00:00"
+                            ).toLocaleDateString(
+                                "en-GB",
+                                {
+                                    day: "numeric",
+                                    month: "short",
+                                    year: "numeric"
+                                }
+                            );
+
+
+                        return (
+                            formattedDate +
+                            " — " +
+                            record.status
+                        );
+
+                    }
+                )
+                .join("\n");
+
+    }
+
+
+    alert(
+        student.full_name +
+        "\n" +
+        "Admission: " +
+        student.admission_number +
+        "\n" +
+        "Class: " +
+        student.class_name +
+        "\n\n" +
+        details
+    );
+
+}
+
+
+// ==========================================
+// ADMIN ATTENDANCE SEARCH
+// ==========================================
+
+const adminAttendanceSearch =
+    document.getElementById(
+        "adminAttendanceSearch"
+    );
+
+
+if (adminAttendanceSearch) {
+
+    adminAttendanceSearch.addEventListener(
+        "input",
+        function () {
+
+            const search =
+                this.value
+                    .trim()
+                    .toLowerCase();
+
+
+            const cards =
+                document.querySelectorAll(
+                    ".admin-attendance-card"
+                );
+
+
+            cards.forEach(
+                function (card) {
+
+                    const searchableText =
+                        card.dataset.search ||
+                        "";
+
+
+                    card.style.display =
+                        searchableText.includes(
+                            search
+                        )
+                            ? ""
+                            : "none";
+
+                }
+            );
+
+        }
+    );
+
+}
+
+
+// ==========================================
+// START ADMIN ATTENDANCE
+// ==========================================
+
+if (
+    window.location.pathname.includes(
+        "admin-attendance.html"
+    )
+) {
+
+    loadAdminAttendance();
+
+}
