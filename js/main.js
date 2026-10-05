@@ -5512,7 +5512,124 @@ async function loadAdminAnnouncements() {
     );
 }
 
+// ======================================
+// EDIT ANNOUNCEMENT
+// ======================================
 
+async function editAnnouncement(id) {
+
+    const newTitle =
+        prompt(
+            "Enter the new announcement title:"
+        );
+
+    if (newTitle === null) {
+        return;
+    }
+
+
+    const newMessage =
+        prompt(
+            "Enter the new announcement message:"
+        );
+
+    if (newMessage === null) {
+        return;
+    }
+
+
+    const title =
+        newTitle.trim();
+
+    const message =
+        newMessage.trim();
+
+
+    if (!title || !message) {
+
+        alert(
+            "Title and message cannot be empty."
+        );
+
+        return;
+    }
+
+
+    const {
+        error
+    } = await supabaseClient
+        .from("announcements")
+        .update({
+            title: title,
+            message: message
+        })
+        .eq("id", id);
+
+
+    if (error) {
+
+        console.error(
+            "EDIT ANNOUNCEMENT ERROR:",
+            error
+        );
+
+        alert(
+            "Unable to update announcement."
+        );
+
+        return;
+    }
+
+
+    await loadAdminAnnouncements();
+
+}
+
+
+// ======================================
+// DELETE ANNOUNCEMENT
+// ======================================
+
+async function deleteAnnouncement(id) {
+
+    const confirmed =
+        confirm(
+            "Are you sure you want to delete this announcement?"
+        );
+
+
+    if (!confirmed) {
+        return;
+    }
+
+
+    const {
+        error
+    } = await supabaseClient
+        .from("announcements")
+        .delete()
+        .eq("id", id);
+
+
+    if (error) {
+
+        console.error(
+            "DELETE ANNOUNCEMENT ERROR:",
+            error
+        );
+
+        alert(
+            "Unable to delete announcement."
+        );
+
+        return;
+    }
+
+
+    await loadAdminAnnouncements();
+
+}
+    
 // ======================================
 // PUBLISH ANNOUNCEMENT
 // ======================================
