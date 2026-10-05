@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Announcements | Admin Portal</title>
+
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/dashboard.css">
+
+</head>
+
+<body>
+
+<div class="dashboard-layout">
+
+    <!-- ============================= -->
+    <!-- SIDEBAR -->
+    <!-- ============================= -->
+
+    <aside class="sidebar">
+
+        <div class="sidebar-logo">
+
+            <h2>Student Portal</h2>
+
+            <p>Administration</p>
+
+        </div>
+
+
+        <nav class="sidebar-nav">
+
+            <a href="admin-dashboard.html">
+                🏠 Dashboard
+            </a>
+
+            <a href="admin-students.html">
+                👥 Students
+            </a>
+
+            <a href="#">
+                👨‍🏫 Teachers
+            </a>
+
+            <a href="#">
+                📚 Classes
+            </a>
+
+            <a href="#">
+                📊 Grades
+            </a>
+
+            <a href="#">
+                ✅ Attendance
+            </a>
+
+            <a href="#">
+                📝 Assignments
+            </a>
+
+            <a href="#">
+                ⚠️ Conduct
+            </a>
+
+            <a href="admin-announcements.html" class="active">
+                📢 Announcements
+            </a>
+
+        </nav>
+
+
+        <button
+            id="logoutButton"
+            class="logout-button">
+
+            Logout
+
+        </button>
+
+    </aside>
+
+
+    <!-- ============================= -->
+    <!-- MAIN CONTENT -->
+    <!-- ============================= -->
+
+    <main class="admin-dashboard-page">
+
+
+        <!-- HEADER -->
+
+        <section class="admin-dashboard-header">
+
+            <div>
+
+                <h1>
+                    Announcements
+                </h1>
+
+                <p>
+                    Create and manage announcements
+                    across the school portal.
+                </p>
+
+            </div>
+
+        </section>
+
+
+        <!-- ============================= -->
+        <!-- CREATE ANNOUNCEMENT -->
+        <!-- ============================= -->
+
+        <section class="admin-dashboard-section">
+
+            <div class="admin-section-header">
+
+                <div>
+
+                    <h2>
+                        Create Announcement
+                    </h2>
+
+                    <p>
+                        Send an announcement to a specific
+                        portal or class.
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <form id="announcementForm">
+
+
+                <!-- TITLE -->
+
+                <div class="form-group">
+
+                    <label for="announcementTitle">
+                        Announcement Title
+                    </label>
+
+                    <input
+                        type="text"
+                        id="announcementTitle"
+                        placeholder="Enter announcement title"
+                        required
+                    >
+
+                </div>
+
+
+                <!-- MESSAGE -->
+
+                <div class="form-group">
+
+                    <label for="announcementMessage">
+                        Message
+                    </label>
+
+                    <textarea
+                        id="announcementMessage"
+                        rows="6"
+                        placeholder="Write your announcement..."
+                        required
+                    ></textarea>
+
+                </div>
+
+
+                <!-- TARGET ROLE -->
+
+                <div class="form-group">
+
+                    <label for="announcementRole">
+                        Display In
+                    </label>
+
+                    <select id="announcementRole">
+
+                        <option value="all">
+                            Everyone
+                        </option>
+
+                        <option value="student">
+                            Student Portal
+                        </option>
+
+                        <option value="teacher">
+                            Teacher Portal
+                        </option>
+
+                        <option value="parent">
+                            Parent Portal
+                        </option>
+
+                        <option value="admin">
+                            Admin Portal
+                        </option>
+
+                    </select>
+
+                </div>
+
+
+                <!-- TARGET CLASS -->
+
+                <div class="form-group">
+
+                    <label for="announcementClass">
+                        Target Class
+                    </label>
+
+                    <select id="announcementClass">
+
+                        <option value="all">
+                            All Classes
+                        </option>
+
+                        <option value="Grade 7">
+                            Grade 7
+                        </option>
+
+                        <option value="Grade 8">
+                            Grade 8
+                        </option>
+
+                        <option value="Grade 9">
+                            Grade 9
+                        </option>
+
+                        <option value="Grade 10">
+                            Grade 10
+                        </option>
+
+                        <option value="Grade 11">
+                            Grade 11
+                        </option>
+
+                        <option value="Grade 12">
+                            Grade 12
+                        </option>
+
+                    </select>
+
+                </div>
+
+
+                <!-- MESSAGE -->
+
+                <div
+                    id="announcementFormMessage"
+                    class="form-message">
+                </div>
+
+
+                <!-- BUTTON -->
+
+                <button
+                    type="submit"
+                    class="primary-button">
+
+                    Publish Announcement
+
+                </button>
+
+            </form>
+
+        </section>
+
+
+        <!-- ============================= -->
+        <!-- EXISTING ANNOUNCEMENTS -->
+        <!-- ============================= -->
+
+        <section class="admin-dashboard-section">
+
+            <div class="admin-section-header">
+
+                <div>
+
+                    <h2>
+                        Existing Announcements
+                    </h2>
+
+                    <p>
+                        Manage announcements already
+                        published in the portal.
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <div
+                id="adminAnnouncementsContainer">
+
+                <p>
+                    Loading announcements...
+                </p>
+
+            </div>
+
+        </section>
+
+
+    </main>
+
+</div>
+
+
+<!-- SUPABASE -->
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<script src="js/main.js"></script>
+
+</body>
+
+</html>
