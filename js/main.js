@@ -5480,41 +5480,53 @@ async function loadAdminAnnouncements() {
 
             announcementElement.innerHTML = `
 
-                <h3>
-                    ${announcement.title}
-                </h3>
+    <h3>
+        ${announcement.title}
+    </h3>
 
-                <p>
-                    ${announcement.message}
-                </p>
+    <p>
+        ${announcement.message}
+    </p>
 
-                <div class="announcement-meta">
+    <div class="announcement-meta">
 
-                    <span class="announcement-target">
-                        ${targetRole}
-                    </span>
+        <span class="announcement-target">
+            ${targetRole}
+        </span>
 
-                    <span class="announcement-target">
-                        🎯 ${targetClass}
-                    </span>
+        <span class="announcement-target">
+            🎯 ${targetClass}
+        </span>
 
-                    <span>
-                        📅 ${formattedDate}
-                    </span>
+        <span>
+            📅 ${formattedDate}
+        </span>
 
-                </div>
+    </div>
 
-            `;
+    <div class="announcement-actions">
 
+        <button
+            type="button"
+            class="announcement-edit-button"
+            onclick="editAnnouncement('${announcement.id}')">
 
-            adminAnnouncementsContainer.appendChild(
-                announcementElement
-            );
+            ✏️ Edit
 
-        }
-    );
-}
+        </button>
 
+        <button
+            type="button"
+            class="announcement-delete-button"
+            onclick="deleteAnnouncement('${announcement.id}')">
+
+            🗑️ Delete
+
+        </button>
+
+    </div>
+
+`;
 // ======================================
 // EDIT ANNOUNCEMENT
 // ======================================
