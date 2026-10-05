@@ -4977,17 +4977,72 @@ function closeStudentModal() {
 }
 
 // ==========================================
-// SAVE STUDENT
+// ADD / EDIT STUDENT
 // ==========================================
 
 const studentForm =
     document.getElementById("studentForm");
 
+const addStudentButton =
+    document.getElementById("addStudentButton");
+
+
+// ==========================================
+// OPEN ADD STUDENT MODAL
+// ==========================================
+
+if (addStudentButton) {
+
+    addStudentButton.addEventListener(
+        "click",
+        function () {
+
+            // Clear the form
+            document.getElementById("studentForm").reset();
+
+            // Clear hidden student ID
+            document.getElementById("studentId").value = "";
+
+            // Change modal title
+            document.getElementById("modalTitle").textContent =
+                "Add Student";
+
+            // Change description
+            const modalDescription =
+                document.querySelector(
+                    ".student-modal-header p"
+                );
+
+            if (modalDescription) {
+
+                modalDescription.textContent =
+                    "Enter the student's information below.";
+
+            }
+
+            // Clear message
+            document.getElementById(
+                "studentFormMessage"
+            ).textContent = "";
+
+            // Open modal
+            document.getElementById("studentModal")
+                .classList.add("active");
+
+        }
+    );
+}
+
+
+// ==========================================
+// SAVE STUDENT
+// ==========================================
+
 if (studentForm) {
 
     studentForm.addEventListener(
         "submit",
-        async function(event) {
+        async function (event) {
 
             event.preventDefault();
 
@@ -4995,9 +5050,11 @@ if (studentForm) {
                 document.getElementById("studentId").value;
 
             const message =
-                document.getElementById("studentFormMessage");
+                document.getElementById(
+                    "studentFormMessage"
+                );
 
-            const updatedStudent = {
+            const studentData = {
 
                 full_name:
                     document.getElementById(
@@ -5026,38 +5083,85 @@ if (studentForm) {
                 "Saving...";
 
 
-            const { error } =
-                await supabaseClient
-                    .from("students")
-                    .update(updatedStudent)
-                    .eq("id", studentId);
+            // ======================================
+            // EDIT EXISTING STUDENT
+            // ======================================
+
+            if (studentId) {
+
+                const { error } =
+                    await supabaseClient
+                        .from("students")
+                        .update(studentData)
+                        .eq("id", studentId);
 
 
-            if (error) {
+                if (error) {
 
-                console.error(
-                    "STUDENT UPDATE ERROR:",
-                    error
-                );
+                    console.error(
+                        "STUDENT UPDATE ERROR:",
+                        error
+                    );
+
+                    message.textContent =
+                        "Error saving student: " +
+                        error.message;
+
+                    return;
+                }
+
 
                 message.textContent =
-                    "Error saving student: " +
-                    error.message;
+                    "Student updated successfully.";
 
-                return;
             }
 
 
-            message.textContent =
-                "Student updated successfully.";
+            // ======================================
+            // ADD NEW STUDENT
+            // ======================================
+
+            else {
+
+                const { error } =
+                    await supabaseClient
+                        .from("students")
+                        .insert([studentData]);
 
 
+                if (error) {
+
+                    console.error(
+                        "STUDENT INSERT ERROR:",
+                        error
+                    );
+
+                    message.textContent =
+                        "Error adding student: " +
+                        error.message;
+
+                    return;
+                }
+
+
+                message.textContent =
+                    "Student added successfully.";
+
+            }
+
+
+            // Refresh student directory
             await loadAdminStudents();
 
 
+            // Close modal
             setTimeout(() => {
 
                 closeStudentModal();
+
+                document.getElementById(
+                    "studentForm"
+                ).reset();
 
             }, 700);
 
@@ -5065,6 +5169,45 @@ if (studentForm) {
     );
 }
 
+
+// ==========================================
+// CLOSE BUTTON
+// ==========================================
+
+const closeStudentModalButton =
+    document.getElementById("closeStudentModal");
+
+if (closeStudentModalButton) {
+
+    closeStudentModalButton.addEventListener(
+        "click",
+        function () {
+
+            closeStudentModal();
+
+        }
+    );
+}
+
+
+// ==========================================
+// CANCEL BUTTON
+// ==========================================
+
+const cancelStudentButton =
+    document.getElementById("cancelStudentButton");
+
+if (cancelStudentButton) {
+
+    cancelStudentButton.addEventListener(
+        "click",
+        function () {
+
+            closeStudentModal();
+
+        }
+    );
+}
 // ==========================================
 // SEARCH STUDENTS
 // ==========================================
