@@ -5289,3 +5289,53 @@ if (
     loadAdminDashboardStats();
 
 }
+
+// ==========================================
+// ADMIN DASHBOARD - TOTAL ANNOUNCEMENTS
+// ==========================================
+
+async function loadAdminAnnouncementsCount() {
+
+    const totalAnnouncements =
+        document.getElementById("totalAnnouncements");
+
+    if (!totalAnnouncements) return;
+
+    totalAnnouncements.textContent = "…";
+
+    const { count, error } =
+        await supabaseClient
+            .from("announcements")
+            .select("id", {
+                count: "exact",
+                head: true
+            });
+
+    if (error) {
+
+        console.error(
+            "TOTAL ANNOUNCEMENTS ERROR:",
+            error
+        );
+
+        totalAnnouncements.textContent = "0";
+
+        return;
+    }
+
+    totalAnnouncements.textContent =
+        count || 0;
+}
+
+
+// ==========================================
+// START ANNOUNCEMENT COUNT
+// ==========================================
+
+if (
+    document.getElementById("totalAnnouncements")
+) {
+
+    loadAdminAnnouncementsCount();
+
+}
