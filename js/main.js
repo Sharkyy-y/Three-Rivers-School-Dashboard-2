@@ -4899,6 +4899,7 @@ async function loadAdminStudents() {
     studentsContainer.appendChild(card);
 });
 
+}
 // ==========================================
 // OPEN EDIT STUDENT MODAL
 // ==========================================
