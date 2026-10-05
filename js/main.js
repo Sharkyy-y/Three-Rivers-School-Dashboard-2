@@ -5785,12 +5785,3 @@ if (adminAnnouncementsContainer) {
 
 }
 
-console.log("ADMIN ANNOUNCEMENT SYSTEM LOADED");
-
-const testAnnouncementForm =
-    document.getElementById("announcementForm");
-
-console.log(
-    "ANNOUNCEMENT FORM:",
-    testAnnouncementForm
-);
