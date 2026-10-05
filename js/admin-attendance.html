@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>Attendance | Student Management Portal</title>
+
+    <link
+        rel="stylesheet"
+        href="css/style.css"
+    >
+
+    <link
+        rel="stylesheet"
+        href="css/dashboard.css"
+    >
+
+</head>
+
+<body>
+
+    <!-- ==========================================
+         SIDEBAR
+    =========================================== -->
+
+    <aside class="sidebar">
+
+        <div class="sidebar-logo">
+
+            <div class="logo-mark">
+                S
+            </div>
+
+            <div>
+                <h2>Student Portal</h2>
+                <span>Administration</span>
+            </div>
+
+        </div>
+
+
+        <nav class="sidebar-nav">
+
+            <a href="admin-dashboard.html">
+                Dashboard
+            </a>
+
+            <a href="admin-students.html">
+                Students
+            </a>
+
+            <a
+                href="admin-attendance.html"
+                class="active"
+            >
+                Attendance
+            </a>
+
+            <a href="admin-announcements.html">
+                Announcements
+            </a>
+
+        </nav>
+
+
+        <div class="sidebar-bottom">
+
+            <button
+                type="button"
+                onclick="logout()"
+            >
+                Logout
+            </button>
+
+        </div>
+
+    </aside>
+
+
+    <!-- ==========================================
+         MAIN CONTENT
+    =========================================== -->
+
+    <main class="dashboard-main">
+
+        <!-- HEADER -->
+
+        <header class="dashboard-header">
+
+            <div>
+
+                <h1>Attendance</h1>
+
+                <p>
+                    View and manage student attendance records
+                </p>
+
+            </div>
+
+
+            <div class="admin-user">
+
+                <div class="admin-avatar">
+                    A
+                </div>
+
+                <div>
+
+                    <strong>
+                        Administrator
+                    </strong>
+
+                    <span>
+                        Administrator
+                    </span>
+
+                </div>
+
+            </div>
+
+        </header>
+
+
+        <!-- ======================================
+             ATTENDANCE OVERVIEW
+        ======================================= -->
+
+        <section class="attendance-overview">
+
+            <div class="attendance-stat-card">
+
+                <span class="attendance-stat-label">
+                    Total Students
+                </span>
+
+                <strong id="adminAttendanceStudentCount">
+                    …
+                </strong>
+
+            </div>
+
+
+            <div class="attendance-stat-card">
+
+                <span class="attendance-stat-label">
+                    Average Attendance
+                </span>
+
+                <strong id="adminAverageAttendance">
+                    …
+                </strong>
+
+            </div>
+
+
+            <div class="attendance-stat-card">
+
+                <span class="attendance-stat-label">
+                    Present Today
+                </span>
+
+                <strong id="adminPresentToday">
+                    …
+                </strong>
+
+            </div>
+
+
+            <div class="attendance-stat-card">
+
+                <span class="attendance-stat-label">
+                    Absent Today
+                </span>
+
+                <strong id="adminAbsentToday">
+                    …
+                </strong>
+
+            </div>
+
+        </section>
+
+
+        <!-- ======================================
+             STUDENT ATTENDANCE
+        ======================================= -->
+
+        <section class="admin-content-card">
+
+            <div class="admin-section-header">
+
+                <div>
+
+                    <h2>
+                        Student Attendance
+                    </h2>
+
+                    <p>
+                        View attendance details for each student.
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <!-- SEARCH -->
+
+            <div class="attendance-search">
+
+                <input
+                    type="text"
+                    id="adminAttendanceSearch"
+                    placeholder="Search student by name, admission number or class..."
+                >
+
+            </div>
+
+
+            <!-- STUDENTS -->
+
+            <div
+                id="adminAttendanceContainer"
+                class="admin-attendance-list"
+            >
+
+                <p>
+                    Loading attendance...
+                </p>
+
+            </div>
+
+        </section>
+
+    </main>
+
+
+    <!-- ==========================================
+         JAVASCRIPT
+    =========================================== -->
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+    <script src="js/main.js"></script>
+
+</body>
+
+</html>
