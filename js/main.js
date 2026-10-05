@@ -5171,24 +5171,6 @@ if (studentForm) {
 
 
 // ==========================================
-// CANCEL BUTTON
-// ==========================================
-
-const cancelStudentButton =
-    document.getElementById("cancelStudentButton");
-
-if (cancelStudentButton) {
-
-    cancelStudentButton.addEventListener(
-        "click",
-        function () {
-
-            closeStudentModal();
-
-        }
-    );
-}
-// ==========================================
 // SEARCH STUDENTS
 // ==========================================
 
