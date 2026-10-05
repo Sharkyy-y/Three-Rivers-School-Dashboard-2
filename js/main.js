@@ -5634,9 +5634,6 @@ async function deleteAnnouncement(id) {
 // PUBLISH ANNOUNCEMENT
 // ======================================
 
-const announcementForm =
-    document.getElementById("announcementForm");
-
 console.log(
     "ADMIN ANNOUNCEMENT FORM:",
     announcementForm
