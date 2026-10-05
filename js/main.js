@@ -4752,6 +4752,9 @@ async function loadAnnouncementsPage() {
 
     }
 );
+
+}
+
 // ==========================================
 // START ANNOUNCEMENTS PAGE
 // ==========================================
