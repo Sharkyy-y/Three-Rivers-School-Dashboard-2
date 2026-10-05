@@ -5339,3 +5339,329 @@ if (
     loadAdminAnnouncementsCount();
 
 }
+
+// ======================================
+// ADMIN ANNOUNCEMENTS
+// ======================================
+
+const announcementForm =
+    document.getElementById("announcementForm");
+
+const adminAnnouncementsContainer =
+    document.getElementById(
+        "adminAnnouncementsContainer"
+    );
+
+
+// ======================================
+// LOAD ADMIN ANNOUNCEMENTS
+// ======================================
+
+async function loadAdminAnnouncements() {
+
+    if (!adminAnnouncementsContainer) {
+        return;
+    }
+
+    adminAnnouncementsContainer.innerHTML = `
+        <p>Loading announcements...</p>
+    `;
+
+    const {
+        data: announcements,
+        error
+    } = await supabaseClient
+        .from("announcements")
+        .select(`
+            id,
+            title,
+            message,
+            target_role,
+            target_class,
+            created_at
+        `)
+        .order("created_at", {
+            ascending: false
+        });
+
+    console.log(
+        "ADMIN ANNOUNCEMENTS:",
+        announcements
+    );
+
+    console.log(
+        "ADMIN ANNOUNCEMENTS ERROR:",
+        error
+    );
+
+
+    if (error) {
+
+        adminAnnouncementsContainer.innerHTML = `
+            <p>
+                Unable to load announcements.
+            </p>
+        `;
+
+        console.error(
+            "Admin announcements error:",
+            error
+        );
+
+        return;
+    }
+
+
+    if (
+        !announcements ||
+        announcements.length === 0
+    ) {
+
+        adminAnnouncementsContainer.innerHTML = `
+            <p>
+                No announcements have been published yet.
+            </p>
+        `;
+
+        return;
+    }
+
+
+    adminAnnouncementsContainer.innerHTML = "";
+
+
+    announcements.forEach(
+        function (announcement) {
+
+            const announcementElement =
+                document.createElement("div");
+
+            announcementElement.className =
+                "admin-announcement-item";
+
+
+            const roleNames = {
+                all: "🌍 Everyone",
+                student: "🎓 Student Portal",
+                teacher: "👨‍🏫 Teacher Portal",
+                parent: "👨‍👩‍👧 Parent Portal",
+                admin: "🛡️ Admin Portal"
+            };
+
+
+            const targetRole =
+                roleNames[
+                    announcement.target_role
+                ] ||
+                announcement.target_role;
+
+
+            const targetClass =
+                announcement.target_class === "all"
+                    ? "All Classes"
+                    : announcement.target_class;
+
+
+            const createdDate =
+                new Date(
+                    announcement.created_at
+                );
+
+
+            const formattedDate =
+                createdDate.toLocaleDateString(
+                    "en-GB",
+                    {
+                        day: "numeric",
+                        month: "short",
+                        year: "numeric"
+                    }
+                );
+
+
+            announcementElement.innerHTML = `
+
+                <h3>
+                    ${announcement.title}
+                </h3>
+
+                <p>
+                    ${announcement.message}
+                </p>
+
+                <div class="announcement-meta">
+
+                    <span class="announcement-target">
+                        ${targetRole}
+                    </span>
+
+                    <span class="announcement-target">
+                        🎯 ${targetClass}
+                    </span>
+
+                    <span>
+                        📅 ${formattedDate}
+                    </span>
+
+                </div>
+
+            `;
+
+
+            adminAnnouncementsContainer.appendChild(
+                announcementElement
+            );
+
+        }
+    );
+}
+
+
+// ======================================
+// PUBLISH ANNOUNCEMENT
+// ======================================
+
+if (announcementForm) {
+
+    announcementForm.addEventListener(
+        "submit",
+        async function (event) {
+
+            event.preventDefault();
+
+
+            const title =
+                document
+                    .getElementById(
+                        "announcementTitle"
+                    )
+                    .value
+                    .trim();
+
+
+            const message =
+                document
+                    .getElementById(
+                        "announcementMessage"
+                    )
+                    .value
+                    .trim();
+
+
+            const targetRole =
+                document
+                    .getElementById(
+                        "announcementRole"
+                    )
+                    .value;
+
+
+            const targetClass =
+                document
+                    .getElementById(
+                        "announcementClass"
+                    )
+                    .value;
+
+
+            const formMessage =
+                document.getElementById(
+                    "announcementFormMessage"
+                );
+
+
+            if (
+                !title ||
+                !message
+            ) {
+
+                formMessage.textContent =
+                    "Please enter a title and message.";
+
+                return;
+            }
+
+
+            formMessage.textContent =
+                "Publishing announcement...";
+
+
+            const {
+                data,
+                error
+            } = await supabaseClient
+                .from("announcements")
+                .insert([
+                    {
+                        title: title,
+                        message: message,
+                        target_role: targetRole,
+                        target_class: targetClass
+                    }
+                ])
+                .select();
+
+
+            console.log(
+                "PUBLISHED ANNOUNCEMENT:",
+                data
+            );
+
+            console.log(
+                "PUBLISH ERROR:",
+                error
+            );
+
+
+            if (error) {
+
+                console.error(
+                    "Publish announcement error:",
+                    error
+                );
+
+                formMessage.textContent =
+                    "Unable to publish announcement.";
+
+                return;
+            }
+
+
+            formMessage.textContent =
+                "Announcement published successfully!";
+
+
+            // Clear form
+            announcementForm.reset();
+
+
+            // Reload announcements immediately
+            await loadAdminAnnouncements();
+
+
+            // Remove success message after a few seconds
+            setTimeout(
+                function () {
+
+                    formMessage.textContent =
+                        "";
+
+                },
+                3000
+            );
+
+        }
+    );
+
+}
+
+
+// ======================================
+// START ADMIN ANNOUNCEMENTS
+// ======================================
+
+if (adminAnnouncementsContainer) {
+
+    loadAdminAnnouncements();
+
+}
