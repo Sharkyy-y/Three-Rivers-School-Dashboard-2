@@ -5239,3 +5239,53 @@ if (cancelStudentButton) {
         closeStudentModal
     );
 }
+
+// ==========================================
+// ADMIN DASHBOARD - TOTAL STUDENTS
+// ==========================================
+
+async function loadAdminDashboardStats() {
+
+    const totalStudents =
+        document.getElementById("totalStudents");
+
+    if (!totalStudents) return;
+
+    totalStudents.textContent = "…";
+
+    const { count, error } =
+        await supabaseClient
+            .from("students")
+            .select("id", {
+                count: "exact",
+                head: true
+            });
+
+    if (error) {
+
+        console.error(
+            "TOTAL STUDENTS ERROR:",
+            error
+        );
+
+        totalStudents.textContent = "0";
+
+        return;
+    }
+
+    totalStudents.textContent =
+        count || 0;
+}
+
+
+// ==========================================
+// START ADMIN DASHBOARD STATS
+// ==========================================
+
+if (
+    document.getElementById("totalStudents")
+) {
+
+    loadAdminDashboardStats();
+
+}
