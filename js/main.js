@@ -4976,7 +4976,6 @@ function closeStudentModal() {
     }
 }
 
-
 // ==========================================
 // SAVE STUDENT
 // ==========================================
@@ -5019,35 +5018,20 @@ if (studentForm) {
                     document.getElementById(
                         "studentEmail"
                     ).value.trim()
+
             };
-
-
-            // Add optional fields only if they exist
-            const phoneInput =
-                document.getElementById("studentPhone");
-
-            if (phoneInput) {
-                updatedStudent.phone =
-                    phoneInput.value.trim();
-            }
-
-            const genderInput =
-                document.getElementById("studentGender");
-
-            if (genderInput) {
-                updatedStudent.gender =
-                    genderInput.value;
-            }
 
 
             message.textContent =
                 "Saving...";
+
 
             const { error } =
                 await supabaseClient
                     .from("students")
                     .update(updatedStudent)
                     .eq("id", studentId);
+
 
             if (error) {
 
@@ -5057,23 +5041,29 @@ if (studentForm) {
                 );
 
                 message.textContent =
-                    "Error saving student.";
+                    "Error saving student: " +
+                    error.message;
 
                 return;
             }
 
+
             message.textContent =
                 "Student updated successfully.";
 
+
             await loadAdminStudents();
 
+
             setTimeout(() => {
+
                 closeStudentModal();
+
             }, 700);
+
         }
     );
 }
-
 
 // ==========================================
 // SEARCH STUDENTS
