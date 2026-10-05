@@ -5171,26 +5171,6 @@ if (studentForm) {
 
 
 // ==========================================
-// CLOSE BUTTON
-// ==========================================
-
-const closeStudentModalButton =
-    document.getElementById("closeStudentModal");
-
-if (closeStudentModalButton) {
-
-    closeStudentModalButton.addEventListener(
-        "click",
-        function () {
-
-            closeStudentModal();
-
-        }
-    );
-}
-
-
-// ==========================================
 // CANCEL BUTTON
 // ==========================================
 
