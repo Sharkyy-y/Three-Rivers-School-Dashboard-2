@@ -2961,20 +2961,9 @@ console.log("ATTENDANCE SUMMARY:", {
 }
 
 
-// ==========================================
-// START ATTENDANCE PAGE
-// ==========================================
-
-if (
-    window.location.pathname.includes(
-        "attendance.html"
-    )
-) {
-
-    loadStudentAttendance();
-
-}
-
+console.log(
+    "Student attendance loaded successfully."
+);
 // ==========================================
 // FULL STUDENT TIMETABLE - GRID
 // ==========================================
