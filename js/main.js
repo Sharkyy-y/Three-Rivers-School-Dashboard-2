@@ -5521,6 +5521,15 @@ async function loadAdminAnnouncements() {
 // PUBLISH ANNOUNCEMENT
 // ======================================
 
+const announcementForm =
+    document.getElementById("announcementForm");
+
+console.log(
+    "ADMIN ANNOUNCEMENT FORM:",
+    announcementForm
+);
+
+
 if (announcementForm) {
 
     announcementForm.addEventListener(
@@ -5529,38 +5538,34 @@ if (announcementForm) {
 
             event.preventDefault();
 
+            console.log(
+                "ANNOUNCEMENT FORM SUBMITTED"
+            );
+
 
             const title =
                 document
-                    .getElementById(
-                        "announcementTitle"
-                    )
+                    .getElementById("announcementTitle")
                     .value
                     .trim();
 
 
             const message =
                 document
-                    .getElementById(
-                        "announcementMessage"
-                    )
+                    .getElementById("announcementMessage")
                     .value
                     .trim();
 
 
             const targetRole =
                 document
-                    .getElementById(
-                        "announcementRole"
-                    )
+                    .getElementById("announcementRole")
                     .value;
 
 
             const targetClass =
                 document
-                    .getElementById(
-                        "announcementClass"
-                    )
+                    .getElementById("announcementClass")
                     .value;
 
 
@@ -5570,10 +5575,18 @@ if (announcementForm) {
                 );
 
 
-            if (
-                !title ||
-                !message
-            ) {
+            console.log(
+                "ANNOUNCEMENT DATA:",
+                {
+                    title,
+                    message,
+                    targetRole,
+                    targetClass
+                }
+            );
+
+
+            if (!title || !message) {
 
                 formMessage.textContent =
                     "Please enter a title and message.";
@@ -5591,14 +5604,12 @@ if (announcementForm) {
                 error
             } = await supabaseClient
                 .from("announcements")
-                .insert([
-                    {
-                        title: title,
-                        message: message,
-                        target_role: targetRole,
-                        target_class: targetClass
-                    }
-                ])
+                .insert({
+                    title: title,
+                    message: message,
+                    target_role: targetRole,
+                    target_class: targetClass
+                })
                 .select();
 
 
@@ -5606,6 +5617,7 @@ if (announcementForm) {
                 "PUBLISHED ANNOUNCEMENT:",
                 data
             );
+
 
             console.log(
                 "PUBLISH ERROR:",
@@ -5631,15 +5643,13 @@ if (announcementForm) {
                 "Announcement published successfully!";
 
 
-            // Clear form
             announcementForm.reset();
 
 
-            // Reload announcements immediately
+            // Refresh published announcements
             await loadAdminAnnouncements();
 
 
-            // Remove success message after a few seconds
             setTimeout(
                 function () {
 
@@ -5654,7 +5664,6 @@ if (announcementForm) {
     );
 
 }
-
 
 // ======================================
 // START ADMIN ANNOUNCEMENTS
