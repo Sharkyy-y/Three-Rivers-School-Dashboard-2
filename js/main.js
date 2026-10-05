@@ -2960,10 +2960,6 @@ console.log("ATTENDANCE SUMMARY:", {
 
 }
 
-
-console.log(
-    "Student attendance loaded successfully."
-);
 // ==========================================
 // FULL STUDENT TIMETABLE - GRID
 // ==========================================
