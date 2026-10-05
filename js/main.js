@@ -5086,30 +5086,34 @@ if (studentSearch) {
 
     studentSearch.addEventListener(
         "input",
-        async function() {
+        function () {
 
             const search =
-                this.value.trim().toLowerCase();
+                this.value
+                    .trim()
+                    .toLowerCase();
 
             const cards =
                 document.querySelectorAll(
-                    ".student-admin-card"
+                    "#studentsContainer > *"
                 );
 
             cards.forEach(card => {
 
                 const text =
-                    card.textContent.toLowerCase();
+                    card.textContent
+                        .toLowerCase();
 
                 card.style.display =
                     text.includes(search)
                         ? ""
                         : "none";
+
             });
+
         }
     );
 }
-
 
 // ==========================================
 // ADMIN STUDENTS PAGE STARTUP
