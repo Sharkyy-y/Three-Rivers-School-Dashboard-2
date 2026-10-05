@@ -3723,3 +3723,44 @@ body {
         padding: 18px;
     }
 }
+
+/* ==========================================
+   ANNOUNCEMENT ACTION BUTTONS
+   ========================================== */
+
+.announcement-actions {
+    display: flex;
+    gap: 10px;
+    margin-top: 16px;
+    padding-top: 14px;
+    border-top: 1px solid #e5e7eb;
+}
+
+.announcement-edit-button,
+.announcement-delete-button {
+    border: none;
+    padding: 8px 13px;
+    border-radius: 8px;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: 0.2s ease;
+}
+
+.announcement-edit-button {
+    background: #dbeafe;
+    color: #1d4ed8;
+}
+
+.announcement-edit-button:hover {
+    background: #bfdbfe;
+}
+
+.announcement-delete-button {
+    background: #fee2e2;
+    color: #dc2626;
+}
+
+.announcement-delete-button:hover {
+    background: #fecaca;
+}
