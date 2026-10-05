@@ -5816,6 +5816,14 @@ if (adminAnnouncementsContainer) {
 
 async function loadAdminAttendance() {
 
+    console.log("ADMIN ATTENDANCE ELEMENTS:", {
+    studentCount: document.getElementById("adminAttendanceStudentCount"),
+    average: document.getElementById("adminAverageAttendance"),
+    present: document.getElementById("adminPresentToday"),
+    absent: document.getElementById("adminAbsentToday"),
+    container: document.getElementById("adminAttendanceContainer")
+});
+
     const container =
         document.getElementById(
             "adminAttendanceContainer"
