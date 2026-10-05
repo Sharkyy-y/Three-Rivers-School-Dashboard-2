@@ -4646,116 +4646,112 @@ async function loadAnnouncementsPage() {
 
     // CREATE ANNOUNCEMENTS
 
-    announcements.forEach(
-        function (announcement, index) {
+   announcements.forEach(
+    function (announcement) {
+
+        const announcementElement =
+            document.createElement("div");
+
+        announcementElement.className =
+            "admin-announcement-item";
 
 
-            const announcementElement =
-                document.createElement(
-                    "div"
-                );
+        const roleNames = {
+            all: "🌍 Everyone",
+            student: "🎓 Student Portal",
+            teacher: "👨‍🏫 Teacher Portal",
+            parent: "👨‍👩‍👧 Parent Portal",
+            admin: "🛡️ Admin Portal"
+        };
 
 
-            announcementElement.className =
-                "announcement-page-card";
+        const targetRole =
+            roleNames[
+                announcement.target_role
+            ] ||
+            announcement.target_role;
 
 
-            // DATE
-
-            const createdDate =
-                new Date(
-                    announcement.created_at
-                );
+        const targetClass =
+            announcement.target_class === "all"
+                ? "All Classes"
+                : announcement.target_class;
 
 
-            const formattedDate =
-                createdDate.toLocaleDateString(
-                    "en-GB",
-                    {
-                        weekday: "long",
-                        day: "numeric",
-                        month: "long",
-                        year: "numeric"
-                    }
-                );
-
-
-            const formattedTime =
-                createdDate.toLocaleTimeString(
-                    "en-GB",
-                    {
-                        hour: "2-digit",
-                        minute: "2-digit"
-                    }
-                );
-
-
-            // ICON
-
-            const icon =
-                index === 0
-                    ? "!"
-                    : "★";
-
-
-            announcementElement.innerHTML = `
-
-                <div class="announcement-page-icon">
-
-                    ${icon}
-
-                </div>
-
-
-                <div class="announcement-page-content">
-
-                    <div class="announcement-page-header">
-
-                        <div>
-
-                            <h3>
-                                ${announcement.title}
-                            </h3>
-
-                        </div>
-
-
-                        <span>
-                            ${formattedDate}
-                        </span>
-
-                    </div>
-
-
-                    <p>
-                        ${announcement.message}
-                    </p>
-
-
-                    <small>
-                        Posted at ${formattedTime}
-                    </small>
-
-                </div>
-
-            `;
-
-
-            container.appendChild(
-                announcementElement
+        const createdDate =
+            new Date(
+                announcement.created_at
             );
 
-        }
-    );
+
+        const formattedDate =
+            createdDate.toLocaleDateString(
+                "en-GB",
+                {
+                    day: "numeric",
+                    month: "short",
+                    year: "numeric"
+                }
+            );
 
 
-    console.log(
-        "Announcements page loaded successfully."
-    );
+        announcementElement.innerHTML = `
 
-}
+            <h3>
+                ${announcement.title}
+            </h3>
+
+            <p>
+                ${announcement.message}
+            </p>
+
+            <div class="announcement-meta">
+
+                <span class="announcement-target">
+                    ${targetRole}
+                </span>
+
+                <span class="announcement-target">
+                    🎯 ${targetClass}
+                </span>
+
+                <span>
+                    📅 ${formattedDate}
+                </span>
+
+            </div>
 
 
+            <div class="announcement-actions">
+
+                <button
+                    class="announcement-edit-button"
+                    onclick="editAnnouncement('${announcement.id}')">
+
+                    ✏️ Edit
+
+                </button>
+
+
+                <button
+                    class="announcement-delete-button"
+                    onclick="deleteAnnouncement('${announcement.id}')">
+
+                    🗑️ Delete
+
+                </button>
+
+            </div>
+
+        `;
+
+
+        adminAnnouncementsContainer.appendChild(
+            announcementElement
+        );
+
+    }
+);
 // ==========================================
 // START ANNOUNCEMENTS PAGE
 // ==========================================
