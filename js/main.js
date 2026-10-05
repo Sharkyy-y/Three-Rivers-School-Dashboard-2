@@ -5527,6 +5527,16 @@ async function loadAdminAnnouncements() {
     </div>
 
 `;
+
+             adminAnnouncementsContainer.appendChild(
+                announcementElement
+            );
+
+        }
+    );
+
+}
+
 // ======================================
 // EDIT ANNOUNCEMENT
 // ======================================
