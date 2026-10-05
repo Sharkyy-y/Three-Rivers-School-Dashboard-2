@@ -5227,20 +5227,6 @@ if (
 // MODAL BUTTONS
 // ==========================================
 
-const closeStudentButton =
-    document.getElementById(
-        "closeStudentModal"
-    );
-
-if (closeStudentButton) {
-
-    closeStudentButton.addEventListener(
-        "click",
-        closeStudentModal
-    );
-}
-
-
 const cancelStudentButton =
     document.getElementById(
         "cancelStudentButton"
