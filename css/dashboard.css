@@ -4584,3 +4584,32 @@ body {
         min-width: 90px;
     }
 }
+
+/* ==========================================
+   ADMIN SIDEBAR LOGOUT
+   ========================================== */
+
+.sidebar {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
+.sidebar-nav {
+    flex: 1;
+}
+
+.sidebar-logout {
+    margin-top: auto;
+    padding: 20px;
+}
+
+.logout-button {
+    width: 100%;
+    padding: 12px 16px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 15px;
+    font-weight: 600;
+}
