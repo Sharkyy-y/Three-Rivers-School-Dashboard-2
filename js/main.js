@@ -7444,3 +7444,482 @@ if (
     console.log("ADMIN GRADES PAGE DETECTED");
     loadAdminGrades();
 }
+
+// ==========================================
+// ADMIN CONDUCT
+// ==========================================
+
+async function loadAdminConduct() {
+
+    const studentList =
+        document.getElementById("adminConductStudentList");
+
+    if (!studentList) return;
+
+    console.log("Loading admin conduct...");
+
+    const {
+        data: students,
+        error: studentsError
+    } = await supabaseClient
+        .from("students")
+        .select(`
+            id,
+            full_name,
+            admission_number,
+            class_name
+        `)
+        .order("full_name", { ascending: true });
+
+    if (studentsError) {
+        console.error("ADMIN CONDUCT STUDENTS ERROR:", studentsError);
+
+        studentList.innerHTML = `
+            <div class="empty-state">
+                Unable to load students.
+            </div>
+        `;
+
+        return;
+    }
+
+    const {
+        data: conduct,
+        error: conductError
+    } = await supabaseClient
+        .from("conduct")
+        .select(`
+            id,
+            student_id,
+            status,
+            remarks,
+            created_at
+        `);
+
+    console.log("ADMIN CONDUCT:", conduct);
+    console.log("ADMIN CONDUCT ERROR:", conductError);
+
+    if (conductError) {
+        studentList.innerHTML = `
+            <div class="empty-state">
+                Unable to load conduct records.
+            </div>
+        `;
+
+        return;
+    }
+
+    // ------------------------------------------
+    // OVERVIEW STATISTICS
+    // ------------------------------------------
+
+    const totalRecordsElement =
+        document.getElementById("adminConductTotalRecords");
+
+    const studentsElement =
+        document.getElementById("adminConductStudents");
+
+    const positiveElement =
+        document.getElementById("adminConductPositive");
+
+    const concernsElement =
+        document.getElementById("adminConductConcerns");
+
+    if (totalRecordsElement) {
+        totalRecordsElement.textContent = conduct.length;
+    }
+
+    const studentsWithRecords = new Set(
+        conduct.map(function (record) {
+            return record.student_id;
+        })
+    );
+
+    if (studentsElement) {
+        studentsElement.textContent =
+            studentsWithRecords.size;
+    }
+
+    const positiveRecords = conduct.filter(function (record) {
+
+        const status =
+            String(record.status || "").toLowerCase();
+
+        return (
+            status === "positive" ||
+            status === "good" ||
+            status === "commendation" ||
+            status === "excellent"
+        );
+
+    });
+
+    const concernRecords = conduct.filter(function (record) {
+
+        const status =
+            String(record.status || "").toLowerCase();
+
+        return !(
+            status === "positive" ||
+            status === "good" ||
+            status === "commendation" ||
+            status === "excellent"
+        );
+
+    });
+
+    if (positiveElement) {
+        positiveElement.textContent =
+            positiveRecords.length;
+    }
+
+    if (concernsElement) {
+        concernsElement.textContent =
+            concernRecords.length;
+    }
+
+    // ------------------------------------------
+    // RENDER STUDENTS
+    // ------------------------------------------
+
+    function renderStudents(searchTerm = "") {
+
+        const search =
+            searchTerm.trim().toLowerCase();
+
+        const filteredStudents =
+            students.filter(function (student) {
+
+                const name =
+                    String(student.full_name || "")
+                        .toLowerCase();
+
+                const admission =
+                    String(student.admission_number || "")
+                        .toLowerCase();
+
+                return (
+                    name.includes(search) ||
+                    admission.includes(search)
+                );
+            });
+
+        if (filteredStudents.length === 0) {
+
+            studentList.innerHTML = `
+                <div class="empty-state">
+                    No students found.
+                </div>
+            `;
+
+            return;
+        }
+
+        studentList.innerHTML = "";
+
+        filteredStudents.forEach(function (student) {
+
+            const studentConduct =
+                conduct.filter(function (record) {
+                    return record.student_id === student.id;
+                });
+
+            const card =
+                document.createElement("div");
+
+            card.className =
+                "admin-conduct-student-card";
+
+            card.innerHTML = `
+                <div>
+                    <h3>${student.full_name || "Unnamed Student"}</h3>
+
+                    <p>
+                        Admission:
+                        ${student.admission_number || "—"}
+                    </p>
+
+                    <p>
+                        Class:
+                        ${student.class_name || "—"}
+                    </p>
+                </div>
+
+                <div class="conduct-card-count">
+                    <strong>${studentConduct.length}</strong>
+                    <span>Records</span>
+                </div>
+            `;
+
+            card.addEventListener(
+                "click",
+                function () {
+                    loadAdminStudentConduct(student);
+                }
+            );
+
+            studentList.appendChild(card);
+        });
+    }
+
+    renderStudents();
+
+    // ------------------------------------------
+    // SEARCH
+    // ------------------------------------------
+
+    const searchInput =
+        document.getElementById("adminConductSearch");
+
+    if (searchInput) {
+
+        searchInput.addEventListener(
+            "input",
+            function () {
+                renderStudents(this.value);
+            }
+        );
+    }
+}
+
+
+// ==========================================
+// ADMIN STUDENT CONDUCT
+// ==========================================
+
+async function loadAdminStudentConduct(student) {
+
+    const resultsSection =
+        document.getElementById(
+            "adminConductResultsSection"
+        );
+
+    const selectedStudent =
+        document.getElementById(
+            "adminSelectedConductStudent"
+        );
+
+    const container =
+        document.getElementById(
+            "adminStudentConductContainer"
+        );
+
+    if (!resultsSection || !container) return;
+
+    resultsSection.style.display = "block";
+
+    if (selectedStudent) {
+
+        selectedStudent.innerHTML = `
+            <h2>${student.full_name || "Student"}</h2>
+
+            <p>
+                Admission:
+                ${student.admission_number || "—"}
+                &nbsp; | &nbsp;
+                Class:
+                ${student.class_name || "—"}
+            </p>
+        `;
+    }
+
+    container.innerHTML =
+        "<p>Loading conduct records...</p>";
+
+    const {
+        data: records,
+        error
+    } = await supabaseClient
+        .from("conduct")
+        .select(`
+            id,
+            student_id,
+            status,
+            remarks,
+            created_at
+        `)
+        .eq("student_id", student.id)
+        .order("created_at", { ascending: false });
+
+    console.log("ADMIN STUDENT CONDUCT:", records);
+    console.log("ADMIN STUDENT CONDUCT ERROR:", error);
+
+    if (error) {
+
+        container.innerHTML = `
+            <div class="empty-state">
+                Unable to load conduct records.
+            </div>
+        `;
+
+        return;
+    }
+
+    // ------------------------------------------
+    // STUDENT SUMMARY
+    // ------------------------------------------
+
+    const countElement =
+        document.getElementById(
+            "adminStudentConductCount"
+        );
+
+    const positiveElement =
+        document.getElementById(
+            "adminStudentPositive"
+        );
+
+    const concernsElement =
+        document.getElementById(
+            "adminStudentConcerns"
+        );
+
+    const positiveRecords =
+        records.filter(function (record) {
+
+            const status =
+                String(record.status || "")
+                    .toLowerCase();
+
+            return (
+                status === "positive" ||
+                status === "good" ||
+                status === "commendation" ||
+                status === "excellent"
+            );
+        });
+
+    if (countElement) {
+        countElement.textContent = records.length;
+    }
+
+    if (positiveElement) {
+        positiveElement.textContent =
+            positiveRecords.length;
+    }
+
+    if (concernsElement) {
+        concernsElement.textContent =
+            records.length - positiveRecords.length;
+    }
+
+    // ------------------------------------------
+    // NO RECORDS
+    // ------------------------------------------
+
+    if (records.length === 0) {
+
+        container.innerHTML = `
+            <div class="empty-state">
+                No conduct records found for this student.
+            </div>
+        `;
+
+        return;
+    }
+
+    // ------------------------------------------
+    // CONDUCT TABLE
+    // ------------------------------------------
+
+    let tableHTML = `
+        <div class="table-wrapper">
+
+            <table class="admin-grades-table">
+
+                <thead>
+                    <tr>
+                        <th>Status</th>
+                        <th>Remarks</th>
+                        <th>Date</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+    `;
+
+    records.forEach(function (record) {
+
+        const date =
+            record.created_at
+                ? new Date(record.created_at)
+                    .toLocaleDateString("en-GB")
+                : "—";
+
+        tableHTML += `
+            <tr>
+
+                <td>
+                    <strong>
+                        ${record.status || "—"}
+                    </strong>
+                </td>
+
+                <td>
+                    ${record.remarks || "No remarks"}
+                </td>
+
+                <td>
+                    ${date}
+                </td>
+
+            </tr>
+        `;
+    });
+
+    tableHTML += `
+                </tbody>
+
+            </table>
+
+        </div>
+    `;
+
+    container.innerHTML = tableHTML;
+}
+
+
+// ==========================================
+// ADMIN CONDUCT BACK BUTTON
+// ==========================================
+
+const adminConductBackButton =
+    document.getElementById(
+        "adminConductBackButton"
+    );
+
+if (adminConductBackButton) {
+
+    adminConductBackButton.addEventListener(
+        "click",
+        function () {
+
+            const resultsSection =
+                document.getElementById(
+                    "adminConductResultsSection"
+                );
+
+            if (resultsSection) {
+                resultsSection.style.display = "none";
+            }
+
+            window.scrollTo({
+                top: 0,
+                behavior: "smooth"
+            });
+        }
+    );
+}
+
+
+// ==========================================
+// START ADMIN CONDUCT
+// ==========================================
+
+if (
+    window.location.pathname.includes(
+        "admin-conduct.html"
+    )
+) {
+    loadAdminConduct();
+}
