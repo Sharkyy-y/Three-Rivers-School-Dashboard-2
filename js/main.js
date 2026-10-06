@@ -6563,7 +6563,7 @@ async function loadAdminGrades() {
 
     const studentSection =
         document.getElementById(
-            "adminGradesStudentSection"
+            "adminStudentSection"
         );
 
     const resultsSection =
