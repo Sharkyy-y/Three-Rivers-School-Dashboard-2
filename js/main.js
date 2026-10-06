@@ -1225,7 +1225,7 @@ const {
 
 
 // ==========================================
-// START STUDENT DASHBOARD
+// START STUDENT PAGES
 // ==========================================
 
 if (
@@ -1238,6 +1238,15 @@ if (
 
 }
 
+if (
+    window.location.pathname.includes(
+        "attendance.html"
+    )
+) {
+
+    loadStudentAttendance();
+
+}
 
 async function loadStudentProfile() {
 
