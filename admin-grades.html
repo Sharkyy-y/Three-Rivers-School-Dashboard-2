@@ -1,1 +1,187 @@
+```html
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>Grades | Admin Portal</title>
+
+    <link
+        rel="stylesheet"
+        href="css/style.css"
+    >
+
+    <link
+        rel="stylesheet"
+        href="css/dashboard.css"
+    >
+
+</head>
+
+<body>
+
+<div class="dashboard-layout">
+
+    <!-- SIDEBAR -->
+
+    <aside class="sidebar">
+
+        <div class="sidebar-logo">
+            <h2>Student Portal</h2>
+            <p>Administration</p>
+        </div>
+
+        <nav class="sidebar-nav">
+
+            <a href="admin-dashboard.html">
+                Dashboard
+            </a>
+
+            <a href="admin-students.html">
+                Students
+            </a>
+
+            <a href="admin-attendance.html">
+                Attendance
+            </a>
+
+            <a href="admin-grades.html" class="active">
+                Grades
+            </a>
+
+            <a href="admin-announcements.html">
+                Announcements
+            </a>
+
+        </nav>
+
+    </aside>
+
+
+    <!-- MAIN CONTENT -->
+
+    <main class="main-content">
+
+        <header class="dashboard-header">
+
+            <div>
+                <h1>Grades</h1>
+
+                <p>
+                    View student academic results
+                </p>
+            </div>
+
+        </header>
+
+
+        <!-- STUDENT LIST -->
+
+        <section
+            id="adminGradesStudentSection"
+            class="dashboard-section"
+        >
+
+            <div class="section-header">
+
+                <div>
+                    <h2>Student Grades</h2>
+
+                    <p>
+                        Search for a student to view their results.
+                    </p>
+                </div>
+
+            </div>
+
+
+            <!-- SEARCH -->
+
+            <div class="grades-search">
+
+                <input
+                    type="text"
+                    id="adminGradesSearch"
+                    placeholder="Search by student name or admission number..."
+                    autocomplete="off"
+                >
+
+            </div>
+
+
+            <!-- STUDENT LIST -->
+
+            <div
+                id="adminGradesStudentList"
+                class="admin-grades-student-list"
+            >
+
+                <p>
+                    Loading students...
+                </p>
+
+            </div>
+
+        </section>
+
+
+        <!-- STUDENT RESULTS -->
+
+        <section
+            id="adminStudentResultsSection"
+            class="dashboard-section"
+            style="display: none;"
+        >
+
+            <button
+                type="button"
+                id="adminGradesBackButton"
+                class="back-button"
+            >
+                ← Back to Students
+            </button>
+
+
+            <div
+                id="adminSelectedStudent"
+                class="student-results-header"
+            >
+            </div>
+
+
+            <div
+                id="adminStudentGradesContainer"
+                class="admin-student-grades"
+            >
+
+                <p>
+                    Loading grades...
+                </p>
+
+            </div>
+
+        </section>
+
+    </main>
+
+</div>
+
+
+<!-- SUPABASE -->
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<script src="main.js"></script>
+
+</body>
+
+</html>
+```
 
