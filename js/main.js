@@ -6764,17 +6764,6 @@ else {
 
     }
 
-}
-
-   if (overallAverageElement) {
-
-        overallAverageElement.textContent =
-            Math.round(overallAverage) + "%";
-
-    }
-
-}
-
 // ======================================
 // EXTRA ADMIN GRADE STATISTICS
 // ======================================
