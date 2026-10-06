@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Teacher Dashboard | Student Management Portal</title>
+
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/dashboard.css">
+</head>
+
+<body>
+
+    <div class="dashboard-layout">
+
+        <!-- ==============================
+             SIDEBAR
+        =============================== -->
+        <aside class="sidebar">
+
+            <div class="sidebar-logo">
+                <h2>Student Portal</h2>
+                <p>Teacher Portal</p>
+            </div>
+
+            <nav class="sidebar-nav">
+
+                <a href="teacher-dashboard.html" class="active">
+                    🏠 Dashboard
+                </a>
+
+                <a href="teacher-students.html">
+                    👥 My Students
+                </a>
+
+                <a href="teacher-grades.html">
+                    📊 Grades
+                </a>
+
+                <a href="teacher-conduct.html">
+                    ⚠️ Conduct
+                </a>
+
+                <a href="teacher-assignments.html">
+                    📝 Assignments
+                </a>
+
+                <a href="teacher-announcements.html">
+                    📢 Announcements
+                </a>
+
+                <a href="teacher-timetable.html">
+                    🗓️ Timetable
+                </a>
+
+                <a href="teacher-duty.html">
+                    👨‍🏫 Teachers on Duty
+                </a>
+
+                <a href="teacher-profile.html">
+                    👤 My Profile
+                </a>
+
+            </nav>
+
+            <div class="sidebar-logout">
+
+                <button
+                    id="teacherLogoutButton"
+                    class="logout-button">
+
+                    🚪 Logout
+
+                </button>
+
+            </div>
+
+        </aside>
+
+
+        <!-- ==============================
+             MAIN CONTENT
+        =============================== -->
+        <main class="admin-dashboard-page">
+
+            <!-- HEADER -->
+            <section class="admin-dashboard-header">
+
+                <h1>
+                    Welcome, <span id="teacherName">Teacher</span>
+                </h1>
+
+                <p>
+                    Manage your students, subjects, grades, conduct,
+                    assignments and school communication.
+                </p>
+
+            </section>
+
+
+            <!-- ==============================
+                 TEACHER STATISTICS
+            =============================== -->
+            <section class="admin-stats-grid">
+
+                <div class="admin-stat-card">
+
+                    <div class="admin-stat-icon">
+                        S
+                    </div>
+
+                    <div>
+                        <h2 id="teacherStudentCount">0</h2>
+                        <p>My Students</p>
+                    </div>
+
+                </div>
+
+
+                <div class="admin-stat-card">
+
+                    <div class="admin-stat-icon">
+                        B
+                    </div>
+
+                    <div>
+                        <h2 id="teacherSubjectCount">0</h2>
+                        <p>My Subjects</p>
+                    </div>
+
+                </div>
+
+
+                <div class="admin-stat-card">
+
+                    <div class="admin-stat-icon">
+                        A
+                    </div>
+
+                    <div>
+                        <h2 id="teacherAssignmentCount">0</h2>
+                        <p>Assignments</p>
+                    </div>
+
+                </div>
+
+
+                <div class="admin-stat-card">
+
+                    <div class="admin-stat-icon">
+                        D
+                    </div>
+
+                    <div>
+                        <h2 id="teacherDutyCount">0</h2>
+                        <p>Duty Days</p>
+                    </div>
+
+                </div>
+
+            </section>
+
+
+            <!-- ==============================
+                 QUICK ACTIONS
+            =============================== -->
+            <section class="admin-dashboard-section">
+
+                <div class="admin-section-header">
+
+                    <div>
+
+                        <h2>Quick Actions</h2>
+
+                        <p>
+                            Quickly access the areas you manage.
+                        </p>
+
+                    </div>
+
+                </div>
+
+
+                <div class="admin-quick-actions">
+
+                    <a
+                        href="teacher-grades.html"
+                        class="admin-action-card">
+
+                        <div class="admin-action-icon">
+                            G
+                        </div>
+
+                        <h3>Manage Grades</h3>
+
+                        <p>
+                            Edit student marks and add teacher comments.
+                        </p>
+
+                    </a>
+
+
+                    <a
+                        href="teacher-conduct.html"
+                        class="admin-action-card">
+
+                        <div class="admin-action-icon">
+                            C
+                        </div>
+
+                        <h3>Student Conduct</h3>
+
+                        <p>
+                            Record and review student conduct.
+                        </p>
+
+                    </a>
+
+
+                    <a
+                        href="teacher-assignments.html"
+                        class="admin-action-card">
+
+                        <div class="admin-action-icon">
+                            A
+                        </div>
+
+                        <h3>Create Assignment</h3>
+
+                        <p>
+                            Give assignments to students in your subjects.
+                        </p>
+
+                    </a>
+
+
+                    <a
+                        href="teacher-announcements.html"
+                        class="admin-action-card">
+
+                        <div class="admin-action-icon">
+                            N
+                        </div>
+
+                        <h3>Announcements</h3>
+
+                        <p>
+                            Send announcements to selected portals.
+                        </p>
+
+                    </a>
+
+                </div>
+
+            </section>
+
+
+            <!-- ==============================
+                 TODAY'S INFORMATION
+            =============================== -->
+            <section class="admin-dashboard-section">
+
+                <div class="admin-section-header">
+
+                    <div>
+
+                        <h2>Today's Overview</h2>
+
+                        <p>
+                            Your teaching activities for today.
+                        </p>
+
+                    </div>
+
+                </div>
+
+
+                <div class="admin-activity-list">
+
+                    <div class="admin-activity-item">
+
+                        <div class="admin-activity-dot"></div>
+
+                        <div>
+
+                            <strong>
+                                Today's timetable
+                            </strong>
+
+                            <span id="teacherTodayTimetable">
+                                Loading today's lessons...
+                            </span>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="admin-activity-item">
+
+                        <div class="admin-activity-dot"></div>
+
+                        <div>
+
+                            <strong>
+                                Teachers on duty
+                            </strong>
+
+                            <span id="teacherTodayDuty">
+                                Loading duty information...
+                            </span>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="admin-activity-item">
+
+                        <div class="admin-activity-dot"></div>
+
+                        <div>
+
+                            <strong>
+                                Assignments
+                            </strong>
+
+                            <span id="teacherUpcomingAssignments">
+                                Loading upcoming assignments...
+                            </span>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </section>
+
+
+        </main>
+
+    </div>
+
+
+    <!-- SUPABASE -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+    <!-- MAIN JAVASCRIPT -->
+    <script src="js/main.js"></script>
+
+</body>
+
+</html>
