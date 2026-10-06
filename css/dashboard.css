@@ -3764,3 +3764,139 @@ body {
 .announcement-delete-button:hover {
     background: #fecaca;
 }
+
+/* ==========================================
+   ADMIN ATTENDANCE PAGE
+========================================== */
+
+.attendance-overview {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 20px;
+    margin-bottom: 30px;
+}
+
+.attendance-stat-card {
+    background: #ffffff;
+    border-radius: 14px;
+    padding: 22px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    border: 1px solid #e5e7eb;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04);
+}
+
+.attendance-stat-icon {
+    width: 48px;
+    height: 48px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 22px;
+    background: #f3f4f6;
+    flex-shrink: 0;
+}
+
+.attendance-stat-card p {
+    margin: 0 0 5px;
+    font-size: 14px;
+    color: #6b7280;
+}
+
+.attendance-stat-card h2 {
+    margin: 0;
+    font-size: 26px;
+    color: #111827;
+}
+
+
+/* Student attendance section */
+
+.admin-content-card {
+    background: #ffffff;
+    border-radius: 16px;
+    padding: 28px;
+    border: 1px solid #e5e7eb;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04);
+}
+
+.admin-section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 22px;
+}
+
+.admin-section-header h2 {
+    margin: 0 0 6px;
+    font-size: 21px;
+    color: #111827;
+}
+
+.admin-section-header p {
+    margin: 0;
+    color: #6b7280;
+    font-size: 14px;
+}
+
+
+/* Search */
+
+.attendance-search {
+    margin-bottom: 24px;
+}
+
+.attendance-search input {
+    width: 100%;
+    box-sizing: border-box;
+    padding: 13px 16px;
+    border: 1px solid #d1d5db;
+    border-radius: 10px;
+    font-size: 14px;
+    outline: none;
+}
+
+.attendance-search input:focus {
+    border-color: #2563eb;
+}
+
+
+/* Attendance records */
+
+.admin-attendance-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.admin-attendance-list > div {
+    background: #f9fafb;
+    border: 1px solid #e5e7eb;
+    border-radius: 12px;
+    padding: 16px 18px;
+}
+
+
+/* Responsive */
+
+@media (max-width: 1000px) {
+
+    .attendance-overview {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+}
+
+@media (max-width: 600px) {
+
+    .attendance-overview {
+        grid-template-columns: 1fr;
+    }
+
+    .admin-content-card {
+        padding: 18px;
+    }
+
+}
