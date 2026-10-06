@@ -6635,7 +6635,7 @@ async function loadAdminGrades() {
     );
 
 
-    // ==========================================
+   // ==========================================
 // ADMIN GRADES OVERVIEW
 // ==========================================
 
@@ -6652,23 +6652,29 @@ const overallAverageElement =
     document.getElementById("adminGradesOverallAverage");
 
 
+/* TOTAL STUDENTS */
+
 if (totalStudentsElement) {
+
     totalStudentsElement.textContent =
-        students ? students.length : 0;
+        students.length;
+
 }
 
 
-// Get all grades for overview statistics
+/* GET ALL GRADES */
 
-const { data: allGrades, error: allGradesError } =
-    await supabaseClient
-        .from("grades")
-        .select(`
-            id,
-            student_id,
-            score,
-            max_score
-        `);
+const {
+    data: allGrades,
+    error: allGradesError
+} = await supabaseClient
+    .from("grades")
+    .select(`
+        id,
+        student_id,
+        score,
+        max_score
+    `);
 
 
 console.log(
@@ -6681,6 +6687,84 @@ console.log(
     allGradesError
 );
 
+
+if (allGradesError) {
+
+    console.error(
+        "Unable to load admin grade statistics:",
+        allGradesError
+    );
+
+}
+else {
+
+    /* TOTAL RESULTS */
+
+    if (totalResultsElement) {
+
+        totalResultsElement.textContent =
+            allGrades.length;
+
+    }
+
+
+    /* STUDENTS WITH GRADES */
+
+    const studentsWithGrades =
+        new Set(
+            allGrades.map(
+                function (grade) {
+                    return grade.student_id;
+                }
+            )
+        );
+
+
+    if (studentsWithGradesElement) {
+
+        studentsWithGradesElement.textContent =
+            studentsWithGrades.size;
+
+    }
+
+
+    /* OVERALL AVERAGE */
+
+    let totalScore = 0;
+    let totalMaxScore = 0;
+
+
+    allGrades.forEach(
+        function (grade) {
+
+            const score =
+                Number(grade.score) || 0;
+
+            const maxScore =
+                Number(grade.max_score) || 0;
+
+
+            totalScore += score;
+            totalMaxScore += maxScore;
+
+        }
+    );
+
+
+    const overallAverage =
+        totalMaxScore > 0
+            ? (totalScore / totalMaxScore) * 100
+            : 0;
+
+
+    if (overallAverageElement) {
+
+        overallAverageElement.textContent =
+            Math.round(overallAverage) + "%";
+
+    }
+
+}
   
     // ==========================================
     // DISPLAY STUDENTS
