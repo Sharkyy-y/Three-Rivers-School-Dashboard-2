@@ -6634,6 +6634,112 @@ async function loadAdminGrades() {
         studentsError
     );
 
+    // ==========================================
+// ADMIN GRADES OVERVIEW
+// ==========================================
+
+const totalStudentsElement =
+    document.getElementById("adminGradesTotalStudents");
+
+const studentsWithGradesElement =
+    document.getElementById("adminGradesStudentsWithGrades");
+
+const totalResultsElement =
+    document.getElementById("adminGradesTotalResults");
+
+const overallAverageElement =
+    document.getElementById("adminGradesOverallAverage");
+
+
+if (totalStudentsElement) {
+    totalStudentsElement.textContent =
+        students ? students.length : 0;
+}
+
+
+// Get all grades for overview statistics
+
+const { data: allGrades, error: allGradesError } =
+    await supabaseClient
+        .from("grades")
+        .select(`
+            id,
+            student_id,
+            score,
+            max_score
+        `);
+
+
+console.log(
+    "ADMIN ALL GRADES:",
+    allGrades
+);
+
+console.log(
+    "ADMIN ALL GRADES ERROR:",
+    allGradesError
+);
+
+
+if (!allGradesError && allGrades) {
+
+    if (totalResultsElement) {
+
+        totalResultsElement.textContent =
+            allGrades.length;
+
+    }
+
+
+    const studentsWithGrades =
+        new Set(
+            allGrades.map(
+                grade => grade.student_id
+            )
+        );
+
+
+    if (studentsWithGradesElement) {
+
+        studentsWithGradesElement.textContent =
+            studentsWithGrades.size;
+
+    }
+
+
+    let totalScore = 0;
+    let totalMaxScore = 0;
+
+
+    allGrades.forEach(function (grade) {
+
+        const score =
+            Number(grade.score) || 0;
+
+        const maxScore =
+            Number(grade.max_score) || 0;
+
+
+        totalScore += score;
+        totalMaxScore += maxScore;
+
+    });
+
+
+    if (overallAverageElement) {
+
+        const average =
+            totalMaxScore > 0
+                ? (totalScore / totalMaxScore) * 100
+                : 0;
+
+
+        overallAverageElement.textContent =
+            Math.round(average) + "%";
+
+    }
+
+}
 
     if (studentsError) {
 
