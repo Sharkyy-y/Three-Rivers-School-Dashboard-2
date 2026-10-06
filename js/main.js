@@ -6774,10 +6774,61 @@ else {
     }
 
 }
-  
-    // ==========================================
-    // DISPLAY STUDENTS
-    // ==========================================
+
+// ======================================
+// EXTRA ADMIN GRADE STATISTICS
+// ======================================
+
+const classAverageElement =
+    document.getElementById("adminClassAverage");
+
+const highestStudentAverageElement =
+    document.getElementById(
+        "adminHighestStudentAverage"
+    );
+
+const subjectsGradedElement =
+    document.getElementById(
+        "adminSubjectsGraded"
+    );
+
+if (allGrades && allGrades.length > 0) {
+
+    // ------------------------------
+    // CLASS AVERAGE
+    // ------------------------------
+
+    if (classAverageElement) {
+        classAverageElement.textContent =
+            Math.round(overallAverage) + "%";
+    }
+
+
+    // ------------------------------
+    // SUBJECTS GRADED
+    // ------------------------------
+
+    const subjectIds =
+        new Set();
+
+    allGrades.forEach(
+        function (grade) {
+
+            if (grade.subject_id) {
+                subjectIds.add(
+                    grade.subject_id
+                );
+            }
+
+        }
+    );
+
+    if (subjectsGradedElement) {
+        subjectsGradedElement.textContent =
+            subjectIds.size;
+    }
+
+}
 
     
     // ==========================================
