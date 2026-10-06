@@ -6541,3 +6541,671 @@ if (
     loadAdminAttendance();
 
 }
+
+```javascript
+// ==========================================
+// ADMIN GRADES
+// ==========================================
+
+async function loadAdminGrades() {
+
+    console.log("Loading admin grades...");
+
+    const studentList =
+        document.getElementById(
+            "adminGradesStudentList"
+        );
+
+    const searchInput =
+        document.getElementById(
+            "adminGradesSearch"
+        );
+
+    const studentSection =
+        document.getElementById(
+            "adminGradesStudentSection"
+        );
+
+    const resultsSection =
+        document.getElementById(
+            "adminStudentResultsSection"
+        );
+
+    const backButton =
+        document.getElementById(
+            "adminGradesBackButton"
+        );
+
+    const selectedStudent =
+        document.getElementById(
+            "adminSelectedStudent"
+        );
+
+    const gradesContainer =
+        document.getElementById(
+            "adminStudentGradesContainer"
+        );
+
+
+    // ==========================================
+    // CHECK ELEMENTS
+    // ==========================================
+
+    if (!studentList) {
+
+        console.error(
+            "Admin grades student list not found."
+        );
+
+        return;
+    }
+
+
+    // ==========================================
+    // GET STUDENTS
+    // ==========================================
+
+    const {
+        data: students,
+        error: studentsError
+    } = await supabaseClient
+        .from("students")
+        .select(`
+            id,
+            full_name,
+            admission_number,
+            class_name
+        `)
+        .order(
+            "full_name",
+            {
+                ascending: true
+            }
+        );
+
+
+    console.log(
+        "ADMIN GRADES STUDENTS:",
+        students
+    );
+
+    console.log(
+        "ADMIN GRADES STUDENT ERROR:",
+        studentsError
+    );
+
+
+    if (studentsError) {
+
+        console.error(
+            studentsError
+        );
+
+        studentList.innerHTML = `
+            <div class="empty-state">
+
+                <h3>
+                    Unable to load students
+                </h3>
+
+                <p>
+                    Please try again later.
+                </p>
+
+            </div>
+        `;
+
+        return;
+    }
+
+
+    if (!students || students.length === 0) {
+
+        studentList.innerHTML = `
+            <div class="empty-state">
+
+                <h3>
+                    No students found
+                </h3>
+
+                <p>
+                    There are currently no students in the system.
+                </p>
+
+            </div>
+        `;
+
+        return;
+    }
+
+
+    // ==========================================
+    // DISPLAY STUDENTS
+    // ==========================================
+
+    function displayStudents(
+        studentArray
+    ) {
+
+        studentList.innerHTML = "";
+
+
+        if (
+            !studentArray ||
+            studentArray.length === 0
+        ) {
+
+            studentList.innerHTML = `
+                <div class="empty-state">
+
+                    <h3>
+                        No students found
+                    </h3>
+
+                    <p>
+                        Try a different name or admission number.
+                    </p>
+
+                </div>
+            `;
+
+            return;
+        }
+
+
+        studentArray.forEach(
+            function (student) {
+
+                const studentCard =
+                    document.createElement(
+                        "div"
+                    );
+
+
+                studentCard.className =
+                    "admin-grade-student-card";
+
+
+                studentCard.innerHTML = `
+
+                    <div class="student-grade-info">
+
+                        <div class="student-grade-avatar">
+
+                            ${
+                                student.full_name
+                                    ? student.full_name
+                                        .charAt(0)
+                                        .toUpperCase()
+                                    : "S"
+                            }
+
+                        </div>
+
+
+                        <div>
+
+                            <h3>
+                                ${student.full_name}
+                            </h3>
+
+                            <p>
+                                Admission No:
+                                ${student.admission_number || "N/A"}
+                            </p>
+
+                            <p>
+                                Class:
+                                ${student.class_name || "N/A"}
+                            </p>
+
+                        </div>
+
+                    </div>
+
+
+                    <button
+                        type="button"
+                        class="view-grades-button"
+                    >
+                        View Grades →
+                    </button>
+
+                `;
+
+
+                const viewButton =
+                    studentCard.querySelector(
+                        ".view-grades-button"
+                    );
+
+
+                viewButton.addEventListener(
+                    "click",
+                    function () {
+
+                        loadAdminStudentGrades(
+                            student
+                        );
+
+                    }
+                );
+
+
+                studentList.appendChild(
+                    studentCard
+                );
+
+            }
+        );
+
+    }
+
+
+    displayStudents(
+        students
+    );
+
+
+    // ==========================================
+    // SEARCH STUDENTS
+    // ==========================================
+
+    if (searchInput) {
+
+        searchInput.addEventListener(
+            "input",
+            function () {
+
+                const searchTerm =
+                    searchInput.value
+                        .trim()
+                        .toLowerCase();
+
+
+                const filteredStudents =
+                    students.filter(
+                        function (student) {
+
+                            const name =
+                                (
+                                    student.full_name || ""
+                                ).toLowerCase();
+
+
+                            const admission =
+                                (
+                                    student.admission_number || ""
+                                ).toLowerCase();
+
+
+                            return (
+                                name.includes(searchTerm) ||
+                                admission.includes(searchTerm)
+                            );
+
+                        }
+                    );
+
+
+                displayStudents(
+                    filteredStudents
+                );
+
+            }
+        );
+
+    }
+
+
+    // ==========================================
+    // BACK BUTTON
+    // ==========================================
+
+    if (backButton) {
+
+        backButton.addEventListener(
+            "click",
+            function () {
+
+                resultsSection.style.display =
+                    "none";
+
+                studentSection.style.display =
+                    "block";
+
+                if (searchInput) {
+
+                    searchInput.focus();
+
+                }
+
+            }
+        );
+
+    }
+
+
+    // ==========================================
+    // LOAD STUDENT GRADES
+    // ==========================================
+
+    async function loadAdminStudentGrades(
+        student
+    ) {
+
+        studentSection.style.display =
+            "none";
+
+        resultsSection.style.display =
+            "block";
+
+
+        selectedStudent.innerHTML = `
+
+            <div>
+
+                <h2>
+                    ${student.full_name}
+                </h2>
+
+                <p>
+                    Admission No:
+                    ${student.admission_number || "N/A"}
+                </p>
+
+                <p>
+                    Class:
+                    ${student.class_name || "N/A"}
+                </p>
+
+            </div>
+
+        `;
+
+
+        gradesContainer.innerHTML = `
+            <p>
+                Loading grades...
+            </p>
+        `;
+
+
+        // ======================================
+        // GET GRADES
+        // ======================================
+
+        const {
+            data: grades,
+            error: gradesError
+        } = await supabaseClient
+            .from("grades")
+            .select(`
+                id,
+                assessment,
+                score,
+                max_score,
+                created_at,
+                subjects (
+                    id,
+                    name,
+                    code
+                )
+            `)
+            .eq(
+                "student_id",
+                student.id
+            )
+            .order(
+                "created_at",
+                {
+                    ascending: false
+                }
+            );
+
+
+        console.log(
+            "ADMIN STUDENT GRADES:",
+            grades
+        );
+
+        console.log(
+            "ADMIN STUDENT GRADES ERROR:",
+            gradesError
+        );
+
+
+        // ======================================
+        // ERROR
+        // ======================================
+
+        if (gradesError) {
+
+            console.error(
+                gradesError
+            );
+
+            gradesContainer.innerHTML = `
+                <div class="empty-state">
+
+                    <h3>
+                        Unable to load grades
+                    </h3>
+
+                    <p>
+                        Please try again later.
+                    </p>
+
+                </div>
+            `;
+
+            return;
+        }
+
+
+        // ======================================
+        // NO GRADES
+        // ======================================
+
+        if (
+            !grades ||
+            grades.length === 0
+        ) {
+
+            gradesContainer.innerHTML = `
+                <div class="empty-state">
+
+                    <h3>
+                        No grades found
+                    </h3>
+
+                    <p>
+                        This student does not have any recorded grades yet.
+                    </p>
+
+                </div>
+            `;
+
+            return;
+        }
+
+
+        // ======================================
+        // DISPLAY GRADES
+        // ======================================
+
+        gradesContainer.innerHTML = `
+
+            <div class="grades-table-wrapper">
+
+                <table class="admin-grades-table">
+
+                    <thead>
+
+                        <tr>
+
+                            <th>
+                                Subject
+                            </th>
+
+                            <th>
+                                Assessment
+                            </th>
+
+                            <th>
+                                Score
+                            </th>
+
+                            <th>
+                                Percentage
+                            </th>
+
+                            <th>
+                                Date
+                            </th>
+
+                        </tr>
+
+                    </thead>
+
+                    <tbody>
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        `;
+
+
+        const tableBody =
+            gradesContainer.querySelector(
+                "tbody"
+            );
+
+
+        grades.forEach(
+            function (grade) {
+
+                const row =
+                    document.createElement(
+                        "tr"
+                    );
+
+
+                const score =
+                    Number(
+                        grade.score
+                    );
+
+
+                const maxScore =
+                    Number(
+                        grade.max_score
+                    );
+
+
+                let percentage = 0;
+
+
+                if (maxScore > 0) {
+
+                    percentage =
+                        (
+                            score /
+                            maxScore
+                        ) * 100;
+
+                }
+
+
+                const gradeDate =
+                    grade.created_at
+                        ? new Date(
+                            grade.created_at
+                        ).toLocaleDateString(
+                            "en-GB",
+                            {
+                                day: "numeric",
+                                month: "short",
+                                year: "numeric"
+                            }
+                        )
+                        : "N/A";
+
+
+                row.innerHTML = `
+
+                    <td>
+
+                        <strong>
+                            ${
+                                grade.subjects
+                                    ? grade.subjects.name
+                                    : "Unknown Subject"
+                            }
+                        </strong>
+
+                        ${
+                            grade.subjects &&
+                            grade.subjects.code
+                                ? `
+                                    <small>
+                                        ${grade.subjects.code}
+                                    </small>
+                                `
+                                : ""
+                        }
+
+                    </td>
+
+
+                    <td>
+                        ${grade.assessment || "N/A"}
+                    </td>
+
+
+                    <td>
+                        ${score} / ${maxScore}
+                    </td>
+
+
+                    <td>
+                        ${Math.round(percentage)}%
+                    </td>
+
+
+                    <td>
+                        ${gradeDate}
+                    </td>
+
+                `;
+
+
+                tableBody.appendChild(
+                    row
+                );
+
+            }
+        );
+
+    }
+
+}
+
+
+// ==========================================
+// START ADMIN GRADES
+// ==========================================
+
+if (
+    window.location.pathname.includes(
+        "admin-grades.html"
+    )
+) {
+
+    loadAdminGrades();
+
+}
+```
