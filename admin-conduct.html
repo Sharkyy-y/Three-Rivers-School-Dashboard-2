@@ -1,1075 +1,326 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
+
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>Conduct Management | Three Rivers Academy</title>
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
 
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <title>Conduct | Student Management Portal</title>
 
-    <style>
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-        }
+    <link
+        rel="stylesheet"
+        href="css/style.css"
+    >
 
-        body {
-            font-family: Arial, Helvetica, sans-serif;
-            background: #f5f7fb;
-            color: #1f2937;
-        }
+    <link
+        rel="stylesheet"
+        href="css/dashboard.css"
+    >
 
-        /* SIDEBAR */
-
-        .sidebar {
-            position: fixed;
-            left: 0;
-            top: 0;
-            width: 250px;
-            height: 100vh;
-            background: #ffffff;
-            border-right: 1px solid #e5e7eb;
-            padding: 24px 16px;
-            z-index: 100;
-        }
-
-        .logo {
-            padding: 0 14px 30px;
-        }
-
-        .logo h2 {
-            font-size: 21px;
-            color: #111827;
-        }
-
-        .logo p {
-            margin-top: 5px;
-            color: #6b7280;
-            font-size: 13px;
-        }
-
-        .nav {
-            display: flex;
-            flex-direction: column;
-            gap: 6px;
-        }
-
-        .nav a {
-            text-decoration: none;
-            color: #4b5563;
-            padding: 12px 14px;
-            border-radius: 9px;
-            font-size: 14px;
-            display: flex;
-            align-items: center;
-            gap: 11px;
-            transition: 0.2s;
-        }
-
-        .nav a:hover {
-            background: #f3f4f6;
-            color: #111827;
-        }
-
-        .nav a.active {
-            background: #eef2ff;
-            color: #4f46e5;
-            font-weight: 600;
-        }
-
-        .nav-icon {
-            width: 20px;
-            text-align: center;
-        }
-
-        .logout {
-            position: absolute;
-            bottom: 25px;
-            left: 16px;
-            right: 16px;
-        }
-
-        .logout a {
-            text-decoration: none;
-            color: #ef4444;
-            padding: 12px 14px;
-            display: block;
-            border-radius: 9px;
-        }
-
-        .logout a:hover {
-            background: #fef2f2;
-        }
-
-        /* MAIN */
-
-        .main {
-            margin-left: 250px;
-            padding: 35px 40px;
-            min-height: 100vh;
-        }
-
-        .topbar {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 30px;
-        }
-
-        .page-title h1 {
-            font-size: 28px;
-            color: #111827;
-        }
-
-        .page-title p {
-            color: #6b7280;
-            margin-top: 7px;
-            font-size: 14px;
-        }
-
-        .admin-badge {
-            background: #eef2ff;
-            color: #4f46e5;
-            padding: 9px 15px;
-            border-radius: 20px;
-            font-size: 13px;
-            font-weight: 600;
-        }
-
-        /* CARDS */
-
-        .card {
-            background: #ffffff;
-            border-radius: 14px;
-            border: 1px solid #e5e7eb;
-            padding: 25px;
-            margin-bottom: 25px;
-        }
-
-        .card-header {
-            margin-bottom: 22px;
-        }
-
-        .card-header h2 {
-            font-size: 19px;
-            color: #111827;
-        }
-
-        .card-header p {
-            color: #6b7280;
-            font-size: 13px;
-            margin-top: 5px;
-        }
-
-        /* FORM */
-
-        .form-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 20px;
-        }
-
-        .form-group {
-            display: flex;
-            flex-direction: column;
-        }
-
-        .form-group.full {
-            grid-column: 1 / -1;
-        }
-
-        label {
-            font-size: 13px;
-            font-weight: 600;
-            margin-bottom: 8px;
-            color: #374151;
-        }
-
-        input,
-        select,
-        textarea {
-            width: 100%;
-            border: 1px solid #d1d5db;
-            border-radius: 8px;
-            padding: 11px 12px;
-            font-size: 14px;
-            outline: none;
-            background: white;
-        }
-
-        input:focus,
-        select:focus,
-        textarea:focus {
-            border-color: #6366f1;
-            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.08);
-        }
-
-        textarea {
-            min-height: 100px;
-            resize: vertical;
-        }
-
-        .buttons {
-            margin-top: 20px;
-            display: flex;
-            gap: 10px;
-        }
-
-        .btn {
-            border: none;
-            border-radius: 8px;
-            padding: 11px 18px;
-            font-size: 14px;
-            cursor: pointer;
-            font-weight: 600;
-        }
-
-        .btn-primary {
-            background: #4f46e5;
-            color: white;
-        }
-
-        .btn-primary:hover {
-            background: #4338ca;
-        }
-
-        .btn-secondary {
-            background: #f3f4f6;
-            color: #374151;
-        }
-
-        .btn-secondary:hover {
-            background: #e5e7eb;
-        }
-
-        /* MESSAGE */
-
-        #message {
-            display: none;
-            margin-bottom: 20px;
-            padding: 12px 15px;
-            border-radius: 8px;
-            font-size: 14px;
-        }
-
-        /* TABLE */
-
-        .table-wrapper {
-            overflow-x: auto;
-        }
-
-        table {
-            width: 100%;
-            border-collapse: collapse;
-        }
-
-        th {
-            text-align: left;
-            font-size: 12px;
-            color: #6b7280;
-            text-transform: uppercase;
-            padding: 12px;
-            border-bottom: 1px solid #e5e7eb;
-        }
-
-        td {
-            padding: 15px 12px;
-            border-bottom: 1px solid #f0f1f3;
-            font-size: 14px;
-        }
-
-        .type-positive {
-            color: #16a34a;
-            font-weight: 600;
-        }
-
-        .type-negative {
-            color: #dc2626;
-            font-weight: 600;
-        }
-
-        .points-positive {
-            color: #16a34a;
-            font-weight: 700;
-        }
-
-        .points-negative {
-            color: #dc2626;
-            font-weight: 700;
-        }
-
-        .empty {
-            text-align: center;
-            padding: 30px;
-            color: #9ca3af;
-        }
-
-        /* LOADING */
-
-        #loading {
-            position: fixed;
-            inset: 0;
-            background: #f5f7fb;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            z-index: 999;
-            font-size: 15px;
-            color: #6b7280;
-        }
-
-        /* MOBILE */
-
-        @media (max-width: 800px) {
-
-            .sidebar {
-                width: 210px;
-            }
-
-            .main {
-                margin-left: 210px;
-                padding: 25px;
-            }
-
-            .form-grid {
-                grid-template-columns: 1fr;
-            }
-
-            .form-group.full {
-                grid-column: auto;
-            }
-        }
-    </style>
 </head>
 
 <body>
 
-<div id="loading">
-    Checking administrator access...
-</div>
+    <div class="dashboard-layout">
 
-<!-- SIDEBAR -->
+        <!-- ============================= -->
+        <!-- SIDEBAR -->
+        <!-- ============================= -->
 
-<aside class="sidebar">
+        <aside class="sidebar">
 
-    <div class="logo">
-        <h2>Three Rivers Academy</h2>
-        <p>School Portal</p>
-    </div>
+            <div class="sidebar-logo">
+                <h2>Student Portal</h2>
+                <span>Administration</span>
+            </div>
 
-    <nav class="nav">
+            <nav class="sidebar-nav">
 
-        <a href="student-dashboard.html">
-            <span class="nav-icon">⌂</span>
-            Dashboard
-        </a>
+                <a href="admin-dashboard.html">
+                    Dashboard
+                </a>
 
-        <a href="timetable.html">
-            <span class="nav-icon">◷</span>
-            Timetable
-        </a>
+                <a href="admin-students.html">
+                    Students
+                </a>
 
-        <a href="assignments.html">
-            <span class="nav-icon">✓</span>
-            Assignments
-        </a>
+                <a href="admin-attendance.html">
+                    Attendance
+                </a>
 
-        <a href="grades.html">
-            <span class="nav-icon">▣</span>
-            Grades
-        </a>
+                <a href="admin-grades.html">
+                    Grades
+                </a>
 
-        <a href="attendance.html">
-            <span class="nav-icon">◉</span>
-            Attendance
-        </a>
+                <a
+                    href="admin-conduct.html"
+                    class="active"
+                >
+                    Conduct
+                </a>
 
-        <a href="conduct.html">
-            <span class="nav-icon">★</span>
-            Conduct
-        </a>
+                <a href="admin-announcements.html">
+                    Announcements
+                </a>
 
-        <a href="announcements.html">
-            <span class="nav-icon">●</span>
-            Announcements
-        </a>
+            </nav>
 
-        <a href="events.html">
-            <span class="nav-icon">□</span>
-            Events
-        </a>
-
-        <a href="profile.html">
-            <span class="nav-icon">○</span>
-            Profile
-        </a>
-
-        <a href="admin-conduct.html" class="active">
-            <span class="nav-icon">⚙</span>
-            Conduct Management
-        </a>
-
-    </nav>
-
-    <div class="logout">
-        <a href="#" id="logoutButton">
-            ↪ &nbsp; Sign out
-        </a>
-    </div>
-
-</aside>
+        </aside>
 
 
-<!-- MAIN -->
+        <!-- ============================= -->
+        <!-- MAIN CONTENT -->
+        <!-- ============================= -->
 
-<main class="main">
+        <main class="dashboard-main">
 
-    <div class="topbar">
+            <header class="dashboard-header">
 
-        <div class="page-title">
-            <h1>Conduct Management</h1>
-            <p>Manage student behaviour and conduct records.</p>
-        </div>
+                <div>
+                    <h1>Conduct</h1>
 
-        <div class="admin-badge">
-            Administrator
-        </div>
+                    <p>
+                        Monitor and review student conduct records.
+                    </p>
+                </div>
 
-    </div>
+                <div class="admin-profile">
+
+                    <div class="admin-avatar">
+                        A
+                    </div>
+
+                    <div>
+                        <strong>Administrator</strong>
+                        <span>Admin</span>
+                    </div>
+
+                </div>
+
+            </header>
 
 
-    <div id="message"></div>
+            <!-- ============================= -->
+            <!-- OVERVIEW CARDS -->
+            <!-- ============================= -->
 
+            <section class="admin-conduct-overview">
 
-    <!-- ADD RECORD -->
+                <div class="conduct-stat-card">
 
-    <section class="card">
+                    <span>Total Records</span>
 
-        <div class="card-header">
-            <h2>Add Conduct Record</h2>
-            <p>Record positive behaviour or an area where a student needs improvement.</p>
-        </div>
+                    <strong id="adminConductTotalRecords">
+                        —
+                    </strong>
 
-        <form id="conductForm">
-
-            <div class="form-grid">
-
-                <div class="form-group">
-
-                    <label for="student">
-                        Student
-                    </label>
-
-                    <select id="student" required>
-                        <option value="">
-                            Select a student
-                        </option>
-                    </select>
+                    <small>
+                        Recorded conduct entries
+                    </small>
 
                 </div>
 
 
-                <div class="form-group">
+                <div class="conduct-stat-card">
 
-                    <label for="type">
-                        Conduct Type
-                    </label>
+                    <span>Students With Records</span>
 
-                    <select id="type" required>
+                    <strong id="adminConductStudents">
+                        —
+                    </strong>
 
-                        <option value="positive">
-                            Positive
-                        </option>
-
-                        <option value="negative">
-                            Negative
-                        </option>
-
-                    </select>
+                    <small>
+                        Students with conduct entries
+                    </small>
 
                 </div>
 
 
-                <div class="form-group">
+                <div class="conduct-stat-card">
 
-                    <label for="title">
-                        Conduct / Behaviour
-                    </label>
+                    <span>Positive Records</span>
+
+                    <strong id="adminConductPositive">
+                        —
+                    </strong>
+
+                    <small>
+                        Positive conduct entries
+                    </small>
+
+                </div>
+
+
+                <div class="conduct-stat-card">
+
+                    <span>Concerns</span>
+
+                    <strong id="adminConductConcerns">
+                        —
+                    </strong>
+
+                    <small>
+                        Conduct concerns recorded
+                    </small>
+
+                </div>
+
+            </section>
+
+
+            <!-- ============================= -->
+            <!-- SEARCH -->
+            <!-- ============================= -->
+
+            <section class="admin-conduct-section">
+
+                <div class="section-heading">
+
+                    <div>
+
+                        <h2>Student Conduct</h2>
+
+                        <p>
+                            Search and review student conduct information.
+                        </p>
+
+                    </div>
+
+                </div>
+
+
+                <div class="admin-conduct-search">
 
                     <input
                         type="text"
-                        id="title"
-                        placeholder="e.g. Helped another student"
-                        required
+                        id="adminConductSearch"
+                        placeholder="Search by student name or admission number..."
                     >
 
                 </div>
 
 
-                <div class="form-group">
-
-                    <label for="points">
-                        Points
-                    </label>
-
-                    <input
-                        type="number"
-                        id="points"
-                        min="1"
-                        placeholder="e.g. 10"
-                        required
-                    >
-
-                </div>
-
-
-                <div class="form-group full">
-
-                    <label for="description">
-                        Description / Comment
-                    </label>
-
-                    <textarea
-                        id="description"
-                        placeholder="Add more information about this conduct record..."
-                    ></textarea>
-
-                </div>
-
-            </div>
-
-
-            <div class="buttons">
-
-                <button
-                    type="submit"
-                    class="btn btn-primary"
+                <div
+                    id="adminConductStudentList"
+                    class="admin-conduct-student-list"
                 >
-                    Add Conduct Record
-                </button>
+
+                    <div class="loading-state">
+                        Loading conduct records...
+                    </div>
+
+                </div>
+
+            </section>
+
+
+            <!-- ============================= -->
+            <!-- STUDENT CONDUCT DETAILS -->
+            <!-- ============================= -->
+
+            <section
+                id="adminConductResultsSection"
+                class="admin-conduct-section"
+                style="display:none;"
+            >
 
                 <button
                     type="button"
-                    class="btn btn-secondary"
-                    id="clearButton"
+                    id="adminConductBackButton"
+                    class="back-button"
                 >
-                    Clear
+                    ← Back to Students
                 </button>
 
-            </div>
 
-        </form>
+                <div
+                    id="adminSelectedConductStudent"
+                    class="admin-selected-student"
+                >
+                </div>
 
-    </section>
 
+                <div class="student-grade-summary">
 
-    <!-- RECORDS -->
+                    <div class="student-summary-card">
 
-    <section class="card">
+                        <span>Total Records</span>
 
-        <div class="card-header">
+                        <strong id="adminStudentConductCount">
+                            —
+                        </strong>
 
-            <h2>Recent Conduct Records</h2>
+                    </div>
 
-            <p>
-                Conduct records across all students.
-            </p>
 
-        </div>
+                    <div class="student-summary-card">
 
+                        <span>Positive</span>
 
-        <div class="table-wrapper">
+                        <strong id="adminStudentPositive">
+                            —
+                        </strong>
 
-            <table>
+                    </div>
 
-                <thead>
 
-                    <tr>
-                        <th>Student</th>
-                        <th>Type</th>
-                        <th>Conduct</th>
-                        <th>Points</th>
-                        <th>Description</th>
-                        <th>Date</th>
-                    </tr>
+                    <div class="student-summary-card">
 
-                </thead>
+                        <span>Concerns</span>
 
-                <tbody id="recordsBody">
+                        <strong id="adminStudentConcerns">
+                            —
+                        </strong>
 
-                    <tr>
-                        <td colspan="6" class="empty">
-                            Loading records...
-                        </td>
-                    </tr>
+                    </div>
 
-                </tbody>
+                </div>
 
-            </table>
 
-        </div>
+                <div class="student-results-card">
 
-    </section>
+                    <div class="section-heading">
 
-</main>
+                        <div>
 
+                            <h2>Conduct History</h2>
 
-<script>
+                            <p>
+                                Complete recorded conduct information for this student.
+                            </p>
 
-    const SUPABASE_URL =
-        "https://deurewdqzvlioopuhikx.supabase.co";
+                        </div>
 
-    const SUPABASE_KEY =
-        "sb_publishable_k2TUtDnGrc0Bupc7kmYEOQ__-vaiMig";
+                    </div>
 
-    const supabaseClient =
-        window.supabase.createClient(
-            SUPABASE_URL,
-            SUPABASE_KEY
-        );
 
+                    <div
+                        id="adminStudentConductContainer"
+                        class="admin-student-grades-container"
+                    >
 
-    const loading =
-        document.getElementById("loading");
+                        <p>
+                            Loading conduct records...
+                        </p>
 
-    const message =
-        document.getElementById("message");
+                    </div>
 
-    const studentSelect =
-        document.getElementById("student");
+                </div>
 
-    const conductForm =
-        document.getElementById("conductForm");
+            </section>
 
-    const clearButton =
-        document.getElementById("clearButton");
+        </main>
 
-    const recordsBody =
-        document.getElementById("recordsBody");
+    </div>
 
 
-    /* SHOW MESSAGE */
-
-    function showMessage(text, success = true) {
-
-        message.textContent = text;
-
-        message.style.display = "block";
-
-        if (success) {
-
-            message.style.background = "#ecfdf5";
-            message.style.color = "#047857";
-
-        } else {
-
-            message.style.background = "#fef2f2";
-            message.style.color = "#b91c1c";
-
-        }
-
-        setTimeout(() => {
-
-            message.style.display = "none";
-
-        }, 4000);
-    }
-
-
-    /* CHECK ADMIN */
-
-    async function checkAdmin() {
-
-        const {
-            data: {
-                user
-            },
-            error
-        } = await supabaseClient.auth.getUser();
-
-
-        if (error || !user) {
-
-            window.location.href = "login.html";
-
-            return false;
-        }
-
-
-        const {
-            data: profile,
-            error: profileError
-        } = await supabaseClient
-            .from("profiles")
-            .select("id, full_name, email, role")
-            .eq("id", user.id)
-            .single();
-
-
-        if (
-            profileError ||
-            !profile ||
-            profile.role !== "admin"
-        ) {
-
-            alert("You do not have administrator access.");
-
-            window.location.href =
-                "student-dashboard.html";
-
-            return false;
-        }
-
-
-        return true;
-    }
-
-
-    /* LOAD STUDENTS */
-
-    async function loadStudents() {
-
-        const {
-            data,
-            error
-        } = await supabaseClient
-            .from("students")
-            .select("id, name")
-            .order("name", {
-                ascending: true
-            });
-
-
-        if (error) {
-
-            console.error(
-                "Student loading error:",
-                error
-            );
-
-            showMessage(
-                "Could not load students.",
-                false
-            );
-
-            return;
-        }
-
-
-        studentSelect.innerHTML =
-            '<option value="">Select a student</option>';
-
-
-        data.forEach(student => {
-
-            const option =
-                document.createElement("option");
-
-            option.value = student.id;
-
-            option.textContent = student.name;
-
-            studentSelect.appendChild(option);
-
-        });
-    }
-
-
-    /* LOAD CONDUCT RECORDS */
-
-    async function loadRecords() {
-
-        recordsBody.innerHTML = `
-            <tr>
-                <td colspan="6" class="empty">
-                    Loading records...
-                </td>
-            </tr>
-        `;
-
-
-        const {
-            data,
-            error
-        } = await supabaseClient
-            .from("conduct_records")
-            .select(`
-                id,
-                type,
-                title,
-                description,
-                points,
-                created_at,
-                students (
-                    name
-                )
-            `)
-            .order("created_at", {
-                ascending: false
-            });
-
-
-        if (error) {
-
-            console.error(
-                "Conduct loading error:",
-                error
-            );
-
-            recordsBody.innerHTML = `
-                <tr>
-                    <td colspan="6" class="empty">
-                        Could not load conduct records.
-                    </td>
-                </tr>
-            `;
-
-            return;
-        }
-
-
-        if (!data || data.length === 0) {
-
-            recordsBody.innerHTML = `
-                <tr>
-                    <td colspan="6" class="empty">
-                        No conduct records yet.
-                    </td>
-                </tr>
-            `;
-
-            return;
-        }
-
-
-        recordsBody.innerHTML = "";
-
-
-        data.forEach(record => {
-
-            const row =
-                document.createElement("tr");
-
-
-            const studentName =
-                record.students?.name ||
-                "Unknown student";
-
-
-            const date =
-                new Date(
-                    record.created_at
-                ).toLocaleDateString();
-
-
-            const typeClass =
-                record.type === "positive"
-                    ? "type-positive"
-                    : "type-negative";
-
-
-            const pointsClass =
-                record.type === "positive"
-                    ? "points-positive"
-                    : "points-negative";
-
-
-            const pointsText =
-                record.type === "positive"
-                    ? `+${record.points}`
-                    : `-${record.points}`;
-
-
-            row.innerHTML = `
-
-                <td>
-                    ${studentName}
-                </td>
-
-                <td class="${typeClass}">
-                    ${record.type}
-                </td>
-
-                <td>
-                    ${record.title}
-                </td>
-
-                <td class="${pointsClass}">
-                    ${pointsText}
-                </td>
-
-                <td>
-                    ${record.description || "-"}
-                </td>
-
-                <td>
-                    ${date}
-                </td>
-
-            `;
-
-
-            recordsBody.appendChild(row);
-
-        });
-
-    }
-
-
-    /* ADD RECORD */
-
-    conductForm.addEventListener(
-        "submit",
-        async function(event) {
-
-            event.preventDefault();
-
-
-            const studentId =
-                studentSelect.value;
-
-            const type =
-                document.getElementById("type").value;
-
-            const title =
-                document.getElementById("title").value.trim();
-
-            const points =
-                parseInt(
-                    document.getElementById("points").value,
-                    10
-                );
-
-            const description =
-                document
-                    .getElementById("description")
-                    .value
-                    .trim();
-
-
-            if (!studentId || !title || !points) {
-
-                showMessage(
-                    "Please complete all required fields.",
-                    false
-                );
-
-                return;
-            }
-
-
-            const {
-                error
-            } = await supabaseClient
-                .from("conduct_records")
-                .insert({
-
-                    student_id: studentId,
-
-                    type: type,
-
-                    title: title,
-
-                    description:
-                        description || null,
-
-                    points: points
-
-                });
-
-
-            if (error) {
-
-                console.error(
-                    "Insert error:",
-                    error
-                );
-
-                showMessage(
-                    "Could not add conduct record: " +
-                    error.message,
-                    false
-                );
-
-                return;
-            }
-
-
-            showMessage(
-                "Conduct record added successfully."
-            );
-
-
-            conductForm.reset();
-
-
-            await loadRecords();
-
-        }
-    );
-
-
-    /* CLEAR FORM */
-
-    clearButton.addEventListener(
-        "click",
-        function() {
-
-            conductForm.reset();
-
-        }
-    );
-
-
-    /* LOGOUT */
-
-    document
-        .getElementById("logoutButton")
-        .addEventListener(
-            "click",
-            async function(event) {
-
-                event.preventDefault();
-
-                await supabaseClient.auth.signOut();
-
-                window.location.href =
-                    "login.html";
-
-            }
-        );
-
-
-    /* START PAGE */
-
-    async function startPage() {
-
-        const isAdmin =
-            await checkAdmin();
-
-
-        if (!isAdmin) {
-
-            return;
-
-        }
-
-
-        await loadStudents();
-
-        await loadRecords();
-
-
-        loading.style.display =
-            "none";
-    }
-
-
-    startPage();
-
-</script>
+    <script src="js/main.js"></script>
 
 </body>
+
 </html>
