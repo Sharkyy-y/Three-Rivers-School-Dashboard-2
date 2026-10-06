@@ -7272,7 +7272,7 @@ else {
 
                 tableBody.appendChild(
                     row
-                );F
+                );
 
             }
         );
