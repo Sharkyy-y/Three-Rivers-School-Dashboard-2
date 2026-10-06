@@ -9544,3 +9544,8 @@ if (
     loadTeacherGrades();
 
 }
+
+console.log(
+    "TEACHER GRADES PAGE CHECK:",
+    window.location.pathname
+);
