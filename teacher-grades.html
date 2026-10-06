@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>Grades | Teacher Portal</title>
+
+    <link
+        rel="stylesheet"
+        href="css/style.css"
+    >
+
+    <link
+        rel="stylesheet"
+        href="css/dashboard.css"
+    >
+
+</head>
+
+<body>
+
+<div class="dashboard-layout">
+
+    <!-- ==========================================
+         SIDEBAR
+    =========================================== -->
+
+    <aside class="sidebar">
+
+        <div class="sidebar-logo">
+
+            <h2>Student Portal</h2>
+
+            <p>Teacher Portal</p>
+
+        </div>
+
+
+        <nav class="sidebar-nav">
+
+            <a href="teacher-dashboard.html">
+                🏠 Dashboard
+            </a>
+
+            <a href="teacher-students.html">
+                👥 My Students
+            </a>
+
+            <a
+                href="teacher-grades.html"
+                class="active"
+            >
+                📊 Grades
+            </a>
+
+            <a href="teacher-conduct.html">
+                ⚠️ Conduct
+            </a>
+
+            <a href="teacher-assignments.html">
+                📝 Assignments
+            </a>
+
+            <a href="teacher-announcements.html">
+                📢 Announcements
+            </a>
+
+            <a href="teacher-timetable.html">
+                🗓️ Timetable
+            </a>
+
+            <a href="teacher-duty.html">
+                👨‍🏫 Teachers on Duty
+            </a>
+
+            <a href="teacher-profile.html">
+                👤 My Profile
+            </a>
+
+        </nav>
+
+
+        <div class="sidebar-logout">
+
+            <button
+                id="teacherLogoutButton"
+                class="logout-button"
+            >
+                🚪 Logout
+            </button>
+
+        </div>
+
+    </aside>
+
+
+    <!-- ==========================================
+         MAIN CONTENT
+    =========================================== -->
+
+    <main class="admin-dashboard-page">
+
+        <section class="admin-dashboard-header">
+
+            <h1>Student Grades</h1>
+
+            <p>
+                View and manage grades for students in your subjects.
+            </p>
+
+        </section>
+
+
+        <!-- ======================================
+             SUBJECT SELECTION
+        ======================================= -->
+
+        <section class="admin-dashboard-section">
+
+            <div class="admin-section-header">
+
+                <div>
+
+                    <h2>Select Subject</h2>
+
+                    <p>
+                        Choose one of your assigned subjects.
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <select
+                id="teacherGradeSubject"
+                class="teacher-grade-select"
+            >
+
+                <option value="">
+                    Loading subjects...
+                </option>
+
+            </select>
+
+        </section>
+
+
+        <!-- ======================================
+             GRADES
+        ======================================= -->
+
+        <section class="admin-dashboard-section">
+
+            <div class="admin-section-header">
+
+                <div>
+
+                    <h2>Student Grades</h2>
+
+                    <p id="teacherGradeStatus">
+                        Select a subject to view grades.
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <div
+                id="teacherGradesContainer"
+                class="teacher-grades-container"
+            >
+
+                <div class="teacher-grades-empty">
+
+                    <h3>No subject selected</h3>
+
+                    <p>
+                        Select a subject above to view student grades.
+                    </p>
+
+                </div>
+
+            </div>
+
+        </section>
+
+    </main>
+
+</div>
+
+
+<!-- ==========================================
+     SUPABASE
+=========================================== -->
+
+<script
+    src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2">
+</script>
+
+
+<script src="js/main.js"></script>
+
+</body>
+
+</html>
