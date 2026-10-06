@@ -7194,24 +7194,11 @@ async function loadAdminGrades() {
 
 }
 
-
 // ==========================================
 // START ADMIN GRADES
 // ==========================================
 
-if (
-    window.location.pathname.includes(
-        "admin-grades.html"
-    )
-) {
-
-    loadAdminGrades();
-
-}
-
-// ==========================================
-// START ADMIN GRADES
-// ==========================================
+console.log("CURRENT PAGE:", window.location.pathname);
 
 if (
     window.location.pathname.includes(
