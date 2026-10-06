@@ -8269,3 +8269,25 @@ if (
     loadAdminConduct();
 
 }
+
+// ==========================================
+// ADMIN LOGOUT
+// ==========================================
+
+const logoutButton = document.getElementById("logoutButton");
+
+if (logoutButton) {
+
+    logoutButton.addEventListener("click", async function () {
+
+        const { error } = await supabaseClient.auth.signOut();
+
+        if (error) {
+            console.error("Logout error:", error);
+            alert("Unable to log out. Please try again.");
+            return;
+        }
+
+        window.location.href = "login.html";
+    });
+}
