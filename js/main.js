@@ -7456,7 +7456,11 @@ async function loadAdminConduct() {
 
     if (!studentList) return;
 
-    console.log("Loading admin conduct...");
+    console.log("Loading admin conduct records...");
+
+    // ------------------------------------------
+    // LOAD STUDENTS
+    // ------------------------------------------
 
     const {
         data: students,
@@ -7472,7 +7476,11 @@ async function loadAdminConduct() {
         .order("full_name", { ascending: true });
 
     if (studentsError) {
-        console.error("ADMIN CONDUCT STUDENTS ERROR:", studentsError);
+
+        console.error(
+            "ADMIN CONDUCT STUDENTS ERROR:",
+            studentsError
+        );
 
         studentList.innerHTML = `
             <div class="empty-state">
@@ -7483,23 +7491,41 @@ async function loadAdminConduct() {
         return;
     }
 
+
+    // ------------------------------------------
+    // LOAD CONDUCT RECORDS
+    // ------------------------------------------
+
     const {
-        data: conduct,
+        data: conductRecords,
         error: conductError
     } = await supabaseClient
-        .from("conduct")
+        .from("conduct_records")
         .select(`
             id,
             student_id,
-            status,
-            remarks,
+            type,
+            title,
+            description,
+            points,
             created_at
-        `);
+        `)
+        .order("created_at", {
+            ascending: false
+        });
 
-    console.log("ADMIN CONDUCT:", conduct);
-    console.log("ADMIN CONDUCT ERROR:", conductError);
+    console.log(
+        "ADMIN CONDUCT RECORDS:",
+        conductRecords
+    );
+
+    console.log(
+        "ADMIN CONDUCT ERROR:",
+        conductError
+    );
 
     if (conductError) {
+
         studentList.innerHTML = `
             <div class="empty-state">
                 Unable to load conduct records.
@@ -7509,74 +7535,97 @@ async function loadAdminConduct() {
         return;
     }
 
+
     // ------------------------------------------
     // OVERVIEW STATISTICS
     // ------------------------------------------
 
     const totalRecordsElement =
-        document.getElementById("adminConductTotalRecords");
+        document.getElementById(
+            "adminConductTotalRecords"
+        );
 
     const studentsElement =
-        document.getElementById("adminConductStudents");
+        document.getElementById(
+            "adminConductStudents"
+        );
 
     const positiveElement =
-        document.getElementById("adminConductPositive");
+        document.getElementById(
+            "adminConductPositive"
+        );
 
     const concernsElement =
-        document.getElementById("adminConductConcerns");
+        document.getElementById(
+            "adminConductConcerns"
+        );
+
+
+    // Total records
 
     if (totalRecordsElement) {
-        totalRecordsElement.textContent = conduct.length;
+
+        totalRecordsElement.textContent =
+            conductRecords.length;
     }
 
-    const studentsWithRecords = new Set(
-        conduct.map(function (record) {
-            return record.student_id;
-        })
-    );
+
+    // Students with records
+
+    const studentsWithRecords =
+        new Set(
+            conductRecords.map(function (record) {
+
+                return record.student_id;
+
+            })
+        );
+
 
     if (studentsElement) {
+
         studentsElement.textContent =
             studentsWithRecords.size;
     }
 
-    const positiveRecords = conduct.filter(function (record) {
 
-        const status =
-            String(record.status || "").toLowerCase();
+    // Positive records
 
-        return (
-            status === "positive" ||
-            status === "good" ||
-            status === "commendation" ||
-            status === "excellent"
-        );
+    const positiveRecords =
+        conductRecords.filter(function (record) {
 
-    });
+            return String(
+                record.type || ""
+            ).toLowerCase() === "positive";
 
-    const concernRecords = conduct.filter(function (record) {
+        });
 
-        const status =
-            String(record.status || "").toLowerCase();
 
-        return !(
-            status === "positive" ||
-            status === "good" ||
-            status === "commendation" ||
-            status === "excellent"
-        );
+    // Negative records
 
-    });
+    const negativeRecords =
+        conductRecords.filter(function (record) {
+
+            return String(
+                record.type || ""
+            ).toLowerCase() === "negative";
+
+        });
+
 
     if (positiveElement) {
+
         positiveElement.textContent =
             positiveRecords.length;
     }
 
+
     if (concernsElement) {
+
         concernsElement.textContent =
-            concernRecords.length;
+            negativeRecords.length;
     }
+
 
     // ------------------------------------------
     // RENDER STUDENTS
@@ -7587,22 +7636,29 @@ async function loadAdminConduct() {
         const search =
             searchTerm.trim().toLowerCase();
 
+
         const filteredStudents =
             students.filter(function (student) {
 
                 const name =
-                    String(student.full_name || "")
-                        .toLowerCase();
+                    String(
+                        student.full_name || ""
+                    ).toLowerCase();
+
 
                 const admission =
-                    String(student.admission_number || "")
-                        .toLowerCase();
+                    String(
+                        student.admission_number || ""
+                    ).toLowerCase();
+
 
                 return (
                     name.includes(search) ||
                     admission.includes(search)
                 );
+
             });
+
 
         if (filteredStudents.length === 0) {
 
@@ -7615,70 +7671,177 @@ async function loadAdminConduct() {
             return;
         }
 
+
         studentList.innerHTML = "";
 
-        filteredStudents.forEach(function (student) {
 
-            const studentConduct =
-                conduct.filter(function (record) {
-                    return record.student_id === student.id;
-                });
+        filteredStudents.forEach(
+            function (student) {
 
-            const card =
-                document.createElement("div");
+                const studentConduct =
+                    conductRecords.filter(
+                        function (record) {
 
-            card.className =
-                "admin-conduct-student-card";
+                            return (
+                                record.student_id ===
+                                student.id
+                            );
 
-            card.innerHTML = `
-                <div>
-                    <h3>${student.full_name || "Unnamed Student"}</h3>
+                        }
+                    );
 
-                    <p>
-                        Admission:
-                        ${student.admission_number || "—"}
-                    </p>
 
-                    <p>
-                        Class:
-                        ${student.class_name || "—"}
-                    </p>
-                </div>
+                const positiveCount =
+                    studentConduct.filter(
+                        function (record) {
 
-                <div class="conduct-card-count">
-                    <strong>${studentConduct.length}</strong>
-                    <span>Records</span>
-                </div>
-            `;
+                            return String(
+                                record.type || ""
+                            ).toLowerCase() ===
+                            "positive";
 
-            card.addEventListener(
-                "click",
-                function () {
-                    loadAdminStudentConduct(student);
-                }
-            );
+                        }
+                    ).length;
 
-            studentList.appendChild(card);
-        });
+
+                const negativeCount =
+                    studentConduct.filter(
+                        function (record) {
+
+                            return String(
+                                record.type || ""
+                            ).toLowerCase() ===
+                            "negative";
+
+                        }
+                    ).length;
+
+
+                const totalPoints =
+                    studentConduct.reduce(
+                        function (total, record) {
+
+                            return (
+                                total +
+                                Number(
+                                    record.points || 0
+                                )
+                            );
+
+                        },
+                        0
+                    );
+
+
+                const card =
+                    document.createElement("div");
+
+
+                card.className =
+                    "admin-conduct-student-card";
+
+
+                card.innerHTML = `
+                    <div>
+
+                        <h3>
+                            ${
+                                student.full_name ||
+                                "Unnamed Student"
+                            }
+                        </h3>
+
+                        <p>
+                            Admission:
+                            ${
+                                student.admission_number ||
+                                "—"
+                            }
+                        </p>
+
+                        <p>
+                            Class:
+                            ${
+                                student.class_name ||
+                                "—"
+                            }
+                        </p>
+
+                    </div>
+
+
+                    <div class="conduct-card-summary">
+
+                        <strong>
+                            ${studentConduct.length}
+                        </strong>
+
+                        <span>
+                            Records
+                        </span>
+
+                        <small>
+                            +${positiveCount}
+                            positive
+                            •
+                            ${negativeCount}
+                            negative
+                        </small>
+
+                        <small>
+                            ${totalPoints}
+                            points
+                        </small>
+
+                    </div>
+                `;
+
+
+                card.addEventListener(
+                    "click",
+                    function () {
+
+                        loadAdminStudentConduct(
+                            student
+                        );
+
+                    }
+                );
+
+
+                studentList.appendChild(card);
+
+            }
+        );
     }
 
+
     renderStudents();
+
 
     // ------------------------------------------
     // SEARCH
     // ------------------------------------------
 
     const searchInput =
-        document.getElementById("adminConductSearch");
+        document.getElementById(
+            "adminConductSearch"
+        );
+
 
     if (searchInput) {
 
         searchInput.addEventListener(
             "input",
             function () {
-                renderStudents(this.value);
+
+                renderStudents(
+                    this.value
+                );
+
             }
         );
+
     }
 }
 
@@ -7694,55 +7857,100 @@ async function loadAdminStudentConduct(student) {
             "adminConductResultsSection"
         );
 
+
     const selectedStudent =
         document.getElementById(
             "adminSelectedConductStudent"
         );
+
 
     const container =
         document.getElementById(
             "adminStudentConductContainer"
         );
 
-    if (!resultsSection || !container) return;
 
-    resultsSection.style.display = "block";
+    if (
+        !resultsSection ||
+        !container
+    ) {
+        return;
+    }
+
+
+    resultsSection.style.display =
+        "block";
+
 
     if (selectedStudent) {
 
         selectedStudent.innerHTML = `
-            <h2>${student.full_name || "Student"}</h2>
+
+            <h2>
+                ${
+                    student.full_name ||
+                    "Student"
+                }
+            </h2>
 
             <p>
                 Admission:
-                ${student.admission_number || "—"}
+                ${
+                    student.admission_number ||
+                    "—"
+                }
+
                 &nbsp; | &nbsp;
+
                 Class:
-                ${student.class_name || "—"}
+                ${
+                    student.class_name ||
+                    "—"
+                }
             </p>
+
         `;
     }
 
+
     container.innerHTML =
         "<p>Loading conduct records...</p>";
+
+
+    // ------------------------------------------
+    // LOAD STUDENT CONDUCT
+    // ------------------------------------------
 
     const {
         data: records,
         error
     } = await supabaseClient
-        .from("conduct")
+        .from("conduct_records")
         .select(`
             id,
             student_id,
-            status,
-            remarks,
+            type,
+            title,
+            description,
+            points,
             created_at
         `)
         .eq("student_id", student.id)
-        .order("created_at", { ascending: false });
+        .order("created_at", {
+            ascending: false
+        });
 
-    console.log("ADMIN STUDENT CONDUCT:", records);
-    console.log("ADMIN STUDENT CONDUCT ERROR:", error);
+
+    console.log(
+        "ADMIN STUDENT CONDUCT:",
+        records
+    );
+
+    console.log(
+        "ADMIN STUDENT CONDUCT ERROR:",
+        error
+    );
+
 
     if (error) {
 
@@ -7755,6 +7963,7 @@ async function loadAdminStudentConduct(student) {
         return;
     }
 
+
     // ------------------------------------------
     // STUDENT SUMMARY
     // ------------------------------------------
@@ -7764,44 +7973,59 @@ async function loadAdminStudentConduct(student) {
             "adminStudentConductCount"
         );
 
+
     const positiveElement =
         document.getElementById(
             "adminStudentPositive"
         );
+
 
     const concernsElement =
         document.getElementById(
             "adminStudentConcerns"
         );
 
+
     const positiveRecords =
         records.filter(function (record) {
 
-            const status =
-                String(record.status || "")
-                    .toLowerCase();
+            return String(
+                record.type || ""
+            ).toLowerCase() === "positive";
 
-            return (
-                status === "positive" ||
-                status === "good" ||
-                status === "commendation" ||
-                status === "excellent"
-            );
         });
 
+
+    const negativeRecords =
+        records.filter(function (record) {
+
+            return String(
+                record.type || ""
+            ).toLowerCase() === "negative";
+
+        });
+
+
     if (countElement) {
-        countElement.textContent = records.length;
+
+        countElement.textContent =
+            records.length;
     }
 
+
     if (positiveElement) {
+
         positiveElement.textContent =
             positiveRecords.length;
     }
 
+
     if (concernsElement) {
+
         concernsElement.textContent =
-            records.length - positiveRecords.length;
+            negativeRecords.length;
     }
+
 
     // ------------------------------------------
     // NO RECORDS
@@ -7811,71 +8035,181 @@ async function loadAdminStudentConduct(student) {
 
         container.innerHTML = `
             <div class="empty-state">
-                No conduct records found for this student.
+                No conduct records found
+                for this student.
             </div>
         `;
 
         return;
     }
 
+
+    // ------------------------------------------
+    // CALCULATE POINTS
+    // ------------------------------------------
+
+    const totalPoints =
+        records.reduce(
+            function (total, record) {
+
+                const points =
+                    Number(
+                        record.points || 0
+                    );
+
+                if (
+                    String(
+                        record.type || ""
+                    ).toLowerCase() ===
+                    "negative"
+                ) {
+
+                    return total - points;
+
+                }
+
+                return total + points;
+
+            },
+            0
+        );
+
+
     // ------------------------------------------
     // CONDUCT TABLE
     // ------------------------------------------
 
     let tableHTML = `
+
         <div class="table-wrapper">
 
             <table class="admin-grades-table">
 
                 <thead>
+
                     <tr>
-                        <th>Status</th>
-                        <th>Remarks</th>
+
+                        <th>Type</th>
+
+                        <th>Title</th>
+
+                        <th>Description</th>
+
+                        <th>Points</th>
+
                         <th>Date</th>
+
                     </tr>
+
                 </thead>
 
                 <tbody>
     `;
 
-    records.forEach(function (record) {
 
-        const date =
-            record.created_at
-                ? new Date(record.created_at)
-                    .toLocaleDateString("en-GB")
-                : "—";
+    records.forEach(
+        function (record) {
 
-        tableHTML += `
-            <tr>
+            const date =
+                record.created_at
+                    ? new Date(
+                        record.created_at
+                    ).toLocaleDateString(
+                        "en-GB"
+                    )
+                    : "—";
 
-                <td>
-                    <strong>
-                        ${record.status || "—"}
-                    </strong>
-                </td>
 
-                <td>
-                    ${record.remarks || "No remarks"}
-                </td>
+            const type =
+                String(
+                    record.type || ""
+                ).toLowerCase();
 
-                <td>
-                    ${date}
-                </td>
 
-            </tr>
-        `;
-    });
+            const points =
+                Number(
+                    record.points || 0
+                );
+
+
+            const displayPoints =
+                type === "negative"
+                    ? `-${points}`
+                    : `+${points}`;
+
+
+            tableHTML += `
+
+                <tr>
+
+                    <td>
+                        <strong>
+                            ${
+                                record.type ||
+                                "—"
+                            }
+                        </strong>
+                    </td>
+
+
+                    <td>
+                        ${
+                            record.title ||
+                            "—"
+                        }
+                    </td>
+
+
+                    <td>
+                        ${
+                            record.description ||
+                            "No description"
+                        }
+                    </td>
+
+
+                    <td>
+                        ${displayPoints}
+                    </td>
+
+
+                    <td>
+                        ${date}
+                    </td>
+
+                </tr>
+
+            `;
+        }
+    );
+
 
     tableHTML += `
+
                 </tbody>
 
             </table>
 
         </div>
+
+
+        <div class="conduct-total-points">
+
+            <strong>
+                Conduct Points:
+            </strong>
+
+            <span>
+                ${totalPoints}
+            </span>
+
+        </div>
+
     `;
 
-    container.innerHTML = tableHTML;
+
+    container.innerHTML =
+        tableHTML;
 }
 
 
@@ -7888,6 +8222,7 @@ const adminConductBackButton =
         "adminConductBackButton"
     );
 
+
 if (adminConductBackButton) {
 
     adminConductBackButton.addEventListener(
@@ -7899,14 +8234,23 @@ if (adminConductBackButton) {
                     "adminConductResultsSection"
                 );
 
+
             if (resultsSection) {
-                resultsSection.style.display = "none";
+
+                resultsSection.style.display =
+                    "none";
+
             }
 
+
             window.scrollTo({
+
                 top: 0,
+
                 behavior: "smooth"
+
             });
+
         }
     );
 }
@@ -7921,5 +8265,7 @@ if (
         "admin-conduct.html"
     )
 ) {
+
     loadAdminConduct();
+
 }
