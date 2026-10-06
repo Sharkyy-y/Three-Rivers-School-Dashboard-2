@@ -6634,6 +6634,126 @@ async function loadAdminGrades() {
         studentsError
     );
 
+// ==========================================
+// INDIVIDUAL STUDENT GRADE SUMMARY
+// ==========================================
+
+const studentAverageElement =
+    document.getElementById("adminStudentAverage");
+
+const studentResultCountElement =
+    document.getElementById("adminStudentResultCount");
+
+const studentHighestElement =
+    document.getElementById("adminStudentHighest");
+
+const studentLowestElement =
+    document.getElementById("adminStudentLowest");
+
+
+if (
+    grades &&
+    grades.length > 0
+) {
+
+    let totalScore = 0;
+    let totalMaxScore = 0;
+
+    let highestPercentage = 0;
+    let lowestPercentage = 100;
+
+
+    grades.forEach(function (grade) {
+
+        const score =
+            Number(grade.score) || 0;
+
+        const maxScore =
+            Number(grade.max_score) || 0;
+
+
+        totalScore += score;
+        totalMaxScore += maxScore;
+
+
+        if (maxScore > 0) {
+
+            const percentage =
+                (score / maxScore) * 100;
+
+
+            if (percentage > highestPercentage) {
+                highestPercentage = percentage;
+            }
+
+
+            if (percentage < lowestPercentage) {
+                lowestPercentage = percentage;
+            }
+
+        }
+
+    });
+
+
+    const average =
+        totalMaxScore > 0
+            ? (totalScore / totalMaxScore) * 100
+            : 0;
+
+
+    if (studentAverageElement) {
+
+        studentAverageElement.textContent =
+            Math.round(average) + "%";
+
+    }
+
+
+    if (studentResultCountElement) {
+
+        studentResultCountElement.textContent =
+            grades.length;
+
+    }
+
+
+    if (studentHighestElement) {
+
+        studentHighestElement.textContent =
+            Math.round(highestPercentage) + "%";
+
+    }
+
+
+    if (studentLowestElement) {
+
+        studentLowestElement.textContent =
+            Math.round(lowestPercentage) + "%";
+
+    }
+
+}
+else {
+
+    if (studentAverageElement) {
+        studentAverageElement.textContent = "—";
+    }
+
+    if (studentResultCountElement) {
+        studentResultCountElement.textContent = "0";
+    }
+
+    if (studentHighestElement) {
+        studentHighestElement.textContent = "—";
+    }
+
+    if (studentLowestElement) {
+        studentLowestElement.textContent = "—";
+    }
+
+}
+    
     // ==========================================
 // ADMIN GRADES OVERVIEW
 // ==========================================
