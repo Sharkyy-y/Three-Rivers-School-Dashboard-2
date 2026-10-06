@@ -2584,8 +2584,8 @@ function getGradeClass(percentage) {
 }
 
 if (
-    window.location.pathname.includes(
-        "grades.html"
+    window.location.pathname.endsWith(
+        "/grades.html"
     )
 ) {
 
