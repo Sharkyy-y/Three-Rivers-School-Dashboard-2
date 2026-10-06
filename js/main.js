@@ -186,7 +186,7 @@ if (loginForm) {
             }
 
 
-           // ----------------------------------
+          // ----------------------------------
 // GO TO CORRECT DASHBOARD
 // ----------------------------------
 
@@ -195,10 +195,32 @@ if (profile.role === "admin") {
     window.location.href =
         "admin-dashboard.html";
 
-} else {
+} else if (profile.role === "teacher") {
+
+    window.location.href =
+        "teacher-dashboard.html";
+
+} else if (profile.role === "student") {
 
     window.location.href =
         "student-dashboard.html";
+
+} else if (profile.role === "parent") {
+
+    window.location.href =
+        "parent-dashboard.html";
+
+} else {
+
+    console.error(
+        "Unknown account role:",
+        profile.role
+    );
+
+    if (message) {
+        message.textContent =
+            "Your account role is not configured.";
+    }
 
 }
             
