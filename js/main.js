@@ -8291,3 +8291,421 @@ if (logoutButton) {
         window.location.href = "login.html";
     });
 }
+
+// ==========================================
+// TEACHER DASHBOARD
+// ==========================================
+
+async function loadTeacherDashboard() {
+
+    console.log("Loading teacher dashboard...");
+
+    const teacherNameElement =
+        document.getElementById("teacherName");
+
+    const teacherStudentCount =
+        document.getElementById("teacherStudentCount");
+
+    const teacherSubjectCount =
+        document.getElementById("teacherSubjectCount");
+
+    const teacherAssignmentCount =
+        document.getElementById("teacherAssignmentCount");
+
+    const teacherDutyCount =
+        document.getElementById("teacherDutyCount");
+
+    const teacherTodayTimetable =
+        document.getElementById("teacherTodayTimetable");
+
+    const teacherUpcomingAssignments =
+        document.getElementById("teacherUpcomingAssignments");
+
+    if (!teacherNameElement) {
+        return;
+    }
+
+    try {
+
+        // ------------------------------------------
+        // GET CURRENT USER
+        // ------------------------------------------
+
+        const {
+            data: { user },
+            error: userError
+        } = await supabaseClient.auth.getUser();
+
+        if (userError || !user) {
+
+            console.error(
+                "Teacher user error:",
+                userError
+            );
+
+            window.location.href = "login.html";
+            return;
+        }
+
+
+        // ------------------------------------------
+        // GET TEACHER PROFILE
+        // ------------------------------------------
+
+        const {
+            data: teacher,
+            error: teacherError
+        } = await supabaseClient
+            .from("profiles")
+            .select("id, full_name, email, role")
+            .eq("id", user.id)
+            .eq("role", "teacher")
+            .single();
+
+
+        if (teacherError || !teacher) {
+
+            console.error(
+                "Teacher profile error:",
+                teacherError
+            );
+
+            teacherNameElement.textContent =
+                "Teacher";
+
+            return;
+        }
+
+
+        // ------------------------------------------
+        // TEACHER NAME
+        // ------------------------------------------
+
+        teacherNameElement.textContent =
+            teacher.full_name || "Teacher";
+
+
+        // ------------------------------------------
+        // GET TEACHER SUBJECTS
+        // ------------------------------------------
+
+        const {
+            data: teacherSubjects,
+            error: subjectsError
+        } = await supabaseClient
+            .from("teacher_subjects")
+            .select(`
+                subject_id,
+                subjects (
+                    id,
+                    name,
+                    code
+                )
+            `)
+            .eq("teacher_id", teacher.id);
+
+
+        if (subjectsError) {
+
+            console.error(
+                "Teacher subjects error:",
+                subjectsError
+            );
+
+        }
+
+
+        const subjects =
+            teacherSubjects || [];
+
+
+        teacherSubjectCount.textContent =
+            subjects.length;
+
+
+        // ------------------------------------------
+        // GET TEACHER TIMETABLE
+        // ------------------------------------------
+
+        const {
+            data: timetable,
+            error: timetableError
+        } = await supabaseClient
+            .from("timetable")
+            .select(`
+                id,
+                class_name,
+                subject_id,
+                teacher_name,
+                room,
+                day_of_week,
+                start_time,
+                end_time
+            `)
+            .eq("teacher_id", teacher.id)
+            .order("start_time");
+
+
+        if (timetableError) {
+
+            console.error(
+                "Teacher timetable error:",
+                timetableError
+            );
+
+        }
+
+
+        const teacherTimetable =
+            timetable || [];
+
+
+        // ------------------------------------------
+        // TODAY'S TIMETABLE
+        // ------------------------------------------
+
+        const todayName =
+            new Date().toLocaleDateString(
+                "en-US",
+                {
+                    weekday: "long"
+                }
+            );
+
+
+        const todayLessons =
+            teacherTimetable.filter(
+                lesson =>
+                    lesson.day_of_week === todayName
+            );
+
+
+        if (todayLessons.length === 0) {
+
+            teacherTodayTimetable.textContent =
+                "No lessons scheduled for today.";
+
+        } else {
+
+            teacherTodayTimetable.innerHTML =
+                todayLessons
+                    .map(lesson => {
+
+                        const subject =
+                            subjects.find(
+                                item =>
+                                    item.subject_id ===
+                                    lesson.subject_id
+                            );
+
+                        const subjectName =
+                            subject?.subjects?.name ||
+                            "Subject";
+
+                        return `
+                            ${lesson.start_time} -
+                            ${lesson.end_time}
+                            ${subjectName}
+                            (${lesson.class_name})
+                            ${lesson.room ? "• " + lesson.room : ""}
+                        `;
+
+                    })
+                    .join("<br>");
+
+        }
+
+
+        // ------------------------------------------
+        // STUDENT COUNT
+        // ------------------------------------------
+
+        const classNames =
+            [
+                ...new Set(
+                    teacherTimetable
+                        .map(item => item.class_name)
+                        .filter(Boolean)
+                )
+            ];
+
+
+        if (classNames.length === 0) {
+
+            teacherStudentCount.textContent = "0";
+
+        } else {
+
+            const {
+                count,
+                error: studentsError
+            } = await supabaseClient
+                .from("students")
+                .select(
+                    "id",
+                    {
+                        count: "exact",
+                        head: true
+                    }
+                )
+                .in(
+                    "class_name",
+                    classNames
+                );
+
+
+            if (studentsError) {
+
+                console.error(
+                    "Teacher student count error:",
+                    studentsError
+                );
+
+                teacherStudentCount.textContent =
+                    "0";
+
+            } else {
+
+                teacherStudentCount.textContent =
+                    count || 0;
+
+            }
+
+        }
+
+
+        // ------------------------------------------
+        // ASSIGNMENTS
+        // ------------------------------------------
+
+        const subjectIds =
+            subjects.map(
+                item => item.subject_id
+            );
+
+
+        if (subjectIds.length === 0) {
+
+            teacherAssignmentCount.textContent =
+                "0";
+
+            teacherUpcomingAssignments.textContent =
+                "No subjects assigned yet.";
+
+        } else {
+
+            const today =
+                new Date()
+                    .toISOString()
+                    .split("T")[0];
+
+
+            const {
+                data: assignments,
+                error: assignmentsError
+            } = await supabaseClient
+                .from("assignments")
+                .select(`
+                    id,
+                    title,
+                    due_date,
+                    subject_id
+                `)
+                .in(
+                    "subject_id",
+                    subjectIds
+                )
+                .gte(
+                    "due_date",
+                    today
+                )
+                .order(
+                    "due_date",
+                    {
+                        ascending: true
+                    }
+                );
+
+
+            if (assignmentsError) {
+
+                console.error(
+                    "Teacher assignments error:",
+                    assignmentsError
+                );
+
+                teacherAssignmentCount.textContent =
+                    "0";
+
+                teacherUpcomingAssignments.textContent =
+                    "Unable to load assignments.";
+
+            } else {
+
+                teacherAssignmentCount.textContent =
+                    assignments?.length || 0;
+
+
+                if (!assignments ||
+                    assignments.length === 0) {
+
+                    teacherUpcomingAssignments.textContent =
+                        "No upcoming assignments.";
+
+                } else {
+
+                    teacherUpcomingAssignments.innerHTML =
+                        assignments
+                            .slice(0, 3)
+                            .map(
+                                assignment =>
+                                    `${assignment.title}
+                                    — Due ${assignment.due_date}`
+                            )
+                            .join("<br>");
+
+                }
+
+            }
+
+        }
+
+
+        // ------------------------------------------
+        // DUTY COUNT
+        // ------------------------------------------
+
+        teacherDutyCount.textContent = "0";
+
+
+        console.log(
+            "TEACHER DASHBOARD LOADED:",
+            teacher
+        );
+
+
+    } catch (error) {
+
+        console.error(
+            "Teacher dashboard error:",
+            error
+        );
+
+    }
+
+}
+
+
+// ==========================================
+// START TEACHER DASHBOARD
+// ==========================================
+
+if (
+    window.location.pathname.includes(
+        "teacher-dashboard.html"
+    )
+) {
+
+    loadTeacherDashboard();
+
+}
