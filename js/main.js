@@ -7208,3 +7208,16 @@ if (
     loadAdminGrades();
 
 }
+
+// ==========================================
+// START ADMIN GRADES
+// ==========================================
+
+if (
+    window.location.pathname.includes(
+        "admin-grades.html"
+    )
+) {
+    console.log("ADMIN GRADES PAGE DETECTED");
+    loadAdminGrades();
+}
