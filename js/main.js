@@ -8731,3 +8731,816 @@ if (
     loadTeacherDashboard();
 
 }
+
+// ==========================================
+// TEACHER GRADES
+// ==========================================
+
+async function loadTeacherGrades() {
+
+    console.log("Loading teacher grades...");
+
+    const subjectSelect =
+        document.getElementById(
+            "teacherGradeSubject"
+        );
+
+    const gradesContainer =
+        document.getElementById(
+            "teacherGradesContainer"
+        );
+
+    const statusElement =
+        document.getElementById(
+            "teacherGradeStatus"
+        );
+
+
+    if (
+        !subjectSelect ||
+        !gradesContainer
+    ) {
+        return;
+    }
+
+
+    try {
+
+        // ==========================================
+        // GET CURRENT USER
+        // ==========================================
+
+        const {
+            data: {
+                user
+            },
+            error: userError
+        } =
+            await supabaseClient.auth.getUser();
+
+
+        if (
+            userError ||
+            !user
+        ) {
+
+            console.error(
+                "Teacher grades user error:",
+                userError
+            );
+
+            window.location.href =
+                "login.html";
+
+            return;
+        }
+
+
+        // ==========================================
+        // GET TEACHER PROFILE
+        // ==========================================
+
+        const {
+            data: teacher,
+            error: teacherError
+        } =
+            await supabaseClient
+                .from("profiles")
+                .select(
+                    "id, full_name, role"
+                )
+                .eq(
+                    "id",
+                    user.id
+                )
+                .eq(
+                    "role",
+                    "teacher"
+                )
+                .single();
+
+
+        if (
+            teacherError ||
+            !teacher
+        ) {
+
+            console.error(
+                "Teacher profile error:",
+                teacherError
+            );
+
+            statusElement.textContent =
+                "Teacher profile could not be found.";
+
+            return;
+        }
+
+
+        // ==========================================
+        // GET TEACHER SUBJECTS
+        // ==========================================
+
+        const {
+            data: teacherSubjects,
+            error: subjectsError
+        } =
+            await supabaseClient
+                .from("teacher_subjects")
+                .select(`
+                    subject_id,
+                    subjects (
+                        id,
+                        name,
+                        code
+                    )
+                `)
+                .eq(
+                    "teacher_id",
+                    teacher.id
+                );
+
+
+        if (subjectsError) {
+
+            console.error(
+                "Teacher subjects error:",
+                subjectsError
+            );
+
+            subjectSelect.innerHTML =
+                `<option value="">
+                    Unable to load subjects
+                </option>`;
+
+            return;
+        }
+
+
+        const subjects =
+            teacherSubjects || [];
+
+
+        // ==========================================
+        // NO SUBJECTS
+        // ==========================================
+
+        if (
+            subjects.length === 0
+        ) {
+
+            subjectSelect.innerHTML =
+                `<option value="">
+                    No subjects assigned
+                </option>`;
+
+            statusElement.textContent =
+                "No subjects have been assigned to you yet.";
+
+            return;
+        }
+
+
+        // ==========================================
+        // POPULATE SUBJECT DROPDOWN
+        // ==========================================
+
+        subjectSelect.innerHTML =
+            `<option value="">
+                Select a subject
+            </option>`;
+
+
+        subjects.forEach(
+            item => {
+
+                const subject =
+                    item.subjects;
+
+                if (!subject) {
+                    return;
+                }
+
+                const option =
+                    document.createElement(
+                        "option"
+                    );
+
+                option.value =
+                    subject.id;
+
+                option.textContent =
+                    subject.code
+                        ? `${subject.name} (${subject.code})`
+                        : subject.name;
+
+                subjectSelect.appendChild(
+                    option
+                );
+
+            }
+        );
+
+
+        // ==========================================
+        // SUBJECT CHANGE
+        // ==========================================
+
+        subjectSelect.addEventListener(
+            "change",
+            function () {
+
+                const subjectId =
+                    this.value;
+
+                if (!subjectId) {
+
+                    gradesContainer.innerHTML = `
+                        <div class="teacher-grades-empty">
+
+                            <h3>No subject selected</h3>
+
+                            <p>
+                                Select a subject above to view grades.
+                            </p>
+
+                        </div>
+                    `;
+
+                    statusElement.textContent =
+                        "Select a subject to view grades.";
+
+                    return;
+                }
+
+
+                loadTeacherSubjectGrades(
+                    subjectId
+                );
+
+            }
+        );
+
+
+        console.log(
+            "TEACHER GRADES READY:",
+            teacher
+        );
+
+    }
+
+    catch (error) {
+
+        console.error(
+            "Teacher grades error:",
+            error
+        );
+
+    }
+
+}
+
+
+// ==========================================
+// LOAD GRADES FOR SELECTED SUBJECT
+// ==========================================
+
+async function loadTeacherSubjectGrades(
+    subjectId
+) {
+
+    const gradesContainer =
+        document.getElementById(
+            "teacherGradesContainer"
+        );
+
+    const statusElement =
+        document.getElementById(
+            "teacherGradeStatus"
+        );
+
+
+    gradesContainer.innerHTML = `
+        <div class="teacher-grades-empty">
+
+            <h3>Loading grades...</h3>
+
+            <p>
+                Please wait.
+            </p>
+
+        </div>
+    `;
+
+
+    statusElement.textContent =
+        "Loading student grades...";
+
+
+    try {
+
+        // ==========================================
+        // GET GRADES
+        // ==========================================
+
+        const {
+            data: grades,
+            error: gradesError
+        } =
+            await supabaseClient
+                .from("grades")
+                .select(`
+                    id,
+                    student_id,
+                    subject_id,
+                    assessment,
+                    score,
+                    max_score,
+                    comments,
+                    created_at,
+                    students (
+                        id,
+                        full_name,
+                        admission_number,
+                        class_name
+                    )
+                `)
+                .eq(
+                    "subject_id",
+                    subjectId
+                )
+                .order(
+                    "created_at",
+                    {
+                        ascending: false
+                    }
+                );
+
+
+        if (gradesError) {
+
+            console.error(
+                "Teacher grades query error:",
+                gradesError
+            );
+
+            gradesContainer.innerHTML = `
+                <div class="teacher-grades-empty">
+
+                    <h3>Unable to load grades</h3>
+
+                    <p>
+                        ${gradesError.message}
+                    </p>
+
+                </div>
+            `;
+
+            statusElement.textContent =
+                "There was a problem loading the grades.";
+
+            return;
+        }
+
+
+        // ==========================================
+        // NO GRADES
+        // ==========================================
+
+        if (
+            !grades ||
+            grades.length === 0
+        ) {
+
+            gradesContainer.innerHTML = `
+                <div class="teacher-grades-empty">
+
+                    <h3>No grades found</h3>
+
+                    <p>
+                        There are no grades recorded for this subject yet.
+                    </p>
+
+                </div>
+            `;
+
+            statusElement.textContent =
+                "No grades recorded.";
+
+            return;
+        }
+
+
+        // ==========================================
+        // DISPLAY GRADES
+        // ==========================================
+
+        gradesContainer.innerHTML = "";
+
+
+        grades.forEach(
+            grade => {
+
+                const student =
+                    grade.students;
+
+
+                const studentName =
+                    student?.full_name ||
+                    "Unknown student";
+
+
+                const admissionNumber =
+                    student?.admission_number ||
+                    "No admission number";
+
+
+                const percentage =
+                    grade.max_score > 0
+                        ? (
+                            grade.score /
+                            grade.max_score
+                        ) * 100
+                        : 0;
+
+
+                const card =
+                    document.createElement(
+                        "div"
+                    );
+
+                card.className =
+                    "teacher-grade-card";
+
+
+                card.innerHTML = `
+
+                    <div class="teacher-grade-header">
+
+                        <div>
+
+                            <h3>
+                                ${studentName}
+                            </h3>
+
+                            <p>
+                                ${admissionNumber}
+                            </p>
+
+                        </div>
+
+                        <div class="teacher-grade-percentage">
+
+                            ${percentage.toFixed(1)}%
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="teacher-grade-fields">
+
+                        <div class="teacher-grade-field">
+
+                            <label>
+                                Assessment
+                            </label>
+
+                            <input
+                                type="text"
+                                class="teacher-grade-assessment"
+                                value="${grade.assessment || ""}"
+                            >
+
+                        </div>
+
+
+                        <div class="teacher-grade-field">
+
+                            <label>
+                                Score
+                            </label>
+
+                            <input
+                                type="number"
+                                class="teacher-grade-score"
+                                value="${grade.score ?? ""}"
+                                min="0"
+                                step="0.01"
+                            >
+
+                        </div>
+
+
+                        <div class="teacher-grade-field">
+
+                            <label>
+                                Maximum Score
+                            </label>
+
+                            <input
+                                type="number"
+                                class="teacher-grade-max-score"
+                                value="${grade.max_score ?? ""}"
+                                min="1"
+                                step="0.01"
+                            >
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="teacher-grade-field">
+
+                        <label>
+                            Teacher Comment
+                        </label>
+
+                        <textarea
+                            class="teacher-grade-comments"
+                            rows="3"
+                            placeholder="Add a comment about this student's performance..."
+                        >${grade.comments || ""}</textarea>
+
+                    </div>
+
+
+                    <div class="teacher-grade-actions">
+
+                        <button
+                            type="button"
+                            class="teacher-grade-save"
+                            data-grade-id="${grade.id}"
+                        >
+                            Save Changes
+                        </button>
+
+                        <span
+                            class="teacher-grade-message"
+                        ></span>
+
+                    </div>
+
+                `;
+
+
+                gradesContainer.appendChild(
+                    card
+                );
+
+
+                const saveButton =
+                    card.querySelector(
+                        ".teacher-grade-save"
+                    );
+
+
+                saveButton.addEventListener(
+                    "click",
+                    function () {
+
+                        saveTeacherGrade(
+                            grade.id,
+                            card
+                        );
+
+                    }
+                );
+
+            }
+        );
+
+
+        statusElement.textContent =
+            `${grades.length} grade record${grades.length === 1 ? "" : "s"} found.`;
+
+
+        console.log(
+            "TEACHER GRADES LOADED:",
+            grades
+        );
+
+    }
+
+    catch (error) {
+
+        console.error(
+            "Teacher subject grades error:",
+            error
+        );
+
+        statusElement.textContent =
+            "Unable to load grades.";
+
+    }
+
+}
+
+
+// ==========================================
+// SAVE TEACHER GRADE
+// ==========================================
+
+async function saveTeacherGrade(
+    gradeId,
+    card
+) {
+
+    const assessmentInput =
+        card.querySelector(
+            ".teacher-grade-assessment"
+        );
+
+    const scoreInput =
+        card.querySelector(
+            ".teacher-grade-score"
+        );
+
+    const maxScoreInput =
+        card.querySelector(
+            ".teacher-grade-max-score"
+        );
+
+    const commentsInput =
+        card.querySelector(
+            ".teacher-grade-comments"
+        );
+
+    const saveButton =
+        card.querySelector(
+            ".teacher-grade-save"
+        );
+
+    const message =
+        card.querySelector(
+            ".teacher-grade-message"
+        );
+
+
+    const assessment =
+        assessmentInput.value.trim();
+
+    const score =
+        Number(
+            scoreInput.value
+        );
+
+    const maxScore =
+        Number(
+            maxScoreInput.value
+        );
+
+    const comments =
+        commentsInput.value.trim();
+
+
+    // ==========================================
+    // VALIDATION
+    // ==========================================
+
+    if (!assessment) {
+
+        message.textContent =
+            "Enter an assessment name.";
+
+        return;
+    }
+
+
+    if (
+        Number.isNaN(score) ||
+        Number.isNaN(maxScore)
+    ) {
+
+        message.textContent =
+            "Enter valid scores.";
+
+        return;
+    }
+
+
+    if (
+        score < 0 ||
+        maxScore <= 0
+    ) {
+
+        message.textContent =
+            "Scores must be valid numbers.";
+
+        return;
+    }
+
+
+    if (
+        score > maxScore
+    ) {
+
+        message.textContent =
+            "Score cannot be greater than maximum score.";
+
+        return;
+    }
+
+
+    saveButton.disabled =
+        true;
+
+    saveButton.textContent =
+        "Saving...";
+
+    message.textContent =
+        "";
+
+
+    try {
+
+        const {
+            error
+        } =
+            await supabaseClient
+                .from("grades")
+                .update({
+
+                    assessment:
+                        assessment,
+
+                    score:
+                        score,
+
+                    max_score:
+                        maxScore,
+
+                    comments:
+                        comments || null
+
+                })
+                .eq(
+                    "id",
+                    gradeId
+                );
+
+
+        if (error) {
+
+            console.error(
+                "Save grade error:",
+                error
+            );
+
+            message.textContent =
+                "Unable to save changes.";
+
+            return;
+        }
+
+
+        message.textContent =
+            "✓ Saved successfully.";
+
+
+        console.log(
+            "GRADE UPDATED:",
+            gradeId
+        );
+
+    }
+
+    catch (error) {
+
+        console.error(
+            "Grade update error:",
+            error
+        );
+
+        message.textContent =
+            "Something went wrong.";
+
+    }
+
+    finally {
+
+        saveButton.disabled =
+            false;
+
+        saveButton.textContent =
+            "Save Changes";
+
+    }
+
+}
+
+
+// ==========================================
+// START TEACHER GRADES
+// ==========================================
+
+if (
+    window.location.pathname.includes(
+        "teacher-grades.html"
+    )
+) {
+
+    loadTeacherGrades();
+
+}
