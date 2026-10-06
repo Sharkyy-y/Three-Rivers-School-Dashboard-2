@@ -6765,7 +6765,21 @@ else {
     }
 
 }
+
+   if (overallAverageElement) {
+
+        overallAverageElement.textContent =
+            Math.round(overallAverage) + "%";
+
+    }
+
+}
   
+    // ==========================================
+    // DISPLAY STUDENTS
+    // ==========================================
+
+    
     // ==========================================
     // DISPLAY STUDENTS
     // ==========================================
