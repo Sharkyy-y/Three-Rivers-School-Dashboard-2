@@ -6731,3 +6731,44 @@ body {
     }
 
 }
+
+/* ==========================================
+   TEACHER ANNOUNCEMENT ACTIONS
+   ========================================== */
+
+.teacher-announcement-actions {
+    display: flex;
+    gap: 10px;
+    margin-top: 18px;
+}
+
+.teacher-announcement-edit-button,
+.teacher-announcement-delete-button {
+    border: none;
+    border-radius: 10px;
+    padding: 9px 16px;
+    font-size: 13px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: 0.2s ease;
+}
+
+.teacher-announcement-edit-button {
+    background: #dcfce7;
+    color: #15803d;
+}
+
+.teacher-announcement-edit-button:hover {
+    background: #bbf7d0;
+    transform: translateY(-1px);
+}
+
+.teacher-announcement-delete-button {
+    background: #fee2e2;
+    color: #dc2626;
+}
+
+.teacher-announcement-delete-button:hover {
+    background: #fecaca;
+    transform: translateY(-1px);
+}
