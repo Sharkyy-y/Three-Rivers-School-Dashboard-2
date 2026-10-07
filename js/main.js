@@ -9471,28 +9471,45 @@ Object.entries(assessmentGroups).forEach(
 
             card.innerHTML = `
 
-                <div class="teacher-grade-header">
+               <div class="teacher-grade-header">
 
-                    <div>
+    <div>
+        <h3>${studentName}</h3>
+        <p>${admissionNumber}</p>
+    </div>
 
-                        <h3>
-                            ${studentName}
-                        </h3>
+    <div class="teacher-grade-score-summary">
 
-                        <p>
-                            ${admissionNumber}
-                        </p>
+        <span class="teacher-grade-score-label">
+            Performance
+        </span>
 
-                    </div>
+        <strong class="teacher-grade-percentage">
+            ${percentage.toFixed(1)}%
+        </strong>
 
-                    <div class="teacher-grade-percentage">
+    </div>
 
-                        ${percentage.toFixed(1)}%
+</div>
 
-                    </div>
+<div class="teacher-grade-progress">
 
-                </div>
+    <div class="teacher-grade-progress-track">
 
+        <div
+            class="teacher-grade-progress-fill"
+            style="width: ${Math.min(percentage, 100)}%;"
+        ></div>
+
+    </div>
+
+    <span>
+        ${Number(grade.score).toFixed(1)}
+        /
+        ${Number(grade.max_score).toFixed(1)}
+    </span>
+
+</div>
 
                 <div class="teacher-grade-fields">
 
