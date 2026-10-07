@@ -10931,3 +10931,836 @@ if (
     loadTeacherConductStudents();
 
 }
+
+// ==========================================
+// TEACHER ASSIGNMENTS
+// ==========================================
+
+let teacherAssignmentSubjects = [];
+
+
+// LOAD TEACHER SUBJECTS
+async function loadTeacherAssignmentSubjects() {
+
+    console.log("Loading teacher assignment subjects...");
+
+    try {
+
+        const {
+            data: {
+                user
+            },
+            error: userError
+        } = await supabaseClient.auth.getUser();
+
+        if (userError) {
+            throw userError;
+        }
+
+        if (!user) {
+            console.error("No authenticated teacher found.");
+            return;
+        }
+
+
+        // GET SUBJECTS ASSIGNED TO THIS TEACHER
+        const {
+            data,
+            error
+        } = await supabaseClient
+            .from("teacher_subjects")
+            .select(`
+                subject_id,
+                subjects (
+                    id,
+                    name,
+                    code
+                )
+            `)
+            .eq("teacher_id", user.id);
+
+        if (error) {
+            throw error;
+        }
+
+
+        teacherAssignmentSubjects =
+            (data || [])
+                .map(function (item) {
+                    return item.subjects;
+                })
+                .filter(Boolean);
+
+
+        const subjectSelect =
+            document.getElementById(
+                "teacherAssignmentSubject"
+            );
+
+
+        if (!subjectSelect) {
+            return;
+        }
+
+
+        subjectSelect.innerHTML =
+            `<option value="">
+                Select subject
+            </option>`;
+
+
+        teacherAssignmentSubjects.forEach(
+            function (subject) {
+
+                const option =
+                    document.createElement("option");
+
+                option.value = subject.id;
+
+                option.textContent =
+                    subject.name +
+                    (
+                        subject.code
+                            ? " (" +
+                              subject.code +
+                              ")"
+                            : ""
+                    );
+
+                subjectSelect.appendChild(option);
+
+            }
+        );
+
+
+        console.log(
+            "Teacher assignment subjects loaded:",
+            teacherAssignmentSubjects
+        );
+
+    } catch (error) {
+
+        console.error(
+            "Error loading teacher assignment subjects:",
+            error
+        );
+
+    }
+
+}
+
+
+// TEACHER ASSIGNMENTS PAGE
+if (
+    window.location.pathname.includes(
+        "teacher-assignments.html"
+    )
+) {
+
+    loadTeacherAssignmentSubjects();
+
+}
+
+// ==========================================
+// CREATE TEACHER ASSIGNMENT
+// ==========================================
+
+async function createTeacherAssignment() {
+
+    console.log(
+        "Saving teacher assignment..."
+    );
+
+
+    const form =
+        document.getElementById(
+            "teacherAssignmentForm"
+        );
+
+
+    const subjectId =
+        document.getElementById(
+            "teacherAssignmentSubject"
+        ).value;
+
+    const className =
+        document.getElementById(
+            "teacherAssignmentClass"
+        ).value.trim();
+
+    const title =
+        document.getElementById(
+            "teacherAssignmentTitle"
+        ).value.trim();
+
+    const description =
+        document.getElementById(
+            "teacherAssignmentDescription"
+        ).value.trim();
+
+    const dueDate =
+        document.getElementById(
+            "teacherAssignmentDueDate"
+        ).value;
+
+    const message =
+        document.getElementById(
+            "teacherAssignmentFormMessage"
+        );
+
+
+    if (
+        !subjectId ||
+        !className ||
+        !title ||
+        !dueDate
+    ) {
+
+        message.textContent =
+            "Please complete all required fields.";
+
+        return;
+    }
+
+
+    const assignmentData = {
+
+        subject_id: subjectId,
+
+        class_name: className,
+
+        title: title,
+
+        description: description,
+
+        due_date: dueDate
+
+    };
+
+
+    try {
+
+        const editingId =
+            form.dataset.editingId;
+
+
+        // ======================================
+        // UPDATE
+        // ======================================
+
+        if (editingId) {
+
+            const {
+                error
+            } = await supabaseClient
+                .from("assignments")
+                .update(
+                    assignmentData
+                )
+                .eq(
+                    "id",
+                    editingId
+                );
+
+
+            if (error) {
+                throw error;
+            }
+
+
+            message.textContent =
+                "Assignment updated successfully.";
+
+        }
+
+
+        // ======================================
+        // CREATE
+        // ======================================
+
+        else {
+
+            const {
+                error
+            } = await supabaseClient
+                .from("assignments")
+                .insert([
+                    assignmentData
+                ]);
+
+
+            if (error) {
+                throw error;
+            }
+
+
+            message.textContent =
+                "Assignment created successfully.";
+
+        }
+
+
+        form.reset();
+
+        delete form.dataset.editingId;
+
+
+        const submitButton =
+            form.querySelector(
+                'button[type="submit"]'
+            );
+
+        submitButton.textContent =
+            "Create Assignment";
+
+
+        await loadTeacherAssignments();
+
+
+    } catch (error) {
+
+        console.error(
+            "Save assignment error:",
+            error
+        );
+
+        message.textContent =
+            "Unable to save assignment. Check the console.";
+
+    }
+
+}
+
+card.innerHTML = `
+
+    <div class="teacher-assignment-card-top">
+
+        <div>
+
+            <span class="teacher-assignment-subject">
+                ${
+                    subject
+                        ? subject.name
+                        : "Unknown Subject"
+                }
+            </span>
+
+            <h3>
+                ${assignment.title}
+            </h3>
+
+        </div>
+
+    </div>
+
+
+    <div class="teacher-assignment-details">
+
+        <p>
+            <strong>Class:</strong>
+            ${assignment.class_name}
+        </p>
+
+        <p>
+            <strong>Due:</strong>
+            ${formattedDate}
+        </p>
+
+    </div>
+
+
+    ${
+        assignment.description
+            ? `
+                <p class="teacher-assignment-description">
+                    ${assignment.description}
+                </p>
+              `
+            : ""
+    }
+
+
+    <div class="teacher-assignment-actions">
+
+        <button
+            type="button"
+            class="teacher-assignment-edit-button"
+            onclick="editTeacherAssignment('${assignment.id}')"
+        >
+            Edit
+        </button>
+
+        <button
+            type="button"
+            class="teacher-assignment-delete-button"
+            onclick="deleteTeacherAssignment('${assignment.id}')"
+        >
+            Delete
+        </button>
+
+    </div>
+
+`;
+// ==========================================
+// TEACHER ASSIGNMENT FORM
+// ==========================================
+
+const teacherAssignmentForm =
+    document.getElementById(
+        "teacherAssignmentForm"
+    );
+
+
+if (teacherAssignmentForm) {
+
+    teacherAssignmentForm.addEventListener(
+        "submit",
+        async function (event) {
+
+            event.preventDefault();
+
+            await createTeacherAssignment();
+
+        }
+    );
+
+}
+
+// ==========================================
+// LOAD TEACHER ASSIGNMENTS
+// ==========================================
+
+async function loadTeacherAssignments() {
+
+    console.log("Loading teacher assignments...");
+
+    const container =
+        document.getElementById(
+            "teacherAssignmentsContainer"
+        );
+
+    if (!container) {
+        return;
+    }
+
+
+    container.innerHTML =
+        `<div class="teacher-loading">
+            Loading assignments...
+        </div>`;
+
+
+    try {
+
+        const {
+            data: {
+                user
+            },
+            error: userError
+        } = await supabaseClient.auth.getUser();
+
+
+        if (userError) {
+            throw userError;
+        }
+
+
+        if (!user) {
+            throw new Error(
+                "No authenticated teacher found."
+            );
+        }
+
+
+        // GET TEACHER'S SUBJECTS
+        const {
+            data: teacherSubjects,
+            error: subjectError
+        } = await supabaseClient
+            .from("teacher_subjects")
+            .select(`
+                subject_id,
+                subjects (
+                    id,
+                    name,
+                    code
+                )
+            `)
+            .eq("teacher_id", user.id);
+
+
+        if (subjectError) {
+            throw subjectError;
+        }
+
+
+        const subjectIds =
+            (teacherSubjects || []).map(
+                function (item) {
+                    return item.subject_id;
+                }
+            );
+
+
+        if (subjectIds.length === 0) {
+
+            container.innerHTML =
+                `<div class="teacher-empty">
+                    You are not assigned to any subjects yet.
+                </div>`;
+
+            return;
+        }
+
+
+        // GET ASSIGNMENTS FOR TEACHER'S SUBJECTS
+        const {
+            data: assignments,
+            error: assignmentError
+        } = await supabaseClient
+            .from("assignments")
+            .select(`
+                id,
+                subject_id,
+                class_name,
+                title,
+                description,
+                due_date,
+                created_at,
+                subjects (
+                    id,
+                    name,
+                    code
+                )
+            `)
+            .in(
+                "subject_id",
+                subjectIds
+            )
+            .order(
+                "due_date",
+                {
+                    ascending: true
+                }
+            );
+
+
+        if (assignmentError) {
+            throw assignmentError;
+        }
+
+
+        if (
+            !assignments ||
+            assignments.length === 0
+        ) {
+
+            container.innerHTML =
+                `<div class="teacher-empty">
+                    No assignments have been created yet.
+                </div>`;
+
+            return;
+        }
+
+
+        container.innerHTML = "";
+
+
+        assignments.forEach(
+            function (assignment) {
+
+                const card =
+                    document.createElement("div");
+
+                card.className =
+                    "teacher-assignment-card";
+
+
+                const subject =
+                    assignment.subjects;
+
+
+                const formattedDate =
+                    assignment.due_date
+                        ? new Date(
+                              assignment.due_date
+                          ).toLocaleDateString(
+                              "en-GB",
+                              {
+                                  day: "numeric",
+                                  month: "short",
+                                  year: "numeric"
+                              }
+                          )
+                        : "No due date";
+
+
+                card.innerHTML = `
+
+                    <div class="teacher-assignment-card-top">
+
+                        <div>
+
+                            <span class="teacher-assignment-subject">
+                                ${
+                                    subject
+                                        ? subject.name
+                                        : "Unknown Subject"
+                                }
+                            </span>
+
+                            <h3>
+                                ${assignment.title}
+                            </h3>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="teacher-assignment-details">
+
+                        <p>
+                            <strong>Class:</strong>
+                            ${assignment.class_name}
+                        </p>
+
+                        <p>
+                            <strong>Due:</strong>
+                            ${formattedDate}
+                        </p>
+
+                    </div>
+
+
+                    ${
+                        assignment.description
+                            ? `
+                                <p class="teacher-assignment-description">
+                                    ${assignment.description}
+                                </p>
+                              `
+                            : ""
+                    }
+
+                `;
+
+
+                container.appendChild(card);
+
+            }
+        );
+
+
+        console.log(
+            "Teacher assignments loaded:",
+            assignments
+        );
+
+
+    } catch (error) {
+
+        console.error(
+            "Load teacher assignments error:",
+            error
+        );
+
+        container.innerHTML =
+            `<div class="teacher-error">
+                Unable to load assignments.
+            </div>`;
+
+    }
+
+}
+
+
+// ==========================================
+// LOAD ASSIGNMENTS ON PAGE
+// ==========================================
+
+if (
+    window.location.pathname.includes(
+        "teacher-assignments.html"
+    )
+) {
+
+    loadTeacherAssignments();
+
+}
+
+// ==========================================
+// EDIT TEACHER ASSIGNMENT
+// ==========================================
+
+async function editTeacherAssignment(assignmentId) {
+
+    const assignment =
+        await getTeacherAssignmentById(
+            assignmentId
+        );
+
+    if (!assignment) {
+        return;
+    }
+
+
+    document.getElementById(
+        "teacherAssignmentSubject"
+    ).value = assignment.subject_id;
+
+    document.getElementById(
+        "teacherAssignmentClass"
+    ).value = assignment.class_name;
+
+    document.getElementById(
+        "teacherAssignmentTitle"
+    ).value = assignment.title;
+
+    document.getElementById(
+        "teacherAssignmentDescription"
+    ).value =
+        assignment.description || "";
+
+    document.getElementById(
+        "teacherAssignmentDueDate"
+    ).value = assignment.due_date;
+
+
+    const form =
+        document.getElementById(
+            "teacherAssignmentForm"
+        );
+
+    const submitButton =
+        form.querySelector(
+            'button[type="submit"]'
+        );
+
+    submitButton.textContent =
+        "Save Changes";
+
+
+    form.dataset.editingId =
+        assignmentId;
+
+
+    form.scrollIntoView({
+        behavior: "smooth",
+        block: "start"
+    });
+
+}
+
+
+// ==========================================
+// GET ASSIGNMENT
+// ==========================================
+
+async function getTeacherAssignmentById(
+    assignmentId
+) {
+
+    try {
+
+        const {
+            data,
+            error
+        } = await supabaseClient
+            .from("assignments")
+            .select(`
+                id,
+                subject_id,
+                class_name,
+                title,
+                description,
+                due_date
+            `)
+            .eq(
+                "id",
+                assignmentId
+            )
+            .single();
+
+
+        if (error) {
+            throw error;
+        }
+
+
+        return data;
+
+    } catch (error) {
+
+        console.error(
+            "Get assignment error:",
+            error
+        );
+
+        return null;
+
+    }
+
+}
+
+
+// ==========================================
+// DELETE TEACHER ASSIGNMENT
+// ==========================================
+
+async function deleteTeacherAssignment(
+    assignmentId
+) {
+
+    const confirmed =
+        confirm(
+            "Are you sure you want to delete this assignment?"
+        );
+
+
+    if (!confirmed) {
+        return;
+    }
+
+
+    try {
+
+        const {
+            error
+        } = await supabaseClient
+            .from("assignments")
+            .delete()
+            .eq(
+                "id",
+                assignmentId
+            );
+
+
+        if (error) {
+            throw error;
+        }
+
+
+        console.log(
+            "Assignment deleted successfully."
+        );
+
+
+        await loadTeacherAssignments();
+
+
+    } catch (error) {
+
+        console.error(
+            "Delete assignment error:",
+            error
+        );
+
+        alert(
+            "Unable to delete assignment."
+        );
+
+    }
+
+}
