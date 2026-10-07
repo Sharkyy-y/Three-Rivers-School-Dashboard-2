@@ -33,9 +33,15 @@
         <aside class="sidebar">
 
             <div class="sidebar-header">
+
                 <h2>Teacher Portal</h2>
-                <p>Administration</p>
+
+                <p>
+                    Administration
+                </p>
+
             </div>
+
 
             <nav class="sidebar-nav">
 
@@ -47,7 +53,10 @@
                     Grades
                 </a>
 
-                <a href="teacher-timetable.html" class="active">
+                <a
+                    href="teacher-timetable.html"
+                    class="active"
+                >
                     Timetable
                 </a>
 
@@ -64,6 +73,7 @@
                 </a>
 
             </nav>
+
 
             <div class="sidebar-bottom">
 
@@ -82,15 +92,22 @@
         <!-- MAIN CONTENT -->
         <main class="main-content">
 
+
+            <!-- HEADER -->
             <header class="dashboard-header">
 
                 <div>
-                    <h1>Teacher Timetable</h1>
+
+                    <h1>
+                        My Timetable
+                    </h1>
 
                     <p>
-                        View your teaching schedule and subjects.
+                        View your weekly teaching schedule.
                     </p>
+
                 </div>
+
 
                 <div class="user-info">
 
@@ -103,61 +120,80 @@
             </header>
 
 
-            <!-- SUBJECT SELECTOR -->
-            <section class="dashboard-card">
+            <!-- TIMETABLE OVERVIEW -->
+            <section class="dashboard-card teacher-timetable-overview">
 
                 <div class="card-header">
 
                     <div>
-                        <h2>Select Subject</h2>
+
+                        <h2>
+                            Weekly Schedule
+                        </h2>
 
                         <p>
-                            Choose a subject to view its timetable.
+                            Select a subject to view its teaching periods.
                         </p>
+
                     </div>
 
                 </div>
 
-                <div class="form-group">
+
+                <!-- SUBJECT SELECTOR -->
+                <div class="teacher-subject-selector">
 
                     <label for="subjectSelect">
                         Subject
                     </label>
 
+
                     <select id="subjectSelect">
 
                         <option value="">
-                            Select a subject
+                            All subjects
                         </option>
 
                     </select>
 
                 </div>
 
-            </section>
 
-
-            <!-- TIMETABLE -->
-            <section class="dashboard-card">
-
-                <div class="card-header">
+                <!-- TODAY -->
+                <div class="teacher-today-banner">
 
                     <div>
-                        <h2>Teaching Schedule</h2>
 
-                        <p id="timetableDescription">
-                            Select a subject to view its schedule.
-                        </p>
+                        <span class="today-label">
+                            TODAY
+                        </span>
+
+                        <h3 id="teacherToday">
+                            Loading...
+                        </h3>
+
+                    </div>
+
+
+                    <div class="today-icon">
+                        📅
                     </div>
 
                 </div>
 
-                <div id="teacherTimetableContainer">
+
+                <!-- TIMETABLE -->
+                <div
+                    id="teacherTimetableContainer"
+                    class="teacher-timetable"
+                >
 
                     <div class="empty-state">
+
                         <p>
-                            Select a subject above to view the timetable.
+                            Loading your timetable...
                         </p>
+
                     </div>
 
                 </div>
