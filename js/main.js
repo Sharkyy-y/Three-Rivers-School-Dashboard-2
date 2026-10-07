@@ -11213,6 +11213,17 @@ async function createTeacherAssignment() {
         submitButton.textContent =
             "Create Assignment";
 
+        const cancelButton =
+    document.getElementById(
+        "teacherAssignmentCancelButton"
+    );
+
+if (cancelButton) {
+
+    cancelButton.style.display =
+        "none";
+
+}
 
         await loadTeacherAssignments();
 
