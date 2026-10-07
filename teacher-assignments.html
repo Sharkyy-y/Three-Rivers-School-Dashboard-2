@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>Assignments | Student Management Portal</title>
+
+    <link
+        rel="stylesheet"
+        href="css/style.css"
+    >
+
+    <link
+        rel="stylesheet"
+        href="css/dashboard.css"
+    >
+
+</head>
+
+<body>
+
+    <div class="dashboard-layout">
+
+        <!-- ========================================== -->
+        <!-- SIDEBAR -->
+        <!-- ========================================== -->
+
+        <aside class="sidebar">
+
+            <div class="sidebar-logo">
+                <h2>Student Portal</h2>
+                <p>Teacher</p>
+            </div>
+
+            <nav class="sidebar-nav">
+
+                <a href="teacher-dashboard.html">
+                    Dashboard
+                </a>
+
+                <a href="teacher-students.html">
+                    My Students
+                </a>
+
+                <a href="teacher-grades.html">
+                    Grades
+                </a>
+
+                <a href="teacher-conduct.html">
+                    Conduct
+                </a>
+
+                <a
+                    href="teacher-assignments.html"
+                    class="active"
+                >
+                    Assignments
+                </a>
+
+                <a href="teacher-announcements.html">
+                    Announcements
+                </a>
+
+                <a href="teacher-timetable.html">
+                    Timetable
+                </a>
+
+                <a href="teacher-duty.html">
+                    Teachers on Duty
+                </a>
+
+                <a href="teacher-profile.html">
+                    My Profile
+                </a>
+
+            </nav>
+
+            <div class="sidebar-bottom">
+
+                <button
+                    type="button"
+                    id="logoutButton"
+                >
+                    Logout
+                </button>
+
+            </div>
+
+        </aside>
+
+
+        <!-- ========================================== -->
+        <!-- MAIN CONTENT -->
+        <!-- ========================================== -->
+
+        <main class="dashboard-main">
+
+            <!-- HERO -->
+
+            <section class="teacher-page-hero">
+
+                <div>
+
+                    <p class="teacher-page-eyebrow">
+                        TEACHER PORTAL
+                    </p>
+
+                    <h1>
+                        Assignments
+                    </h1>
+
+                    <p>
+                        Create and manage assignments
+                        for your subjects.
+                    </p>
+
+                </div>
+
+            </section>
+
+
+            <!-- ====================================== -->
+            <!-- CREATE ASSIGNMENT -->
+            <!-- ====================================== -->
+
+            <section class="teacher-assignment-section">
+
+                <div class="teacher-section-header">
+
+                    <div>
+
+                        <h2>
+                            Create Assignment
+                        </h2>
+
+                        <p>
+                            Create a new assignment
+                            for one of your subjects.
+                        </p>
+
+                    </div>
+
+                </div>
+
+
+                <form
+                    id="teacherAssignmentForm"
+                    class="teacher-assignment-form"
+                >
+
+                    <!-- SUBJECT -->
+
+                    <div class="teacher-form-group">
+
+                        <label for="teacherAssignmentSubject">
+                            Subject
+                        </label>
+
+                        <select
+                            id="teacherAssignmentSubject"
+                            required
+                        >
+
+                            <option value="">
+                                Select subject
+                            </option>
+
+                        </select>
+
+                    </div>
+
+
+                    <!-- CLASS -->
+
+                    <div class="teacher-form-group">
+
+                        <label for="teacherAssignmentClass">
+                            Class
+                        </label>
+
+                        <input
+                            type="text"
+                            id="teacherAssignmentClass"
+                            placeholder="e.g. Year 13B"
+                            required
+                        >
+
+                    </div>
+
+
+                    <!-- TITLE -->
+
+                    <div class="teacher-form-group">
+
+                        <label for="teacherAssignmentTitle">
+                            Assignment Title
+                        </label>
+
+                        <input
+                            type="text"
+                            id="teacherAssignmentTitle"
+                            placeholder="e.g. English Essay"
+                            required
+                        >
+
+                    </div>
+
+
+                    <!-- DESCRIPTION -->
+
+                    <div class="teacher-form-group">
+
+                        <label for="teacherAssignmentDescription">
+                            Description
+                        </label>
+
+                        <textarea
+                            id="teacherAssignmentDescription"
+                            rows="5"
+                            placeholder="Enter assignment instructions..."
+                        ></textarea>
+
+                    </div>
+
+
+                    <!-- DUE DATE -->
+
+                    <div class="teacher-form-group">
+
+                        <label for="teacherAssignmentDueDate">
+                            Due Date
+                        </label>
+
+                        <input
+                            type="date"
+                            id="teacherAssignmentDueDate"
+                            required
+                        >
+
+                    </div>
+
+
+                    <div
+                        id="teacherAssignmentFormMessage"
+                        class="teacher-form-message"
+                    ></div>
+
+
+                    <button
+                        type="submit"
+                        class="teacher-primary-button"
+                    >
+                        Create Assignment
+                    </button>
+
+                </form>
+
+            </section>
+
+
+            <!-- ====================================== -->
+            <!-- ASSIGNMENT LIST -->
+            <!-- ====================================== -->
+
+            <section class="teacher-assignment-section">
+
+                <div class="teacher-section-header">
+
+                    <div>
+
+                        <h2>
+                            My Assignments
+                        </h2>
+
+                        <p>
+                            Assignments you have created.
+                        </p>
+
+                    </div>
+
+                </div>
+
+
+                <div
+                    id="teacherAssignmentsContainer"
+                    class="teacher-assignments-container"
+                >
+
+                    <div class="teacher-loading">
+                        Loading assignments...
+                    </div>
+
+                </div>
+
+            </section>
+
+        </main>
+
+    </div>
+
+
+    <!-- ========================================== -->
+    <!-- SUPABASE -->
+    <!-- ========================================== -->
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+    <script src="js/main.js"></script>
+
+</body>
+
+</html>
