@@ -10226,8 +10226,6 @@ async function loadTeacherStudentConduct(
     }
 
 
-    // Show selected student
-
     panel.style.display =
         "block";
 
@@ -10293,36 +10291,39 @@ async function loadTeacherStudentConduct(
         // TOTAL POINTS
         // ==========================================
 
-       const totalPoints =
-    (records || []).reduce(
-        (
-            total,
-            record
-        ) => {
-
-            const rawPoints =
-                Number(
-                    record.points || 0
-                );
-
-            const recordType =
+        const totalPoints =
+            (records || []).reduce(
                 (
-                    record.type ||
-                    "neutral"
-                ).toLowerCase();
+                    total,
+                    record
+                ) => {
 
-            const points =
-                recordType === "negative"
-                    ? -Math.abs(rawPoints)
-                    : recordType === "positive"
-                        ? Math.abs(rawPoints)
-                        : rawPoints;
+                    const rawPoints =
+                        Number(
+                            record.points || 0
+                        );
 
-            return total + points;
 
-        },
-        0
-    );
+                    const recordType =
+                        (
+                            record.type ||
+                            "neutral"
+                        ).toLowerCase();
+
+
+                    const points =
+                        recordType === "negative"
+                            ? -Math.abs(rawPoints)
+                            : recordType === "positive"
+                                ? Math.abs(rawPoints)
+                                : rawPoints;
+
+
+                    return total + points;
+
+                },
+                0
+            );
 
 
         const pointsElement =
@@ -10400,20 +10401,24 @@ async function loadTeacherStudentConduct(
 
 
                 const rawPoints =
-    Number(
-        record.points || 0
-    );
-
-const points =
-    recordType === "negative"
-        ? -Math.abs(rawPoints)
-        : Math.abs(rawPoints);
+                    Number(
+                        record.points || 0
+                    );
 
 
-const pointsText =
-    points > 0
-        ? `+${points}`
-        : `${points}`;
+                const points =
+                    recordType === "negative"
+                        ? -Math.abs(rawPoints)
+                        : recordType === "positive"
+                            ? Math.abs(rawPoints)
+                            : rawPoints;
+
+
+                const pointsText =
+                    points > 0
+                        ? `+${points}`
+                        : `${points}`;
+
 
                 recordElement.innerHTML = `
 
@@ -10449,6 +10454,19 @@ const pointsText =
                             `
                             : ""
                     }
+
+
+                    <div class="teacher-conduct-record-actions">
+
+                        <button
+                            type="button"
+                            class="teacher-conduct-delete-button"
+                            onclick="deleteTeacherConductRecord('${record.id}')"
+                        >
+                            Delete
+                        </button>
+
+                    </div>
 
                 `;
 
@@ -10487,6 +10505,76 @@ const pointsText =
 
             </div>
         `;
+
+    }
+
+}
+
+
+// ==========================================
+// DELETE TEACHER CONDUCT RECORD
+// ==========================================
+
+async function deleteTeacherConductRecord(
+    recordId
+) {
+
+    const confirmed =
+        confirm(
+            "Are you sure you want to delete this conduct record?"
+        );
+
+
+    if (!confirmed) {
+        return;
+    }
+
+
+    try {
+
+        const {
+            error
+        } = await supabaseClient
+            .from("conduct_records")
+            .delete()
+            .eq(
+                "id",
+                recordId
+            );
+
+
+        if (error) {
+            throw error;
+        }
+
+
+        console.log(
+            "Conduct record deleted successfully."
+        );
+
+
+        if (
+            selectedTeacherConductStudent
+        ) {
+
+            await loadTeacherStudentConduct(
+                selectedTeacherConductStudent
+            );
+
+        }
+
+
+    } catch (error) {
+
+        console.error(
+            "Delete conduct record error:",
+            error
+        );
+
+
+        alert(
+            "Unable to delete conduct record."
+        );
 
     }
 
@@ -10658,10 +10746,6 @@ async function saveTeacherConductRecord() {
         );
 
 
-    // ==========================================
-    // VALIDATION
-    // ==========================================
-
     if (
         !type ||
         !title
@@ -10732,17 +10816,11 @@ async function saveTeacherConductRecord() {
         let result;
 
 
-        // ==========================================
-        // UPDATE EXISTING RECORD
-        // ==========================================
-
         if (recordId) {
 
             result =
                 await supabaseClient
-                    .from(
-                        "conduct_records"
-                    )
+                    .from("conduct_records")
                     .update(
                         recordData
                     )
@@ -10751,19 +10829,11 @@ async function saveTeacherConductRecord() {
                         recordId
                     );
 
-        }
-
-        // ==========================================
-        // INSERT NEW RECORD
-        // ==========================================
-
-        else {
+        } else {
 
             result =
                 await supabaseClient
-                    .from(
-                        "conduct_records"
-                    )
+                    .from("conduct_records")
                     .insert(
                         recordData
                     );
@@ -10788,14 +10858,10 @@ async function saveTeacherConductRecord() {
             "#15803d";
 
 
-        // Reload records
-
         await loadTeacherStudentConduct(
             selectedTeacherConductStudent
         );
 
-
-        // Hide form
 
         document.getElementById(
             "teacherConductFormSection"
@@ -10840,7 +10906,6 @@ if (teacherConductForm) {
 
             event.preventDefault();
 
-
             await saveTeacherConductRecord();
 
         }
@@ -10858,6 +10923,10 @@ if (
         "teacher-conduct.html"
     )
 ) {
+
+    console.log(
+        "Teacher Conduct page detected."
+    );
 
     loadTeacherConductStudents();
 
