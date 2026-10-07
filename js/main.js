@@ -9452,10 +9452,52 @@ Object.entries(assessmentGroups).forEach(
         });
 
 
-        gradesContainer.appendChild(section);
+               gradesContainer.appendChild(section);
 
     }
 );
+
+
+// ==========================================
+// GRADES LOADED SUCCESSFULLY
+// ==========================================
+
+statusElement.textContent =
+    `${grades.length} grade records loaded.`;
+
+console.log(
+    "TEACHER SUBJECT GRADES LOADED:",
+    grades
+);
+
+    }
+
+    catch (error) {
+
+        console.error(
+            "Teacher grades loading error:",
+            error
+        );
+
+        gradesContainer.innerHTML = `
+            <div class="teacher-grades-empty">
+
+                <h3>Unable to load grades</h3>
+
+                <p>
+                    Something went wrong while loading the grades.
+                </p>
+
+            </div>
+        `;
+
+        statusElement.textContent =
+            "Unable to load grades.";
+
+    }
+
+}
+
         
 // ==========================================
 // SAVE TEACHER GRADE
