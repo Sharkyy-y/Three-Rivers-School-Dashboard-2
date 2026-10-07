@@ -9176,6 +9176,102 @@ async function loadTeacherSubjectGrades(subjectId) {
 
 gradesContainer.innerHTML = "";
 
+        // ==========================================
+// UPDATE PERFORMANCE SUMMARY
+// ==========================================
+
+const uniqueStudents = new Set(
+    grades.map(grade => grade.student_id)
+);
+
+const percentages = grades
+    .filter(
+        grade =>
+            Number(grade.max_score) > 0
+    )
+    .map(
+        grade =>
+            (
+                Number(grade.score) /
+                Number(grade.max_score)
+            ) * 100
+    );
+
+const studentsGradedElement =
+    document.getElementById(
+        "teacherStudentsGraded"
+    );
+
+const classAverageElement =
+    document.getElementById(
+        "teacherClassAverage"
+    );
+
+const highestScoreElement =
+    document.getElementById(
+        "teacherHighestScore"
+    );
+
+const lowestScoreElement =
+    document.getElementById(
+        "teacherLowestScore"
+    );
+
+
+if (studentsGradedElement) {
+
+    studentsGradedElement.textContent =
+        uniqueStudents.size;
+
+}
+
+
+if (percentages.length > 0) {
+
+    const average =
+        percentages.reduce(
+            (total, value) =>
+                total + value,
+            0
+        ) / percentages.length;
+
+    const highest =
+        Math.max(...percentages);
+
+    const lowest =
+        Math.min(...percentages);
+
+
+    if (classAverageElement) {
+
+        classAverageElement.textContent =
+            `${average.toFixed(1)}%`;
+
+    }
+
+
+    if (highestScoreElement) {
+
+        highestScoreElement.textContent =
+            `${highest.toFixed(1)}%`;
+
+    }
+
+
+    if (lowestScoreElement) {
+
+        lowestScoreElement.textContent =
+            `${lowest.toFixed(1)}%`;
+
+    }
+
+}
+
+
+// ==========================================
+// ASSESSMENT GROUPS
+// ==========================================
+
 const assessmentGroups = {
     "Opener": [],
     "Midterm": [],
