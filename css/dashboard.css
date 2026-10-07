@@ -5090,3 +5090,61 @@ body {
     }
 
 }
+
+/* ==========================================
+   ASSESSMENT STATISTICS
+========================================== */
+
+.teacher-grade-section-header {
+    align-items: center;
+}
+
+.teacher-assessment-stats {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.teacher-assessment-stats span {
+    padding: 6px 10px;
+    border: 1px solid #bbf7d0;
+    border-radius: 20px;
+    background: #ffffff;
+    color: #166534;
+    font-size: 11px;
+    font-weight: 700;
+    white-space: nowrap;
+}
+
+
+/* ==========================================
+   ASSESSMENT HEADER IMPROVEMENT
+========================================== */
+
+.teacher-grade-section-header h2 {
+    margin-top: 2px;
+}
+
+.teacher-grade-section-header .teacher-section-label {
+    margin-bottom: 3px;
+}
+
+
+/* ==========================================
+   RESPONSIVE ASSESSMENT STATS
+========================================== */
+
+@media (max-width: 700px) {
+
+    .teacher-grade-section-header {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+
+    .teacher-assessment-stats {
+        justify-content: flex-start;
+    }
+
+}
