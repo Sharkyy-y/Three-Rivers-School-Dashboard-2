@@ -6358,3 +6358,43 @@ body {
     }
 
 }
+
+/* ==========================================
+   ASSIGNMENT FORM ACTIONS
+   ========================================== */
+
+.teacher-assignment-form-actions {
+    grid-column: 1 / -1;
+    display: flex;
+    gap: 12px;
+    align-items: center;
+}
+
+.teacher-assignment-form-actions .teacher-primary-button {
+    flex: 1;
+}
+
+.teacher-assignment-cancel-button {
+    border: 1px solid #d1d5db;
+    background: #f3f4f6;
+    color: #374151;
+    padding: 13px 20px;
+    border-radius: 10px;
+    font-size: 14px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: 0.2s ease;
+}
+
+.teacher-assignment-cancel-button:hover {
+    background: #e5e7eb;
+}
+
+@media (max-width: 600px) {
+
+    .teacher-assignment-form-actions {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+}
