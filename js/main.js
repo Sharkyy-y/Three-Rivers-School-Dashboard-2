@@ -12461,7 +12461,6 @@ async function deleteTeacherAnnouncement(announcementId) {
 
 }
 
-```javascript
 // ==========================================
 // TEACHER TIMETABLE
 // ==========================================
