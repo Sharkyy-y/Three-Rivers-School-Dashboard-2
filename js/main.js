@@ -9170,120 +9170,190 @@ async function loadTeacherSubjectGrades(subjectId) {
         );
 
 
+// ==========================================
+// DISPLAY GRADES BY ASSESSMENT
+// ==========================================
+
+gradesContainer.innerHTML = "";
+
+const assessmentGroups = {
+    "Opener": [],
+    "Midterm": [],
+    "End Term": [],
+    "Internal Test": []
+};
+
+
+// ==========================================
+// GROUP GRADES
+// ==========================================
+
+grades.forEach(grade => {
+
+    const assessment =
+        (grade.assessment || "").toLowerCase();
+
+    if (assessment.includes("opener")) {
+
+        assessmentGroups["Opener"].push(grade);
+
+    } else if (assessment.includes("midterm") ||
+               assessment.includes("mid-term")) {
+
+        assessmentGroups["Midterm"].push(grade);
+
+    } else if (assessment.includes("end term") ||
+               assessment.includes("end-term")) {
+
+        assessmentGroups["End Term"].push(grade);
+
+    } else if (assessment.includes("internal")) {
+
+        assessmentGroups["Internal Test"].push(grade);
+
+    }
+
+});
+
+
+// ==========================================
+// CREATE SECTIONS
+// ==========================================
+
+Object.entries(assessmentGroups).forEach(
+    ([sectionName, sectionGrades]) => {
+
+        const section =
+            document.createElement("section");
+
+        section.className =
+            "teacher-grade-section";
+
+
+        section.innerHTML = `
+
+            <div class="teacher-grade-section-header">
+
+                <h2>
+                    ${sectionName}
+                </h2>
+
+                <span>
+                    ${sectionGrades.length} record${sectionGrades.length === 1 ? "" : "s"}
+                </span>
+
+            </div>
+
+            <div class="teacher-grade-section-content">
+            </div>
+
+        `;
+
+
+        const sectionContent =
+            section.querySelector(
+                ".teacher-grade-section-content"
+            );
+
+
         // ==========================================
-        // DISPLAY GRADES
+        // NO RECORDS
         // ==========================================
 
-        gradesContainer.innerHTML = "";
+        if (sectionGrades.length === 0) {
+
+            sectionContent.innerHTML = `
+
+                <div class="teacher-grades-empty">
+
+                    <p>
+                        No ${sectionName.toLowerCase()} grades recorded.
+                    </p>
+
+                </div>
+
+            `;
+
+            gradesContainer.appendChild(section);
+
+            return;
+        }
 
 
-        grades.forEach(
-            grade => {
+        // ==========================================
+        // ADD GRADES
+        // ==========================================
 
-                const student =
-                    studentMap[grade.student_id];
+        sectionGrades.forEach(grade => {
 
-
-                const studentName =
-                    student?.full_name ||
-                    "Unknown student";
+            const student =
+                studentMap[grade.student_id];
 
 
-                const admissionNumber =
-                    student?.admission_number ||
-                    "No admission number";
+            const studentName =
+                student?.full_name ||
+                "Unknown student";
 
 
-                const percentage =
-                    Number(grade.max_score) > 0
-                        ? (
-                            Number(grade.score) /
-                            Number(grade.max_score)
-                        ) * 100
-                        : 0;
+            const admissionNumber =
+                student?.admission_number ||
+                "No admission number";
 
 
-                const card =
-                    document.createElement("div");
+            const percentage =
+                Number(grade.max_score) > 0
+                    ? (
+                        Number(grade.score) /
+                        Number(grade.max_score)
+                    ) * 100
+                    : 0;
 
-                card.className =
-                    "teacher-grade-card";
+
+            const card =
+                document.createElement("div");
+
+            card.className =
+                "teacher-grade-card";
 
 
-                card.innerHTML = `
+            card.innerHTML = `
 
-                    <div class="teacher-grade-header">
+                <div class="teacher-grade-header">
 
-                        <div>
+                    <div>
 
-                            <h3>
-                                ${studentName}
-                            </h3>
+                        <h3>
+                            ${studentName}
+                        </h3>
 
-                            <p>
-                                ${admissionNumber}
-                            </p>
-
-                        </div>
-
-                        <div class="teacher-grade-percentage">
-
-                            ${percentage.toFixed(1)}%
-
-                        </div>
+                        <p>
+                            ${admissionNumber}
+                        </p>
 
                     </div>
 
+                    <div class="teacher-grade-percentage">
 
-                    <div class="teacher-grade-fields">
+                        ${percentage.toFixed(1)}%
 
-                        <div class="teacher-grade-field">
+                    </div>
 
-                            <label>
-                                Assessment
-                            </label>
-
-                            <input
-                                type="text"
-                                class="teacher-grade-assessment"
-                                value="${grade.assessment || ""}"
-                            >
-
-                        </div>
+                </div>
 
 
-                        <div class="teacher-grade-field">
+                <div class="teacher-grade-fields">
 
-                            <label>
-                                Score
-                            </label>
+                    <div class="teacher-grade-field">
 
-                            <input
-                                type="number"
-                                class="teacher-grade-score"
-                                value="${grade.score ?? ""}"
-                                min="0"
-                                step="0.01"
-                            >
+                        <label>
+                            Assessment
+                        </label>
 
-                        </div>
-
-
-                        <div class="teacher-grade-field">
-
-                            <label>
-                                Maximum Score
-                            </label>
-
-                            <input
-                                type="number"
-                                class="teacher-grade-max-score"
-                                value="${grade.max_score ?? ""}"
-                                min="1"
-                                step="0.01"
-                            >
-
-                        </div>
+                        <input
+                            type="text"
+                            class="teacher-grade-assessment"
+                            value="${grade.assessment || ""}"
+                        >
 
                     </div>
 
@@ -9291,87 +9361,102 @@ async function loadTeacherSubjectGrades(subjectId) {
                     <div class="teacher-grade-field">
 
                         <label>
-                            Teacher Comment
+                            Score
                         </label>
 
-                        <textarea
-                            class="teacher-grade-comments"
-                            rows="3"
-                            placeholder="Add a comment about this student's performance..."
-                        >${grade.comments || ""}</textarea>
-
-                    </div>
-
-
-                    <div class="teacher-grade-actions">
-
-                        <button
-                            type="button"
-                            class="teacher-grade-save"
-                            data-grade-id="${grade.id}"
+                        <input
+                            type="number"
+                            class="teacher-grade-score"
+                            value="${grade.score ?? ""}"
+                            min="0"
+                            step="0.01"
                         >
-                            Save Changes
-                        </button>
-
-                        <span
-                            class="teacher-grade-message"
-                        ></span>
 
                     </div>
 
-                `;
+
+                    <div class="teacher-grade-field">
+
+                        <label>
+                            Maximum Score
+                        </label>
+
+                        <input
+                            type="number"
+                            class="teacher-grade-max-score"
+                            value="${grade.max_score ?? ""}"
+                            min="1"
+                            step="0.01"
+                        >
+
+                    </div>
+
+                </div>
 
 
-                gradesContainer.appendChild(card);
+                <div class="teacher-grade-field">
+
+                    <label>
+                        Teacher Comment
+                    </label>
+
+                    <textarea
+                        class="teacher-grade-comments"
+                        rows="3"
+                        placeholder="Add a comment about this student's performance..."
+                    >${grade.comments || ""}</textarea>
+
+                </div>
 
 
-                const saveButton =
-                    card.querySelector(
-                        ".teacher-grade-save"
-                    );
+                <div class="teacher-grade-actions">
+
+                    <button
+                        type="button"
+                        class="teacher-grade-save"
+                        data-grade-id="${grade.id}"
+                    >
+                        Save Changes
+                    </button>
+
+                    <span
+                        class="teacher-grade-message"
+                    ></span>
+
+                </div>
+
+            `;
 
 
-                saveButton.addEventListener(
-                    "click",
-                    function () {
+            sectionContent.appendChild(card);
 
-                        saveTeacherGrade(
-                            grade.id,
-                            card
-                        );
 
-                    }
+            const saveButton =
+                card.querySelector(
+                    ".teacher-grade-save"
                 );
 
-            }
-        );
+
+            saveButton.addEventListener(
+                "click",
+                function () {
+
+                    saveTeacherGrade(
+                        grade.id,
+                        card
+                    );
+
+                }
+            );
+
+        });
 
 
-        statusElement.textContent =
-            `${grades.length} grade records found.`;
-
-
-        console.log(
-            "TEACHER GRADES DISPLAYED:",
-            grades
-        );
-
-    }
-
-    catch (error) {
-
-        console.error(
-            "Teacher subject grades error:",
-            error
-        );
-
-        statusElement.textContent =
-            "Unable to load grades.";
+        gradesContainer.appendChild(section);
 
     }
-
-}
-
+);
+        
 // ==========================================
 // SAVE TEACHER GRADE
 // ==========================================
