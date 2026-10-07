@@ -9049,22 +9049,16 @@ async function loadTeacherSubjectGrades(
         } =
             await supabaseClient
                 .from("grades")
-                .select(`
-                    id,
-                    student_id,
-                    subject_id,
-                    assessment,
-                    score,
-                    max_score,
-                    comments,
-                    created_at,
-                    students (
-                        id,
-                        full_name,
-                        admission_number,
-                        class_name
-                    )
-                `)
+              .select(`
+    id,
+    student_id,
+    subject_id,
+    assessment,
+    score,
+    max_score,
+    comments,
+    created_at
+`)
                 .eq(
                     "subject_id",
                     subjectId
