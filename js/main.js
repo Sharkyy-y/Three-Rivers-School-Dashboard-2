@@ -10293,18 +10293,36 @@ async function loadTeacherStudentConduct(
         // TOTAL POINTS
         // ==========================================
 
-        const totalPoints =
-            (records || []).reduce(
+       const totalPoints =
+    (records || []).reduce(
+        (
+            total,
+            record
+        ) => {
+
+            const rawPoints =
+                Number(
+                    record.points || 0
+                );
+
+            const recordType =
                 (
-                    total,
-                    record
-                ) =>
-                    total +
-                    Number(
-                        record.points || 0
-                    ),
-                0
-            );
+                    record.type ||
+                    "neutral"
+                ).toLowerCase();
+
+            const points =
+                recordType === "negative"
+                    ? -Math.abs(rawPoints)
+                    : recordType === "positive"
+                        ? Math.abs(rawPoints)
+                        : rawPoints;
+
+            return total + points;
+
+        },
+        0
+    );
 
 
         const pointsElement =
