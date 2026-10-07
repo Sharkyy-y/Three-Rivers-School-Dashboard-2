@@ -9362,16 +9362,41 @@ Object.entries(assessmentGroups).forEach(
 
             <div class="teacher-grade-section-header">
 
-                <h2>
-                    ${sectionName}
-                </h2>
+    <div>
 
-                <span>
-                    ${sectionGrades.length} record${sectionGrades.length === 1 ? "" : "s"}
-                </span>
+        <span class="teacher-section-label">
+            ASSESSMENT
+        </span>
 
-            </div>
+        <h2>
+            ${sectionName}
+        </h2>
 
+    </div>
+
+    <div class="teacher-assessment-stats">
+
+        <span>
+            ${sectionGrades.length} student${sectionGrades.length === 1 ? "" : "s"}
+        </span>
+
+        ${
+            sectionGrades.length > 0
+                ? `
+                    <span>
+                        Avg ${sectionAverage.toFixed(1)}%
+                    </span>
+
+                    <span>
+                        Best ${sectionHighest.toFixed(1)}%
+                    </span>
+                `
+                : ""
+        }
+
+    </div>
+
+</div>
             <div class="teacher-grade-section-content">
             </div>
 
