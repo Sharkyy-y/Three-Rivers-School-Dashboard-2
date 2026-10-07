@@ -12595,29 +12595,42 @@ async function loadTeacherTimetable() {
         // ==========================================
 
         const {
-            data: timetable,
-            error: timetableError
-        } = await supabaseClient
-            .from("timetable")
-            .select(`
-                id,
-                class_name,
-                subject_id,
-                teacher_name,
-                room,
-                day_of_week,
-                start_time,
-                end_time,
-                subjects (
-                    id,
-                    name,
-                    code
-                )
-            `)
-            .eq(
-                "teacher_name",
-                profile.full_name
-            )
+    data: timetable,
+    error: timetableError
+} = await supabaseClient
+    .from("timetable")
+    .select(`
+        id,
+        class_name,
+        subject_id,
+        teacher_id,
+        teacher_name,
+        room,
+        day_of_week,
+        start_time,
+        end_time,
+        subjects (
+            id,
+            name,
+            code
+        )
+    `)
+    .eq(
+        "teacher_id",
+        user.id
+    )
+    .order(
+        "day_of_week",
+        {
+            ascending: true
+        }
+    )
+    .order(
+        "start_time",
+        {
+            ascending: true
+        }
+    );
             .order(
                 "day_of_week",
                 {
