@@ -9461,6 +9461,15 @@ Object.entries(assessmentGroups).forEach(
                     ) * 100
                     : 0;
 
+            let performanceLabel = "Needs Improvement";
+
+if (percentage >= 80) {
+    performanceLabel = "Excellent";
+} else if (percentage >= 70) {
+    performanceLabel = "Good";
+} else if (percentage >= 50) {
+    performanceLabel = "Average";
+}
 
             const card =
                 document.createElement("div");
@@ -9485,8 +9494,12 @@ Object.entries(assessmentGroups).forEach(
         </span>
 
         <strong class="teacher-grade-percentage">
-            ${percentage.toFixed(1)}%
-        </strong>
+    ${percentage.toFixed(1)}%
+</strong>
+
+<span class="teacher-grade-performance-label">
+    ${performanceLabel}
+</span>
 
     </div>
 
