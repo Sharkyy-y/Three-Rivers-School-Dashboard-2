@@ -5367,3 +5367,24 @@ body {
     font-weight: 800;
     text-align: right;
 }
+
+/* ==========================================
+   PERFORMANCE CATEGORY
+========================================== */
+
+.teacher-grade-performance-label {
+    display: inline-flex;
+    align-items: center;
+    padding: 4px 9px;
+    border-radius: 20px;
+    background: #f0fdf4;
+    color: #15803d;
+    font-size: 10px;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+}
+
+.teacher-grade-score-summary {
+    align-items: flex-end;
+}
