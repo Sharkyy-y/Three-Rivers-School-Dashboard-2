@@ -11834,3 +11834,123 @@ if (teacherAssignmentCancelButton) {
     );
 
 }
+
+// ==========================================
+// TEACHER ANNOUNCEMENTS
+// ==========================================
+
+async function createTeacherAnnouncement() {
+
+    console.log("Saving teacher announcement...");
+
+    const title =
+        document.getElementById(
+            "teacherAnnouncementTitle"
+        ).value.trim();
+
+    const targetClass =
+        document.getElementById(
+            "teacherAnnouncementClass"
+        ).value.trim();
+
+    const targetRole =
+        document.getElementById(
+            "teacherAnnouncementPortal"
+        ).value;
+
+    const message =
+        document.getElementById(
+            "teacherAnnouncementMessage"
+        ).value.trim();
+
+    const formMessage =
+        document.getElementById(
+            "teacherAnnouncementFormMessage"
+        );
+
+    if (
+        !title ||
+        !targetClass ||
+        !targetRole ||
+        !message
+    ) {
+
+        formMessage.textContent =
+            "Please complete all fields.";
+
+        return;
+    }
+
+    try {
+
+        const { data, error } =
+            await supabaseClient
+                .from("announcements")
+                .insert([
+                    {
+                        title: title,
+                        message: message,
+                        target_role: targetRole,
+                        target_class: targetClass
+                    }
+                ])
+                .select()
+                .single();
+
+        if (error) {
+            throw error;
+        }
+
+        console.log(
+            "Teacher announcement created:",
+            data
+        );
+
+        formMessage.textContent =
+            "Announcement published successfully.";
+
+        document
+            .getElementById(
+                "teacherAnnouncementForm"
+            )
+            .reset();
+
+
+    } catch (error) {
+
+        console.error(
+            "Save teacher announcement error:",
+            error
+        );
+
+        formMessage.textContent =
+            "Unable to publish announcement.";
+
+    }
+
+}
+
+
+// ==========================================
+// TEACHER ANNOUNCEMENT FORM
+// ==========================================
+
+const teacherAnnouncementForm =
+    document.getElementById(
+        "teacherAnnouncementForm"
+    );
+
+if (teacherAnnouncementForm) {
+
+    teacherAnnouncementForm.addEventListener(
+        "submit",
+        async function (event) {
+
+            event.preventDefault();
+
+            await createTeacherAnnouncement();
+
+        }
+    );
+
+}
