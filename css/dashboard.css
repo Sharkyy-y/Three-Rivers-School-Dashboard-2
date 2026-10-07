@@ -4613,3 +4613,480 @@ body {
     font-size: 15px;
     font-weight: 600;
 }
+
+/* ==========================================
+   TEACHER GRADES - ACADEMIC DESIGN
+========================================== */
+
+.teacher-grades-page {
+    padding-bottom: 50px;
+}
+
+
+/* ==========================================
+   HERO
+========================================== */
+
+.teacher-grades-hero {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 30px;
+    padding: 32px;
+    margin-bottom: 24px;
+    border-radius: 18px;
+    background: linear-gradient(
+        135deg,
+        #14532d,
+        #166534
+    );
+    color: white;
+    box-shadow: 0 10px 30px rgba(20, 83, 45, 0.18);
+}
+
+.teacher-grades-eyebrow {
+    display: inline-block;
+    margin-bottom: 8px;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 1.5px;
+    opacity: 0.8;
+}
+
+.teacher-grades-hero h1 {
+    margin: 0 0 8px;
+    font-size: 32px;
+    font-weight: 700;
+}
+
+.teacher-grades-hero p {
+    margin: 0;
+    max-width: 650px;
+    line-height: 1.6;
+    opacity: 0.9;
+}
+
+.teacher-grades-hero-icon {
+    width: 78px;
+    height: 78px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    border-radius: 20px;
+    background: rgba(255, 255, 255, 0.14);
+    font-size: 38px;
+}
+
+
+/* ==========================================
+   SECTION LABELS
+========================================== */
+
+.teacher-section-label {
+    display: block;
+    margin-bottom: 5px;
+    color: #15803d;
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: 1.4px;
+}
+
+
+/* ==========================================
+   SUBJECT SELECTOR
+========================================== */
+
+.teacher-grade-control {
+    margin-bottom: 24px;
+}
+
+.teacher-subject-selector {
+    display: flex;
+    align-items: center;
+    gap: 18px;
+    margin-top: 20px;
+    padding: 20px;
+    border: 1px solid #e5e7eb;
+    border-radius: 14px;
+    background: #f8fafc;
+}
+
+.teacher-subject-icon {
+    width: 48px;
+    height: 48px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    border-radius: 12px;
+    background: #dcfce7;
+    font-size: 23px;
+}
+
+.teacher-subject-select-wrapper {
+    flex: 1;
+}
+
+.teacher-subject-select-wrapper label {
+    display: block;
+    margin-bottom: 7px;
+    color: #374151;
+    font-size: 13px;
+    font-weight: 600;
+}
+
+.teacher-grade-select {
+    width: 100%;
+    padding: 13px 15px;
+    border: 1px solid #d1d5db;
+    border-radius: 10px;
+    background: white;
+    color: #111827;
+    font-size: 15px;
+    outline: none;
+    cursor: pointer;
+    transition: 0.2s ease;
+}
+
+.teacher-grade-select:focus {
+    border-color: #16a34a;
+    box-shadow: 0 0 0 3px rgba(22, 163, 74, 0.12);
+}
+
+
+/* ==========================================
+   PERFORMANCE OVERVIEW
+========================================== */
+
+.teacher-performance-overview {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 18px;
+    margin-bottom: 24px;
+}
+
+.teacher-performance-card {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 20px;
+    border: 1px solid #e5e7eb;
+    border-radius: 14px;
+    background: white;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.04);
+    transition: transform 0.2s ease,
+                box-shadow 0.2s ease;
+}
+
+.teacher-performance-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 22px rgba(0, 0, 0, 0.08);
+}
+
+.teacher-performance-icon {
+    width: 46px;
+    height: 46px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    border-radius: 12px;
+    background: #ecfdf5;
+    font-size: 21px;
+}
+
+.teacher-performance-card span {
+    display: block;
+    margin-bottom: 4px;
+    color: #6b7280;
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.teacher-performance-card strong {
+    display: block;
+    color: #111827;
+    font-size: 23px;
+    font-weight: 750;
+}
+
+
+/* ==========================================
+   GRADEBOOK
+========================================== */
+
+.teacher-gradebook-section {
+    overflow: hidden;
+}
+
+.teacher-gradebook-badge {
+    padding: 7px 12px;
+    border-radius: 20px;
+    background: #dcfce7;
+    color: #166534;
+    font-size: 12px;
+    font-weight: 700;
+}
+
+
+/* ==========================================
+   ASSESSMENT SECTIONS
+========================================== */
+
+.teacher-grade-section {
+    margin-top: 24px;
+    overflow: hidden;
+    border: 1px solid #e5e7eb;
+    border-radius: 15px;
+    background: #ffffff;
+}
+
+.teacher-grade-section-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 15px;
+    padding: 17px 20px;
+    border-bottom: 1px solid #e5e7eb;
+    background: #f0fdf4;
+}
+
+.teacher-grade-section-header h2 {
+    margin: 0;
+    color: #14532d;
+    font-size: 18px;
+}
+
+.teacher-grade-section-header span {
+    padding: 5px 10px;
+    border-radius: 20px;
+    background: white;
+    color: #166534;
+    font-size: 12px;
+    font-weight: 700;
+}
+
+.teacher-grade-section-content {
+    padding: 18px;
+}
+
+
+/* ==========================================
+   GRADE CARDS
+========================================== */
+
+.teacher-grade-card {
+    margin-bottom: 16px;
+    padding: 20px;
+    border: 1px solid #e5e7eb;
+    border-radius: 13px;
+    background: white;
+    transition: 0.2s ease;
+}
+
+.teacher-grade-card:last-child {
+    margin-bottom: 0;
+}
+
+.teacher-grade-card:hover {
+    border-color: #bbf7d0;
+    box-shadow: 0 5px 18px rgba(0, 0, 0, 0.05);
+}
+
+.teacher-grade-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+    margin-bottom: 20px;
+}
+
+.teacher-grade-header h3 {
+    margin: 0 0 4px;
+    color: #111827;
+    font-size: 17px;
+}
+
+.teacher-grade-header p {
+    margin: 0;
+    color: #6b7280;
+    font-size: 13px;
+}
+
+.teacher-grade-percentage {
+    min-width: 70px;
+    padding: 9px 12px;
+    border-radius: 10px;
+    background: #dcfce7;
+    color: #166534;
+    text-align: center;
+    font-size: 16px;
+    font-weight: 800;
+}
+
+
+/* ==========================================
+   GRADE FIELDS
+========================================== */
+
+.teacher-grade-fields {
+    display: grid;
+    grid-template-columns: 1.5fr 1fr 1fr;
+    gap: 15px;
+}
+
+.teacher-grade-field {
+    margin-bottom: 15px;
+}
+
+.teacher-grade-field label {
+    display: block;
+    margin-bottom: 6px;
+    color: #374151;
+    font-size: 12px;
+    font-weight: 700;
+}
+
+.teacher-grade-field input,
+.teacher-grade-field textarea {
+    width: 100%;
+    box-sizing: border-box;
+    padding: 11px 12px;
+    border: 1px solid #d1d5db;
+    border-radius: 9px;
+    background: #fff;
+    color: #111827;
+    font-family: inherit;
+    font-size: 14px;
+    outline: none;
+    transition: 0.2s ease;
+}
+
+.teacher-grade-field input:focus,
+.teacher-grade-field textarea:focus {
+    border-color: #16a34a;
+    box-shadow: 0 0 0 3px rgba(22, 163, 74, 0.1);
+}
+
+.teacher-grade-comments {
+    resize: vertical;
+}
+
+
+/* ==========================================
+   ACTIONS
+========================================== */
+
+.teacher-grade-actions {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-top: 5px;
+}
+
+.teacher-grade-save {
+    padding: 10px 17px;
+    border: none;
+    border-radius: 9px;
+    background: #15803d;
+    color: white;
+    font-size: 13px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: 0.2s ease;
+}
+
+.teacher-grade-save:hover {
+    background: #166534;
+    transform: translateY(-1px);
+}
+
+.teacher-grade-save:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    transform: none;
+}
+
+.teacher-grade-message {
+    color: #15803d;
+    font-size: 13px;
+    font-weight: 600;
+}
+
+
+/* ==========================================
+   EMPTY STATE
+========================================== */
+
+.teacher-grades-empty {
+    padding: 45px 20px;
+    text-align: center;
+}
+
+.teacher-empty-icon {
+    margin-bottom: 12px;
+    font-size: 36px;
+}
+
+.teacher-grades-empty h3 {
+    margin: 0 0 7px;
+    color: #1f2937;
+    font-size: 18px;
+}
+
+.teacher-grades-empty p {
+    margin: 0;
+    color: #6b7280;
+    font-size: 14px;
+}
+
+
+/* ==========================================
+   RESPONSIVE
+========================================== */
+
+@media (max-width: 1000px) {
+
+    .teacher-performance-overview {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .teacher-grade-fields {
+        grid-template-columns: 1fr 1fr;
+    }
+
+}
+
+
+@media (max-width: 650px) {
+
+    .teacher-grades-hero {
+        padding: 24px;
+    }
+
+    .teacher-grades-hero h1 {
+        font-size: 25px;
+    }
+
+    .teacher-grades-hero-icon {
+        display: none;
+    }
+
+    .teacher-performance-overview {
+        grid-template-columns: 1fr;
+    }
+
+    .teacher-subject-selector {
+        align-items: flex-start;
+    }
+
+    .teacher-grade-fields {
+        grid-template-columns: 1fr;
+    }
+
+    .teacher-grade-header {
+        align-items: flex-start;
+    }
+
+}
