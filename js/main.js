@@ -12713,8 +12713,7 @@ subjects.forEach(subject => {
     const option =
         document.createElement("option");
 
-    option.value =
-        subject.id;
+    option.value = subject.id;
 
     option.textContent =
         `${subject.name} (${subject.code})`;
@@ -12722,7 +12721,6 @@ subjects.forEach(subject => {
     subjectSelect.appendChild(option);
 
 });
-
 
 // ==========================================
 // SHOW TIMETABLE
