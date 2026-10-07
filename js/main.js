@@ -11467,115 +11467,111 @@ async function loadTeacherAssignments() {
         container.innerHTML = "";
 
 
-        assignments.forEach(
-            function (assignment) {
+       assignments.forEach(
+    function (assignment) {
 
-                const card =
-                    document.createElement("div");
+        const card =
+            document.createElement("div");
 
-                card.className =
-                    "teacher-assignment-card";
-
-
-                const subject =
-                    assignment.subjects;
+        card.className =
+            "teacher-assignment-card";
 
 
-                const formattedDate =
-                    assignment.due_date
-                        ? new Date(
-                              assignment.due_date
-                          ).toLocaleDateString(
-                              "en-GB",
-                              {
-                                  day: "numeric",
-                                  month: "short",
-                                  year: "numeric"
-                              }
-                          )
-                        : "No due date";
+        const subject =
+            assignment.subjects;
 
 
-                card.innerHTML = `
-
-                    <div class="teacher-assignment-card-top">
-
-                        <div>
-
-                            <span class="teacher-assignment-subject">
-                                ${
-                                    subject
-                                        ? subject.name
-                                        : "Unknown Subject"
-                                }
-                            </span>
-
-                            <h3>
-                                ${assignment.title}
-                            </h3>
-
-                        </div>
-
-                    </div>
+        const formattedDate =
+            assignment.due_date
+                ? new Date(
+                      assignment.due_date
+                  ).toLocaleDateString(
+                      "en-GB",
+                      {
+                          day: "numeric",
+                          month: "short",
+                          year: "numeric"
+                      }
+                  )
+                : "No due date";
 
 
-                    <div class="teacher-assignment-details">
+        card.innerHTML = `
 
-                        <p>
-                            <strong>Class:</strong>
-                            ${assignment.class_name}
+            <div class="teacher-assignment-card-top">
+
+                <div>
+
+                    <span class="teacher-assignment-subject">
+                        ${
+                            subject
+                                ? subject.name
+                                : "Unknown Subject"
+                        }
+                    </span>
+
+                    <h3>
+                        ${assignment.title}
+                    </h3>
+
+                </div>
+
+            </div>
+
+
+            <div class="teacher-assignment-details">
+
+                <p>
+                    <strong>Class:</strong>
+                    ${assignment.class_name}
+                </p>
+
+                <p>
+                    <strong>Due:</strong>
+                    ${formattedDate}
+                </p>
+
+            </div>
+
+
+            ${
+                assignment.description
+                    ? `
+                        <p class="teacher-assignment-description">
+                            ${assignment.description}
                         </p>
-
-                        <p>
-                            <strong>Due:</strong>
-                            ${formattedDate}
-                        </p>
-
-                    </div>
-
-
-                    ${
-                        assignment.description
-                            ? `
-                                <p class="teacher-assignment-description">
-                                    ${assignment.description}
-                                </p>
-                              `
-                            : ""
-                    }
-
-                `;
-
-
-                container.appendChild(card);
-
+                    `
+                    : ""
             }
-        );
 
 
-        console.log(
-            "Teacher assignments loaded:",
-            assignments
-        );
+            <div class="teacher-assignment-actions">
+
+                <button
+                    type="button"
+                    class="teacher-assignment-edit-button"
+                    onclick="editTeacherAssignment('${assignment.id}')"
+                >
+                    Edit
+                </button>
+
+                <button
+                    type="button"
+                    class="teacher-assignment-delete-button"
+                    onclick="deleteTeacherAssignment('${assignment.id}')"
+                >
+                    Delete
+                </button>
+
+            </div>
+
+        `;
 
 
-    } catch (error) {
-
-        console.error(
-            "Load teacher assignments error:",
-            error
-        );
-
-        container.innerHTML =
-            `<div class="teacher-error">
-                Unable to load assignments.
-            </div>`;
+        container.appendChild(card);
 
     }
-
-}
-
-
+);
 // ==========================================
 // LOAD ASSIGNMENTS ON PAGE
 // ==========================================
