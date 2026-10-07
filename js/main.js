@@ -11343,12 +11343,10 @@ async function loadTeacherAssignments() {
         return;
     }
 
-
     container.innerHTML =
         `<div class="teacher-loading">
             Loading assignments...
         </div>`;
-
 
     try {
 
@@ -11359,11 +11357,9 @@ async function loadTeacherAssignments() {
             error: userError
         } = await supabaseClient.auth.getUser();
 
-
         if (userError) {
             throw userError;
         }
-
 
         if (!user) {
             throw new Error(
@@ -11372,7 +11368,10 @@ async function loadTeacherAssignments() {
         }
 
 
+        // ======================================
         // GET TEACHER'S SUBJECTS
+        // ======================================
+
         const {
             data: teacherSubjects,
             error: subjectError
@@ -11386,8 +11385,10 @@ async function loadTeacherAssignments() {
                     code
                 )
             `)
-            .eq("teacher_id", user.id);
-
+            .eq(
+                "teacher_id",
+                user.id
+            );
 
         if (subjectError) {
             throw subjectError;
@@ -11413,7 +11414,10 @@ async function loadTeacherAssignments() {
         }
 
 
-        // GET ASSIGNMENTS FOR TEACHER'S SUBJECTS
+        // ======================================
+        // GET ASSIGNMENTS
+        // ======================================
+
         const {
             data: assignments,
             error: assignmentError
@@ -11467,111 +11471,140 @@ async function loadTeacherAssignments() {
         container.innerHTML = "";
 
 
-       assignments.forEach(
-    function (assignment) {
+        // ======================================
+        // DISPLAY ASSIGNMENTS
+        // ======================================
 
-        const card =
-            document.createElement("div");
+        assignments.forEach(
+            function (assignment) {
 
-        card.className =
-            "teacher-assignment-card";
+                const card =
+                    document.createElement("div");
 
-
-        const subject =
-            assignment.subjects;
-
-
-        const formattedDate =
-            assignment.due_date
-                ? new Date(
-                      assignment.due_date
-                  ).toLocaleDateString(
-                      "en-GB",
-                      {
-                          day: "numeric",
-                          month: "short",
-                          year: "numeric"
-                      }
-                  )
-                : "No due date";
+                card.className =
+                    "teacher-assignment-card";
 
 
-        card.innerHTML = `
-
-            <div class="teacher-assignment-card-top">
-
-                <div>
-
-                    <span class="teacher-assignment-subject">
-                        ${
-                            subject
-                                ? subject.name
-                                : "Unknown Subject"
-                        }
-                    </span>
-
-                    <h3>
-                        ${assignment.title}
-                    </h3>
-
-                </div>
-
-            </div>
+                const subject =
+                    assignment.subjects;
 
 
-            <div class="teacher-assignment-details">
+                const formattedDate =
+                    assignment.due_date
+                        ? new Date(
+                              assignment.due_date
+                          ).toLocaleDateString(
+                              "en-GB",
+                              {
+                                  day: "numeric",
+                                  month: "short",
+                                  year: "numeric"
+                              }
+                          )
+                        : "No due date";
 
-                <p>
-                    <strong>Class:</strong>
-                    ${assignment.class_name}
-                </p>
 
-                <p>
-                    <strong>Due:</strong>
-                    ${formattedDate}
-                </p>
+                card.innerHTML = `
 
-            </div>
+                    <div class="teacher-assignment-card-top">
+
+                        <div>
+
+                            <span class="teacher-assignment-subject">
+                                ${
+                                    subject
+                                        ? subject.name
+                                        : "Unknown Subject"
+                                }
+                            </span>
+
+                            <h3>
+                                ${assignment.title}
+                            </h3>
+
+                        </div>
+
+                    </div>
 
 
-            ${
-                assignment.description
-                    ? `
-                        <p class="teacher-assignment-description">
-                            ${assignment.description}
+                    <div class="teacher-assignment-details">
+
+                        <p>
+                            <strong>Class:</strong>
+                            ${assignment.class_name}
                         </p>
-                    `
-                    : ""
+
+                        <p>
+                            <strong>Due:</strong>
+                            ${formattedDate}
+                        </p>
+
+                    </div>
+
+
+                    ${
+                        assignment.description
+                            ? `
+                                <p class="teacher-assignment-description">
+                                    ${assignment.description}
+                                </p>
+                            `
+                            : ""
+                    }
+
+
+                    <div class="teacher-assignment-actions">
+
+                        <button
+                            type="button"
+                            class="teacher-assignment-edit-button"
+                            onclick="editTeacherAssignment('${assignment.id}')"
+                        >
+                            Edit
+                        </button>
+
+                        <button
+                            type="button"
+                            class="teacher-assignment-delete-button"
+                            onclick="deleteTeacherAssignment('${assignment.id}')"
+                        >
+                            Delete
+                        </button>
+
+                    </div>
+
+                `;
+
+
+                container.appendChild(card);
+
             }
+        );
 
 
-            <div class="teacher-assignment-actions">
-
-                <button
-                    type="button"
-                    class="teacher-assignment-edit-button"
-                    onclick="editTeacherAssignment('${assignment.id}')"
-                >
-                    Edit
-                </button>
-
-                <button
-                    type="button"
-                    class="teacher-assignment-delete-button"
-                    onclick="deleteTeacherAssignment('${assignment.id}')"
-                >
-                    Delete
-                </button>
-
-            </div>
-
-        `;
+        console.log(
+            "Teacher assignments loaded:",
+            assignments
+        );
 
 
-        container.appendChild(card);
+    } catch (error) {
+
+        console.error(
+            "Load teacher assignments error:",
+            error
+        );
+
+        container.innerHTML =
+            `<div class="teacher-error">
+                Unable to load assignments.
+            </div>`;
 
     }
-);
+
+}
+
+
 // ==========================================
 // LOAD ASSIGNMENTS ON PAGE
 // ==========================================
@@ -11586,16 +11619,20 @@ if (
 
 }
 
+
 // ==========================================
 // EDIT TEACHER ASSIGNMENT
 // ==========================================
 
-async function editTeacherAssignment(assignmentId) {
+async function editTeacherAssignment(
+    assignmentId
+) {
 
     const assignment =
         await getTeacherAssignmentById(
             assignmentId
         );
+
 
     if (!assignment) {
         return;
@@ -11604,24 +11641,32 @@ async function editTeacherAssignment(assignmentId) {
 
     document.getElementById(
         "teacherAssignmentSubject"
-    ).value = assignment.subject_id;
+    ).value =
+        assignment.subject_id;
+
 
     document.getElementById(
         "teacherAssignmentClass"
-    ).value = assignment.class_name;
+    ).value =
+        assignment.class_name;
+
 
     document.getElementById(
         "teacherAssignmentTitle"
-    ).value = assignment.title;
+    ).value =
+        assignment.title;
+
 
     document.getElementById(
         "teacherAssignmentDescription"
     ).value =
         assignment.description || "";
 
+
     document.getElementById(
         "teacherAssignmentDueDate"
-    ).value = assignment.due_date;
+    ).value =
+        assignment.due_date;
 
 
     const form =
@@ -11629,10 +11674,12 @@ async function editTeacherAssignment(assignmentId) {
             "teacherAssignmentForm"
         );
 
+
     const submitButton =
         form.querySelector(
             'button[type="submit"]'
         );
+
 
     submitButton.textContent =
         "Save Changes";
@@ -11640,6 +11687,20 @@ async function editTeacherAssignment(assignmentId) {
 
     form.dataset.editingId =
         assignmentId;
+
+
+    const cancelButton =
+        document.getElementById(
+            "teacherAssignmentCancelButton"
+        );
+
+
+    if (cancelButton) {
+
+        cancelButton.style.display =
+            "block";
+
+    }
 
 
     form.scrollIntoView({
@@ -11686,6 +11747,7 @@ async function getTeacherAssignmentById(
 
 
         return data;
+
 
     } catch (error) {
 
@@ -11758,5 +11820,75 @@ async function deleteTeacherAssignment(
         );
 
     }
+
+}
+
+
+// ==========================================
+// CANCEL TEACHER ASSIGNMENT EDIT
+// ==========================================
+
+const teacherAssignmentCancelButton =
+    document.getElementById(
+        "teacherAssignmentCancelButton"
+    );
+
+
+if (teacherAssignmentCancelButton) {
+
+    teacherAssignmentCancelButton.addEventListener(
+        "click",
+        function () {
+
+            const form =
+                document.getElementById(
+                    "teacherAssignmentForm"
+                );
+
+
+            if (!form) {
+                return;
+            }
+
+
+            form.reset();
+
+
+            delete form.dataset.editingId;
+
+
+            const submitButton =
+                form.querySelector(
+                    'button[type="submit"]'
+                );
+
+
+            if (submitButton) {
+
+                submitButton.textContent =
+                    "Create Assignment";
+
+            }
+
+
+            teacherAssignmentCancelButton.style.display =
+                "none";
+
+
+            const message =
+                document.getElementById(
+                    "teacherAssignmentFormMessage"
+                );
+
+
+            if (message) {
+
+                message.textContent =
+                    "";
+
+            }
+
+        }
+    );
 
 }
