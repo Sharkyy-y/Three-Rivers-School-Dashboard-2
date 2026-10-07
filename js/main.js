@@ -11242,76 +11242,7 @@ if (cancelButton) {
 
 }
 
-card.innerHTML = `
 
-    <div class="teacher-assignment-card-top">
-
-        <div>
-
-            <span class="teacher-assignment-subject">
-                ${
-                    subject
-                        ? subject.name
-                        : "Unknown Subject"
-                }
-            </span>
-
-            <h3>
-                ${assignment.title}
-            </h3>
-
-        </div>
-
-    </div>
-
-
-    <div class="teacher-assignment-details">
-
-        <p>
-            <strong>Class:</strong>
-            ${assignment.class_name}
-        </p>
-
-        <p>
-            <strong>Due:</strong>
-            ${formattedDate}
-        </p>
-
-    </div>
-
-
-    ${
-        assignment.description
-            ? `
-                <p class="teacher-assignment-description">
-                    ${assignment.description}
-                </p>
-              `
-            : ""
-    }
-
-
-    <div class="teacher-assignment-actions">
-
-        <button
-            type="button"
-            class="teacher-assignment-edit-button"
-            onclick="editTeacherAssignment('${assignment.id}')"
-        >
-            Edit
-        </button>
-
-        <button
-            type="button"
-            class="teacher-assignment-delete-button"
-            onclick="deleteTeacherAssignment('${assignment.id}')"
-        >
-            Delete
-        </button>
-
-    </div>
-
-`;
 // ==========================================
 // TEACHER ASSIGNMENT FORM
 // ==========================================
