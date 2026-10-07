@@ -1,0 +1,181 @@
+```html
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>Teacher Timetable | Student Management Portal</title>
+
+    <link
+        rel="stylesheet"
+        href="css/style.css"
+    >
+
+    <link
+        rel="stylesheet"
+        href="css/dashboard.css"
+    >
+
+</head>
+
+<body>
+
+    <div class="dashboard-container">
+
+        <!-- SIDEBAR -->
+        <aside class="sidebar">
+
+            <div class="sidebar-header">
+                <h2>Teacher Portal</h2>
+                <p>Administration</p>
+            </div>
+
+            <nav class="sidebar-nav">
+
+                <a href="teacher-dashboard.html">
+                    Dashboard
+                </a>
+
+                <a href="teacher-grades.html">
+                    Grades
+                </a>
+
+                <a href="teacher-timetable.html" class="active">
+                    Timetable
+                </a>
+
+                <a href="#">
+                    Conduct
+                </a>
+
+                <a href="#">
+                    Assignments
+                </a>
+
+                <a href="#">
+                    Announcements
+                </a>
+
+            </nav>
+
+            <div class="sidebar-bottom">
+
+                <button
+                    id="logoutButton"
+                    class="logout-btn"
+                >
+                    Logout
+                </button>
+
+            </div>
+
+        </aside>
+
+
+        <!-- MAIN CONTENT -->
+        <main class="main-content">
+
+            <header class="dashboard-header">
+
+                <div>
+                    <h1>Teacher Timetable</h1>
+
+                    <p>
+                        View your teaching schedule and subjects.
+                    </p>
+                </div>
+
+                <div class="user-info">
+
+                    <span id="teacherName">
+                        Teacher
+                    </span>
+
+                </div>
+
+            </header>
+
+
+            <!-- SUBJECT SELECTOR -->
+            <section class="dashboard-card">
+
+                <div class="card-header">
+
+                    <div>
+                        <h2>Select Subject</h2>
+
+                        <p>
+                            Choose a subject to view its timetable.
+                        </p>
+                    </div>
+
+                </div>
+
+                <div class="form-group">
+
+                    <label for="subjectSelect">
+                        Subject
+                    </label>
+
+                    <select id="subjectSelect">
+
+                        <option value="">
+                            Select a subject
+                        </option>
+
+                    </select>
+
+                </div>
+
+            </section>
+
+
+            <!-- TIMETABLE -->
+            <section class="dashboard-card">
+
+                <div class="card-header">
+
+                    <div>
+                        <h2>Teaching Schedule</h2>
+
+                        <p id="timetableDescription">
+                            Select a subject to view its schedule.
+                        </p>
+                    </div>
+
+                </div>
+
+                <div id="teacherTimetableContainer">
+
+                    <div class="empty-state">
+                        <p>
+                            Select a subject above to view the timetable.
+                        </p>
+                    </div>
+
+                </div>
+
+            </section>
+
+        </main>
+
+    </div>
+
+
+    <!-- SUPABASE -->
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+    <script src="main.js"></script>
+
+</body>
+
+</html>
+```
