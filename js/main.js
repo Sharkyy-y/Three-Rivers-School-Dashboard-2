@@ -12460,3 +12460,260 @@ async function deleteTeacherAnnouncement(announcementId) {
     }
 
 }
+
+```javascript
+// ==========================================
+// TEACHER TIMETABLE
+// ==========================================
+
+async function loadTeacherTimetable() {
+
+    console.log("Loading teacher timetable...");
+
+    const subjectSelect =
+        document.getElementById("subjectSelect");
+
+    const timetableContainer =
+        document.getElementById(
+            "teacherTimetableContainer"
+        );
+
+    const timetableDescription =
+        document.getElementById(
+            "timetableDescription"
+        );
+
+    const teacherNameElement =
+        document.getElementById("teacherName");
+
+
+    if (!subjectSelect || !timetableContainer) {
+
+        console.log(
+            "Teacher timetable elements not found."
+        );
+
+        return;
+
+    }
+
+
+    try {
+
+        // ==========================================
+        // GET CURRENT LOGGED-IN USER
+        // ==========================================
+
+        const {
+            data: {
+                user
+            },
+            error: userError
+        } = await supabaseClient.auth.getUser();
+
+
+        if (userError) {
+            throw userError;
+        }
+
+
+        if (!user) {
+
+            console.error(
+                "No logged-in teacher found."
+            );
+
+            window.location.href =
+                "login.html";
+
+            return;
+
+        }
+
+
+        console.log(
+            "Logged-in teacher:",
+            user.id
+        );
+
+
+        // ==========================================
+        // GET TEACHER PROFILE
+        // ==========================================
+
+        const {
+            data: profile,
+            error: profileError
+        } = await supabaseClient
+            .from("profiles")
+            .select(`
+                full_name,
+                email,
+                role
+            `)
+            .eq("id", user.id)
+            .single();
+
+
+        if (profileError) {
+            throw profileError;
+        }
+
+
+        console.log(
+            "Teacher profile:",
+            profile
+        );
+
+
+        if (
+            profile.role !== "teacher"
+        ) {
+
+            console.error(
+                "Logged-in account is not a teacher."
+            );
+
+            return;
+
+        }
+
+
+        // Show teacher name
+
+        if (teacherNameElement) {
+
+            teacherNameElement.textContent =
+                profile.full_name ||
+                "Teacher";
+
+        }
+
+
+        // ==========================================
+        // GET TEACHER'S TIMETABLE
+        // ==========================================
+
+        const {
+            data: timetable,
+            error: timetableError
+        } = await supabaseClient
+            .from("timetable")
+            .select(`
+                id,
+                class_name,
+                subject_id,
+                teacher_name,
+                room,
+                day_of_week,
+                start_time,
+                end_time,
+                subjects (
+                    id,
+                    name,
+                    code
+                )
+            `)
+            .eq(
+                "teacher_name",
+                profile.full_name
+            )
+            .order(
+                "day_of_week",
+                {
+                    ascending: true
+                }
+            )
+            .order(
+                "start_time",
+                {
+                    ascending: true
+                });
+
+
+        if (timetableError) {
+            throw timetableError;
+        }
+
+
+        console.log(
+            "Teacher timetable:",
+            timetable
+        );
+
+
+        // ==========================================
+        // NO TIMETABLE
+        // ==========================================
+
+        if (
+            !timetable ||
+            timetable.length === 0
+        ) {
+
+            subjectSelect.innerHTML = `
+                <option value="">
+                    No subjects found
+                </option>
+            `;
+
+
+            timetableContainer.innerHTML = `
+                <div class="empty-state">
+                    <p>
+                        No timetable records were found for this teacher.
+                    </p>
+                </div>
+            `;
+
+            return;
+
+        }
+
+
+        // ==========================================
+        // CREATE UNIQUE SUBJECT LIST
+        // ==========================================
+
+        const subjects = [];
+
+
+        timetable.forEach(entry => {
+
+            if (
+                entry.subjects &&
+                !subjects.some(
+                    subject =>
+                        subject.id ===
+                        entry.subjects.id
+                )
+            ) {
+
+                subjects.push(
+                    entry.subjects
+                );
+
+            }
+
+        });
+
+
+        // ==========================================
+        // FILL SUBJECT DROPDOWN
+        // ==========================================
+
+        subjectSelect.innerHTML = `
+            <option value="">
+                Select a subject
+            </option>
+        `;
+
+
+        subjects.forEach(subject => {
+
+            const option =
+                document.createElement("option");
+
+
+            option.value =
+```
