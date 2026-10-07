@@ -9893,3 +9893,172 @@ console.log(
     "TEACHER GRADES PAGE CHECK:",
     window.location.pathname
 );
+
+// ==========================================
+// TEACHER CONDUCT
+// ==========================================
+
+async function loadTeacherConductStudents() {
+
+    console.log("Loading teacher conduct students...");
+
+    const studentList =
+        document.getElementById(
+            "teacherConductStudentList"
+        );
+
+    if (!studentList) {
+        return;
+    }
+
+    studentList.innerHTML = `
+        <div class="teacher-conduct-loading">
+            Loading students...
+        </div>
+    `;
+
+    try {
+
+        const {
+            data: students,
+            error
+        } = await supabaseClient
+            .from("students")
+            .select(`
+                id,
+                full_name,
+                admission_number,
+                class_name
+            `)
+            .order(
+                "full_name",
+                {
+                    ascending: true
+                }
+            );
+
+
+        if (error) {
+            throw error;
+        }
+
+
+        if (!students || students.length === 0) {
+
+            studentList.innerHTML = `
+                <div class="teacher-conduct-empty">
+
+                    <div class="teacher-conduct-empty-icon">
+                        👨‍🎓
+                    </div>
+
+                    <h3>
+                        No students found
+                    </h3>
+
+                    <p>
+                        There are currently no students
+                        available.
+                    </p>
+
+                </div>
+            `;
+
+            return;
+        }
+
+
+        renderTeacherConductStudents(
+            students
+        );
+
+
+        const searchInput =
+            document.getElementById(
+                "teacherConductSearch"
+            );
+
+
+        if (searchInput) {
+
+            searchInput.addEventListener(
+                "input",
+                function () {
+
+                    const searchTerm =
+                        this.value
+                            .trim()
+                            .toLowerCase();
+
+
+                    const filteredStudents =
+                        students.filter(
+                            student => {
+
+                                const name =
+                                    (
+                                        student.full_name ||
+                                        ""
+                                    ).toLowerCase();
+
+
+                                const admission =
+                                    (
+                                        student.admission_number ||
+                                        ""
+                                    ).toLowerCase();
+
+
+                                return (
+                                    name.includes(
+                                        searchTerm
+                                    ) ||
+                                    admission.includes(
+                                        searchTerm
+                                    )
+                                );
+
+                            }
+                        );
+
+
+                    renderTeacherConductStudents(
+                        filteredStudents
+                    );
+
+                }
+            );
+
+        }
+
+
+    } catch (error) {
+
+        console.error(
+            "Teacher conduct student loading error:",
+            error
+        );
+
+
+        studentList.innerHTML = `
+            <div class="teacher-conduct-empty">
+
+                <div class="teacher-conduct-empty-icon">
+                    ⚠️
+                </div>
+
+                <h3>
+                    Unable to load students
+                </h3>
+
+                <p>
+                    Something went wrong while
+                    loading the student list.
+                </p>
+
+            </div>
+        `;
+
+    }
+
+}
