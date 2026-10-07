@@ -10149,6 +10149,259 @@ function renderTeacherConductStudents(
     });
 
 }
+
+// ==========================================
+// LOAD SELECTED STUDENT CONDUCT
+// ==========================================
+
+async function loadTeacherStudentConduct(student) {
+
+    const panel =
+        document.getElementById(
+            "teacherConductStudentPanel"
+        );
+
+    const formSection =
+        document.getElementById(
+            "teacherConductFormSection"
+        );
+
+    const studentName =
+        document.getElementById(
+            "teacherConductStudentName"
+        );
+
+    const studentDetails =
+        document.getElementById(
+            "teacherConductStudentDetails"
+        );
+
+    const recordsContainer =
+        document.getElementById(
+            "teacherConductRecords"
+        );
+
+
+    if (!panel || !recordsContainer) {
+        return;
+    }
+
+
+    // Show selected student
+
+    panel.style.display = "block";
+
+    formSection.style.display = "none";
+
+
+    studentName.textContent =
+        student.full_name ||
+        "Unknown student";
+
+
+    studentDetails.textContent =
+        `${student.admission_number || "No admission number"} • ${student.class_name || "No class"}`;
+
+
+    recordsContainer.innerHTML = `
+        <div class="teacher-conduct-loading">
+            Loading conduct records...
+        </div>
+    `;
+
+
+    try {
+
+        const {
+            data: records,
+            error
+        } = await supabaseClient
+            .from("conduct_records")
+            .select(`
+                id,
+                student_id,
+                type,
+                title,
+                description,
+                points,
+                created_at
+            `)
+            .eq(
+                "student_id",
+                student.id
+            )
+            .order(
+                "created_at",
+                {
+                    ascending: false
+                }
+            );
+
+
+        if (error) {
+            throw error;
+        }
+
+
+        // Calculate total points
+
+        const totalPoints =
+            (records || []).reduce(
+                (total, record) =>
+                    total +
+                    Number(record.points || 0),
+                0
+            );
+
+
+        const pointsElement =
+            document.getElementById(
+                "teacherConductPoints"
+            );
+
+
+        if (pointsElement) {
+
+            pointsElement.textContent =
+                `${totalPoints} points`;
+
+        }
+
+
+        // No records
+
+        if (
+            !records ||
+            records.length === 0
+        ) {
+
+            recordsContainer.innerHTML = `
+                <div class="teacher-conduct-empty">
+
+                    <div class="teacher-conduct-empty-icon">
+                        📋
+                    </div>
+
+                    <h3>
+                        No conduct records
+                    </h3>
+
+                    <p>
+                        This student does not have
+                        any conduct records yet.
+                    </p>
+
+                </div>
+            `;
+
+            return;
+        }
+
+
+        recordsContainer.innerHTML = "";
+
+
+        records.forEach(record => {
+
+            const recordElement =
+                document.createElement("div");
+
+            recordElement.className =
+                "teacher-conduct-record";
+
+
+            const recordType =
+                (
+                    record.type ||
+                    "neutral"
+                ).toLowerCase();
+
+
+            const points =
+                Number(
+                    record.points || 0
+                );
+
+
+            const pointsText =
+                points > 0
+                    ? `+${points}`
+                    : `${points}`;
+
+
+            recordElement.innerHTML = `
+
+                <div class="teacher-conduct-record-header">
+
+                    <div>
+
+                        <h4>
+                            ${record.title || "Untitled record"}
+                        </h4>
+
+                        <span class="teacher-conduct-record-type ${recordType}">
+                            ${recordType}
+                        </span>
+
+                    </div>
+
+                    <strong class="teacher-conduct-record-points">
+                        ${pointsText} points
+                    </strong>
+
+                </div>
+
+
+                ${
+                    record.description
+                        ? `
+                            <p class="teacher-conduct-record-description">
+                                ${record.description}
+                            </p>
+                        `
+                        : ""
+                }
+
+            `;
+
+
+            recordsContainer.appendChild(
+                recordElement
+            );
+
+        });
+
+
+    } catch (error) {
+
+        console.error(
+            "Teacher conduct loading error:",
+            error
+        );
+
+
+        recordsContainer.innerHTML = `
+            <div class="teacher-conduct-empty">
+
+                <div class="teacher-conduct-empty-icon">
+                    ⚠️
+                </div>
+
+                <h3>
+                    Unable to load conduct
+                </h3>
+
+                <p>
+                    Something went wrong while
+                    loading the conduct records.
+                </p>
+
+            </div>
+        `;
+
+    }
+
+}
 // ==========================================
 // TEACHER CONDUCT PAGE ROUTE
 // ==========================================
