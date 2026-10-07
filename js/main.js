@@ -9898,9 +9898,23 @@ console.log(
 // TEACHER CONDUCT
 // ==========================================
 
+
+// ==========================================
+// SELECTED TEACHER CONDUCT STUDENT
+// ==========================================
+
+let selectedTeacherConductStudent = null;
+
+
+// ==========================================
+// LOAD TEACHER CONDUCT STUDENTS
+// ==========================================
+
 async function loadTeacherConductStudents() {
 
-    console.log("Loading teacher conduct students...");
+    console.log(
+        "Loading teacher conduct students..."
+    );
 
     const studentList =
         document.getElementById(
@@ -9943,7 +9957,10 @@ async function loadTeacherConductStudents() {
         }
 
 
-        if (!students || students.length === 0) {
+        if (
+            !students ||
+            students.length === 0
+        ) {
 
             studentList.innerHTML = `
                 <div class="teacher-conduct-empty">
@@ -10062,6 +10079,8 @@ async function loadTeacherConductStudents() {
     }
 
 }
+
+
 // ==========================================
 // RENDER TEACHER CONDUCT STUDENTS
 // ==========================================
@@ -10081,7 +10100,10 @@ function renderTeacherConductStudents(
     }
 
 
-    if (!students || students.length === 0) {
+    if (
+        !students ||
+        students.length === 0
+    ) {
 
         studentList.innerHTML = `
             <div class="teacher-conduct-empty">
@@ -10112,6 +10134,7 @@ function renderTeacherConductStudents(
 
         const card =
             document.createElement("div");
+
 
         card.className =
             "teacher-conduct-student-card";
@@ -10144,37 +10167,50 @@ function renderTeacherConductStudents(
         );
 
 
-        studentList.appendChild(card);
+        studentList.appendChild(
+            card
+        );
 
     });
 
 }
 
+
 // ==========================================
 // LOAD SELECTED STUDENT CONDUCT
 // ==========================================
 
-async function loadTeacherStudentConduct(student) {
+async function loadTeacherStudentConduct(
+    student
+) {
+
+    selectedTeacherConductStudent =
+        student;
+
 
     const panel =
         document.getElementById(
             "teacherConductStudentPanel"
         );
 
+
     const formSection =
         document.getElementById(
             "teacherConductFormSection"
         );
+
 
     const studentName =
         document.getElementById(
             "teacherConductStudentName"
         );
 
+
     const studentDetails =
         document.getElementById(
             "teacherConductStudentDetails"
         );
+
 
     const recordsContainer =
         document.getElementById(
@@ -10182,16 +10218,26 @@ async function loadTeacherStudentConduct(student) {
         );
 
 
-    if (!panel || !recordsContainer) {
+    if (
+        !panel ||
+        !recordsContainer
+    ) {
         return;
     }
 
 
     // Show selected student
 
-    panel.style.display = "block";
+    panel.style.display =
+        "block";
 
-    formSection.style.display = "none";
+
+    if (formSection) {
+
+        formSection.style.display =
+            "none";
+
+    }
 
 
     studentName.textContent =
@@ -10243,13 +10289,20 @@ async function loadTeacherStudentConduct(student) {
         }
 
 
-        // Calculate total points
+        // ==========================================
+        // TOTAL POINTS
+        // ==========================================
 
         const totalPoints =
             (records || []).reduce(
-                (total, record) =>
+                (
+                    total,
+                    record
+                ) =>
                     total +
-                    Number(record.points || 0),
+                    Number(
+                        record.points || 0
+                    ),
                 0
             );
 
@@ -10268,7 +10321,9 @@ async function loadTeacherStudentConduct(student) {
         }
 
 
-        // No records
+        // ==========================================
+        // NO RECORDS
+        // ==========================================
 
         if (
             !records ||
@@ -10298,78 +10353,90 @@ async function loadTeacherStudentConduct(student) {
         }
 
 
-        recordsContainer.innerHTML = "";
+        recordsContainer.innerHTML =
+            "";
 
 
-        records.forEach(record => {
+        // ==========================================
+        // DISPLAY RECORDS
+        // ==========================================
 
-            const recordElement =
-                document.createElement("div");
+        records.forEach(
+            record => {
 
-            recordElement.className =
-                "teacher-conduct-record";
-
-
-            const recordType =
-                (
-                    record.type ||
-                    "neutral"
-                ).toLowerCase();
+                const recordElement =
+                    document.createElement(
+                        "div"
+                    );
 
 
-            const points =
-                Number(
-                    record.points || 0
-                );
+                recordElement.className =
+                    "teacher-conduct-record";
 
 
-            const pointsText =
-                points > 0
-                    ? `+${points}`
-                    : `${points}`;
+                const recordType =
+                    (
+                        record.type ||
+                        "neutral"
+                    ).toLowerCase();
 
 
-            recordElement.innerHTML = `
+                const points =
+                    Number(
+                        record.points || 0
+                    );
 
-                <div class="teacher-conduct-record-header">
 
-                    <div>
+                const pointsText =
+                    points > 0
+                        ? `+${points}`
+                        : `${points}`;
 
-                        <h4>
-                            ${record.title || "Untitled record"}
-                        </h4>
 
-                        <span class="teacher-conduct-record-type ${recordType}">
-                            ${recordType}
-                        </span>
+                recordElement.innerHTML = `
+
+                    <div class="teacher-conduct-record-header">
+
+                        <div>
+
+                            <h4>
+                                ${record.title || "Untitled record"}
+                            </h4>
+
+                            <span
+                                class="teacher-conduct-record-type ${recordType}"
+                            >
+                                ${recordType}
+                            </span>
+
+                        </div>
+
+                        <strong class="teacher-conduct-record-points">
+                            ${pointsText} points
+                        </strong>
 
                     </div>
 
-                    <strong class="teacher-conduct-record-points">
-                        ${pointsText} points
-                    </strong>
 
-                </div>
+                    ${
+                        record.description
+                            ? `
+                                <p class="teacher-conduct-record-description">
+                                    ${record.description}
+                                </p>
+                            `
+                            : ""
+                    }
 
-
-                ${
-                    record.description
-                        ? `
-                            <p class="teacher-conduct-record-description">
-                                ${record.description}
-                            </p>
-                        `
-                        : ""
-                }
-
-            `;
+                `;
 
 
-            recordsContainer.appendChild(
-                recordElement
-            );
+                recordsContainer.appendChild(
+                    recordElement
+                );
 
-        });
+            }
+        );
 
 
     } catch (error) {
@@ -10402,6 +10469,364 @@ async function loadTeacherStudentConduct(student) {
     }
 
 }
+
+
+// ==========================================
+// OPEN TEACHER CONDUCT FORM
+// ==========================================
+
+function openTeacherConductForm() {
+
+    const formSection =
+        document.getElementById(
+            "teacherConductFormSection"
+        );
+
+
+    const formTitle =
+        document.getElementById(
+            "teacherConductFormTitle"
+        );
+
+
+    const recordId =
+        document.getElementById(
+            "teacherConductRecordId"
+        );
+
+
+    const type =
+        document.getElementById(
+            "teacherConductType"
+        );
+
+
+    const title =
+        document.getElementById(
+            "teacherConductTitle"
+        );
+
+
+    const description =
+        document.getElementById(
+            "teacherConductDescription"
+        );
+
+
+    const points =
+        document.getElementById(
+            "teacherConductPointsInput"
+        );
+
+
+    const message =
+        document.getElementById(
+            "teacherConductFormMessage"
+        );
+
+
+    if (!formSection) {
+        return;
+    }
+
+
+    formSection.style.display =
+        "block";
+
+
+    formTitle.textContent =
+        "Add Conduct Record";
+
+
+    recordId.value =
+        "";
+
+
+    type.value =
+        "";
+
+
+    title.value =
+        "";
+
+
+    description.value =
+        "";
+
+
+    points.value =
+        "";
+
+
+    message.textContent =
+        "";
+
+
+    formSection.scrollIntoView({
+        behavior: "smooth",
+        block: "start"
+    });
+
+}
+
+
+// ==========================================
+// ADD CONDUCT BUTTON
+// ==========================================
+
+const teacherAddConductButton =
+    document.getElementById(
+        "teacherAddConductButton"
+    );
+
+
+if (teacherAddConductButton) {
+
+    teacherAddConductButton.addEventListener(
+        "click",
+        function () {
+
+            openTeacherConductForm();
+
+        }
+    );
+
+}
+
+
+// ==========================================
+// SAVE TEACHER CONDUCT RECORD
+// ==========================================
+
+async function saveTeacherConductRecord() {
+
+    const recordId =
+        document.getElementById(
+            "teacherConductRecordId"
+        ).value.trim();
+
+
+    const type =
+        document.getElementById(
+            "teacherConductType"
+        ).value;
+
+
+    const title =
+        document.getElementById(
+            "teacherConductTitle"
+        ).value.trim();
+
+
+    const description =
+        document.getElementById(
+            "teacherConductDescription"
+        ).value.trim();
+
+
+    const pointsValue =
+        document.getElementById(
+            "teacherConductPointsInput"
+        ).value;
+
+
+    const message =
+        document.getElementById(
+            "teacherConductFormMessage"
+        );
+
+
+    // ==========================================
+    // VALIDATION
+    // ==========================================
+
+    if (
+        !type ||
+        !title
+    ) {
+
+        message.textContent =
+            "Please select a type and enter a title.";
+
+        message.style.color =
+            "#b91c1c";
+
+        return;
+
+    }
+
+
+    if (
+        !selectedTeacherConductStudent
+    ) {
+
+        message.textContent =
+            "Please select a student first.";
+
+        message.style.color =
+            "#b91c1c";
+
+        return;
+
+    }
+
+
+    const points =
+        Number(
+            pointsValue || 0
+        );
+
+
+    message.textContent =
+        "Saving...";
+
+
+    message.style.color =
+        "#64748b";
+
+
+    try {
+
+        const recordData = {
+
+            student_id:
+                selectedTeacherConductStudent.id,
+
+            type:
+                type,
+
+            title:
+                title,
+
+            description:
+                description,
+
+            points:
+                points
+
+        };
+
+
+        let result;
+
+
+        // ==========================================
+        // UPDATE EXISTING RECORD
+        // ==========================================
+
+        if (recordId) {
+
+            result =
+                await supabaseClient
+                    .from(
+                        "conduct_records"
+                    )
+                    .update(
+                        recordData
+                    )
+                    .eq(
+                        "id",
+                        recordId
+                    );
+
+        }
+
+        // ==========================================
+        // INSERT NEW RECORD
+        // ==========================================
+
+        else {
+
+            result =
+                await supabaseClient
+                    .from(
+                        "conduct_records"
+                    )
+                    .insert(
+                        recordData
+                    );
+
+        }
+
+
+        if (result.error) {
+
+            throw result.error;
+
+        }
+
+
+        message.textContent =
+            recordId
+                ? "Conduct record updated successfully."
+                : "Conduct record added successfully.";
+
+
+        message.style.color =
+            "#15803d";
+
+
+        // Reload records
+
+        await loadTeacherStudentConduct(
+            selectedTeacherConductStudent
+        );
+
+
+        // Hide form
+
+        document.getElementById(
+            "teacherConductFormSection"
+        ).style.display =
+            "none";
+
+
+    } catch (error) {
+
+        console.error(
+            "Saving conduct record error:",
+            error
+        );
+
+
+        message.textContent =
+            "Unable to save conduct record.";
+
+        message.style.color =
+            "#b91c1c";
+
+    }
+
+}
+
+
+// ==========================================
+// TEACHER CONDUCT FORM SUBMIT
+// ==========================================
+
+const teacherConductForm =
+    document.getElementById(
+        "teacherConductForm"
+    );
+
+
+if (teacherConductForm) {
+
+    teacherConductForm.addEventListener(
+        "submit",
+        async function (event) {
+
+            event.preventDefault();
+
+
+            await saveTeacherConductRecord();
+
+        }
+    );
+
+}
+
+
 // ==========================================
 // TEACHER CONDUCT PAGE ROUTE
 // ==========================================
