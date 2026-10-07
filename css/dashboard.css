@@ -5318,3 +5318,52 @@ body {
     }
 
 }
+
+/* ==========================================
+   GRADE PERFORMANCE BAR
+========================================== */
+
+.teacher-grade-score-summary {
+    display: flex;
+    align-items: flex-end;
+    flex-direction: column;
+    gap: 3px;
+}
+
+.teacher-grade-score-label {
+    color: #64748b;
+    font-size: 10px;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.teacher-grade-progress {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 16px 24px 0;
+}
+
+.teacher-grade-progress-track {
+    flex: 1;
+    height: 8px;
+    overflow: hidden;
+    border-radius: 20px;
+    background: #e5e7eb;
+}
+
+.teacher-grade-progress-fill {
+    height: 100%;
+    border-radius: 20px;
+    background: #16a34a;
+    transition: width 0.4s ease;
+}
+
+.teacher-grade-progress > span {
+    min-width: 70px;
+    color: #475569;
+    font-size: 12px;
+    font-weight: 800;
+    text-align: right;
+}
