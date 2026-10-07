@@ -11915,6 +11915,8 @@ async function createTeacherAnnouncement() {
             )
             .reset();
 
+        await loadTeacherAnnouncements();
+
 
     } catch (error) {
 
@@ -11952,5 +11954,202 @@ if (teacherAnnouncementForm) {
 
         }
     );
+
+}
+
+// ==========================================
+// LOAD TEACHER ANNOUNCEMENTS
+// ==========================================
+
+async function loadTeacherAnnouncements() {
+
+    console.log("Loading teacher announcements...");
+
+    const container =
+        document.getElementById(
+            "teacherAnnouncementsContainer"
+        );
+
+    if (!container) {
+        return;
+    }
+
+    container.innerHTML =
+        `<div class="teacher-loading">
+            Loading announcements...
+        </div>`;
+
+    try {
+
+        const {
+            data: announcements,
+            error
+        } = await supabaseClient
+            .from("announcements")
+            .select(`
+                id,
+                title,
+                message,
+                target_role,
+                target_class,
+                created_at
+            `)
+            .order(
+                "created_at",
+                {
+                    ascending: false
+                }
+            );
+
+
+        if (error) {
+            throw error;
+        }
+
+
+        if (
+            !announcements ||
+            announcements.length === 0
+        ) {
+
+            container.innerHTML =
+                `<div class="teacher-empty">
+                    No announcements have been published yet.
+                </div>`;
+
+            return;
+        }
+
+
+        container.innerHTML = "";
+
+
+        announcements.forEach(
+            function (announcement) {
+
+                const card =
+                    document.createElement("div");
+
+                card.className =
+                    "teacher-announcement-card";
+
+
+                const formattedDate =
+                    new Date(
+                        announcement.created_at
+                    ).toLocaleDateString(
+                        "en-GB",
+                        {
+                            day: "numeric",
+                            month: "short",
+                            year: "numeric"
+                        }
+                    );
+
+
+                let targetText =
+                    "All Portals";
+
+
+                if (
+                    announcement.target_role ===
+                    "student"
+                ) {
+
+                    targetText =
+                        "Students";
+
+                } else if (
+                    announcement.target_role ===
+                    "parent"
+                ) {
+
+                    targetText =
+                        "Parents";
+
+                }
+
+
+                card.innerHTML = `
+
+                    <div class="teacher-announcement-card-top">
+
+                        <div>
+
+                            <span class="teacher-announcement-target">
+                                ${targetText}
+                            </span>
+
+                            <h3>
+                                ${announcement.title}
+                            </h3>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="teacher-announcement-details">
+
+                        <p>
+                            <strong>Class:</strong>
+                            ${announcement.target_class}
+                        </p>
+
+                        <p>
+                            <strong>Published:</strong>
+                            ${formattedDate}
+                        </p>
+
+                    </div>
+
+
+                    <p class="teacher-announcement-message">
+                        ${announcement.message}
+                    </p>
+
+
+                `;
+
+
+                container.appendChild(card);
+
+            }
+        );
+
+
+        console.log(
+            "Teacher announcements loaded:",
+            announcements
+        );
+
+
+    } catch (error) {
+
+        console.error(
+            "Load teacher announcements error:",
+            error
+        );
+
+        container.innerHTML =
+            `<div class="teacher-error">
+                Unable to load announcements.
+            </div>`;
+
+    }
+
+}
+
+// ==========================================
+// LOAD ANNOUNCEMENTS ON PAGE
+// ==========================================
+
+if (
+    window.location.pathname.includes(
+        "teacher-announcements.html"
+    )
+) {
+
+    loadTeacherAnnouncements();
 
 }
