@@ -12590,11 +12590,11 @@ async function loadTeacherTimetable() {
         }
 
 
-        // ==========================================
-        // GET TEACHER'S TIMETABLE
-        // ==========================================
+       // ==========================================
+// GET TEACHER'S TIMETABLE
+// ==========================================
 
-        const {
+const {
     data: timetable,
     error: timetableError
 } = await supabaseClient
@@ -12631,30 +12631,17 @@ async function loadTeacherTimetable() {
             ascending: true
         }
     );
-            .order(
-                "day_of_week",
-                {
-                    ascending: true
-                }
-            )
-            .order(
-                "start_time",
-                {
-                    ascending: true
-                });
 
 
-        if (timetableError) {
-            throw timetableError;
-        }
+if (timetableError) {
+    throw timetableError;
+}
 
 
-        console.log(
-            "Teacher timetable:",
-            timetable
-        );
-
-
+console.log(
+    "Teacher timetable:",
+    timetable
+);
         // ==========================================
         // NO TIMETABLE
         // ==========================================
