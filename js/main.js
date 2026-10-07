@@ -12070,46 +12070,67 @@ async function loadTeacherAnnouncements() {
                 }
 
 
-                card.innerHTML = `
+               card.innerHTML = `
 
-                    <div class="teacher-announcement-card-top">
+    <div class="teacher-announcement-card-top">
 
-                        <div>
+        <div>
 
-                            <span class="teacher-announcement-target">
-                                ${targetText}
-                            </span>
+            <span class="teacher-announcement-target">
+                ${targetText}
+            </span>
 
-                            <h3>
-                                ${announcement.title}
-                            </h3>
+            <h3>
+                ${announcement.title}
+            </h3>
 
-                        </div>
+        </div>
 
-                    </div>
-
-
-                    <div class="teacher-announcement-details">
-
-                        <p>
-                            <strong>Class:</strong>
-                            ${announcement.target_class}
-                        </p>
-
-                        <p>
-                            <strong>Published:</strong>
-                            ${formattedDate}
-                        </p>
-
-                    </div>
+    </div>
 
 
-                    <p class="teacher-announcement-message">
-                        ${announcement.message}
-                    </p>
+    <div class="teacher-announcement-details">
+
+        <p>
+            <strong>Class:</strong>
+            ${announcement.target_class}
+        </p>
+
+        <p>
+            <strong>Published:</strong>
+            ${formattedDate}
+        </p>
+
+    </div>
 
 
-                `;
+    <p class="teacher-announcement-message">
+        ${announcement.message}
+    </p>
+
+
+    <div class="teacher-announcement-actions">
+
+        <button
+            type="button"
+            class="teacher-announcement-edit-button"
+            onclick="editTeacherAnnouncement('${announcement.id}')"
+        >
+            Edit
+        </button>
+
+
+        <button
+            type="button"
+            class="teacher-announcement-delete-button"
+            onclick="deleteTeacherAnnouncement('${announcement.id}')"
+        >
+            Delete
+        </button>
+
+    </div>
+
+`;
 
 
                 container.appendChild(card);
