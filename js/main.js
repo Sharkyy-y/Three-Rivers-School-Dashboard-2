@@ -9319,6 +9319,38 @@ grades.forEach(grade => {
 Object.entries(assessmentGroups).forEach(
     ([sectionName, sectionGrades]) => {
 
+                // ==========================================
+        // ASSESSMENT STATISTICS
+        // ==========================================
+
+        const sectionPercentages =
+            sectionGrades
+                .filter(
+                    grade =>
+                        Number(grade.max_score) > 0
+                )
+                .map(
+                    grade =>
+                        (
+                            Number(grade.score) /
+                            Number(grade.max_score)
+                        ) * 100
+                );
+
+        const sectionAverage =
+            sectionPercentages.length > 0
+                ? sectionPercentages.reduce(
+                    (total, value) =>
+                        total + value,
+                    0
+                ) / sectionPercentages.length
+                : 0;
+
+        const sectionHighest =
+            sectionPercentages.length > 0
+                ? Math.max(...sectionPercentages)
+                : 0;
+
         const section =
             document.createElement("section");
 
