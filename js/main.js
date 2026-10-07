@@ -9005,37 +9005,23 @@ async function loadTeacherGrades() {
 // LOAD GRADES FOR SELECTED SUBJECT
 // ==========================================
 
-async function loadTeacherSubjectGrades(
-    subjectId
-) {
+async function loadTeacherSubjectGrades(subjectId) {
 
     const gradesContainer =
-        document.getElementById(
-            "teacherGradesContainer"
-        );
+        document.getElementById("teacherGradesContainer");
 
     const statusElement =
-        document.getElementById(
-            "teacherGradeStatus"
-        );
-
+        document.getElementById("teacherGradeStatus");
 
     gradesContainer.innerHTML = `
         <div class="teacher-grades-empty">
-
             <h3>Loading grades...</h3>
-
-            <p>
-                Please wait.
-            </p>
-
+            <p>Please wait.</p>
         </div>
     `;
 
-
     statusElement.textContent =
         "Loading student grades...";
-
 
     try {
 
@@ -9046,29 +9032,22 @@ async function loadTeacherSubjectGrades(
         const {
             data: grades,
             error: gradesError
-        } =
-            await supabaseClient
-                .from("grades")
-              .select(`
-    id,
-    student_id,
-    subject_id,
-    assessment,
-    score,
-    max_score,
-    comments,
-    created_at
-`)
-                .eq(
-                    "subject_id",
-                    subjectId
-                )
-                .order(
-                    "created_at",
-                    {
-                        ascending: false
-                    }
-                );
+        } = await supabaseClient
+            .from("grades")
+            .select(`
+                id,
+                student_id,
+                subject_id,
+                assessment,
+                score,
+                max_score,
+                comments,
+                created_at
+            `)
+            .eq("subject_id", subjectId)
+            .order("created_at", {
+                ascending: false
+            });
 
 
         if (gradesError) {
@@ -9101,10 +9080,7 @@ async function loadTeacherSubjectGrades(
         // NO GRADES
         // ==========================================
 
-        if (
-            !grades ||
-            grades.length === 0
-        ) {
+        if (!grades || grades.length === 0) {
 
             gradesContainer.innerHTML = `
                 <div class="teacher-grades-empty">
@@ -9126,6 +9102,75 @@ async function loadTeacherSubjectGrades(
 
 
         // ==========================================
+        // GET STUDENTS
+        // ==========================================
+
+        const studentIds = [
+            ...new Set(
+                grades.map(
+                    grade => grade.student_id
+                )
+            )
+        ];
+
+
+        const {
+            data: students,
+            error: studentsError
+        } = await supabaseClient
+            .from("students")
+            .select(`
+                id,
+                full_name,
+                admission_number,
+                class_name
+            `)
+            .in("id", studentIds);
+
+
+        if (studentsError) {
+
+            console.error(
+                "Teacher students query error:",
+                studentsError
+            );
+
+            gradesContainer.innerHTML = `
+                <div class="teacher-grades-empty">
+
+                    <h3>Unable to load student information</h3>
+
+                    <p>
+                        ${studentsError.message}
+                    </p>
+
+                </div>
+            `;
+
+            statusElement.textContent =
+                "Unable to load student information.";
+
+            return;
+        }
+
+
+        // ==========================================
+        // CREATE STUDENT LOOKUP
+        // ==========================================
+
+        const studentMap = {};
+
+        students.forEach(
+            student => {
+
+                studentMap[student.id] =
+                    student;
+
+            }
+        );
+
+
+        // ==========================================
         // DISPLAY GRADES
         // ==========================================
 
@@ -9136,7 +9181,7 @@ async function loadTeacherSubjectGrades(
             grade => {
 
                 const student =
-                    grade.students;
+                    studentMap[grade.student_id];
 
 
                 const studentName =
@@ -9150,18 +9195,16 @@ async function loadTeacherSubjectGrades(
 
 
                 const percentage =
-                    grade.max_score > 0
+                    Number(grade.max_score) > 0
                         ? (
-                            grade.score /
-                            grade.max_score
+                            Number(grade.score) /
+                            Number(grade.max_score)
                         ) * 100
                         : 0;
 
 
                 const card =
-                    document.createElement(
-                        "div"
-                    );
+                    document.createElement("div");
 
                 card.className =
                     "teacher-grade-card";
@@ -9279,9 +9322,7 @@ async function loadTeacherSubjectGrades(
                 `;
 
 
-                gradesContainer.appendChild(
-                    card
-                );
+                gradesContainer.appendChild(card);
 
 
                 const saveButton =
@@ -9307,11 +9348,11 @@ async function loadTeacherSubjectGrades(
 
 
         statusElement.textContent =
-            `${grades.length} grade record${grades.length === 1 ? "" : "s"} found.`;
+            `${grades.length} grade records found.`;
 
 
         console.log(
-            "TEACHER GRADES LOADED:",
+            "TEACHER GRADES DISPLAYED:",
             grades
         );
 
@@ -9330,7 +9371,6 @@ async function loadTeacherSubjectGrades(
     }
 
 }
-
 
 // ==========================================
 // SAVE TEACHER GRADE
