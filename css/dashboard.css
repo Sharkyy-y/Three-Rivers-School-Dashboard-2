@@ -6398,3 +6398,336 @@ body {
     }
 
 }
+
+/* ==========================================
+   TEACHER ANNOUNCEMENTS
+   ========================================== */
+
+.teacher-announcements-hero {
+    position: relative;
+    overflow: hidden;
+    background: linear-gradient(
+        135deg,
+        #0f766e,
+        #16a34a
+    );
+    color: white;
+    border-radius: 24px;
+    padding: 36px 40px;
+    margin-bottom: 30px;
+    box-shadow: 0 15px 35px rgba(22, 163, 74, 0.18);
+}
+
+.teacher-announcements-hero::after {
+    content: "📢";
+    position: absolute;
+    right: 40px;
+    bottom: -35px;
+    font-size: 150px;
+    opacity: 0.10;
+}
+
+.teacher-announcements-hero-content {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 30px;
+    position: relative;
+    z-index: 2;
+}
+
+.teacher-announcements-hero h1 {
+    margin: 6px 0 10px;
+    font-size: 34px;
+    font-weight: 800;
+}
+
+.teacher-announcements-hero p {
+    margin: 0;
+    max-width: 650px;
+    line-height: 1.6;
+    opacity: 0.92;
+}
+
+.teacher-announcements-hero-icon {
+    width: 78px;
+    height: 78px;
+    border-radius: 22px;
+    background: rgba(255, 255, 255, 0.16);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 38px;
+    backdrop-filter: blur(8px);
+}
+
+
+/* ==========================================
+   ANNOUNCEMENT SECTIONS
+   ========================================== */
+
+.teacher-announcement-section {
+    background: #ffffff;
+    border-radius: 22px;
+    padding: 30px;
+    margin-bottom: 28px;
+    border: 1px solid #e5e7eb;
+    box-shadow: 0 8px 25px rgba(15, 23, 42, 0.05);
+}
+
+.teacher-section-header {
+    margin-bottom: 24px;
+}
+
+.teacher-section-eyebrow {
+    color: #16a34a;
+    font-size: 12px;
+    font-weight: 800;
+    letter-spacing: 1.5px;
+    margin-bottom: 6px;
+}
+
+.teacher-section-header h2 {
+    margin: 0 0 7px;
+    font-size: 24px;
+    color: #111827;
+}
+
+.teacher-section-header p {
+    margin: 0;
+    color: #6b7280;
+}
+
+
+/* ==========================================
+   ANNOUNCEMENT FORM
+   ========================================== */
+
+.teacher-announcement-form {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.teacher-form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+}
+
+.teacher-form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.teacher-form-group label {
+    font-size: 14px;
+    font-weight: 700;
+    color: #374151;
+}
+
+.teacher-form-group input,
+.teacher-form-group select,
+.teacher-form-group textarea {
+    width: 100%;
+    box-sizing: border-box;
+    border: 1px solid #d1d5db;
+    border-radius: 12px;
+    padding: 13px 15px;
+    font-size: 14px;
+    font-family: inherit;
+    background: #f9fafb;
+    transition: 0.2s ease;
+}
+
+.teacher-form-group textarea {
+    resize: vertical;
+    min-height: 140px;
+}
+
+.teacher-form-group input:focus,
+.teacher-form-group select:focus,
+.teacher-form-group textarea:focus {
+    outline: none;
+    border-color: #16a34a;
+    background: #ffffff;
+    box-shadow: 0 0 0 4px rgba(22, 163, 74, 0.10);
+}
+
+.teacher-announcement-form-actions {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-top: 4px;
+}
+
+
+/* ==========================================
+   ANNOUNCEMENT CARDS
+   ========================================== */
+
+.teacher-announcements-container {
+    display: grid;
+    grid-template-columns: repeat(
+        auto-fit,
+        minmax(300px, 1fr)
+    );
+    gap: 20px;
+}
+
+.teacher-announcement-card {
+    position: relative;
+    overflow: hidden;
+    background: linear-gradient(
+        145deg,
+        #ffffff,
+        #f8fafc
+    );
+    border: 1px solid #e5e7eb;
+    border-radius: 20px;
+    padding: 24px;
+    box-shadow: 0 8px 22px rgba(15, 23, 42, 0.05);
+    transition:
+        transform 0.2s ease,
+        box-shadow 0.2s ease,
+        border-color 0.2s ease;
+}
+
+.teacher-announcement-card::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 5px;
+    background: linear-gradient(
+        90deg,
+        #16a34a,
+        #0f766e
+    );
+}
+
+.teacher-announcement-card:hover {
+    transform: translateY(-5px);
+    border-color: #bbf7d0;
+    box-shadow: 0 16px 32px rgba(15, 23, 42, 0.10);
+}
+
+.teacher-announcement-card-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 15px;
+    margin-bottom: 18px;
+}
+
+.teacher-announcement-card h3 {
+    margin: 10px 0 0;
+    font-size: 20px;
+    line-height: 1.35;
+    color: #111827;
+}
+
+.teacher-announcement-target {
+    display: inline-flex;
+    align-items: center;
+    padding: 6px 11px;
+    border-radius: 999px;
+    background: #dcfce7;
+    color: #15803d;
+    font-size: 12px;
+    font-weight: 800;
+    letter-spacing: 0.3px;
+}
+
+.teacher-announcement-details {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-bottom: 18px;
+}
+
+.teacher-announcement-details p {
+    margin: 0;
+    padding: 7px 10px;
+    border-radius: 9px;
+    background: #f1f5f9;
+    color: #64748b;
+    font-size: 12px;
+}
+
+.teacher-announcement-details strong {
+    color: #334155;
+}
+
+.teacher-announcement-message {
+    margin: 0;
+    padding: 17px;
+    background: #f8fafc;
+    border-radius: 14px;
+    color: #475569;
+    font-size: 14px;
+    line-height: 1.7;
+    border-left: 4px solid #16a34a;
+}
+
+
+/* ==========================================
+   STATES
+   ========================================== */
+
+.teacher-loading,
+.teacher-empty,
+.teacher-error {
+    grid-column: 1 / -1;
+    text-align: center;
+    padding: 45px 20px;
+    border-radius: 18px;
+    background: #f8fafc;
+    color: #64748b;
+    border: 1px dashed #cbd5e1;
+}
+
+.teacher-error {
+    color: #dc2626;
+    background: #fef2f2;
+    border-color: #fecaca;
+}
+
+
+/* ==========================================
+   RESPONSIVE
+   ========================================== */
+
+@media (max-width: 700px) {
+
+    .teacher-announcements-hero {
+        padding: 28px 24px;
+    }
+
+    .teacher-announcements-hero-content {
+        align-items: flex-start;
+    }
+
+    .teacher-announcements-hero-icon {
+        display: none;
+    }
+
+    .teacher-announcements-hero h1 {
+        font-size: 28px;
+    }
+
+    .teacher-announcement-section {
+        padding: 22px;
+    }
+
+    .teacher-form-row {
+        grid-template-columns: 1fr;
+    }
+
+    .teacher-announcements-container {
+        grid-template-columns: 1fr;
+    }
+
+}
