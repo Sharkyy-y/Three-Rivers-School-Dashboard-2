@@ -12697,23 +12697,317 @@ console.log(
 
         });
 
+// ==========================================
+// FILL SUBJECT DROPDOWN
+// ==========================================
 
-        // ==========================================
-        // FILL SUBJECT DROPDOWN
-        // ==========================================
+subjectSelect.innerHTML = `
+    <option value="">
+        All subjects
+    </option>
+`;
 
-        subjectSelect.innerHTML = `
-            <option value="">
-                Select a subject
-            </option>
+
+subjects.forEach(subject => {
+
+    const option =
+        document.createElement("option");
+
+    option.value =
+        subject.id;
+
+    option.textContent =
+        `${subject.name} (${subject.code})`;
+
+    subjectSelect.appendChild(option);
+
+});
+
+
+// ==========================================
+// SHOW TIMETABLE
+// ==========================================
+
+function showTeacherTimetable(entries) {
+
+    if (!entries || entries.length === 0) {
+
+        timetableContainer.innerHTML = `
+            <div class="teacher-timetable-empty">
+
+                <h3>No lessons found</h3>
+
+                <p>
+                    There are no timetable entries
+                    for this selection.
+                </p>
+
+            </div>
+        `;
+
+        return;
+    }
+
+
+    const days = [
+        "Monday",
+        "Tuesday",
+        "Wednesday",
+        "Thursday",
+        "Friday"
+    ];
+
+
+    const today =
+        new Date().toLocaleDateString(
+            "en-US",
+            {
+                weekday: "long"
+            }
+        );
+
+
+    let html = "";
+
+
+    days.forEach(day => {
+
+        const dayEntries =
+            entries.filter(
+                entry =>
+                    entry.day_of_week === day
+            );
+
+
+        if (dayEntries.length === 0) {
+            return;
+        }
+
+
+        html += `
+
+            <div class="teacher-timetable-day">
+
+                <div class="
+                    teacher-timetable-day-header
+                    ${day === today ? "today" : ""}
+                ">
+
+                    <h3>
+                        ${day}
+                    </h3>
+
+                    <span>
+                        ${dayEntries.length}
+                        ${dayEntries.length === 1
+                            ? "lesson"
+                            : "lessons"}
+                    </span>
+
+                </div>
         `;
 
 
-        subjects.forEach(subject => {
+        dayEntries.forEach(entry => {
 
-            const option =
-                document.createElement("option");
+            const subjectName =
+                entry.subjects?.name ||
+                "Subject";
 
 
-            option.value =
-```
+            const className =
+                entry.class_name ||
+                "Class not specified";
+
+
+            const room =
+                entry.room ||
+                "Room not specified";
+
+
+            const startTime =
+                formatTeacherTime(
+                    entry.start_time
+                );
+
+
+            const endTime =
+                formatTeacherTime(
+                    entry.end_time
+                );
+
+
+            html += `
+
+                <div class="
+                    teacher-timetable-entry
+                    ${day === today
+                        ? "today-lesson"
+                        : ""}
+                ">
+
+                    <div class="
+                        teacher-timetable-time
+                    ">
+
+                        <strong>
+                            ${startTime}
+                        </strong>
+
+                        <span>
+                            ${endTime}
+                        </span>
+
+                    </div>
+
+
+                    <div class="
+                        teacher-timetable-details
+                    ">
+
+                        <h4>
+                            ${subjectName}
+                        </h4>
+
+                        <p>
+                            <strong>Class:</strong>
+                            ${className}
+                        </p>
+
+                        <p>
+                            <strong>Room:</strong>
+                            ${room}
+                        </p>
+
+                    </div>
+
+                </div>
+
+            `;
+
+        });
+
+
+        html += `
+            </div>
+        `;
+
+    });
+
+
+    timetableContainer.innerHTML =
+        html;
+
+}
+
+
+// ==========================================
+// FORMAT TIME
+// ==========================================
+
+function formatTeacherTime(time) {
+
+    if (!time) {
+        return "";
+    }
+
+
+    const parts =
+        time.split(":");
+
+
+    let hours =
+        parseInt(parts[0], 10);
+
+
+    const minutes =
+        parts[1];
+
+
+    const period =
+        hours >= 12
+            ? "PM"
+            : "AM";
+
+
+    hours =
+        hours % 12 || 12;
+
+
+    return `${hours}:${minutes} ${period}`;
+
+}
+
+
+// ==========================================
+// INITIAL TIMETABLE
+// ==========================================
+
+showTeacherTimetable(
+    timetable
+);
+
+
+// ==========================================
+// SUBJECT CHANGE
+// ==========================================
+
+subjectSelect.addEventListener(
+    "change",
+    function () {
+
+        const selectedSubject =
+            this.value;
+
+
+        if (!selectedSubject) {
+
+            showTeacherTimetable(
+                timetable
+            );
+
+            if (timetableDescription) {
+
+                timetableDescription.textContent =
+                    "View your weekly teaching schedule.";
+
+            }
+
+            return;
+
+        }
+
+
+        const filteredEntries =
+            timetable.filter(
+                entry =>
+                    String(entry.subject_id) ===
+                    String(selectedSubject)
+            );
+
+
+        showTeacherTimetable(
+            filteredEntries
+        );
+
+
+        const selectedSubjectData =
+            subjects.find(
+                subject =>
+                    String(subject.id) ===
+                    String(selectedSubject)
+            );
+
+
+        if (
+            timetableDescription &&
+            selectedSubjectData
+        ) {
+
+            timetableDescription.textContent =
+                `${selectedSubjectData.name} teaching schedule`;
+
+        }
+
+    }
+);
