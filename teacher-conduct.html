@@ -1,0 +1,506 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>
+        Teacher Conduct | Student Management Portal
+    </title>
+
+    <link
+        rel="stylesheet"
+        href="css/style.css"
+    >
+
+    <link
+        rel="stylesheet"
+        href="css/dashboard.css"
+    >
+
+</head>
+
+
+<body>
+
+
+<!-- ==========================================
+     SIDEBAR
+========================================== -->
+
+<aside class="sidebar">
+
+    <div class="sidebar-header">
+
+        <div class="sidebar-logo">
+            TR
+        </div>
+
+        <div>
+
+            <h2>
+                Student Portal
+            </h2>
+
+            <span>
+                Teacher
+            </span>
+
+        </div>
+
+    </div>
+
+
+    <nav class="sidebar-nav">
+
+        <a href="teacher-dashboard.html">
+            <span>🏠</span>
+            Dashboard
+        </a>
+
+        <a href="teacher-students.html">
+            <span>👨‍🎓</span>
+            My Students
+        </a>
+
+        <a href="teacher-grades.html">
+            <span>📊</span>
+            Grades
+        </a>
+
+        <a
+            href="teacher-conduct.html"
+            class="active"
+        >
+            <span>📋</span>
+            Conduct
+        </a>
+
+        <a href="teacher-assignments.html">
+            <span>📝</span>
+            Assignments
+        </a>
+
+        <a href="teacher-announcements.html">
+            <span>📢</span>
+            Announcements
+        </a>
+
+        <a href="teacher-timetable.html">
+            <span>🗓️</span>
+            Timetable
+        </a>
+
+        <a href="teacher-duty.html">
+            <span>🛡️</span>
+            Teachers on Duty
+        </a>
+
+        <a href="teacher-profile.html">
+            <span>👤</span>
+            My Profile
+        </a>
+
+    </nav>
+
+
+    <div class="sidebar-footer">
+
+        <button
+            id="logoutButton"
+            type="button"
+        >
+            🚪 Logout
+        </button>
+
+    </div>
+
+</aside>
+
+
+
+<!-- ==========================================
+     MAIN CONTENT
+========================================== -->
+
+<main class="admin-dashboard-page teacher-conduct-page">
+
+
+    <!-- HERO -->
+
+    <section class="teacher-conduct-hero">
+
+        <div class="teacher-conduct-hero-content">
+
+            <span class="teacher-conduct-eyebrow">
+                STUDENT WELLBEING
+            </span>
+
+            <h1>
+                Student Conduct
+            </h1>
+
+            <p>
+                Review and manage conduct records
+                for your students.
+            </p>
+
+        </div>
+
+
+        <div class="teacher-conduct-hero-icon">
+            📋
+        </div>
+
+    </section>
+
+
+
+    <!-- ==========================================
+         SEARCH STUDENTS
+    =========================================== -->
+
+    <section class="teacher-conduct-section">
+
+        <div class="teacher-conduct-section-heading">
+
+            <div>
+
+                <span class="teacher-section-label">
+                    STUDENT MANAGEMENT
+                </span>
+
+                <h2>
+                    Find a Student
+                </h2>
+
+                <p>
+                    Search for a student to view
+                    and manage their conduct records.
+                </p>
+
+            </div>
+
+        </div>
+
+
+        <div class="teacher-conduct-search">
+
+            <div class="teacher-conduct-search-icon">
+                🔎
+            </div>
+
+            <input
+                type="text"
+                id="teacherConductSearch"
+                placeholder="Search by student name or admission number..."
+            >
+
+        </div>
+
+
+        <div
+            id="teacherConductStudentList"
+            class="teacher-conduct-student-list"
+        >
+
+            <div class="teacher-conduct-empty">
+
+                <div class="teacher-conduct-empty-icon">
+                    👨‍🎓
+                </div>
+
+                <h3>
+                    Search for a student
+                </h3>
+
+                <p>
+                    Enter a student's name or admission
+                    number above.
+                </p>
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+
+    <!-- ==========================================
+         SELECTED STUDENT
+    =========================================== -->
+
+    <section
+        id="teacherConductStudentPanel"
+        class="teacher-conduct-section"
+        style="display: none;"
+    >
+
+        <div class="teacher-conduct-student-header">
+
+            <div>
+
+                <span class="teacher-section-label">
+                    SELECTED STUDENT
+                </span>
+
+                <h2 id="teacherConductStudentName">
+                    Student Name
+                </h2>
+
+                <p id="teacherConductStudentDetails">
+                    Admission number • Class
+                </p>
+
+            </div>
+
+
+            <div
+                id="teacherConductPoints"
+                class="teacher-conduct-points"
+            >
+                0 points
+            </div>
+
+        </div>
+
+
+
+        <!-- CONDUCT RECORDS -->
+
+        <div class="teacher-conduct-records-header">
+
+            <div>
+
+                <h3>
+                    Conduct Records
+                </h3>
+
+                <p>
+                    Review the student's conduct history.
+                </p>
+
+            </div>
+
+
+            <button
+                type="button"
+                id="teacherAddConductButton"
+                class="teacher-conduct-add-button"
+            >
+                + Add Conduct Record
+            </button>
+
+        </div>
+
+
+        <div
+            id="teacherConductRecords"
+            class="teacher-conduct-records"
+        >
+
+            <div class="teacher-conduct-loading">
+                Loading conduct records...
+            </div>
+
+        </div>
+
+    </section>
+
+
+
+    <!-- ==========================================
+         ADD / EDIT FORM
+    =========================================== -->
+
+    <section
+        id="teacherConductFormSection"
+        class="teacher-conduct-section teacher-conduct-form-section"
+        style="display: none;"
+    >
+
+        <div class="teacher-conduct-section-heading">
+
+            <div>
+
+                <span class="teacher-section-label">
+                    CONDUCT RECORD
+                </span>
+
+                <h2 id="teacherConductFormTitle">
+                    Add Conduct Record
+                </h2>
+
+                <p>
+                    Record an important student
+                    behaviour or achievement.
+                </p>
+
+            </div>
+
+        </div>
+
+
+        <form id="teacherConductForm">
+
+
+            <input
+                type="hidden"
+                id="teacherConductRecordId"
+            >
+
+
+            <!-- TYPE -->
+
+            <div class="teacher-conduct-form-grid">
+
+                <div class="teacher-conduct-field">
+
+                    <label for="teacherConductType">
+                        Record Type
+                    </label>
+
+                    <select
+                        id="teacherConductType"
+                        required
+                    >
+
+                        <option value="">
+                            Select type
+                        </option>
+
+                        <option value="positive">
+                            Positive
+                        </option>
+
+                        <option value="negative">
+                            Negative
+                        </option>
+
+                        <option value="neutral">
+                            Neutral
+                        </option>
+
+                    </select>
+
+                </div>
+
+
+
+                <!-- TITLE -->
+
+                <div class="teacher-conduct-field">
+
+                    <label for="teacherConductTitle">
+                        Title
+                    </label>
+
+                    <input
+                        type="text"
+                        id="teacherConductTitle"
+                        placeholder="e.g. Excellent participation"
+                        required
+                    >
+
+                </div>
+
+            </div>
+
+
+
+            <!-- DESCRIPTION -->
+
+            <div class="teacher-conduct-field">
+
+                <label for="teacherConductDescription">
+                    Description
+                </label>
+
+                <textarea
+                    id="teacherConductDescription"
+                    rows="4"
+                    placeholder="Describe the conduct record..."
+                ></textarea>
+
+            </div>
+
+
+
+            <!-- POINTS -->
+
+            <div class="teacher-conduct-field">
+
+                <label for="teacherConductPointsInput">
+                    Points
+                </label>
+
+                <input
+                    type="number"
+                    id="teacherConductPointsInput"
+                    placeholder="e.g. 10 or -5"
+                    step="1"
+                >
+
+                <small>
+                    Positive behaviour can receive positive
+                    points, while negative behaviour can receive
+                    negative points.
+                </small>
+
+            </div>
+
+
+
+            <!-- ACTIONS -->
+
+            <div class="teacher-conduct-form-actions">
+
+                <button
+                    type="submit"
+                    class="teacher-conduct-save-button"
+                >
+                    Save Conduct Record
+                </button>
+
+                <button
+                    type="button"
+                    id="teacherConductCancelButton"
+                    class="teacher-conduct-cancel-button"
+                >
+                    Cancel
+                </button>
+
+                <span
+                    id="teacherConductFormMessage"
+                    class="teacher-conduct-form-message"
+                ></span>
+
+            </div>
+
+
+        </form>
+
+    </section>
+
+
+</main>
+
+
+
+<script
+    src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"
+></script>
+
+<script src="main.js"></script>
+
+
+</body>
+
+</html>
