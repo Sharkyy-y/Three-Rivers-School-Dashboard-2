@@ -10062,3 +10062,103 @@ async function loadTeacherConductStudents() {
     }
 
 }
+// ==========================================
+// RENDER TEACHER CONDUCT STUDENTS
+// ==========================================
+
+function renderTeacherConductStudents(
+    students
+) {
+
+    const studentList =
+        document.getElementById(
+            "teacherConductStudentList"
+        );
+
+
+    if (!studentList) {
+        return;
+    }
+
+
+    if (!students || students.length === 0) {
+
+        studentList.innerHTML = `
+            <div class="teacher-conduct-empty">
+
+                <div class="teacher-conduct-empty-icon">
+                    🔎
+                </div>
+
+                <h3>
+                    No matching students
+                </h3>
+
+                <p>
+                    Try another name or admission number.
+                </p>
+
+            </div>
+        `;
+
+        return;
+    }
+
+
+    studentList.innerHTML = "";
+
+
+    students.forEach(student => {
+
+        const card =
+            document.createElement("div");
+
+        card.className =
+            "teacher-conduct-student-card";
+
+
+        card.innerHTML = `
+
+            <h3>
+                ${student.full_name}
+            </h3>
+
+            <p>
+                ${student.admission_number || "No admission number"}
+                •
+                ${student.class_name || "No class"}
+            </p>
+
+        `;
+
+
+        card.addEventListener(
+            "click",
+            function () {
+
+                loadTeacherStudentConduct(
+                    student
+                );
+
+            }
+        );
+
+
+        studentList.appendChild(card);
+
+    });
+
+}
+// ==========================================
+// TEACHER CONDUCT PAGE ROUTE
+// ==========================================
+
+if (
+    window.location.pathname.includes(
+        "teacher-conduct.html"
+    )
+) {
+
+    loadTeacherConductStudents();
+
+}
