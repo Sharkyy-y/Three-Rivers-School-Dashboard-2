@@ -10381,17 +10381,21 @@ async function loadTeacherStudentConduct(
                     ).toLowerCase();
 
 
-                const points =
-                    Number(
-                        record.points || 0
-                    );
+                const rawPoints =
+    Number(
+        record.points || 0
+    );
+
+const points =
+    recordType === "negative"
+        ? -Math.abs(rawPoints)
+        : Math.abs(rawPoints);
 
 
-                const pointsText =
-                    points > 0
-                        ? `+${points}`
-                        : `${points}`;
-
+const pointsText =
+    points > 0
+        ? `+${points}`
+        : `${points}`;
 
                 recordElement.innerHTML = `
 
