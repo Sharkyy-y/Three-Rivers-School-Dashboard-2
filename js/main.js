@@ -11844,36 +11844,30 @@ async function createTeacherAnnouncement() {
     console.log("Saving teacher announcement...");
 
     const title =
-        document.getElementById(
-            "teacherAnnouncementTitle"
-        ).value.trim();
+        document.getElementById("teacherAnnouncementTitle")
+            .value.trim();
 
     const targetClass =
-        document.getElementById(
-            "teacherAnnouncementClass"
-        ).value.trim();
+        document.getElementById("teacherAnnouncementClass")
+            .value.trim();
 
     const targetRole =
-        document.getElementById(
-            "teacherAnnouncementPortal"
-        ).value;
+        document.getElementById("teacherAnnouncementPortal")
+            .value;
 
     const message =
-        document.getElementById(
-            "teacherAnnouncementMessage"
-        ).value.trim();
+        document.getElementById("teacherAnnouncementMessage")
+            .value.trim();
+
+    const form =
+        document.getElementById("teacherAnnouncementForm");
 
     const formMessage =
         document.getElementById(
             "teacherAnnouncementFormMessage"
         );
 
-    if (
-        !title ||
-        !targetClass ||
-        !targetRole ||
-        !message
-    ) {
+    if (!title || !targetClass || !targetRole || !message) {
 
         formMessage.textContent =
             "Please complete all fields.";
@@ -11881,42 +11875,102 @@ async function createTeacherAnnouncement() {
         return;
     }
 
+    const editingId =
+        form.dataset.editingId;
+
     try {
 
-        const { data, error } =
-            await supabaseClient
+        let result;
+
+        // ==========================================
+        // UPDATE EXISTING ANNOUNCEMENT
+        // ==========================================
+
+        if (editingId) {
+
+            result = await supabaseClient
                 .from("announcements")
-                .insert([
-                    {
-                        title: title,
-                        message: message,
-                        target_role: targetRole,
-                        target_class: targetClass
-                    }
-                ])
+                .update({
+                    title: title,
+                    message: message,
+                    target_role: targetRole,
+                    target_class: targetClass
+                })
+                .eq("id", editingId)
                 .select()
                 .single();
 
-        if (error) {
-            throw error;
+        }
+
+        // ==========================================
+        // CREATE NEW ANNOUNCEMENT
+        // ==========================================
+
+        else {
+
+            result = await supabaseClient
+                .from("announcements")
+                .insert([{
+                    title: title,
+                    message: message,
+                    target_role: targetRole,
+                    target_class: targetClass
+                }])
+                .select()
+                .single();
+
+        }
+
+        if (result.error) {
+            throw result.error;
         }
 
         console.log(
-            "Teacher announcement created:",
-            data
+            editingId
+                ? "Teacher announcement updated:"
+                : "Teacher announcement created:",
+            result.data
         );
 
         formMessage.textContent =
-            "Announcement published successfully.";
+            editingId
+                ? "Announcement updated successfully."
+                : "Announcement published successfully.";
 
-        document
-            .getElementById(
-                "teacherAnnouncementForm"
-            )
-            .reset();
+        // Reset form
+        form.reset();
 
+        // Remove editing mode
+        delete form.dataset.editingId;
+
+        // Restore button
+        const submitButton =
+            form.querySelector(
+                'button[type="submit"]'
+            );
+
+        if (submitButton) {
+
+            submitButton.textContent =
+                "Publish Announcement";
+
+        }
+
+        // Hide cancel button
+        const cancelButton =
+            document.getElementById(
+                "teacherAnnouncementCancelButton"
+            );
+
+        if (cancelButton) {
+
+            cancelButton.style.display =
+                "none";
+
+        }
+
+        // Reload announcements
         await loadTeacherAnnouncements();
-
 
     } catch (error) {
 
@@ -11926,13 +11980,11 @@ async function createTeacherAnnouncement() {
         );
 
         formMessage.textContent =
-            "Unable to publish announcement.";
+            "Unable to save announcement.";
 
     }
 
 }
-
-
 // ==========================================
 // TEACHER ANNOUNCEMENT FORM
 // ==========================================
@@ -11951,6 +12003,68 @@ if (teacherAnnouncementForm) {
             event.preventDefault();
 
             await createTeacherAnnouncement();
+
+        }
+    );
+
+}
+
+const teacherAnnouncementCancelButton =
+    document.getElementById(
+        "teacherAnnouncementCancelButton"
+    );
+
+if (teacherAnnouncementCancelButton) {
+
+    teacherAnnouncementCancelButton.addEventListener(
+        "click",
+        function () {
+
+            const form =
+                document.getElementById(
+                    "teacherAnnouncementForm"
+                );
+
+            if (!form) return;
+
+            // Reset form
+            form.reset();
+
+            // Exit editing mode
+            delete form.dataset.editingId;
+
+            // Restore publish button
+            const submitButton =
+                form.querySelector(
+                    'button[type="submit"]'
+                );
+
+            if (submitButton) {
+
+                submitButton.textContent =
+                    "Publish Announcement";
+
+            }
+
+            // Hide cancel button
+            teacherAnnouncementCancelButton.style.display =
+                "none";
+
+            // Clear message
+            const message =
+                document.getElementById(
+                    "teacherAnnouncementFormMessage"
+                );
+
+            if (message) {
+
+                message.textContent = "";
+
+            }
+
+            console.log(
+                "Teacher announcement edit cancelled."
+            );
 
         }
     );
@@ -12172,5 +12286,177 @@ if (
 ) {
 
     loadTeacherAnnouncements();
+
+}
+
+// ==========================================
+// EDIT TEACHER ANNOUNCEMENT
+// ==========================================
+
+async function editTeacherAnnouncement(announcementId) {
+
+    console.log(
+        "Editing teacher announcement:",
+        announcementId
+    );
+
+    try {
+
+        const {
+            data: announcement,
+            error
+        } = await supabaseClient
+            .from("announcements")
+            .select(`
+                id,
+                title,
+                message,
+                target_role,
+                target_class
+            `)
+            .eq("id", announcementId)
+            .single();
+
+
+        if (error) {
+            throw error;
+        }
+
+
+        document.getElementById(
+            "teacherAnnouncementTitle"
+        ).value = announcement.title || "";
+
+
+        document.getElementById(
+            "teacherAnnouncementClass"
+        ).value = announcement.target_class || "";
+
+
+        document.getElementById(
+            "teacherAnnouncementPortal"
+        ).value = announcement.target_role || "";
+
+
+        document.getElementById(
+            "teacherAnnouncementMessage"
+        ).value = announcement.message || "";
+
+
+        const form =
+            document.getElementById(
+                "teacherAnnouncementForm"
+            );
+
+
+        if (!form) {
+            return;
+        }
+
+
+        form.dataset.editingId =
+            announcementId;
+
+
+        const submitButton =
+            form.querySelector(
+                'button[type="submit"]'
+            );
+
+
+        if (submitButton) {
+
+            submitButton.textContent =
+                "Save Changes";
+
+        }
+
+
+        const cancelButton =
+            document.getElementById(
+                "teacherAnnouncementCancelButton"
+            );
+
+
+        if (cancelButton) {
+
+            cancelButton.style.display =
+                "block";
+
+        }
+
+
+        form.scrollIntoView({
+            behavior: "smooth",
+            block: "start"
+        });
+
+
+    } catch (error) {
+
+        console.error(
+            "Edit announcement error:",
+            error
+        );
+
+        alert(
+            "Unable to load announcement for editing."
+        );
+
+    }
+
+}
+
+// ==========================================
+// DELETE TEACHER ANNOUNCEMENT
+// ==========================================
+
+async function deleteTeacherAnnouncement(announcementId) {
+
+    console.log(
+        "Deleting teacher announcement:",
+        announcementId
+    );
+
+    const confirmed =
+        confirm(
+            "Are you sure you want to delete this announcement?"
+        );
+
+    if (!confirmed) {
+        return;
+    }
+
+    try {
+
+        const {
+            error
+        } = await supabaseClient
+            .from("announcements")
+            .delete()
+            .eq("id", announcementId);
+
+        if (error) {
+            throw error;
+        }
+
+        console.log(
+            "Teacher announcement deleted successfully."
+        );
+
+        await loadTeacherAnnouncements();
+
+    } catch (error) {
+
+        console.error(
+            "Delete announcement error:",
+            error
+        );
+
+        alert(
+            "Unable to delete announcement."
+        );
+
+    }
 
 }
