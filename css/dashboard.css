@@ -5889,3 +5889,29 @@ body {
     }
 
 }
+
+/* ==========================================
+   TEACHER CONDUCT DELETE BUTTON
+   ========================================== */
+
+.teacher-conduct-record-actions {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 15px;
+}
+
+.teacher-conduct-delete-button {
+    border: none;
+    background: #fee2e2;
+    color: #b91c1c;
+    padding: 8px 14px;
+    border-radius: 8px;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: 0.2s ease;
+}
+
+.teacher-conduct-delete-button:hover {
+    background: #fecaca;
+}
