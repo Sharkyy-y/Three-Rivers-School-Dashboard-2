@@ -105,15 +105,35 @@
          MAIN CONTENT
     =========================================== -->
 
-    <main class="admin-dashboard-page">
+    <main class="admin-dashboard-page teacher-grades-page">
 
-        <section class="admin-dashboard-header">
 
-            <h1>Student Grades</h1>
+        <!-- ======================================
+             PAGE HEADER
+        ======================================= -->
 
-            <p>
-                View and manage grades for students in your subjects.
-            </p>
+        <section class="teacher-grades-hero">
+
+            <div class="teacher-grades-hero-content">
+
+                <span class="teacher-grades-eyebrow">
+                    ACADEMIC MANAGEMENT
+                </span>
+
+                <h1>
+                    Student Grades
+                </h1>
+
+                <p>
+                    Review, update and monitor academic
+                    performance across your assigned subjects.
+                </p>
+
+            </div>
+
+            <div class="teacher-grades-hero-icon">
+                📊
+            </div>
 
         </section>
 
@@ -122,16 +142,23 @@
              SUBJECT SELECTION
         ======================================= -->
 
-        <section class="admin-dashboard-section">
+        <section class="admin-dashboard-section teacher-grade-control">
 
             <div class="admin-section-header">
 
                 <div>
 
-                    <h2>Select Subject</h2>
+                    <span class="teacher-section-label">
+                        SUBJECT
+                    </span>
+
+                    <h2>
+                        Select Subject
+                    </h2>
 
                     <p>
-                        Choose one of your assigned subjects.
+                        Choose one of your assigned subjects
+                        to manage student grades.
                     </p>
 
                 </div>
@@ -139,16 +166,126 @@
             </div>
 
 
-            <select
-                id="teacherGradeSubject"
-                class="teacher-grade-select"
-            >
+            <div class="teacher-subject-selector">
 
-                <option value="">
-                    Loading subjects...
-                </option>
+                <div class="teacher-subject-icon">
+                    📚
+                </div>
 
-            </select>
+                <div class="teacher-subject-select-wrapper">
+
+                    <label
+                        for="teacherGradeSubject"
+                    >
+                        Assigned Subject
+                    </label>
+
+                    <select
+                        id="teacherGradeSubject"
+                        class="teacher-grade-select"
+                    >
+
+                        <option value="">
+                            Loading subjects...
+                        </option>
+
+                    </select>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- ======================================
+             PERFORMANCE OVERVIEW
+        ======================================= -->
+
+        <section class="teacher-performance-overview">
+
+            <div class="teacher-performance-card">
+
+                <div class="teacher-performance-icon">
+                    👨‍🎓
+                </div>
+
+                <div>
+
+                    <span>
+                        Students Graded
+                    </span>
+
+                    <strong id="teacherStudentsGraded">
+                        —
+                    </strong>
+
+                </div>
+
+            </div>
+
+
+            <div class="teacher-performance-card">
+
+                <div class="teacher-performance-icon">
+                    📈
+                </div>
+
+                <div>
+
+                    <span>
+                        Class Average
+                    </span>
+
+                    <strong id="teacherClassAverage">
+                        —
+                    </strong>
+
+                </div>
+
+            </div>
+
+
+            <div class="teacher-performance-card">
+
+                <div class="teacher-performance-icon">
+                    🏆
+                </div>
+
+                <div>
+
+                    <span>
+                        Highest Score
+                    </span>
+
+                    <strong id="teacherHighestScore">
+                        —
+                    </strong>
+
+                </div>
+
+            </div>
+
+
+            <div class="teacher-performance-card">
+
+                <div class="teacher-performance-icon">
+                    🎯
+                </div>
+
+                <div>
+
+                    <span>
+                        Lowest Score
+                    </span>
+
+                    <strong id="teacherLowestScore">
+                        —
+                    </strong>
+
+                </div>
+
+            </div>
 
         </section>
 
@@ -157,18 +294,28 @@
              GRADES
         ======================================= -->
 
-        <section class="admin-dashboard-section">
+        <section class="admin-dashboard-section teacher-gradebook-section">
 
             <div class="admin-section-header">
 
                 <div>
 
-                    <h2>Student Grades</h2>
+                    <span class="teacher-section-label">
+                        GRADEBOOK
+                    </span>
+
+                    <h2>
+                        Student Performance
+                    </h2>
 
                     <p id="teacherGradeStatus">
                         Select a subject to view grades.
                     </p>
 
+                </div>
+
+                <div class="teacher-gradebook-badge">
+                    ✏️ Editable
                 </div>
 
             </div>
@@ -181,10 +328,17 @@
 
                 <div class="teacher-grades-empty">
 
-                    <h3>No subject selected</h3>
+                    <div class="teacher-empty-icon">
+                        📚
+                    </div>
+
+                    <h3>
+                        No subject selected
+                    </h3>
 
                     <p>
-                        Select a subject above to view student grades.
+                        Select a subject above to view
+                        and manage student grades.
                     </p>
 
                 </div>
@@ -192,6 +346,7 @@
             </div>
 
         </section>
+
 
     </main>
 
