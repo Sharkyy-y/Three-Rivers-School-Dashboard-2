@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>Announcements | Student Management Portal</title>
+
+    <link
+        rel="stylesheet"
+        href="css/style.css"
+    >
+
+    <link
+        rel="stylesheet"
+        href="css/dashboard.css"
+    >
+
+</head>
+
+<body>
+
+<div class="dashboard-layout">
+
+    <!-- ==========================================
+         SIDEBAR
+         ========================================== -->
+
+    <aside class="dashboard-sidebar">
+
+        <div class="sidebar-brand">
+
+            <h2>Student Portal</h2>
+
+            <span>Teacher Portal</span>
+
+        </div>
+
+
+        <nav class="sidebar-navigation">
+
+            <a href="teacher-dashboard.html">
+                Dashboard
+            </a>
+
+            <a href="teacher-students.html">
+                My Students
+            </a>
+
+            <a href="teacher-grades.html">
+                Grades
+            </a>
+
+            <a href="teacher-conduct.html">
+                Conduct
+            </a>
+
+            <a href="teacher-assignments.html">
+                Assignments
+            </a>
+
+            <a
+                href="teacher-announcements.html"
+                class="active"
+            >
+                Announcements
+            </a>
+
+            <a href="teacher-timetable.html">
+                Timetable
+            </a>
+
+            <a href="teacher-duty.html">
+                Teachers on Duty
+            </a>
+
+        </nav>
+
+
+        <div class="sidebar-bottom">
+
+            <a href="teacher-profile.html">
+                My Profile
+            </a>
+
+            <button
+                type="button"
+                id="logoutButton"
+            >
+                Logout
+            </button>
+
+        </div>
+
+    </aside>
+
+
+    <!-- ==========================================
+         MAIN CONTENT
+         ========================================== -->
+
+    <main class="dashboard-main">
+
+        <!-- HERO -->
+
+        <section class="teacher-page-hero teacher-announcements-hero">
+
+            <div class="teacher-announcements-hero-content">
+
+                <div>
+
+                    <p class="teacher-page-eyebrow">
+                        TEACHER PORTAL
+                    </p>
+
+                    <h1>
+                        Announcement Centre
+                    </h1>
+
+                    <p>
+                        Create and manage important announcements
+                        for your students and classes.
+                    </p>
+
+                </div>
+
+                <div class="teacher-announcements-hero-icon">
+                    📢
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- CREATE ANNOUNCEMENT -->
+
+        <section class="teacher-announcement-section">
+
+            <div class="teacher-section-header">
+
+                <div>
+
+                    <p class="teacher-section-eyebrow">
+                        CREATE
+                    </p>
+
+                    <h2>
+                        New Announcement
+                    </h2>
+
+                    <p>
+                        Share important information with your
+                        students.
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <form
+                id="teacherAnnouncementForm"
+                class="teacher-announcement-form"
+            >
+
+                <div class="teacher-form-row">
+
+                    <div class="teacher-form-group">
+
+                        <label for="teacherAnnouncementTitle">
+                            Announcement Title
+                        </label>
+
+                        <input
+                            type="text"
+                            id="teacherAnnouncementTitle"
+                            placeholder="Enter announcement title"
+                            required
+                        >
+
+                    </div>
+
+
+                    <div class="teacher-form-group">
+
+                        <label for="teacherAnnouncementClass">
+                            Target Class
+                        </label>
+
+                        <input
+                            type="text"
+                            id="teacherAnnouncementClass"
+                            placeholder="Example: Year 13B"
+                            required
+                        >
+
+                    </div>
+
+                </div>
+
+
+                <div class="teacher-form-group">
+
+                    <label for="teacherAnnouncementPortal">
+                        Target Portal
+                    </label>
+
+                    <select
+                        id="teacherAnnouncementPortal"
+                        required
+                    >
+
+                        <option value="">
+                            Select target portal
+                        </option>
+
+                        <option value="student">
+                            Students
+                        </option>
+
+                        <option value="parent">
+                            Parents
+                        </option>
+
+                        <option value="all">
+                            Students & Parents
+                        </option>
+
+                    </select>
+
+                </div>
+
+
+                <div class="teacher-form-group">
+
+                    <label for="teacherAnnouncementMessage">
+                        Announcement
+                    </label>
+
+                    <textarea
+                        id="teacherAnnouncementMessage"
+                        rows="6"
+                        placeholder="Write your announcement here..."
+                        required
+                    ></textarea>
+
+                </div>
+
+
+                <div class="teacher-announcement-form-actions">
+
+                    <button
+                        type="submit"
+                        class="teacher-primary-button"
+                    >
+                        Publish Announcement
+                    </button>
+
+                    <button
+                        type="button"
+                        id="teacherAnnouncementCancelButton"
+                        class="teacher-assignment-cancel-button"
+                        style="display: none;"
+                    >
+                        Cancel Edit
+                    </button>
+
+                </div>
+
+
+                <p
+                    id="teacherAnnouncementFormMessage"
+                    class="teacher-form-message"
+                ></p>
+
+            </form>
+
+        </section>
+
+
+        <!-- ANNOUNCEMENTS -->
+
+        <section class="teacher-announcement-section">
+
+            <div class="teacher-section-header">
+
+                <div>
+
+                    <p class="teacher-section-eyebrow">
+                        MANAGE
+                    </p>
+
+                    <h2>
+                        My Announcements
+                    </h2>
+
+                    <p>
+                        View, edit and remove announcements you
+                        have published.
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <div
+                id="teacherAnnouncementsContainer"
+                class="teacher-announcements-container"
+            >
+
+                <div class="teacher-loading">
+                    Loading announcements...
+                </div>
+
+            </div>
+
+        </section>
+
+    </main>
+
+</div>
+
+
+<script
+    src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"
+></script>
+
+<script src="js/main.js"></script>
+
+</body>
+
+</html>
