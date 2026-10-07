@@ -5915,3 +5915,353 @@ body {
 .teacher-conduct-delete-button:hover {
     background: #fecaca;
 }
+
+/* ==========================================
+   TEACHER ASSIGNMENTS
+   ========================================== */
+
+.teacher-assignment-section {
+    background: #ffffff;
+    border-radius: 18px;
+    padding: 28px;
+    margin-bottom: 28px;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.06);
+    border: 1px solid #e5e7eb;
+}
+
+.teacher-section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 24px;
+}
+
+.teacher-section-header h2 {
+    margin: 0 0 6px;
+    font-size: 22px;
+    color: #111827;
+}
+
+.teacher-section-header p {
+    margin: 0;
+    color: #6b7280;
+    font-size: 14px;
+}
+
+
+/* ==========================================
+   ASSIGNMENT FORM
+   ========================================== */
+
+.teacher-assignment-form {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 20px;
+}
+
+.teacher-form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.teacher-form-group:nth-child(3),
+.teacher-form-group:nth-child(4) {
+    grid-column: 1 / -1;
+}
+
+.teacher-form-group label {
+    font-size: 14px;
+    font-weight: 600;
+    color: #374151;
+}
+
+.teacher-form-group input,
+.teacher-form-group select,
+.teacher-form-group textarea {
+    width: 100%;
+    box-sizing: border-box;
+    border: 1px solid #d1d5db;
+    border-radius: 10px;
+    padding: 12px 14px;
+    font-size: 14px;
+    background: #ffffff;
+    color: #111827;
+    transition: 0.2s ease;
+}
+
+.teacher-form-group input:focus,
+.teacher-form-group select:focus,
+.teacher-form-group textarea:focus {
+    outline: none;
+    border-color: #16a34a;
+    box-shadow: 0 0 0 3px rgba(22, 163, 74, 0.10);
+}
+
+.teacher-form-group textarea {
+    resize: vertical;
+    min-height: 120px;
+}
+
+
+/* ==========================================
+   CREATE BUTTON
+   ========================================== */
+
+.teacher-primary-button {
+    grid-column: 1 / -1;
+    border: none;
+    border-radius: 10px;
+    padding: 13px 20px;
+    background: #16a34a;
+    color: #ffffff;
+    font-size: 14px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: 0.2s ease;
+}
+
+.teacher-primary-button:hover {
+    background: #15803d;
+    transform: translateY(-1px);
+}
+
+
+/* ==========================================
+   FORM MESSAGE
+   ========================================== */
+
+.teacher-form-message {
+    grid-column: 1 / -1;
+    min-height: 20px;
+    font-size: 14px;
+    font-weight: 600;
+}
+
+
+/* ==========================================
+   ASSIGNMENT GRID
+   ========================================== */
+
+.teacher-assignments-container {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 20px;
+}
+
+
+/* ==========================================
+   ASSIGNMENT CARD
+   ========================================== */
+
+.teacher-assignment-card {
+    position: relative;
+    background: #ffffff;
+    border: 1px solid #e5e7eb;
+    border-radius: 16px;
+    padding: 22px;
+    transition: 0.25s ease;
+    overflow: hidden;
+}
+
+.teacher-assignment-card::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 5px;
+    height: 100%;
+    background: #16a34a;
+}
+
+.teacher-assignment-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 12px 28px rgba(0, 0, 0, 0.09);
+    border-color: #bbf7d0;
+}
+
+
+/* ==========================================
+   CARD TOP
+   ========================================== */
+
+.teacher-assignment-card-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 15px;
+    margin-bottom: 18px;
+}
+
+.teacher-assignment-card h3 {
+    margin: 8px 0 0;
+    font-size: 19px;
+    color: #111827;
+    line-height: 1.35;
+}
+
+.teacher-assignment-subject {
+    display: inline-block;
+    background: #dcfce7;
+    color: #166534;
+    padding: 6px 10px;
+    border-radius: 999px;
+    font-size: 12px;
+    font-weight: 700;
+}
+
+
+/* ==========================================
+   DETAILS
+   ========================================== */
+
+.teacher-assignment-details {
+    display: flex;
+    gap: 20px;
+    flex-wrap: wrap;
+    margin-bottom: 16px;
+    padding: 13px;
+    background: #f9fafb;
+    border-radius: 10px;
+}
+
+.teacher-assignment-details p {
+    margin: 0;
+    font-size: 13px;
+    color: #6b7280;
+}
+
+.teacher-assignment-details strong {
+    color: #374151;
+}
+
+
+/* ==========================================
+   DESCRIPTION
+   ========================================== */
+
+.teacher-assignment-description {
+    margin: 0 0 20px;
+    padding: 14px;
+    background: #f8fafc;
+    border-radius: 10px;
+    color: #4b5563;
+    font-size: 14px;
+    line-height: 1.6;
+}
+
+
+/* ==========================================
+   ACTION BUTTONS
+   ========================================== */
+
+.teacher-assignment-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    margin-top: 18px;
+}
+
+.teacher-assignment-edit-button,
+.teacher-assignment-delete-button {
+    border: none;
+    padding: 9px 15px;
+    border-radius: 9px;
+    font-size: 13px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: 0.2s ease;
+}
+
+.teacher-assignment-edit-button {
+    background: #dcfce7;
+    color: #166534;
+}
+
+.teacher-assignment-edit-button:hover {
+    background: #bbf7d0;
+}
+
+.teacher-assignment-delete-button {
+    background: #fee2e2;
+    color: #b91c1c;
+}
+
+.teacher-assignment-delete-button:hover {
+    background: #fecaca;
+}
+
+
+/* ==========================================
+   EMPTY / LOADING / ERROR
+   ========================================== */
+
+.teacher-loading,
+.teacher-empty,
+.teacher-error {
+    grid-column: 1 / -1;
+    text-align: center;
+    padding: 45px 20px;
+    border-radius: 14px;
+    background: #f9fafb;
+    color: #6b7280;
+    font-size: 14px;
+}
+
+.teacher-error {
+    color: #b91c1c;
+    background: #fef2f2;
+}
+
+
+/* ==========================================
+   RESPONSIVE
+   ========================================== */
+
+@media (max-width: 900px) {
+
+    .teacher-assignments-container {
+        grid-template-columns: 1fr;
+    }
+
+}
+
+@media (max-width: 700px) {
+
+    .teacher-assignment-section {
+        padding: 20px;
+    }
+
+    .teacher-assignment-form {
+        grid-template-columns: 1fr;
+    }
+
+    .teacher-form-group:nth-child(3),
+    .teacher-form-group:nth-child(4) {
+        grid-column: auto;
+    }
+
+    .teacher-primary-button,
+    .teacher-form-message {
+        grid-column: auto;
+    }
+
+}
+
+@media (max-width: 500px) {
+
+    .teacher-assignment-details {
+        flex-direction: column;
+        gap: 8px;
+    }
+
+    .teacher-assignment-actions {
+        justify-content: stretch;
+    }
+
+    .teacher-assignment-edit-button,
+    .teacher-assignment-delete-button {
+        flex: 1;
+    }
+
+}
