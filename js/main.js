@@ -13091,37 +13091,33 @@ async function loadTeacherDuty() {
     console.log("Loading teacher on duty...");
 
     const teacherDutyContainer =
-        document.getElementById(
-            "teacherDutyContainer"
-        );
+        document.getElementById("teacherDutyContainer");
 
     const teacherTodayDuty =
-        document.getElementById(
-            "teacherTodayDuty"
-        );
+        document.getElementById("teacherTodayDuty");
 
 
     // ==========================================
     // GET TODAY'S DATE
     // ==========================================
 
-   const today =
-    new Date()
-        .toISOString()
-        .split("T")[0];
+    const today =
+        new Date()
+            .toISOString()
+            .split("T")[0];
 
     console.log(
-    "Teacher duty date being searched:",
-    today
-);
+        "Teacher duty date being searched:",
+        today
+    );
 
 
-        // ==========================================
-        // GET TODAY'S DUTY
-        // ==========================================
+    // ==========================================
+    // GET TODAY'S DUTY
+    // ==========================================
 
     try {
-        
+
         const {
             data,
             error
@@ -13135,22 +13131,14 @@ async function loadTeacherDuty() {
                 start_time,
                 end_time
             `)
-            .eq(
-                "duty_date",
-                today
-            )
-            .order(
-                "start_time",
-                {
-                    ascending: true
-                }
-            );
+            .eq("duty_date", today)
+            .order("start_time", {
+                ascending: true
+            });
 
 
         if (error) {
-
             throw error;
-
         }
 
 
@@ -13164,21 +13152,16 @@ async function loadTeacherDuty() {
         // NO DUTY
         // ==========================================
 
-        if (
-            !data ||
-            data.length === 0
-        ) {
+        if (!data || data.length === 0) {
 
             if (teacherDutyContainer) {
 
                 teacherDutyContainer.innerHTML = `
                     <div class="empty-state">
-
                         <p>
                             No teacher on duty has been
                             assigned today.
                         </p>
-
                     </div>
                 `;
 
@@ -13207,22 +13190,15 @@ async function loadTeacherDuty() {
                 return "";
             }
 
-            const parts =
-                time.split(":");
+            const parts = time.split(":");
 
             let hours =
-                parseInt(
-                    parts[0],
-                    10
-                );
+                parseInt(parts[0], 10);
 
-            const minutes =
-                parts[1];
+            const minutes = parts[1];
 
             const period =
-                hours >= 12
-                    ? "PM"
-                    : "AM";
+                hours >= 12 ? "PM" : "AM";
 
             hours =
                 hours % 12 || 12;
@@ -13256,7 +13232,6 @@ async function loadTeacherDuty() {
 
 
                 return `
-
                     <div class="admin-activity-item">
 
                         <div class="admin-activity-dot"></div>
@@ -13276,7 +13251,6 @@ async function loadTeacherDuty() {
                         </div>
 
                     </div>
-
                 `;
 
             }).join("");
@@ -13301,9 +13275,8 @@ async function loadTeacherDuty() {
         if (teacherTodayDuty) {
 
             const names =
-                data.map(
-                    duty =>
-                        `${duty.teacher_name} — ${duty.duty_area}`
+                data.map(duty =>
+                    `${duty.teacher_name} — ${duty.duty_area}`
                 );
 
             teacherTodayDuty.textContent =
@@ -13316,9 +13289,7 @@ async function loadTeacherDuty() {
             "Teacher on duty loaded successfully."
         );
 
-    }
-
-    catch (error) {
+    } catch (error) {
 
         console.error(
             "Teacher duty error:",
@@ -13330,11 +13301,9 @@ async function loadTeacherDuty() {
 
             teacherDutyContainer.innerHTML = `
                 <div class="empty-state">
-
                     <p>
                         Unable to load teacher duty information.
                     </p>
-
                 </div>
             `;
 
@@ -13349,35 +13318,5 @@ async function loadTeacherDuty() {
         }
 
     }
-
-}
-
-
-// ==========================================
-// TEACHER DUTY PAGE
-// ==========================================
-
-if (
-    window.location.pathname.includes(
-        "teacher-duty.html"
-    )
-) {
-
-    loadTeacherDuty();
-
-}
-
-
-// ==========================================
-// TEACHER DASHBOARD DUTY
-// ==========================================
-
-if (
-    window.location.pathname.includes(
-        "teacher-dashboard.html"
-    )
-) {
-
-    loadTeacherDuty();
 
 }
