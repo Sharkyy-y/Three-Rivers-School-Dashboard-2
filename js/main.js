@@ -4936,6 +4936,10 @@ async function loadAdminStudents() {
 
 async function loadTotalTeachers() {
 
+    console.log(
+    "LOADING TOTAL TEACHERS..."
+);
+
     const totalTeachers =
         document.getElementById(
             "totalTeachers"
