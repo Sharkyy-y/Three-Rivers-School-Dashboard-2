@@ -5094,6 +5094,215 @@ async function loadAdminTeachers() {
 }
 
 // ==========================================
+// EDIT TEACHER
+// ==========================================
+
+window.openEditTeacherModal = async function (teacherId) {
+
+    console.log(
+        "EDIT TEACHER CLICKED:",
+        teacherId
+    );
+
+    const teacherModal =
+        document.getElementById("teacherModal");
+
+    const teacherFormMessage =
+        document.getElementById(
+            "teacherFormMessage"
+        );
+
+    const teacherModalTitle =
+        document.getElementById(
+            "teacherModalTitle"
+        );
+
+    if (!teacherModal) {
+        console.error("Teacher modal not found.");
+        return;
+    }
+
+    teacherModal.classList.add("active");
+
+    if (teacherFormMessage) {
+        teacherFormMessage.textContent =
+            "Loading teacher information...";
+    }
+
+    const {
+        data: teacher,
+        error
+    } = await supabaseClient
+        .from("teachers")
+        .select(
+            "id, full_name, email, phone, gender, date_of_birth, address"
+        )
+        .eq("id", teacherId)
+        .single();
+
+    console.log(
+        "TEACHER EDIT RESULT:",
+        teacher,
+        error
+    );
+
+    if (error) {
+
+        console.error(
+            "LOAD TEACHER ERROR:",
+            error
+        );
+
+        if (teacherFormMessage) {
+            teacherFormMessage.textContent =
+                "Unable to load teacher information.";
+        }
+
+        return;
+    }
+
+    document.getElementById(
+        "teacherId"
+    ).value = teacher.id;
+
+    document.getElementById(
+        "teacherFullName"
+    ).value = teacher.full_name || "";
+
+    document.getElementById(
+        "teacherEmail"
+    ).value = teacher.email || "";
+
+    document.getElementById(
+        "teacherPhone"
+    ).value = teacher.phone || "";
+
+    document.getElementById(
+        "teacherGender"
+    ).value = teacher.gender || "";
+
+    document.getElementById(
+        "teacherDateOfBirth"
+    ).value = teacher.date_of_birth || "";
+
+    document.getElementById(
+        "teacherAddress"
+    ).value = teacher.address || "";
+
+    if (teacherModalTitle) {
+        teacherModalTitle.textContent =
+            "Edit Teacher";
+    }
+
+    const description =
+        teacherModal.querySelector(
+            ".student-modal-header p"
+        );
+
+    if (description) {
+        description.textContent =
+            "Update the teacher's information below.";
+    }
+
+    if (teacherFormMessage) {
+        teacherFormMessage.textContent = "";
+    }
+};
+
+
+// ==========================================
+// DELETE TEACHER
+// ==========================================
+
+window.deleteTeacher = async function (teacherId) {
+
+    console.log(
+        "DELETE TEACHER CLICKED:",
+        teacherId
+    );
+
+    const confirmed =
+        confirm(
+            "Are you sure you want to permanently delete this teacher?\n\n" +
+            "This will remove the teacher's school record and login account."
+        );
+
+    if (!confirmed) {
+        return;
+    }
+
+    try {
+
+        alert("Deleting teacher...");
+
+        const {
+            data,
+            error
+        } = await supabaseClient
+            .functions
+            .invoke(
+                "delete-teacher",
+                {
+                    body: {
+                        teacherId: teacherId
+                    }
+                }
+            );
+
+        console.log(
+            "DELETE TEACHER DATA:",
+            data
+        );
+
+        console.log(
+            "DELETE TEACHER ERROR:",
+            error
+        );
+
+        if (error) {
+
+            alert(
+                "Unable to delete teacher:\n\n" +
+                error.message
+            );
+
+            return;
+        }
+
+        if (
+            !data ||
+            !data.success
+        ) {
+
+            alert(
+                data?.error ||
+                "Unable to delete teacher."
+            );
+
+            return;
+        }
+
+        await loadAdminTeachers();
+
+        alert(
+            "Teacher deleted successfully."
+        );
+
+    } catch (error) {
+
+        console.error(
+            "DELETE TEACHER ERROR:",
+            error
+        );
+
+        alert(
+            error.message ||
+            "An unexpected error occurred."
+        );
+    }
+};
+
+// ==========================================
 // SEARCH TEACHERS
 // ==========================================
 
