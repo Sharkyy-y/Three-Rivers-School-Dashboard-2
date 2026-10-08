@@ -128,6 +128,74 @@
             }
 
         }
+        .student-details-card {
+    margin-top: 25px;
+    background: white;
+    border-radius: 14px;
+    padding: 25px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.06);
+}
+
+.student-details-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 25px;
+}
+
+.student-details-header h2 {
+    margin: 0 0 5px;
+}
+
+.student-details-header p {
+    margin: 0;
+    color: #777;
+}
+
+.student-details-header button {
+    border: none;
+    background: #f1f5f9;
+    width: 35px;
+    height: 35px;
+    border-radius: 50%;
+    cursor: pointer;
+    font-size: 16px;
+}
+
+.student-details-header button:hover {
+    background: #fee2e2;
+}
+
+.student-details-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px;
+}
+
+.student-detail-item {
+    padding: 18px;
+    background: #f8fafc;
+    border-radius: 10px;
+}
+
+.student-detail-item span {
+    display: block;
+    font-size: 13px;
+    color: #777;
+    margin-bottom: 6px;
+}
+
+.student-detail-item strong {
+    font-size: 16px;
+}
+
+@media (max-width: 600px) {
+
+    .student-details-grid {
+        grid-template-columns: 1fr;
+    }
+
+}
 
     </style>
 
@@ -284,23 +352,83 @@
 
                         </thead>
 
+<tbody id="teacherStudentsTableBody">
 
-                        <tbody id="teacherStudentsTableBody">
+    <tr>
 
-                            <tr>
+        <td
+            colspan="4"
+            class="empty-state"
+        >
+            Loading students...
+        </td>
 
-                                <td
-                                    colspan="4"
-                                    class="empty-state"
-                                >
-                                    Loading students...
-                                </td>
+    </tr>
 
-                            </tr>
-
-                        </tbody>
+</tbody>
 
                     </table>
+
+                    <div
+    id="teacherStudentDetails"
+    class="student-details-card"
+    style="display: none;"
+>
+
+    <div class="student-details-header">
+
+        <div>
+
+            <h2 id="selectedStudentName">
+                Student Name
+            </h2>
+
+            <p id="selectedStudentAdmission">
+                Admission Number
+            </p>
+
+        </div>
+
+        <button
+            id="closeStudentDetails"
+            type="button"
+        >
+            ✕
+        </button>
+
+    </div>
+
+
+    <div class="student-details-grid">
+
+        <div class="student-detail-item">
+
+            <span>
+                Class
+            </span>
+
+            <strong id="selectedStudentClass">
+                —
+            </strong>
+
+        </div>
+
+
+        <div class="student-detail-item">
+
+            <span>
+                Email
+            </span>
+
+            <strong id="selectedStudentEmail">
+                —
+            </strong>
+
+        </div>
+
+    </div>
+
+</div>
 
                 </section>
 
