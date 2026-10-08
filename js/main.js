@@ -5013,10 +5013,6 @@ if (passwordInput) {
 
 }
 
-        const passwordInput =
-    document.getElementById(
-        `password-${studentId}`
-    );
 
 if (passwordInput) {
 
