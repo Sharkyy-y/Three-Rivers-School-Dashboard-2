@@ -4911,6 +4911,12 @@ async function loadAdminStudents() {
     </button>
 
     <button
+    class="delete-student-button"
+    onclick="deleteStudent('${student.id}')">
+    Delete
+</button>
+
+    <button
         class="reset-password-button"
         onclick="resetStudentPassword('${student.id}')">
         Reset Password
@@ -15213,5 +15219,113 @@ if (
 ) {
 
     loadAdminCredentials();
+
+}
+
+// ==========================================
+// DELETE STUDENT
+// ==========================================
+
+async function deleteStudent(studentId) {
+
+    const confirmed =
+        confirm(
+            "Are you sure you want to permanently delete this student?\n\n" +
+            "This will remove the student's school record and login account."
+        );
+
+    if (!confirmed) {
+        return;
+    }
+
+    try {
+
+        // ==========================================
+        // SHOW DELETING MESSAGE
+        // ==========================================
+
+        alert("Deleting student...");
+
+        // ==========================================
+        // CALL EDGE FUNCTION
+        // ==========================================
+
+        const {
+            data,
+            error
+        } =
+            await supabaseClient.functions.invoke(
+                "delete-student",
+                {
+                    body: {
+                        studentId:
+                            studentId
+                    }
+                }
+            );
+
+        if (error) {
+
+            console.error(
+                "DELETE STUDENT ERROR:",
+                error
+            );
+
+            alert(
+                "Unable to delete student:\n" +
+                error.message
+            );
+
+            return;
+        }
+
+        if (
+            !data ||
+            !data.success
+        ) {
+
+            console.error(
+                "DELETE STUDENT RESPONSE:",
+                data
+            );
+
+            alert(
+                data?.error ||
+                "Unable to delete student."
+            );
+
+            return;
+        }
+
+        // ==========================================
+        // REMOVE SAVED PASSWORD
+        // ==========================================
+
+        sessionStorage.removeItem(
+            `studentPassword_${studentId}`
+        );
+
+        // ==========================================
+        // REFRESH STUDENT LIST
+        // ==========================================
+
+        await loadAdminStudents();
+
+        alert(
+            "Student deleted successfully."
+        );
+
+    } catch (error) {
+
+        console.error(
+            "DELETE STUDENT EXCEPTION:",
+            error
+        );
+
+        alert(
+            "Something went wrong while deleting the student."
+        );
+
+    }
 
 }
