@@ -5133,6 +5133,138 @@ if (teacherSearch) {
 }
 
 // ==========================================
+// ADMIN - TEACHER MODAL
+// ==========================================
+
+const addTeacherButton =
+    document.getElementById(
+        "addTeacherButton"
+    );
+
+const teacherModal =
+    document.getElementById(
+        "teacherModal"
+    );
+
+const closeTeacherModal =
+    document.getElementById(
+        "closeTeacherModal"
+    );
+
+const cancelTeacherButton =
+    document.getElementById(
+        "cancelTeacherButton"
+    );
+
+const teacherForm =
+    document.getElementById(
+        "teacherForm"
+    );
+
+
+// OPEN ADD TEACHER MODAL
+
+if (addTeacherButton) {
+
+    addTeacherButton.addEventListener(
+        "click",
+        function () {
+
+            teacherForm.reset();
+
+            document.getElementById(
+                "teacherId"
+            ).value = "";
+
+            document.getElementById(
+                "teacherModalTitle"
+            ).textContent =
+                "Add Teacher";
+
+            const description =
+                teacherModal.querySelector(
+                    ".student-modal-header p"
+                );
+
+            if (description) {
+
+                description.textContent =
+                    "Enter the teacher's information below.";
+
+            }
+
+            document.getElementById(
+                "teacherFormMessage"
+            ).textContent = "";
+
+            teacherModal.classList.add(
+                "active"
+            );
+
+        }
+    );
+
+}
+
+
+// CLOSE MODAL
+
+function closeTeacherModalWindow() {
+
+    if (teacherModal) {
+
+        teacherModal.classList.remove(
+            "active"
+        );
+
+    }
+
+}
+
+
+if (closeTeacherModal) {
+
+    closeTeacherModal.addEventListener(
+        "click",
+        closeTeacherModalWindow
+    );
+
+}
+
+
+if (cancelTeacherButton) {
+
+    cancelTeacherButton.addEventListener(
+        "click",
+        closeTeacherModalWindow
+    );
+
+}
+
+
+// CLOSE WHEN CLICKING OUTSIDE
+
+if (teacherModal) {
+
+    teacherModal.addEventListener(
+        "click",
+        function (event) {
+
+            if (
+                event.target ===
+                teacherModal
+            ) {
+
+                closeTeacherModalWindow();
+
+            }
+
+        }
+    );
+
+}
+
+// ==========================================
 // RESET STUDENT PASSWORD
 // ==========================================
 
