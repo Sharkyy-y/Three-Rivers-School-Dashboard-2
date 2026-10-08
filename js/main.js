@@ -4985,13 +4985,25 @@ async function resetStudentPassword(studentId) {
 
             return;
         }
-
+        
        // ==========================================
 // SHOW AND COPY NEW PASSWORD
 // ==========================================
 
 const newPassword =
     accountData.student.temporary_password;
+
+        const passwordInput =
+    document.getElementById(
+        `password-${studentId}`
+    );
+
+if (passwordInput) {
+
+    passwordInput.value =
+        newPassword;
+
+}
 
 const copyPassword =
     confirm(
@@ -5047,6 +5059,53 @@ if (copyPassword) {
         );
     }
 }
+
+// ==========================================
+// COPY STUDENT PASSWORD
+// ==========================================
+
+async function copyStudentPassword(studentId) {
+
+    const passwordInput =
+        document.getElementById(
+            `password-${studentId}`
+        );
+
+    if (
+        !passwordInput ||
+        !passwordInput.value
+    ) {
+
+        alert(
+            "No password is available to copy."
+        );
+
+        return;
+    }
+
+    try {
+
+        await navigator.clipboard.writeText(
+            passwordInput.value
+        );
+
+        alert(
+            "Password copied to clipboard!"
+        );
+
+    } catch (error) {
+
+        console.error(
+            "COPY PASSWORD ERROR:",
+            error
+        );
+
+        alert(
+            "The password could not be copied."
+        );
+    }
+}
+
 // ==========================================
 // OPEN EDIT STUDENT MODAL
 // ==========================================
