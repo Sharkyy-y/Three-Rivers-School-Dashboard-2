@@ -13581,6 +13581,10 @@ async function loadTeacherProfile() {
     console.log("Loading teacher profile...");
 
 
+    // ==========================================
+    // GET ELEMENTS
+    // ==========================================
+
     const teacherProfileName =
         document.getElementById(
             "teacherProfileName"
@@ -13611,6 +13615,21 @@ async function loadTeacherProfile() {
             "teacherProfileCreated"
         );
 
+    const teacherProfilePhoto =
+        document.getElementById(
+            "teacherProfilePhoto"
+        );
+
+    const teacherProfilePlaceholder =
+        document.getElementById(
+            "teacherProfilePlaceholder"
+        );
+
+    const teacherPhotoInput =
+        document.getElementById(
+            "teacherPhotoInput"
+        );
+
 
     try {
 
@@ -13623,7 +13642,8 @@ async function loadTeacherProfile() {
                 user
             },
             error: userError
-        } = await supabaseClient.auth.getUser();
+        } =
+            await supabaseClient.auth.getUser();
 
 
         if (userError) {
@@ -13655,20 +13675,21 @@ async function loadTeacherProfile() {
         const {
             data: profile,
             error: profileError
-        } = await supabaseClient
-            .from("profiles")
-            .select(`
-                id,
-                full_name,
-                email,
-                role,
-                created_at
-            `)
-            .eq(
-                "id",
-                user.id
-            )
-            .single();
+        } =
+            await supabaseClient
+                .from("profiles")
+                .select(`
+                    id,
+                    full_name,
+                    email,
+                    role,
+                    created_at
+                `)
+                .eq(
+                    "id",
+                    user.id
+                )
+                .single();
 
 
         if (profileError) {
@@ -13741,7 +13762,9 @@ async function loadTeacherProfile() {
 
             teacherProfileRole.textContent =
                 profile.role
-                    ? profile.role.charAt(0).toUpperCase() +
+                    ? profile.role
+                        .charAt(0)
+                        .toUpperCase() +
                       profile.role.slice(1)
                     : "Teacher";
 
@@ -13778,6 +13801,251 @@ async function loadTeacherProfile() {
                     "Not available";
 
             }
+
+        }
+
+
+        // ==========================================
+        // LOAD SAVED PROFILE PHOTO
+        // ==========================================
+
+        const photoPath =
+            user.id +
+            "/profile.jpg";
+
+
+        const {
+            data: photoData
+        } =
+            supabaseClient.storage
+                .from("profile-photos")
+                .getPublicUrl(
+                    photoPath
+                );
+
+
+        /*
+         * The bucket is private, so we use a
+         * signed URL instead of the public URL.
+         */
+
+        const {
+            data: signedPhoto,
+            error: signedPhotoError
+        } =
+            await supabaseClient.storage
+                .from("profile-photos")
+                .createSignedUrl(
+                    photoPath,
+                    3600
+                );
+
+
+        if (
+            !signedPhotoError &&
+            signedPhoto &&
+            signedPhoto.signedUrl
+        ) {
+
+            if (teacherProfilePhoto) {
+
+                teacherProfilePhoto.src =
+                    signedPhoto.signedUrl;
+
+                teacherProfilePhoto.style.display =
+                    "block";
+
+            }
+
+
+            if (teacherProfilePlaceholder) {
+
+                teacherProfilePlaceholder.style.display =
+                    "none";
+
+            }
+
+        }
+
+
+        // ==========================================
+        // PHOTO UPLOAD
+        // ==========================================
+
+        if (teacherPhotoInput) {
+
+            teacherPhotoInput.addEventListener(
+                "change",
+                async function () {
+
+                    const file =
+                        this.files[0];
+
+
+                    if (!file) {
+                        return;
+                    }
+
+
+                    // ==================================
+                    // CHECK FILE TYPE
+                    // ==================================
+
+                    if (
+                        !file.type.startsWith(
+                            "image/"
+                        )
+                    ) {
+
+                        alert(
+                            "Please select an image file."
+                        );
+
+                        this.value = "";
+
+                        return;
+
+                    }
+
+
+                    // ==================================
+                    // CHECK FILE SIZE
+                    // ==================================
+
+                    if (
+                        file.size >
+                        5 * 1024 * 1024
+                    ) {
+
+                        alert(
+                            "Please choose an image smaller than 5 MB."
+                        );
+
+                        this.value = "";
+
+                        return;
+
+                    }
+
+
+                    console.log(
+                        "Uploading teacher profile photo..."
+                    );
+
+
+                    try {
+
+                        // ==============================
+                        // UPLOAD PHOTO
+                        // ==============================
+
+                        const {
+                            error: uploadError
+                        } =
+                            await supabaseClient.storage
+                                .from("profile-photos")
+                                .upload(
+                                    photoPath,
+                                    file,
+                                    {
+                                        upsert: true,
+                                        contentType:
+                                            file.type
+                                    }
+                                );
+
+
+                        if (uploadError) {
+
+                            throw uploadError;
+
+                        }
+
+
+                        console.log(
+                            "Teacher profile photo uploaded."
+                        );
+
+
+                        // ==============================
+                        // GET NEW SIGNED URL
+                        // ==============================
+
+                        const {
+                            data: newPhoto,
+                            error: newPhotoError
+                        } =
+                            await supabaseClient.storage
+                                .from("profile-photos")
+                                .createSignedUrl(
+                                    photoPath,
+                                    3600
+                                );
+
+
+                        if (newPhotoError) {
+
+                            throw newPhotoError;
+
+                        }
+
+
+                        if (
+                            newPhoto &&
+                            newPhoto.signedUrl
+                        ) {
+
+                            if (
+                                teacherProfilePhoto
+                            ) {
+
+                                teacherProfilePhoto.src =
+                                    newPhoto.signedUrl;
+
+                                teacherProfilePhoto.style.display =
+                                    "block";
+
+                            }
+
+
+                            if (
+                                teacherProfilePlaceholder
+                            ) {
+
+                                teacherProfilePlaceholder.style.display =
+                                    "none";
+
+                            }
+
+                        }
+
+
+                        alert(
+                            "Profile photo updated successfully!"
+                        );
+
+
+                    } catch (uploadError) {
+
+                        console.error(
+                            "Profile photo upload error:",
+                            uploadError
+                        );
+
+
+                        alert(
+                            "Unable to update profile photo."
+                        );
+
+                    }
+
+
+                    // Clear file input
+
+                    this.value = "";
+
+                }
+            );
 
         }
 
