@@ -4931,6 +4931,163 @@ async function loadAdminStudents() {
 }
 
 // ==========================================
+// ADMIN - LOAD TEACHERS
+// ==========================================
+
+async function loadAdminTeachers() {
+
+    const teachersContainer =
+        document.getElementById(
+            "teachersContainer"
+        );
+
+    const teachersCount =
+        document.getElementById(
+            "teachersCount"
+        );
+
+    if (!teachersContainer) {
+        return;
+    }
+
+    teachersContainer.innerHTML =
+        "<p>Loading teachers...</p>";
+
+    const {
+        data: teachers,
+        error
+    } = await supabaseClient
+        .from("teachers")
+        .select(
+            "id, full_name, email, phone, gender, date_of_birth, address"
+        )
+        .order(
+            "full_name",
+            {
+                ascending: true
+            }
+        );
+
+    if (error) {
+
+        console.error(
+            "ADMIN TEACHERS ERROR:",
+            error
+        );
+
+        teachersContainer.innerHTML =
+            "<p>Unable to load teachers.</p>";
+
+        return;
+    }
+
+    if (teachersCount) {
+
+        teachersCount.textContent =
+            `${teachers.length} teacher${teachers.length === 1 ? "" : "s"}`;
+
+    }
+
+    if (teachers.length === 0) {
+
+        teachersContainer.innerHTML =
+            `
+            <div class="empty-state">
+
+                <p>
+                    No teachers have been added yet.
+                </p>
+
+            </div>
+            `;
+
+        return;
+    }
+
+    teachersContainer.innerHTML = "";
+
+    teachers.forEach(
+        teacher => {
+
+            const card =
+                document.createElement("div");
+
+            card.className =
+                "student-admin-card";
+
+            const initials =
+                teacher.full_name
+                    ? teacher.full_name
+                        .split(" ")
+                        .map(
+                            name =>
+                                name.charAt(0)
+                        )
+                        .slice(0, 2)
+                        .join("")
+                        .toUpperCase()
+                    : "T";
+
+            card.innerHTML = `
+
+                <div class="student-admin-info">
+
+                    <div class="student-admin-avatar">
+                        ${initials}
+                    </div>
+
+                    <div class="student-admin-details">
+
+                        <h3>
+                            ${teacher.full_name || "Unnamed Teacher"}
+                        </h3>
+
+                        <p>
+                            <strong>Email:</strong>
+                            ${teacher.email || "—"}
+                        </p>
+
+                        <p>
+                            <strong>Phone:</strong>
+                            ${teacher.phone || "—"}
+                        </p>
+
+                    </div>
+
+                </div>
+
+                <div class="student-admin-actions">
+
+                    <button
+                        class="edit-student-button"
+                        onclick="openEditTeacherModal('${teacher.id}')">
+
+                        Edit
+
+                    </button>
+
+                    <button
+                        class="delete-student-button"
+                        onclick="deleteTeacher('${teacher.id}')">
+
+                        Delete
+
+                    </button>
+
+                </div>
+
+            `;
+
+            teachersContainer.appendChild(
+                card
+            );
+
+        }
+    );
+
+}
+
+// ==========================================
 // RESET STUDENT PASSWORD
 // ==========================================
 
