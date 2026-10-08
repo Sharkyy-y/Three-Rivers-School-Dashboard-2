@@ -5926,19 +5926,57 @@ if (error) {
                     }
 
 
-                    alert(
-                        "Teacher created successfully!\n\n" +
-                        "Teacher: " +
-                        fullName +
-                        "\n\n" +
-                        "Email: " +
-                        email +
-                        "\n\n" +
-                        "Temporary Password: " +
-                        data.temporaryPassword +
-                        "\n\n" +
-                        "Give these login details to the teacher."
-                    );
+                    // ==========================================
+// STORE NEW TEACHER PASSWORD
+// ==========================================
+
+if (
+    data &&
+    data.temporaryPassword
+) {
+
+    const {
+        data: createdTeacher,
+        error: createdTeacherError
+    } =
+        await supabaseClient
+            .from("teachers")
+            .select("id")
+            .eq("email", email)
+            .single();
+
+    if (
+        !createdTeacherError &&
+        createdTeacher
+    ) {
+
+        sessionStorage.setItem(
+            `teacherPassword_${createdTeacher.id}`,
+            data.temporaryPassword
+        );
+
+        console.log(
+            "Teacher temporary password stored."
+        );
+    }
+}
+
+
+// ==========================================
+// SHOW LOGIN DETAILS
+// ==========================================
+
+alert(
+    "Teacher created successfully!\n\n" +
+    "Teacher: " + fullName +
+    "\n\n" +
+    "Email: " + email +
+    "\n\n" +
+    "Temporary Password: " +
+    data.temporaryPassword +
+    "\n\n" +
+    "The password has also been saved in the teacher directory."
+);
 
 
                     teacherForm.reset();
