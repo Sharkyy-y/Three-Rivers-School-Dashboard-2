@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>Teachers on Duty | Student Management Portal</title>
+
+    <link
+        rel="stylesheet"
+        href="css/style.css"
+    >
+
+    <link
+        rel="stylesheet"
+        href="css/dashboard.css"
+    >
+
+</head>
+
+<body>
+
+    <div class="dashboard-layout">
+
+
+        <!-- ==============================
+             SIDEBAR
+        =============================== -->
+
+        <aside class="sidebar">
+
+            <div class="sidebar-logo">
+
+                <h2>
+                    Student Portal
+                </h2>
+
+                <p>
+                    Teacher Portal
+                </p>
+
+            </div>
+
+
+            <nav class="sidebar-nav">
+
+                <a href="teacher-dashboard.html">
+                    🏠 Dashboard
+                </a>
+
+                <a href="teacher-students.html">
+                    👥 My Students
+                </a>
+
+                <a href="teacher-grades.html">
+                    📊 Grades
+                </a>
+
+                <a href="teacher-conduct.html">
+                    ⚠️ Conduct
+                </a>
+
+                <a href="teacher-assignments.html">
+                    📝 Assignments
+                </a>
+
+                <a href="teacher-announcements.html">
+                    📢 Announcements
+                </a>
+
+                <a href="teacher-timetable.html">
+                    🗓️ Timetable
+                </a>
+
+                <a
+                    href="teacher-duty.html"
+                    class="active"
+                >
+                    👨‍🏫 Teachers on Duty
+                </a>
+
+                <a href="teacher-profile.html">
+                    👤 My Profile
+                </a>
+
+            </nav>
+
+
+            <div class="sidebar-logout">
+
+                <button
+                    id="teacherLogoutButton"
+                    class="logout-button"
+                >
+                    🚪 Logout
+                </button>
+
+            </div>
+
+        </aside>
+
+
+        <!-- ==============================
+             MAIN CONTENT
+        =============================== -->
+
+        <main class="admin-dashboard-page">
+
+
+            <!-- HEADER -->
+
+            <section class="admin-dashboard-header">
+
+                <h1>
+                    Teachers on Duty
+                </h1>
+
+                <p>
+                    View the teachers assigned to duty.
+                </p>
+
+            </section>
+
+
+            <!-- ==============================
+                 TODAY'S DUTY
+            =============================== -->
+
+            <section class="admin-dashboard-section">
+
+                <div class="admin-section-header">
+
+                    <div>
+
+                        <h2>
+                            Today's Duty
+                        </h2>
+
+                        <p>
+                            Teachers assigned to duty today.
+                        </p>
+
+                    </div>
+
+                </div>
+
+
+                <div
+                    id="teacherDutyContainer"
+                    class="admin-activity-list"
+                >
+
+                    <div class="admin-activity-item">
+
+                        <div class="admin-activity-dot"></div>
+
+                        <div>
+
+                            <strong>
+                                Loading...
+                            </strong>
+
+                            <span>
+                                Loading today's duty information...
+                            </span>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </section>
+
+
+            <!-- ==============================
+                 ALL DUTY
+            =============================== -->
+
+            <section class="admin-dashboard-section">
+
+                <div class="admin-section-header">
+
+                    <div>
+
+                        <h2>
+                            Duty Schedule
+                        </h2>
+
+                        <p>
+                            View upcoming teacher duty assignments.
+                        </p>
+
+                    </div>
+
+                </div>
+
+
+                <div
+                    id="teacherDutySchedule"
+                    class="admin-activity-list"
+                >
+
+                    <div class="admin-activity-item">
+
+                        <div class="admin-activity-dot"></div>
+
+                        <div>
+
+                            <strong>
+                                Loading...
+                            </strong>
+
+                            <span>
+                                Loading duty schedule...
+                            </span>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </section>
+
+
+        </main>
+
+    </div>
+
+
+    <!-- SUPABASE -->
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+
+    <!-- MAIN JAVASCRIPT -->
+
+    <script src="js/main.js"></script>
+
+</body>
+
+</html>
