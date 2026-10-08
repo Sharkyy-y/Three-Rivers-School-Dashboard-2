@@ -13091,10 +13091,19 @@ async function loadTeacherDuty() {
     console.log("Loading teacher on duty...");
 
     const teacherDutyContainer =
-        document.getElementById("teacherDutyContainer");
+        document.getElementById(
+            "teacherDutyContainer"
+        );
+
+    const teacherDutySchedule =
+        document.getElementById(
+            "teacherDutySchedule"
+        );
 
     const teacherTodayDuty =
-        document.getElementById("teacherTodayDuty");
+        document.getElementById(
+            "teacherTodayDuty"
+        );
 
 
     // ==========================================
@@ -13112,15 +13121,15 @@ async function loadTeacherDuty() {
     );
 
 
-    // ==========================================
-    // GET TODAY'S DUTY
-    // ==========================================
-
     try {
 
+        // ==========================================
+        // GET TODAY'S DUTY
+        // ==========================================
+
         const {
-            data,
-            error
+            data: todayData,
+            error: todayError
         } = await supabaseClient
             .from("teacher_duty")
             .select(`
@@ -13131,37 +13140,179 @@ async function loadTeacherDuty() {
                 start_time,
                 end_time
             `)
-            .eq("duty_date", today)
-            .order("start_time", {
-                ascending: true
-            });
+            .eq(
+                "duty_date",
+                today
+            )
+            .order(
+                "start_time",
+                {
+                    ascending: true
+                }
+            );
 
 
-        if (error) {
-            throw error;
+        if (todayError) {
+            throw todayError;
         }
 
 
         console.log(
             "Today's teacher duty:",
-            data
+            todayData
         );
 
 
         // ==========================================
-        // NO DUTY
+        // GET DUTY SCHEDULE
         // ==========================================
 
-        if (!data || data.length === 0) {
+        const {
+            data: scheduleData,
+            error: scheduleError
+        } = await supabaseClient
+            .from("teacher_duty")
+            .select(`
+                id,
+                teacher_name,
+                duty_date,
+                duty_area,
+                start_time,
+                end_time
+            `)
+            .gte(
+                "duty_date",
+                today
+            )
+            .order(
+                "duty_date",
+                {
+                    ascending: true
+                }
+            )
+            .order(
+                "start_time",
+                {
+                    ascending: true
+                }
+            );
+
+
+        if (scheduleError) {
+            throw scheduleError;
+        }
+
+
+        console.log(
+            "Teacher duty schedule:",
+            scheduleData
+        );
+
+
+        // ==========================================
+        // FORMAT TIME
+        // ==========================================
+
+        function formatDutyTime(time) {
+
+            if (!time) {
+                return "";
+            }
+
+            const parts =
+                time.split(":");
+
+            let hours =
+                parseInt(
+                    parts[0],
+                    10
+                );
+
+            const minutes =
+                parts[1];
+
+            const period =
+                hours >= 12
+                    ? "PM"
+                    : "AM";
+
+            hours =
+                hours % 12 || 12;
+
+            return `${hours}:${minutes} ${period}`;
+
+        }
+
+
+        // ==========================================
+        // FORMAT DATE
+        // ==========================================
+
+        function formatDutyDate(date) {
+
+            if (!date) {
+                return "";
+            }
+
+            const parts =
+                date.split("-");
+
+            const year =
+                parseInt(
+                    parts[0],
+                    10
+                );
+
+            const month =
+                parseInt(
+                    parts[1],
+                    10
+                ) - 1;
+
+            const day =
+                parseInt(
+                    parts[2],
+                    10
+                );
+
+            const dutyDate =
+                new Date(
+                    year,
+                    month,
+                    day
+                );
+
+            return dutyDate.toLocaleDateString(
+                "en-GB",
+                {
+                    day: "numeric",
+                    month: "short",
+                    year: "numeric"
+                }
+            );
+
+        }
+
+
+        // ==========================================
+        // TODAY'S DUTY
+        // ==========================================
+
+        if (
+            !todayData ||
+            todayData.length === 0
+        ) {
 
             if (teacherDutyContainer) {
 
                 teacherDutyContainer.innerHTML = `
                     <div class="empty-state">
+
                         <p>
                             No teacher on duty has been
                             assigned today.
                         </p>
+
                     </div>
                 `;
 
@@ -13175,112 +13326,167 @@ async function loadTeacherDuty() {
 
             }
 
-            return;
+        } else {
 
-        }
+            const todayHTML =
+                todayData.map(
+                    duty => {
+
+                        const startTime =
+                            formatDutyTime(
+                                duty.start_time
+                            );
+
+                        const endTime =
+                            formatDutyTime(
+                                duty.end_time
+                            );
+
+                        const dutyTime =
+                            startTime && endTime
+                                ? `${startTime} - ${endTime}`
+                                : "Time not specified";
 
 
-        // ==========================================
-        // FORMAT TIME
-        // ==========================================
+                        return `
 
-        function formatDutyTime(time) {
+                            <div class="admin-activity-item">
 
-            if (!time) {
-                return "";
+                                <div class="admin-activity-dot"></div>
+
+                                <div>
+
+                                    <strong>
+                                        ${duty.teacher_name}
+                                    </strong>
+
+                                    <span>
+                                        ${duty.duty_area}
+                                        •
+                                        ${dutyTime}
+                                    </span>
+
+                                </div>
+
+                            </div>
+
+                        `;
+
+                    }
+                ).join("");
+
+
+            if (teacherDutyContainer) {
+
+                teacherDutyContainer.innerHTML =
+                    todayHTML;
+
             }
 
-            const parts = time.split(":");
 
-            let hours =
-                parseInt(parts[0], 10);
+            if (teacherTodayDuty) {
 
-            const minutes = parts[1];
+                const names =
+                    todayData.map(
+                        duty =>
+                            `${duty.teacher_name} — ${duty.duty_area}`
+                    );
 
-            const period =
-                hours >= 12 ? "PM" : "AM";
+                teacherTodayDuty.textContent =
+                    names.join(" | ");
 
-            hours =
-                hours % 12 || 12;
-
-            return `${hours}:${minutes} ${period}`;
+            }
 
         }
 
 
         // ==========================================
-        // CREATE DUTY HTML
+        // DUTY SCHEDULE
         // ==========================================
 
-        const dutyHTML =
-            data.map(duty => {
+        if (
+            !scheduleData ||
+            scheduleData.length === 0
+        ) {
 
-                const startTime =
-                    formatDutyTime(
-                        duty.start_time
-                    );
+            if (teacherDutySchedule) {
 
-                const endTime =
-                    formatDutyTime(
-                        duty.end_time
-                    );
+                teacherDutySchedule.innerHTML = `
+                    <div class="empty-state">
 
-                const dutyTime =
-                    startTime && endTime
-                        ? `${startTime} - ${endTime}`
-                        : "Time not specified";
-
-
-                return `
-                    <div class="admin-activity-item">
-
-                        <div class="admin-activity-dot"></div>
-
-                        <div>
-
-                            <strong>
-                                ${duty.teacher_name}
-                            </strong>
-
-                            <span>
-                                ${duty.duty_area}
-                                •
-                                ${dutyTime}
-                            </span>
-
-                        </div>
+                        <p>
+                            No upcoming duty assignments
+                            have been scheduled.
+                        </p>
 
                     </div>
                 `;
 
-            }).join("");
+            }
+
+        } else {
+
+            const scheduleHTML =
+                scheduleData.map(
+                    duty => {
+
+                        const dutyDate =
+                            formatDutyDate(
+                                duty.duty_date
+                            );
+
+                        const startTime =
+                            formatDutyTime(
+                                duty.start_time
+                            );
+
+                        const endTime =
+                            formatDutyTime(
+                                duty.end_time
+                            );
+
+                        const dutyTime =
+                            startTime && endTime
+                                ? `${startTime} - ${endTime}`
+                                : "Time not specified";
 
 
-        // ==========================================
-        // TEACHER DUTY PAGE
-        // ==========================================
+                        return `
 
-        if (teacherDutyContainer) {
+                            <div class="admin-activity-item">
 
-            teacherDutyContainer.innerHTML =
-                dutyHTML;
+                                <div class="admin-activity-dot"></div>
 
-        }
+                                <div>
+
+                                    <strong>
+                                        ${duty.teacher_name}
+                                    </strong>
+
+                                    <span>
+                                        ${dutyDate}
+                                        •
+                                        ${duty.duty_area}
+                                        •
+                                        ${dutyTime}
+                                    </span>
+
+                                </div>
+
+                            </div>
+
+                        `;
+
+                    }
+                ).join("");
 
 
-        // ==========================================
-        // TEACHER DASHBOARD
-        // ==========================================
+            if (teacherDutySchedule) {
 
-        if (teacherTodayDuty) {
+                teacherDutySchedule.innerHTML =
+                    scheduleHTML;
 
-            const names =
-                data.map(duty =>
-                    `${duty.teacher_name} — ${duty.duty_area}`
-                );
-
-            teacherTodayDuty.textContent =
-                names.join(" | ");
+            }
 
         }
 
@@ -13301,9 +13507,26 @@ async function loadTeacherDuty() {
 
             teacherDutyContainer.innerHTML = `
                 <div class="empty-state">
+
                     <p>
                         Unable to load teacher duty information.
                     </p>
+
+                </div>
+            `;
+
+        }
+
+
+        if (teacherDutySchedule) {
+
+            teacherDutySchedule.innerHTML = `
+                <div class="empty-state">
+
+                    <p>
+                        Unable to load duty schedule.
+                    </p>
+
                 </div>
             `;
 
@@ -13318,5 +13541,33 @@ async function loadTeacherDuty() {
         }
 
     }
+
+}
+// ==========================================
+// TEACHER DUTY PAGE
+// ==========================================
+
+if (
+    window.location.pathname.includes(
+        "teacher-duty.html"
+    )
+) {
+
+    loadTeacherDuty();
+
+}
+
+
+// ==========================================
+// TEACHER DASHBOARD DUTY
+// ==========================================
+
+if (
+    window.location.pathname.includes(
+        "teacher-dashboard.html"
+    )
+) {
+
+    loadTeacherDuty();
 
 }
