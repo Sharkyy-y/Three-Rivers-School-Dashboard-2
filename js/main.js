@@ -13057,3 +13057,28 @@ subjectSelect.addEventListener(
 
     }
 );
+    }
+
+    catch (error) {
+
+        console.error(
+            "Teacher timetable error:",
+            error
+        );
+
+    }
+
+}
+// ==========================================
+// TEACHER TIMETABLE PAGE
+// ==========================================
+
+if (
+    window.location.pathname.includes(
+        "teacher-timetable.html"
+    )
+) {
+
+    loadTeacherTimetable();
+
+}
