@@ -13320,23 +13320,3 @@ async function loadTeacherDuty() {
     }
 
 }
-console.log("===== TEACHER DUTY TEST =====");
-
-console.log(
-    "Current path:",
-    window.location.pathname
-);
-
-if (
-    window.location.pathname.includes(
-        "teacher-duty.html"
-    )
-) {
-
-    console.log(
-        "Teacher duty page detected!"
-    );
-
-    loadTeacherDuty();
-
-}
