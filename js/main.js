@@ -5324,173 +5324,206 @@ document.addEventListener(
 // ADMIN - SAVE TEACHER
 // ==========================================
 
-if (teacherForm) {
+document.addEventListener(
+    "DOMContentLoaded",
+    function () {
 
-    teacherForm.addEventListener(
-        "submit",
-        async function (event) {
+        const teacherForm =
+            document.getElementById(
+                "teacherForm"
+            );
 
-            event.preventDefault();
-
-            const message =
-                document.getElementById(
-                    "teacherFormMessage"
-                );
-
-            const fullName =
-                document.getElementById(
-                    "teacherFullName"
-                ).value.trim();
-
-            const email =
-                document.getElementById(
-                    "teacherEmail"
-                ).value.trim();
-
-            const phone =
-                document.getElementById(
-                    "teacherPhone"
-                ).value.trim();
-
-            const gender =
-                document.getElementById(
-                    "teacherGender"
-                ).value;
-
-            const dateOfBirth =
-                document.getElementById(
-                    "teacherDateOfBirth"
-                ).value;
-
-            const address =
-                document.getElementById(
-                    "teacherAddress"
-                ).value.trim();
+        const teacherModal =
+            document.getElementById(
+                "teacherModal"
+            );
 
 
-            if (!fullName || !email) {
+        if (!teacherForm) {
+            return;
+        }
+
+
+        teacherForm.addEventListener(
+            "submit",
+            async function (event) {
+
+                event.preventDefault();
+
+
+                const message =
+                    document.getElementById(
+                        "teacherFormMessage"
+                    );
+
+
+                const fullName =
+                    document.getElementById(
+                        "teacherFullName"
+                    ).value.trim();
+
+
+                const email =
+                    document.getElementById(
+                        "teacherEmail"
+                    ).value.trim();
+
+
+                const phone =
+                    document.getElementById(
+                        "teacherPhone"
+                    ).value.trim();
+
+
+                const gender =
+                    document.getElementById(
+                        "teacherGender"
+                    ).value;
+
+
+                const dateOfBirth =
+                    document.getElementById(
+                        "teacherDateOfBirth"
+                    ).value;
+
+
+                const address =
+                    document.getElementById(
+                        "teacherAddress"
+                    ).value.trim();
+
+
+                if (
+                    !fullName ||
+                    !email
+                ) {
+
+                    message.textContent =
+                        "Full name and email are required.";
+
+                    return;
+
+                }
+
 
                 message.textContent =
-                    "Full name and email are required.";
-
-                return;
-
-            }
+                    "Creating teacher account...";
 
 
-            message.textContent =
-                "Creating teacher account...";
+                try {
 
-
-            try {
-
-                const {
-                    data,
-                    error
-                } =
-                    await supabaseClient
-                        .functions
-                        .invoke(
-                            "create-teacher",
-                            {
-                                body: {
-                                    full_name:
-                                        fullName,
-                                    email:
-                                        email,
-                                    phone:
-                                        phone || null,
-                                    gender:
-                                        gender || null,
-                                    date_of_birth:
-                                        dateOfBirth || null,
-                                    address:
-                                        address || null
+                    const {
+                        data,
+                        error
+                    } =
+                        await supabaseClient
+                            .functions
+                            .invoke(
+                                "create-teacher",
+                                {
+                                    body: {
+                                        full_name:
+                                            fullName,
+                                        email:
+                                            email,
+                                        phone:
+                                            phone ||
+                                            null,
+                                        gender:
+                                            gender ||
+                                            null,
+                                        date_of_birth:
+                                            dateOfBirth ||
+                                            null,
+                                        address:
+                                            address ||
+                                            null
+                                    }
                                 }
-                            }
+                            );
+
+
+                    if (error) {
+
+                        console.error(
+                            "CREATE TEACHER ERROR:",
+                            error
                         );
 
+                        message.textContent =
+                            error.message ||
+                            "Unable to create teacher.";
 
-                if (error) {
+                        return;
+
+                    }
+
+
+                    if (
+                        !data ||
+                        !data.success
+                    ) {
+
+                        message.textContent =
+                            data?.error ||
+                            "Unable to create teacher.";
+
+                        return;
+
+                    }
+
+
+                    alert(
+                        "Teacher created successfully!\n\n" +
+                        "Teacher: " +
+                        fullName +
+                        "\n\n" +
+                        "Email: " +
+                        email +
+                        "\n\n" +
+                        "Temporary Password: " +
+                        data.temporaryPassword +
+                        "\n\n" +
+                        "Give these login details to the teacher."
+                    );
+
+
+                    teacherForm.reset();
+
+
+                    teacherModal.classList.remove(
+                        "active"
+                    );
+
+
+                    if (
+                        typeof loadAdminTeachers ===
+                        "function"
+                    ) {
+
+                        await loadAdminTeachers();
+
+                    }
+
+
+                } catch (error) {
 
                     console.error(
-                        "CREATE TEACHER ERROR:",
+                        "SAVE TEACHER ERROR:",
                         error
                     );
 
                     message.textContent =
                         error.message ||
-                        "Unable to create teacher.";
-
-                    return;
+                        "An unexpected error occurred.";
 
                 }
-
-
-                if (
-                    !data ||
-                    !data.success
-                ) {
-
-                    message.textContent =
-                        data?.error ||
-                        "Unable to create teacher.";
-
-                    return;
-
-                }
-
-
-                // ==========================================
-                // SUCCESS
-                // ==========================================
-
-                message.textContent =
-                    "Teacher created successfully.";
-
-
-                alert(
-                    "Teacher created successfully!\n\n" +
-                    "Teacher: " +
-                    fullName +
-                    "\n\n" +
-                    "Email: " +
-                    email +
-                    "\n\n" +
-                    "Temporary Password: " +
-                    data.temporaryPassword +
-                    "\n\n" +
-                    "Give these login details to the teacher."
-                );
-
-
-                teacherForm.reset();
-
-
-                teacherModal.classList.remove(
-                    "active"
-                );
-
-
-                await loadAdminTeachers();
-
-
-            } catch (error) {
-
-                console.error(
-                    "SAVE TEACHER ERROR:",
-                    error
-                );
-
-                message.textContent =
-                    "An unexpected error occurred.";
 
             }
+        );
 
-        }
-    );
-
-}
+    }
+);
 
 // ==========================================
 // RESET STUDENT PASSWORD
