@@ -5088,6 +5088,51 @@ async function loadAdminTeachers() {
 }
 
 // ==========================================
+// SEARCH TEACHERS
+// ==========================================
+
+const teacherSearch =
+    document.getElementById(
+        "teacherSearch"
+    );
+
+if (teacherSearch) {
+
+    teacherSearch.addEventListener(
+        "input",
+        function () {
+
+            const search =
+                this.value
+                    .trim()
+                    .toLowerCase();
+
+            const cards =
+                document.querySelectorAll(
+                    "#teachersContainer > *"
+                );
+
+            cards.forEach(
+                card => {
+
+                    const text =
+                        card.textContent
+                            .toLowerCase();
+
+                    card.style.display =
+                        text.includes(search)
+                            ? ""
+                            : "none";
+
+                }
+            );
+
+        }
+    );
+
+}
+
+// ==========================================
 // RESET STUDENT PASSWORD
 // ==========================================
 
