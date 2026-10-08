@@ -4993,6 +4993,26 @@ async function resetStudentPassword(studentId) {
 const newPassword =
     accountData.student.temporary_password;
 
+        // Save password for this browser session
+sessionStorage.setItem(
+    `studentPassword_${studentId}`,
+    newPassword
+);
+
+// Find this student's password box
+const passwordInput =
+    document.getElementById(
+        `student-password-${studentId}`
+    );
+
+// Put the new password into the box
+if (passwordInput) {
+
+    passwordInput.value =
+        newPassword;
+
+}
+
         const passwordInput =
     document.getElementById(
         `password-${studentId}`
@@ -14921,6 +14941,7 @@ if (
 }
 
 ```js
+```js
 // ==========================================
 // ADMIN - LOGIN CREDENTIALS
 // ==========================================
@@ -15069,7 +15090,7 @@ async function loadAdminCredentials() {
 
                                 <input
                                     type="text"
-                                    id="password-${student.id}"
+                                    id="student-password-${student.id}"
                                     value="${savedPassword}"
                                     placeholder="No password available"
                                     readonly
