@@ -14983,30 +14983,54 @@ async function loadAdminCredentials() {
 
             </div>
 
+<div class="credential-account">
 
-            <div class="credential-account">
+    <span class="credential-status">
+        ${accountStatus}
+    </span>
 
-                <span class="credential-status">
-                    ${accountStatus}
-                </span>
+    ${
+        student.user_id
+        ? `
+            <div class="student-password-box">
 
-                ${
-                    student.user_id
-                    ? `
-                        <button
-                            class="reset-password-button"
-                            onclick="resetStudentPassword('${student.id}')">
-                            Reset Password
-                        </button>
-                    `
-                    : `
-                        <span class="no-account-text">
-                            No account
-                        </span>
-                    `
-                }
+                <label>
+                    Student Password
+                </label>
+
+                <div class="password-input-row">
+
+                    <input
+                        type="text"
+                        id="password-${student.id}"
+                        placeholder="No password available"
+                        readonly
+                    >
+
+                    <button
+                        type="button"
+                        onclick="copyStudentPassword('${student.id}')">
+                        Copy
+                    </button>
+
+                </div>
 
             </div>
+
+            <button
+                class="reset-password-button"
+                onclick="resetStudentPassword('${student.id}')">
+                Reset Password
+            </button>
+        `
+        : `
+            <span class="no-account-text">
+                No account
+            </span>
+        `
+    }
+
+</div>
 
         `;
 
