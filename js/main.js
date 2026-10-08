@@ -4986,17 +4986,54 @@ async function resetStudentPassword(studentId) {
             return;
         }
 
-        alert(
-            "Password reset successfully!\n\n" +
-            "Student: " +
-            accountData.student.full_name +
-            "\n\n" +
-            "Login email: " +
-            accountData.student.email +
-            "\n\n" +
-            "New temporary password:\n" +
-            accountData.student.temporary_password
+       // ==========================================
+// SHOW AND COPY NEW PASSWORD
+// ==========================================
+
+const newPassword =
+    accountData.student.temporary_password;
+
+const copyPassword =
+    confirm(
+        "Password reset successfully!\n\n" +
+        "Student: " +
+        accountData.student.full_name +
+        "\n\n" +
+        "Login email: " +
+        accountData.student.email +
+        "\n\n" +
+        "New temporary password:\n" +
+        newPassword +
+        "\n\n" +
+        "Press OK to copy the password."
+    );
+
+if (copyPassword) {
+
+    try {
+
+        await navigator.clipboard.writeText(
+            newPassword
         );
+
+        alert(
+            "Password copied to clipboard!"
+        );
+
+    } catch (error) {
+
+        console.error(
+            "COPY PASSWORD ERROR:",
+            error
+        );
+
+        alert(
+            "The password could not be copied automatically.\n\n" +
+            "Password:\n" +
+            newPassword
+        );
+    }
+}
 
     } catch (error) {
 
