@@ -5013,6 +5013,28 @@ async function loadAdminTeachers() {
     teachersContainer.innerHTML =
         "<p>Loading teachers...</p>";
 
+const {
+    data: {
+        user
+    },
+    error: userError
+} = await supabaseClient.auth.getUser();
+
+console.log(
+    "CURRENT ADMIN AUTH USER ID:",
+    user?.id
+);
+
+console.log(
+    "CURRENT ADMIN AUTH EMAIL:",
+    user?.email
+);
+
+console.log(
+    "CURRENT ADMIN AUTH ERROR:",
+    userError
+);
+    
     const {
         data: teachers,
         error
