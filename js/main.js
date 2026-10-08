@@ -5194,39 +5194,110 @@ if (studentForm) {
             }
 
 
-            // ======================================
-            // ADD NEW STUDENT
-            // ======================================
+           // ======================================
+// ADD NEW STUDENT
+// ======================================
 
-            else {
+else {
 
-                const { error } =
-                    await supabaseClient
-                        .from("students")
-                        .insert([studentData]);
+    // ======================================
+    // CREATE STUDENT RECORD
+    // ======================================
 
-
-                if (error) {
-
-                    console.error(
-                        "STUDENT INSERT ERROR:",
-                        error
-                    );
-
-                    message.textContent =
-                        "Error adding student: " +
-                        error.message;
-
-                    return;
-                }
+    const {
+        data: newStudent,
+        error: insertError
+    } = await supabaseClient
+        .from("students")
+        .insert([studentData])
+        .select()
+        .single();
 
 
-                message.textContent =
-                    "Student added successfully.";
+    if (insertError) {
+
+        console.error(
+            "STUDENT INSERT ERROR:",
+            insertError
+        );
+
+        message.textContent =
+            "Error adding student: " +
+            insertError.message;
+
+        return;
+    }
+
+
+    // ======================================
+    // CREATE AUTH ACCOUNT
+    // ======================================
+
+    message.textContent =
+        "Creating student login account...";
+
+
+    const {
+        data: accountData,
+        error: accountError
+    } = await supabaseClient.functions.invoke(
+        "create-student",
+        {
+            body: {
+
+                studentId:
+                    newStudent.id,
+
+                ...studentData
 
             }
+        }
+    );
 
 
+    if (accountError) {
+
+        console.error(
+            "STUDENT ACCOUNT ERROR:",
+            accountError
+        );
+
+        message.textContent =
+            "Student was added, but the login account could not be created: " +
+            accountError.message;
+
+        return;
+    }
+
+
+    if (
+        !accountData ||
+        !accountData.success
+    ) {
+
+        console.error(
+            "STUDENT ACCOUNT RESPONSE:",
+            accountData
+        );
+
+        message.textContent =
+            "Student was added, but the login account could not be created.";
+
+        return;
+    }
+
+
+    // ======================================
+    // SHOW LOGIN DETAILS
+    // ======================================
+
+    message.innerHTML = `
+        <strong>Student added successfully!</strong><br>
+        Login email: ${accountData.student.email}<br>
+        Temporary password: ${accountData.student.temporary_password}
+    `;
+
+}
             // Refresh student directory
             await loadAdminStudents();
 
