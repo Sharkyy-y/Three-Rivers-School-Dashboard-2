@@ -5136,133 +5136,189 @@ if (teacherSearch) {
 // ADMIN - TEACHER MODAL
 // ==========================================
 
-const addTeacherButton =
-    document.getElementById(
-        "addTeacherButton"
-    );
+document.addEventListener(
+    "DOMContentLoaded",
+    function () {
 
-const teacherModal =
-    document.getElementById(
-        "teacherModal"
-    );
-
-const closeTeacherModal =
-    document.getElementById(
-        "closeTeacherModal"
-    );
-
-const cancelTeacherButton =
-    document.getElementById(
-        "cancelTeacherButton"
-    );
-
-const teacherForm =
-    document.getElementById(
-        "teacherForm"
-    );
-
-
-// OPEN ADD TEACHER MODAL
-
-if (addTeacherButton) {
-
-    addTeacherButton.addEventListener(
-        "click",
-        function () {
-
-            teacherForm.reset();
-
+        const addTeacherButton =
             document.getElementById(
-                "teacherId"
-            ).value = "";
+                "addTeacherButton"
+            );
 
+        const teacherModal =
             document.getElementById(
-                "teacherModalTitle"
-            ).textContent =
-                "Add Teacher";
+                "teacherModal"
+            );
 
-            const description =
-                teacherModal.querySelector(
-                    ".student-modal-header p"
-                );
+        const closeTeacherButton =
+            document.getElementById(
+                "closeTeacherModal"
+            );
 
-            if (description) {
+        const cancelTeacherButton =
+            document.getElementById(
+                "cancelTeacherButton"
+            );
 
-                description.textContent =
-                    "Enter the teacher's information below.";
+        const teacherForm =
+            document.getElementById(
+                "teacherForm"
+            );
 
+
+        console.log(
+            "TEACHER MODAL ELEMENTS:",
+            {
+                addTeacherButton,
+                teacherModal,
+                closeTeacherButton,
+                cancelTeacherButton,
+                teacherForm
             }
+        );
 
-            document.getElementById(
-                "teacherFormMessage"
-            ).textContent = "";
 
-            teacherModal.classList.add(
-                "active"
+        // ==========================================
+        // OPEN ADD TEACHER MODAL
+        // ==========================================
+
+        if (addTeacherButton) {
+
+            addTeacherButton.addEventListener(
+                "click",
+                function () {
+
+                    console.log(
+                        "ADD TEACHER BUTTON CLICKED"
+                    );
+
+                    if (teacherForm) {
+                        teacherForm.reset();
+                    }
+
+                    const teacherId =
+                        document.getElementById(
+                            "teacherId"
+                        );
+
+                    if (teacherId) {
+                        teacherId.value = "";
+                    }
+
+                    const modalTitle =
+                        document.getElementById(
+                            "teacherModalTitle"
+                        );
+
+                    if (modalTitle) {
+
+                        modalTitle.textContent =
+                            "Add Teacher";
+
+                    }
+
+                    const description =
+                        teacherModal.querySelector(
+                            ".student-modal-header p"
+                        );
+
+                    if (description) {
+
+                        description.textContent =
+                            "Enter the teacher's information below.";
+
+                    }
+
+                    const message =
+                        document.getElementById(
+                            "teacherFormMessage"
+                        );
+
+                    if (message) {
+
+                        message.textContent = "";
+
+                    }
+
+                    teacherModal.classList.add(
+                        "active"
+                    );
+
+                }
+            );
+
+        } else {
+
+            console.error(
+                "ADD TEACHER BUTTON NOT FOUND"
             );
 
         }
-    );
-
-}
 
 
-// CLOSE MODAL
+        // ==========================================
+        // CLOSE MODAL
+        // ==========================================
 
-function closeTeacherModalWindow() {
+        function closeTeacherModalWindow() {
 
-    if (teacherModal) {
+            if (teacherModal) {
 
-        teacherModal.classList.remove(
-            "active"
-        );
-
-    }
-
-}
-
-
-if (closeTeacherModal) {
-
-    closeTeacherModal.addEventListener(
-        "click",
-        closeTeacherModalWindow
-    );
-
-}
-
-
-if (cancelTeacherButton) {
-
-    cancelTeacherButton.addEventListener(
-        "click",
-        closeTeacherModalWindow
-    );
-
-}
-
-
-// CLOSE WHEN CLICKING OUTSIDE
-
-if (teacherModal) {
-
-    teacherModal.addEventListener(
-        "click",
-        function (event) {
-
-            if (
-                event.target ===
-                teacherModal
-            ) {
-
-                closeTeacherModalWindow();
+                teacherModal.classList.remove(
+                    "active"
+                );
 
             }
 
         }
-    );
 
-}
+
+        if (closeTeacherButton) {
+
+            closeTeacherButton.addEventListener(
+                "click",
+                closeTeacherModalWindow
+            );
+
+        }
+
+
+        if (cancelTeacherButton) {
+
+            cancelTeacherButton.addEventListener(
+                "click",
+                closeTeacherModalWindow
+            );
+
+        }
+
+
+        // ==========================================
+        // CLOSE WHEN CLICKING OUTSIDE
+        // ==========================================
+
+        if (teacherModal) {
+
+            teacherModal.addEventListener(
+                "click",
+                function (event) {
+
+                    if (
+                        event.target ===
+                        teacherModal
+                    ) {
+
+                        closeTeacherModalWindow();
+
+                    }
+
+                }
+            );
+
+        }
+
+    }
+);
 
 // ==========================================
 // ADMIN - SAVE TEACHER
