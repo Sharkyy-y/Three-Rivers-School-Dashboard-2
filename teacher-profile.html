@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>My Profile | Student Management Portal</title>
+
+    <link
+        rel="stylesheet"
+        href="css/style.css"
+    >
+
+    <link
+        rel="stylesheet"
+        href="css/dashboard.css"
+    >
+
+</head>
+
+<body>
+
+    <!-- ==========================================
+         SIDEBAR
+    =========================================== -->
+
+    <aside class="sidebar">
+
+        <div class="sidebar-header">
+
+            <h2>Student Management Portal</h2>
+
+        </div>
+
+
+        <nav class="sidebar-nav">
+
+            <a href="teacher-dashboard.html">
+                Dashboard
+            </a>
+
+            <a href="teacher-grades.html">
+                Grades
+            </a>
+
+            <a href="teacher-conduct.html">
+                Conduct
+            </a>
+
+            <a href="teacher-assignments.html">
+                Assignments
+            </a>
+
+            <a href="teacher-announcements.html">
+                Announcements
+            </a>
+
+            <a href="teacher-timetable.html">
+                Timetable
+            </a>
+
+            <a href="teacher-duty.html">
+                Teachers on Duty
+            </a>
+
+            <a
+                href="teacher-profile.html"
+                class="active"
+            >
+                My Profile
+            </a>
+
+        </nav>
+
+
+        <div class="sidebar-footer">
+
+            <button
+                id="teacherLogoutButton"
+                class="logout-button"
+            >
+                Logout
+            </button>
+
+        </div>
+
+    </aside>
+
+
+    <!-- ==========================================
+         MAIN CONTENT
+    =========================================== -->
+
+    <main class="main-content">
+
+        <header class="dashboard-header">
+
+            <div>
+
+                <h1>My Profile</h1>
+
+                <p>
+                    View and manage your teacher profile.
+                </p>
+
+            </div>
+
+        </header>
+
+
+        <!-- ==========================================
+             PROFILE
+        =========================================== -->
+
+        <section class="dashboard-section">
+
+            <div class="section-header">
+
+                <h2>Profile Information</h2>
+
+            </div>
+
+
+            <div class="profile-card">
+
+
+                <!-- PROFILE PHOTO -->
+
+                <div class="profile-photo-section">
+
+                    <div
+                        id="teacherProfilePhoto"
+                        class="profile-photo"
+                    >
+                        <span>👤</span>
+                    </div>
+
+                </div>
+
+
+                <!-- PROFILE DETAILS -->
+
+                <div class="profile-details">
+
+                    <div class="profile-field">
+
+                        <label>
+                            Full Name
+                        </label>
+
+                        <p id="teacherProfileName">
+                            Loading...
+                        </p>
+
+                    </div>
+
+
+                    <div class="profile-field">
+
+                        <label>
+                            Email
+                        </label>
+
+                        <p id="teacherProfileEmail">
+                            Loading...
+                        </p>
+
+                    </div>
+
+
+                    <div class="profile-field">
+
+                        <label>
+                            Role
+                        </label>
+
+                        <p id="teacherProfileRole">
+                            Loading...
+                        </p>
+
+                    </div>
+
+
+                    <div class="profile-field">
+
+                        <label>
+                            Account Created
+                        </label>
+
+                        <p id="teacherProfileCreated">
+                            Loading...
+                        </p>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- ==========================================
+             SECURITY
+        =========================================== -->
+
+        <section class="dashboard-section">
+
+            <div class="section-header">
+
+                <h2>Account</h2>
+
+            </div>
+
+
+            <div class="profile-card">
+
+                <div class="profile-details">
+
+                    <div class="profile-field">
+
+                        <label>
+                            Account Status
+                        </label>
+
+                        <p>
+                            Active
+                        </p>
+
+                    </div>
+
+
+                    <div class="profile-field">
+
+                        <label>
+                            Account Type
+                        </label>
+
+                        <p>
+                            Teacher
+                        </p>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </section>
+
+    </main>
+
+
+    <!-- ==========================================
+         SUPABASE
+    =========================================== -->
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+
+    <!-- ==========================================
+         MAIN JAVASCRIPT
+    =========================================== -->
+
+    <script src="js/main.js"></script>
+
+</body>
+
+</html>
