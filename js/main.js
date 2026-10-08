@@ -13120,6 +13120,8 @@ async function loadTeacherDuty() {
         // GET TODAY'S DUTY
         // ==========================================
 
+    try {
+        
         const {
             data,
             error
@@ -13375,21 +13377,6 @@ if (
         "teacher-dashboard.html"
     )
 ) {
-
-    loadTeacherDuty();
-
-}
-console.log("TEACHER DUTY SCRIPT LOADED");
-
-if (
-    window.location.pathname.includes(
-        "teacher-duty.html"
-    )
-) {
-
-    console.log(
-        "TEACHER DUTY PAGE DETECTED"
-    );
 
     loadTeacherDuty();
 
