@@ -13571,3 +13571,217 @@ if (
     loadTeacherDuty();
 
 }
+
+// ==========================================
+// TEACHER PROFILE
+// ==========================================
+
+async function loadTeacherProfile() {
+
+    console.log("Loading teacher profile...");
+
+    const teacherProfileName =
+        document.getElementById(
+            "teacherProfileName"
+        );
+
+    const teacherProfileEmail =
+        document.getElementById(
+            "teacherProfileEmail"
+        );
+
+    const teacherProfileRole =
+        document.getElementById(
+            "teacherProfileRole"
+        );
+
+    const teacherProfileCreated =
+        document.getElementById(
+            "teacherProfileCreated"
+        );
+
+
+    try {
+
+        // ==========================================
+        // GET CURRENT USER
+        // ==========================================
+
+        const {
+            data: {
+                user
+            },
+            error: userError
+        } = await supabaseClient.auth.getUser();
+
+
+        if (userError) {
+            throw userError;
+        }
+
+
+        if (!user) {
+
+            console.error(
+                "No logged-in user found."
+            );
+
+            return;
+
+        }
+
+
+        console.log(
+            "Teacher user:",
+            user
+        );
+
+
+        // ==========================================
+        // GET TEACHER PROFILE
+        // ==========================================
+
+        const {
+            data: profile,
+            error: profileError
+        } = await supabaseClient
+            .from("profiles")
+            .select(`
+                id,
+                full_name,
+                email,
+                role,
+                created_at
+            `)
+            .eq(
+                "id",
+                user.id
+            )
+            .single();
+
+
+        if (profileError) {
+            throw profileError;
+        }
+
+
+        console.log(
+            "Teacher profile:",
+            profile
+        );
+
+
+        // ==========================================
+        // DISPLAY PROFILE
+        // ==========================================
+
+        if (teacherProfileName) {
+
+            teacherProfileName.textContent =
+                profile.full_name ||
+                "Not provided";
+
+        }
+
+
+        if (teacherProfileEmail) {
+
+            teacherProfileEmail.textContent =
+                profile.email ||
+                user.email ||
+                "Not provided";
+
+        }
+
+
+        if (teacherProfileRole) {
+
+            teacherProfileRole.textContent =
+                profile.role
+                    ? profile.role.charAt(0).toUpperCase() +
+                      profile.role.slice(1)
+                    : "Teacher";
+
+        }
+
+
+        if (teacherProfileCreated) {
+
+            if (profile.created_at) {
+
+                const createdDate =
+                    new Date(
+                        profile.created_at
+                    );
+
+                teacherProfileCreated.textContent =
+                    createdDate.toLocaleDateString(
+                        "en-GB",
+                        {
+                            day: "numeric",
+                            month: "long",
+                            year: "numeric"
+                        }
+                    );
+
+            } else {
+
+                teacherProfileCreated.textContent =
+                    "Not available";
+
+            }
+
+        }
+
+
+        console.log(
+            "Teacher profile loaded successfully."
+        );
+
+
+    } catch (error) {
+
+        console.error(
+            "Teacher profile error:",
+            error
+        );
+
+
+        if (teacherProfileName) {
+            teacherProfileName.textContent =
+                "Unable to load";
+        }
+
+        if (teacherProfileEmail) {
+            teacherProfileEmail.textContent =
+                "Unable to load";
+        }
+
+        if (teacherProfileRole) {
+            teacherProfileRole.textContent =
+                "Unable to load";
+        }
+
+        if (teacherProfileCreated) {
+            teacherProfileCreated.textContent =
+                "Unable to load";
+        }
+
+    }
+
+}
+
+
+// ==========================================
+// TEACHER PROFILE PAGE
+// ==========================================
+
+if (
+    window.location.pathname.includes(
+        "teacher-profile.html"
+    )
+) {
+
+    loadTeacherProfile();
+
+}
