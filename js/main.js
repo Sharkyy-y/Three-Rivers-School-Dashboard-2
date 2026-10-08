@@ -13376,3 +13376,18 @@ if (
     loadTeacherDuty();
 
 }
+console.log("TEACHER DUTY SCRIPT LOADED");
+
+if (
+    window.location.pathname.includes(
+        "teacher-duty.html"
+    )
+) {
+
+    console.log(
+        "TEACHER DUTY PAGE DETECTED"
+    );
+
+    loadTeacherDuty();
+
+}
