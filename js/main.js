@@ -5073,7 +5073,7 @@ async function loadAdminTeachers() {
         <input
             type="text"
             id="teacher-password-${teacher.id}"
-            value=""
+            value="${sessionStorage.getItem(`teacherPassword_${teacher.id}`) || ""}"
             placeholder="No password stored"
             readonly
         >
