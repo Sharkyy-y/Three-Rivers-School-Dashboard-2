@@ -5062,26 +5062,65 @@ async function loadAdminTeachers() {
 
                 </div>
 
-                <div class="student-admin-actions">
+<div class="student-admin-actions">
 
-                    <button
-                        class="edit-student-button"
-                        onclick="openEditTeacherModal('${teacher.id}')">
+    <div class="teacher-password-box">
 
-                        Edit
+        <label>
+            Temporary Password
+        </label>
 
-                    </button>
+        <input
+            type="text"
+            id="teacher-password-${teacher.id}"
+            value=""
+            placeholder="No password stored"
+            readonly
+        >
 
-                    <button
-                        class="delete-student-button"
-                        onclick="deleteTeacher('${teacher.id}')">
+        <button
+            type="button"
+            class="secondary-button"
+            onclick="copyTeacherPassword('${teacher.id}')">
 
-                        Delete
+            Copy Password
 
-                    </button>
+        </button>
 
-                </div>
+    </div>
 
+
+    <button
+        class="secondary-button"
+        type="button"
+        onclick="resetTeacherPassword('${teacher.id}')">
+
+        Reset Password
+
+    </button>
+
+
+    <button
+        class="edit-student-button"
+        type="button"
+        onclick="openEditTeacherModal('${teacher.id}')">
+
+        Edit
+
+    </button>
+
+
+    <button
+        class="delete-student-button"
+        type="button"
+        onclick="deleteTeacher('${teacher.id}')">
+
+        Delete
+
+    </button>
+
+</div>
+            
             `;
 
             teachersContainer.appendChild(
@@ -5298,6 +5337,175 @@ window.deleteTeacher = async function (teacherId) {
         alert(
             error.message ||
             "An unexpected error occurred."
+        );
+    }
+};
+
+// ==========================================
+// RESET TEACHER PASSWORD
+// ==========================================
+
+window.resetTeacherPassword = async function (teacherId) {
+
+    console.log(
+        "RESET TEACHER PASSWORD:",
+        teacherId
+    );
+
+    const confirmed =
+        confirm(
+            "Are you sure you want to reset this teacher's password?\n\n" +
+            "The current password will stop working."
+        );
+
+    if (!confirmed) {
+        return;
+    }
+
+    try {
+
+        alert("Resetting teacher password...");
+
+        const {
+            data,
+            error
+        } =
+            await supabaseClient
+                .functions
+                .invoke(
+                    "reset-teacher-password",
+                    {
+                        body: {
+                            teacherId: teacherId
+                        }
+                    }
+                );
+
+        console.log(
+            "RESET TEACHER PASSWORD DATA:",
+            data
+        );
+
+        console.log(
+            "RESET TEACHER PASSWORD ERROR:",
+            error
+        );
+
+        if (error) {
+
+            alert(
+                "Unable to reset password:\n\n" +
+                error.message
+            );
+
+            return;
+        }
+
+        if (
+            !data ||
+            !data.success
+        ) {
+
+            alert(
+                data?.error ||
+                "Unable to reset password."
+            );
+
+            return;
+        }
+
+        const newPassword =
+            data.teacher.temporary_password;
+
+        // Store password in this browser session
+        sessionStorage.setItem(
+            `teacherPassword_${teacherId}`,
+            newPassword
+        );
+
+        // Put password directly into the box
+        const passwordInput =
+            document.getElementById(
+                `teacher-password-${teacherId}`
+            );
+
+        if (passwordInput) {
+
+            passwordInput.value =
+                newPassword;
+        }
+
+        alert(
+            "Teacher password reset successfully!\n\n" +
+            "Teacher: " +
+            data.teacher.full_name +
+            "\n\n" +
+            "Email: " +
+            data.teacher.email +
+            "\n\n" +
+            "New Temporary Password: " +
+            newPassword
+        );
+
+    } catch (error) {
+
+        console.error(
+            "RESET TEACHER PASSWORD ERROR:",
+            error
+        );
+
+        alert(
+            error.message ||
+            "An unexpected error occurred."
+        );
+    }
+};
+
+
+// ==========================================
+// COPY TEACHER PASSWORD
+// ==========================================
+
+window.copyTeacherPassword = async function (
+    teacherId
+) {
+
+    const passwordInput =
+        document.getElementById(
+            `teacher-password-${teacherId}`
+        );
+
+    if (
+        !passwordInput ||
+        !passwordInput.value
+    ) {
+
+        alert(
+            "No password is currently stored for this teacher."
+        );
+
+        return;
+    }
+
+    try {
+
+        await navigator.clipboard.writeText(
+            passwordInput.value
+        );
+
+        alert(
+            "Teacher password copied to clipboard."
+        );
+
+    } catch (error) {
+
+        console.error(
+            "COPY PASSWORD ERROR:",
+            error
+        );
+
+        alert(
+            "Unable to copy the password."
         );
     }
 };
