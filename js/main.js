@@ -14128,3 +14128,324 @@ if (
     loadTeacherProfile();
 
 }
+
+// ==========================================
+// TEACHER - MY STUDENTS
+// ==========================================
+
+async function loadTeacherStudents() {
+
+    console.log("Loading teacher students...");
+
+    const tableBody =
+        document.getElementById(
+            "teacherStudentsTableBody"
+        );
+
+    const searchInput =
+        document.getElementById(
+            "teacherStudentSearch"
+        );
+
+    if (!tableBody) {
+        return;
+    }
+
+
+    // ==========================================
+    // GET CURRENT TEACHER
+    // ==========================================
+
+    const {
+        data: {
+            user
+        },
+        error: userError
+    } =
+        await supabaseClient.auth.getUser();
+
+
+    if (userError || !user) {
+
+        console.error(
+            "Unable to get current teacher.",
+            userError
+        );
+
+        tableBody.innerHTML = `
+            <tr>
+                <td colspan="4" class="empty-state">
+                    Unable to identify the teacher.
+                </td>
+            </tr>
+        `;
+
+        return;
+    }
+
+
+    // ==========================================
+    // GET TEACHER TIMETABLE
+    // ==========================================
+
+    const {
+        data: timetable,
+        error: timetableError
+    } =
+        await supabaseClient
+            .from("timetable")
+            .select(`
+                class_name,
+                subject_id,
+                subjects (
+                    name
+                )
+            `)
+            .eq("teacher_id", user.id);
+
+
+    if (timetableError) {
+
+        console.error(
+            "Teacher timetable error:",
+            timetableError
+        );
+
+        tableBody.innerHTML = `
+            <tr>
+                <td colspan="4" class="empty-state">
+                    Unable to load your teaching classes.
+                </td>
+            </tr>
+        `;
+
+        return;
+    }
+
+
+    // ==========================================
+    // GET UNIQUE CLASSES
+    // ==========================================
+
+    const teacherClasses =
+        [
+            ...new Set(
+                (timetable || [])
+                    .map(
+                        entry =>
+                            entry.class_name
+                    )
+                    .filter(Boolean)
+            )
+        ];
+
+
+    console.log(
+        "Teacher classes:",
+        teacherClasses
+    );
+
+
+    if (teacherClasses.length === 0) {
+
+        tableBody.innerHTML = `
+            <tr>
+                <td colspan="4" class="empty-state">
+                    No students are currently assigned to you.
+                </td>
+            </tr>
+        `;
+
+        return;
+    }
+
+
+    // ==========================================
+    // GET STUDENTS
+    // ==========================================
+
+    const {
+        data: students,
+        error: studentsError
+    } =
+        await supabaseClient
+            .from("students")
+            .select(`
+                id,
+                full_name,
+                admission_number,
+                class_name,
+                email
+            `)
+            .in(
+                "class_name",
+                teacherClasses
+            )
+            .order(
+                "full_name",
+                {
+                    ascending: true
+                }
+            );
+
+
+    if (studentsError) {
+
+        console.error(
+            "Teacher students error:",
+            studentsError
+        );
+
+        tableBody.innerHTML = `
+            <tr>
+                <td colspan="4" class="empty-state">
+                    Unable to load students.
+                </td>
+            </tr>
+        `;
+
+        return;
+    }
+
+
+    // ==========================================
+    // DISPLAY STUDENTS
+    // ==========================================
+
+    function displayStudents(
+        studentsToDisplay
+    ) {
+
+        if (
+            !studentsToDisplay ||
+            studentsToDisplay.length === 0
+        ) {
+
+            tableBody.innerHTML = `
+                <tr>
+                    <td
+                        colspan="4"
+                        class="empty-state"
+                    >
+                        No students found.
+                    </td>
+                </tr>
+            `;
+
+            return;
+        }
+
+
+        tableBody.innerHTML =
+            studentsToDisplay
+                .map(
+                    student => `
+                        <tr>
+
+                            <td>
+                                <span class="student-name">
+                                    ${student.full_name || "Unknown"}
+                                </span>
+                            </td>
+
+                            <td>
+                                <span class="student-admission">
+                                    ${student.admission_number || "—"}
+                                </span>
+                            </td>
+
+                            <td>
+                                <span class="student-class">
+                                    ${student.class_name || "—"}
+                                </span>
+                            </td>
+
+                            <td>
+                                ${student.email || "—"}
+                            </td>
+
+                        </tr>
+                    `
+                )
+                .join("");
+    }
+
+
+    displayStudents(students);
+
+
+    // ==========================================
+    // SEARCH STUDENTS
+    // ==========================================
+
+    if (searchInput) {
+
+        searchInput.addEventListener(
+            "input",
+            function () {
+
+                const searchTerm =
+                    this.value
+                        .trim()
+                        .toLowerCase();
+
+
+                const filteredStudents =
+                    (students || []).filter(
+                        student => {
+
+                            const name =
+                                (
+                                    student.full_name ||
+                                    ""
+                                ).toLowerCase();
+
+                            const admission =
+                                (
+                                    student.admission_number ||
+                                    ""
+                                ).toLowerCase();
+
+                            return (
+                                name.includes(
+                                    searchTerm
+                                ) ||
+                                admission.includes(
+                                    searchTerm
+                                )
+                            );
+
+                        }
+                    );
+
+
+                displayStudents(
+                    filteredStudents
+                );
+
+            }
+        );
+
+    }
+
+
+    console.log(
+        "Teacher students loaded successfully."
+    );
+
+}
+
+
+// ==========================================
+// TEACHER STUDENTS PAGE
+// ==========================================
+
+if (
+    window.location.pathname.includes(
+        "teacher-students.html"
+    )
+) {
+
+    loadTeacherStudents();
+
+}
