@@ -5449,20 +5449,40 @@ document.addEventListener(
                             );
 
 
-                    if (error) {
+if (error) {
 
-                        console.error(
-                            "CREATE TEACHER ERROR:",
-                            error
-                        );
+    console.error(
+        "CREATE TEACHER ERROR:",
+        error
+    );
 
-                        message.textContent =
-                            error.message ||
-                            "Unable to create teacher.";
+    console.error(
+        "FUNCTION RESPONSE DATA:",
+        data
+    );
 
-                        return;
+    let errorMessage =
+        error.message ||
+        "Unable to create teacher.";
 
-                    }
+    if (data?.error) {
+
+        errorMessage =
+            data.error;
+
+    }
+
+    message.textContent =
+        errorMessage;
+
+    alert(
+        "Teacher creation failed:\n\n" +
+        errorMessage
+    );
+
+    return;
+
+}
 
 
                     if (
