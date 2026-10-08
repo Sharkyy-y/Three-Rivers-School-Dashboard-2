@@ -5008,6 +5008,8 @@ if (addressInput) {
     addressInput.value =
         student.address || "";
 }
+
+}
 // ==========================================
 // CLOSE STUDENT MODAL
 // ==========================================
