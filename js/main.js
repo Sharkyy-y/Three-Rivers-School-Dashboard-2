@@ -5216,6 +5216,39 @@ if (addressInput) {
         student.address || "";
 }
 
+// ==========================================
+// EDIT MODE
+// ==========================================
+
+document.getElementById(
+    "modalTitle"
+).textContent =
+    "Edit Student";
+
+const modalDescription =
+    document.querySelector(
+        ".student-modal-header p"
+    );
+
+if (modalDescription) {
+
+    modalDescription.textContent =
+        "Edit the student's information below.";
+
+}
+
+document.getElementById(
+    "studentFormMessage"
+).textContent = "";
+
+// ==========================================
+// OPEN MODAL
+// ==========================================
+
+document.getElementById(
+    "studentModal"
+).classList.add("active");
+
 }
 // ==========================================
 // CLOSE STUDENT MODAL
