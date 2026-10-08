@@ -1,15 +1,26 @@
 <!DOCTYPE html>
+
 <html lang="en">
 
 <head>
 
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta charset="UTF-8">
+<meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+>
 
-    <title>Teachers </title>
+<title>Teachers | Student Management Portal</title>
 
-    <link rel="stylesheet" href="css/style.css">
-    <link rel="stylesheet" href="css/dashboard.css">
+<link
+    rel="stylesheet"
+    href="css/style.css"
+>
+
+<link
+    rel="stylesheet"
+    href="css/dashboard.css"
+>
 
 </head>
 
@@ -17,85 +28,160 @@
 
 <div class="dashboard-layout">
 
-    <!-- ============================= -->
-    <!-- SIDEBAR -->
-    <!-- ============================= -->
+<!-- ============================= -->
+<!-- SIDEBAR -->
+<!-- ============================= -->
 
-    <aside class="sidebar">
+<aside class="sidebar">
 
-        <div class="sidebar-logo">
+    <div class="sidebar-logo">
 
-            <h2>Student Portal</h2>
+        <h2>
+            Student Portal
+        </h2>
 
-            <p>Administration</p>
+        <p>
+            Administration
+        </p>
 
-        </div>
+    </div>
 
-        <nav class="sidebar-nav">
 
-            <a href="admin-dashboard.html">
-                🏠 Dashboard
-            </a>
+    <nav class="sidebar-nav">
 
-            <a href="admin-students.html" class="active">
-                👥 Students
-            </a>
+        <a href="admin-dashboard.html">
+            🏠 Dashboard
+        </a>
 
-            <a href="#">
-                👨‍🏫 Teachers
-            </a>
+        <a href="admin-students.html">
+            👥 Students
+        </a>
 
-            <a href="#">
-                📊 Grades
-            </a>
+        <a href="admin-credentials.html">
+            🔑 Login Credentials
+        </a>
 
-            <a href="#">
-                ✅ Attendance
-            </a>
+        <a
+            href="admin-teachers.html"
+            class="active"
+        >
+            👨‍🏫 Teachers
+        </a>
 
-            <a href="#">
-                ⚠️ Conduct
-            </a>
+        <a href="admin-grades.html">
+            📊 Grades
+        </a>
 
-            <a href="#">
-                📢 Announcements
-            </a>
+        <a href="admin-attendance.html">
+            ✅ Attendance
+        </a>
 
-        </nav>
+        <a href="admin-conduct.html">
+            ⚠️ Conduct
+        </a>
+
+        <a href="admin-announcements.html">
+            📢 Announcements
+        </a>
+
+    </nav>
+
+
+    <div class="sidebar-logout">
 
         <button
             id="logoutButton"
-            class="logout-button">
+            class="logout-button"
+        >
 
-            Logout
+            🚪 Logout
 
         </button>
 
-    </aside>
+    </div>
+
+</aside>
+
+
+<!-- ============================= -->
+<!-- MAIN CONTENT -->
+<!-- ============================= -->
+
+<main class="admin-students-page">
 
 
     <!-- ============================= -->
-    <!-- MAIN CONTENT -->
+    <!-- PAGE HEADER -->
     <!-- ============================= -->
 
-    <main class="admin-students-page">
+    <div class="students-hero">
 
-        <!-- PAGE HEADER -->
+        <div class="students-hero-left">
 
-        <div class="students-hero">
+            <div class="students-icon">
+                T
+            </div>
 
-            <div class="students-hero-left">
+            <div>
 
-                <div class="students-icon">
-                    S
+                <h1>
+                    Teachers
+                </h1>
+
+                <p>
+                    View and manage teacher information
+                </p>
+
+            </div>
+
+        </div>
+
+
+        <div class="administrator-badge">
+
+            <div class="administrator-avatar">
+                A
+            </div>
+
+            <div>
+
+                <strong>
+                    Administrator
+                </strong>
+
+                <span>
+                    Administrator
+                </span>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- ============================= -->
+    <!-- TEACHER DIRECTORY -->
+    <!-- ============================= -->
+
+    <section class="student-directory-card">
+
+        <div class="directory-header">
+
+            <div class="directory-title">
+
+                <div class="directory-icon">
+                    T
                 </div>
 
                 <div>
 
-                    <h1>Students</h1>
+                    <h2>
+                        Teacher Directory
+                    </h2>
 
                     <p>
-                        View and manage student information
+                        Search for a teacher to view or edit their information.
                     </p>
 
                 </div>
@@ -103,396 +189,314 @@
             </div>
 
 
-            <div class="administrator-badge">
-
-                <div class="administrator-avatar">
-                    A
-                </div>
-
-                <div>
-
-                    <strong>
-                        Administrator
-                    </strong>
-
-                    <span>
-                        Administrator
-                    </span>
-
-                </div>
-
-            </div>
-
-        </div>
-
-
-        <!-- ============================= -->
-        <!-- STUDENT DIRECTORY -->
-        <!-- ============================= -->
-
-        <section class="student-directory-card">
-
-            <div class="directory-header">
-
-                <div class="directory-title">
-
-                    <div class="directory-icon">
-                        S
-                    </div>
-
-                    <div>
-
-                        <h2>
-                           Teacher Directory
-                        </h2>
-
-                        <p>
-                           Search for a teacher to view or edit their information.
-                        </p>
-
-                    </div>
-
-                </div>
-
-
-                <button
-                    class="add-student-button"
-                    id="addStudentButton">
-
-                    + Add Teacher
-
-                </button>
-
-            </div>
-
-
-            <!-- SEARCH -->
-
-            <div class="student-search-box">
-
-                <span class="search-icon">
-                    ⌕
-                </span>
-
-                <input
-                    type="text"
-                    id="studentSearch"
-                    placeholder="Search teachers by name or email..."
-                    autocomplete="off"
-                >
-
-            </div>
-
-
-         <!-- TEACHER COUNT -->
-
-<div class="student-directory-summary">
-
-    <div>
-
-        <strong id="teachersCount">
-            Loading teachers...
-        </strong>
-
-        <span>
-            registered teachers
-        </span>
-
-    </div>
-
-</div>
-
-          <!-- TEACHERS -->
-
-<div id="teachersContainer">
-
-    <div class="students-loading">
-
-        <div class="loading-circle"></div>
-
-        <span>
-            Loading teachers...
-        </span>
-
-    </div>
-
-</div>
-
-<!-- ============================= -->
-<!-- EDIT STUDENT MODAL -->
-<!-- ============================= -->
-
-<div
-    id="studentModal"
-    class="student-modal">
-
-    <div class="student-modal-content">
-
-        <div class="student-modal-header">
-
-            <div>
-
-                <h2 id="modalTitle">
-                    Edit Student
-                </h2>
-
-                <p>
-                    Update the student's information below.
-                </p>
-
-            </div>
-
             <button
-                id="closeStudentModal"
-                class="modal-close">
+                class="add-student-button"
+                id="addTeacherButton"
+            >
 
-                ×
+                + Add Teacher
 
             </button>
 
         </div>
 
 
-      <!-- FORM -->
+        <!-- ============================= -->
+        <!-- SEARCH -->
+        <!-- ============================= -->
 
-<form id="studentForm">
+        <div class="student-search-box">
 
-    <input
-        type="hidden"
-        id="studentId"
-    >
-
-
-    <div class="form-grid">
-
-
-        <!-- FULL NAME -->
-
-        <div class="form-group">
-
-            <label for="studentFullName">
-                Full Name
-            </label>
+            <span class="search-icon">
+                ⌕
+            </span>
 
             <input
                 type="text"
-                id="studentFullName"
-                required
+                id="teacherSearch"
+                placeholder="Search teachers by name or email..."
+                autocomplete="off"
             >
 
         </div>
 
 
-        <!-- ADMISSION NUMBER -->
+        <!-- ============================= -->
+        <!-- TEACHER COUNT -->
+        <!-- ============================= -->
 
-        <div class="form-group">
+        <div class="student-directory-summary">
 
-            <label for="studentAdmissionNumber">
-                Admission Number
-            </label>
+            <div>
 
-            <input
-                type="text"
-                id="studentAdmissionNumber"
-                required
-            >
+                <strong id="teachersCount">
+                    Loading teachers...
+                </strong>
 
-        </div>
+                <span>
+                    registered teachers
+                </span>
 
-
-        <!-- CLASS -->
-
-        <div class="form-group">
-
-            <label for="studentClass">
-                Class
-            </label>
-
-            <input
-                type="text"
-                id="studentClass"
-                placeholder="e.g. Year 13B"
-                required
-            >
+            </div>
 
         </div>
 
 
-        <!-- EMAIL -->
+        <!-- ============================= -->
+        <!-- TEACHERS -->
+        <!-- ============================= -->
 
-        <div class="form-group">
+        <div id="teachersContainer">
 
-            <label for="studentEmail">
-                Email
-            </label>
+            <div class="students-loading">
 
-            <input
-    type="email"
-    id="studentEmail"
-    required
->
+                <div class="loading-circle"></div>
 
-        </div>
+                <span>
+                    Loading teachers...
+                </span>
 
-
-        <!-- PHONE -->
-
-        <div class="form-group">
-
-            <label for="studentPhone">
-                Phone Number
-            </label>
-
-            <input
-                type="tel"
-                id="studentPhone"
-            >
+            </div>
 
         </div>
 
 
-        <!-- GENDER -->
+    </section>
 
-        <div class="form-group">
-
-            <label for="studentGender">
-                Gender
-            </label>
-
-            <select id="studentGender">
-
-                <option value="">
-                    Select gender
-                </option>
-
-                <option value="Male">
-                    Male
-                </option>
-
-                <option value="Female">
-                    Female
-                </option>
-
-                <option value="Other">
-                    Other
-                </option>
-
-            </select>
-
-        </div>
-
-
-        <!-- DATE OF BIRTH -->
-
-        <div class="form-group">
-
-            <label for="studentDateOfBirth">
-                Date of Birth
-            </label>
-
-            <input
-                type="date"
-                id="studentDateOfBirth"
-            >
-
-        </div>
-
-
-        <!-- GUARDIAN NAME -->
-
-        <div class="form-group">
-
-            <label for="studentGuardianName">
-                Parent / Guardian Name
-            </label>
-
-            <input
-                type="text"
-                id="studentGuardianName"
-            >
-
-        </div>
-
-
-        <!-- GUARDIAN PHONE -->
-
-        <div class="form-group">
-
-            <label for="studentGuardianPhone">
-                Parent / Guardian Phone
-            </label>
-
-            <input
-                type="tel"
-                id="studentGuardianPhone"
-            >
-
-        </div>
-
-
-        <!-- ADDRESS -->
-
-        <div
-            class="form-group"
-            style="grid-column: 1 / -1;"
-        >
-
-            <label for="studentAddress">
-                Address
-            </label>
-
-            <textarea
-                id="studentAddress"
-                rows="3"
-                placeholder="Student's home address"
-            ></textarea>
-
-        </div>
-
-
-    </div>
-
-
-    <!-- MESSAGE -->
-
-    <div
-        id="studentFormMessage"
-        class="form-message">
-    </div>
-
-
-    <!-- ACTIONS -->
-
-    <div class="modal-actions">
-
-        <button
-            type="button"
-            id="cancelStudentButton"
-            class="secondary-button">
-
-            Cancel
-
-        </button>
-
-
-        <button
-            type="submit"
-            class="primary-button">
-
-            Save Student
-
-        </button>
-
-    </div>
-
-</form>
-    </div>
+</main>
 
 </div>
 
+<!-- ============================= -->
+
+<!-- TEACHER MODAL -->
 
 <!-- ============================= -->
+
+<div
+    id="teacherModal"
+    class="student-modal"
+>
+
+<div class="student-modal-content">
+
+
+    <!-- MODAL HEADER -->
+
+    <div class="student-modal-header">
+
+        <div>
+
+            <h2 id="teacherModalTitle">
+                Add Teacher
+            </h2>
+
+            <p>
+                Enter the teacher's information below.
+            </p>
+
+        </div>
+
+
+        <button
+            type="button"
+            id="closeTeacherModal"
+            class="modal-close"
+        >
+
+            ×
+
+        </button>
+
+    </div>
+
+
+    <!-- ============================= -->
+    <!-- TEACHER FORM -->
+    <!-- ============================= -->
+
+    <form id="teacherForm">
+
+
+        <input
+            type="hidden"
+            id="teacherId"
+        >
+
+
+        <div class="form-grid">
+
+
+            <!-- FULL NAME -->
+
+            <div class="form-group">
+
+                <label for="teacherFullName">
+                    Full Name
+                </label>
+
+                <input
+                    type="text"
+                    id="teacherFullName"
+                    required
+                >
+
+            </div>
+
+
+            <!-- EMAIL -->
+
+            <div class="form-group">
+
+                <label for="teacherEmail">
+                    Email
+                </label>
+
+                <input
+                    type="email"
+                    id="teacherEmail"
+                    required
+                >
+
+            </div>
+
+
+            <!-- PHONE -->
+
+            <div class="form-group">
+
+                <label for="teacherPhone">
+                    Phone Number
+                </label>
+
+                <input
+                    type="tel"
+                    id="teacherPhone"
+                >
+
+            </div>
+
+
+            <!-- GENDER -->
+
+            <div class="form-group">
+
+                <label for="teacherGender">
+                    Gender
+                </label>
+
+                <select id="teacherGender">
+
+                    <option value="">
+                        Select gender
+                    </option>
+
+                    <option value="Male">
+                        Male
+                    </option>
+
+                    <option value="Female">
+                        Female
+                    </option>
+
+                    <option value="Other">
+                        Other
+                    </option>
+
+                </select>
+
+            </div>
+
+
+            <!-- DATE OF BIRTH -->
+
+            <div class="form-group">
+
+                <label for="teacherDateOfBirth">
+                    Date of Birth
+                </label>
+
+                <input
+                    type="date"
+                    id="teacherDateOfBirth"
+                >
+
+            </div>
+
+
+            <!-- ADDRESS -->
+
+            <div
+                class="form-group"
+                style="grid-column: 1 / -1;"
+            >
+
+                <label for="teacherAddress">
+                    Address
+                </label>
+
+                <textarea
+                    id="teacherAddress"
+                    rows="3"
+                    placeholder="Teacher's home address"
+                ></textarea>
+
+            </div>
+
+
+        </div>
+
+
+        <!-- ============================= -->
+        <!-- FORM MESSAGE -->
+        <!-- ============================= -->
+
+        <div
+            id="teacherFormMessage"
+            class="form-message"
+        >
+        </div>
+
+
+        <!-- ============================= -->
+        <!-- MODAL ACTIONS -->
+        <!-- ============================= -->
+
+        <div class="modal-actions">
+
+            <button
+                type="button"
+                id="cancelTeacherButton"
+                class="secondary-button"
+            >
+
+                Cancel
+
+            </button>
+
+
+            <button
+                type="submit"
+                class="primary-button"
+            >
+
+                Save Teacher
+
+            </button>
+
+        </div>
+
+
+    </form>
+
+</div>
+
+</div>
+
+<!-- ============================= -->
+
 <!-- SUPABASE -->
+
 <!-- ============================= -->
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
