@@ -4902,18 +4902,113 @@ async function loadAdminStudents() {
 
         </div>
 
-        <button
-            class="edit-student-button"
-            onclick="openEditStudentModal('${student.id}')">
+       <div class="student-admin-actions">
 
-            Edit
+    <button
+        class="edit-student-button"
+        onclick="openEditStudentModal('${student.id}')">
+        Edit
+    </button>
 
-        </button>
+    <button
+        class="reset-password-button"
+        onclick="resetStudentPassword('${student.id}')">
+        Reset Password
+    </button>
+
+</div>
     `;
 
     studentsContainer.appendChild(card);
 });
 
+}
+
+// ==========================================
+// RESET STUDENT PASSWORD
+// ==========================================
+
+async function resetStudentPassword(studentId) {
+
+    const confirmed =
+        confirm(
+            "Are you sure you want to reset this student's password?"
+        );
+
+    if (!confirmed) {
+        return;
+    }
+
+    try {
+
+        const {
+            data: accountData,
+            error: accountError
+        } = await supabaseClient.functions.invoke(
+            "reset-student-password",
+            {
+                body: {
+                    studentId: studentId
+                }
+            }
+        );
+
+        if (accountError) {
+
+            console.error(
+                "PASSWORD RESET ERROR:",
+                accountError
+            );
+
+            alert(
+                "Password reset failed: " +
+                accountError.message
+            );
+
+            return;
+        }
+
+        if (
+            !accountData ||
+            !accountData.success
+        ) {
+
+            console.error(
+                "PASSWORD RESET RESPONSE:",
+                accountData
+            );
+
+            alert(
+                accountData?.error ||
+                "Password reset failed."
+            );
+
+            return;
+        }
+
+        alert(
+            "Password reset successfully!\n\n" +
+            "Student: " +
+            accountData.student.full_name +
+            "\n\n" +
+            "Login email: " +
+            accountData.student.email +
+            "\n\n" +
+            "New temporary password:\n" +
+            accountData.student.temporary_password
+        );
+
+    } catch (error) {
+
+        console.error(
+            "PASSWORD RESET ERROR:",
+            error
+        );
+
+        alert(
+            "An unexpected error occurred."
+        );
+    }
 }
 // ==========================================
 // OPEN EDIT STUDENT MODAL
