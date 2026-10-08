@@ -13105,13 +13105,16 @@ async function loadTeacherDuty() {
     // GET TODAY'S DATE
     // ==========================================
 
-    const today =
-        new Date().toLocaleDateString(
-            "en-CA"
-        );
+   const today =
+    new Date()
+        .toISOString()
+        .split("T")[0];
 
+    console.log(
+    "Teacher duty date being searched:",
+    today
+);
 
-    try {
 
         // ==========================================
         // GET TODAY'S DUTY
