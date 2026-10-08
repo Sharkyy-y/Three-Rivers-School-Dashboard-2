@@ -262,163 +262,238 @@
         </div>
 
 
-        <!-- FORM -->
+      <!-- FORM -->
 
-        <form id="studentForm">
+<form id="studentForm">
+
+    <input
+        type="hidden"
+        id="studentId"
+    >
+
+
+    <div class="form-grid">
+
+
+        <!-- FULL NAME -->
+
+        <div class="form-group">
+
+            <label for="studentFullName">
+                Full Name
+            </label>
 
             <input
-                type="hidden"
-                id="studentId"
+                type="text"
+                id="studentFullName"
+                required
             >
 
-
-            <div class="form-grid">
-
-
-                <!-- FULL NAME -->
-
-                <div class="form-group">
-
-                    <label for="studentFullName">
-                        Full Name
-                    </label>
-
-                    <input
-                        type="text"
-                        id="studentFullName"
-                        required
-                    >
-
-                </div>
+        </div>
 
 
-                <!-- ADMISSION NUMBER -->
+        <!-- ADMISSION NUMBER -->
 
-                <div class="form-group">
+        <div class="form-group">
 
-                    <label for="studentAdmissionNumber">
-                        Admission Number
-                    </label>
+            <label for="studentAdmissionNumber">
+                Admission Number
+            </label>
 
-                    <input
-                        type="text"
-                        id="studentAdmissionNumber"
-                    >
+            <input
+                type="text"
+                id="studentAdmissionNumber"
+                required
+            >
 
-                </div>
-
-
-                <!-- CLASS -->
-
-                <div class="form-group">
-
-                    <label for="studentClass">
-                        Class
-                    </label>
-
-                    <input
-                        type="text"
-                        id="studentClass"
-                    >
-
-                </div>
+        </div>
 
 
-                <!-- EMAIL -->
+        <!-- CLASS -->
 
-                <div class="form-group">
+        <div class="form-group">
 
-                    <label for="studentEmail">
-                        Email
-                    </label>
+            <label for="studentClass">
+                Class
+            </label>
 
-                    <input
-                        type="email"
-                        id="studentEmail"
-                    >
+            <input
+                type="text"
+                id="studentClass"
+                placeholder="e.g. Year 13B"
+                required
+            >
 
-                </div>
-
-
-                <!-- PHONE -->
-
-                <div class="form-group">
-
-                    <label for="studentPhone">
-                        Phone Number
-                    </label>
-
-                    <input
-                        type="text"
-                        id="studentPhone"
-                    >
-
-                </div>
+        </div>
 
 
-                <!-- GENDER -->
+        <!-- EMAIL -->
 
-                <div class="form-group">
+        <div class="form-group">
 
-                    <label for="studentGender">
-                        Gender
-                    </label>
+            <label for="studentEmail">
+                Email
+            </label>
 
-                    <select id="studentGender">
+            <input
+                type="email"
+                id="studentEmail"
+            >
 
-                        <option value="">
-                            Select gender
-                        </option>
-
-                        <option value="Male">
-                            Male
-                        </option>
-
-                        <option value="Female">
-                            Female
-                        </option>
-
-                    </select>
-
-                </div>
-
-            </div>
+        </div>
 
 
-            <!-- MESSAGE -->
+        <!-- PHONE -->
 
-            <div
-                id="studentFormMessage"
-                class="form-message">
-            </div>
+        <div class="form-group">
 
+            <label for="studentPhone">
+                Phone Number
+            </label>
 
-            <!-- ACTIONS -->
+            <input
+                type="tel"
+                id="studentPhone"
+            >
 
-            <div class="modal-actions">
-
-                <button
-                    type="button"
-                    id="cancelStudentButton"
-                    class="secondary-button">
-
-                    Cancel
-
-                </button>
+        </div>
 
 
-                <button
-                    type="submit"
-                    class="primary-button">
+        <!-- GENDER -->
 
-                    Save Changes
+        <div class="form-group">
 
-                </button>
+            <label for="studentGender">
+                Gender
+            </label>
 
-            </div>
+            <select id="studentGender">
 
-        </form>
+                <option value="">
+                    Select gender
+                </option>
 
+                <option value="Male">
+                    Male
+                </option>
+
+                <option value="Female">
+                    Female
+                </option>
+
+                <option value="Other">
+                    Other
+                </option>
+
+            </select>
+
+        </div>
+
+
+        <!-- DATE OF BIRTH -->
+
+        <div class="form-group">
+
+            <label for="studentDateOfBirth">
+                Date of Birth
+            </label>
+
+            <input
+                type="date"
+                id="studentDateOfBirth"
+            >
+
+        </div>
+
+
+        <!-- GUARDIAN NAME -->
+
+        <div class="form-group">
+
+            <label for="studentGuardianName">
+                Parent / Guardian Name
+            </label>
+
+            <input
+                type="text"
+                id="studentGuardianName"
+            >
+
+        </div>
+
+
+        <!-- GUARDIAN PHONE -->
+
+        <div class="form-group">
+
+            <label for="studentGuardianPhone">
+                Parent / Guardian Phone
+            </label>
+
+            <input
+                type="tel"
+                id="studentGuardianPhone"
+            >
+
+        </div>
+
+
+        <!-- ADDRESS -->
+
+        <div
+            class="form-group"
+            style="grid-column: 1 / -1;"
+        >
+
+            <label for="studentAddress">
+                Address
+            </label>
+
+            <textarea
+                id="studentAddress"
+                rows="3"
+                placeholder="Student's home address"
+            ></textarea>
+
+        </div>
+
+
+    </div>
+
+
+    <!-- MESSAGE -->
+
+    <div
+        id="studentFormMessage"
+        class="form-message">
+    </div>
+
+
+    <!-- ACTIONS -->
+
+    <div class="modal-actions">
+
+        <button
+            type="button"
+            id="cancelStudentButton"
+            class="secondary-button">
+
+            Cancel
+
+        </button>
+
+
+        <button
+            type="submit"
+            class="primary-button">
+
+            Save Student
+
+        </button>
+
+    </div>
+
+</form>
     </div>
 
 </div>
