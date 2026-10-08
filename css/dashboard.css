@@ -2606,10 +2606,11 @@ body {
 }
 
 /* ==========================================
-   STUDENT EDIT MODAL
+   STUDENT & TEACHER MODALS
 ========================================== */
 
-#studentModal {
+#studentModal,
+#teacherModal {
     position: fixed;
     inset: 0;
     background: rgba(0, 0, 0, 0.45);
@@ -2620,7 +2621,8 @@ body {
     padding: 20px;
 }
 
-#studentModal.active {
+#studentModal.active,
+#teacherModal.active {
     display: flex;
 }
 
@@ -2671,7 +2673,9 @@ body {
     border-color: #111827;
 }
 
-/* Modal buttons */
+/* ==========================================
+   MODAL BUTTONS
+========================================== */
 
 .student-modal-actions {
     display: flex;
@@ -2699,7 +2703,9 @@ body {
     color: white;
 }
 
-/* Mobile */
+/* ==========================================
+   MOBILE
+========================================== */
 
 @media (max-width: 700px) {
 
@@ -2720,6 +2726,7 @@ body {
     .student-admin-card {
         align-items: flex-start;
     }
+
 }
 
 /* ==========================================
@@ -7228,16 +7235,3 @@ body {
     }
 
 }
-
-/* ==========================================
-   TEACHER MODAL
-   ========================================== */
-
-.student-modal {
-    display: none;
-}
-
-.student-modal.active {
-    display: flex;
-}
-
