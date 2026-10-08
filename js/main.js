@@ -4955,28 +4955,59 @@ async function openEditStudentModal(studentId) {
     document.getElementById("studentEmail").value =
         student.email || "";
 
-    // Only fill these if the fields exist
-    const phoneInput =
-        document.getElementById("studentPhone");
+   // Phone
+const phoneInput =
+    document.getElementById("studentPhone");
 
-    if (phoneInput) {
-        phoneInput.value =
-            student.phone || "";
-    }
-
-    const genderInput =
-        document.getElementById("studentGender");
-
-    if (genderInput) {
-        genderInput.value =
-            student.gender || "";
-    }
-
-    document.getElementById("studentModal")
-        .classList.add("active");
+if (phoneInput) {
+    phoneInput.value =
+        student.phone || "";
 }
 
+// Gender
+const genderInput =
+    document.getElementById("studentGender");
 
+if (genderInput) {
+    genderInput.value =
+        student.gender || "";
+}
+
+// Date of birth
+const dateOfBirthInput =
+    document.getElementById("studentDateOfBirth");
+
+if (dateOfBirthInput) {
+    dateOfBirthInput.value =
+        student.date_of_birth || "";
+}
+
+// Guardian name
+const guardianNameInput =
+    document.getElementById("studentGuardianName");
+
+if (guardianNameInput) {
+    guardianNameInput.value =
+        student.guardian_name || "";
+}
+
+// Guardian phone
+const guardianPhoneInput =
+    document.getElementById("studentGuardianPhone");
+
+if (guardianPhoneInput) {
+    guardianPhoneInput.value =
+        student.guardian_phone || "";
+}
+
+// Address
+const addressInput =
+    document.getElementById("studentAddress");
+
+if (addressInput) {
+    addressInput.value =
+        student.address || "";
+}
 // ==========================================
 // CLOSE STUDENT MODAL
 // ==========================================
@@ -5069,30 +5100,59 @@ if (studentForm) {
                     "studentFormMessage"
                 );
 
-            const studentData = {
+          const studentData = {
 
-                full_name:
-                    document.getElementById(
-                        "studentFullName"
-                    ).value.trim(),
+    full_name:
+        document.getElementById(
+            "studentFullName"
+        ).value.trim(),
 
-                admission_number:
-                    document.getElementById(
-                        "studentAdmissionNumber"
-                    ).value.trim(),
+    admission_number:
+        document.getElementById(
+            "studentAdmissionNumber"
+        ).value.trim(),
 
-                class_name:
-                    document.getElementById(
-                        "studentClass"
-                    ).value.trim(),
+    class_name:
+        document.getElementById(
+            "studentClass"
+        ).value.trim(),
 
-                email:
-                    document.getElementById(
-                        "studentEmail"
-                    ).value.trim()
+    email:
+        document.getElementById(
+            "studentEmail"
+        ).value.trim(),
 
-            };
+    phone:
+        document.getElementById(
+            "studentPhone"
+        ).value.trim(),
 
+    gender:
+        document.getElementById(
+            "studentGender"
+        ).value,
+
+    date_of_birth:
+        document.getElementById(
+            "studentDateOfBirth"
+        ).value || null,
+
+    guardian_name:
+        document.getElementById(
+            "studentGuardianName"
+        ).value.trim(),
+
+    guardian_phone:
+        document.getElementById(
+            "studentGuardianPhone"
+        ).value.trim(),
+
+    address:
+        document.getElementById(
+            "studentAddress"
+        ).value.trim()
+
+}; 
 
             message.textContent =
                 "Saving...";
