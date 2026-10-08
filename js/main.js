@@ -15486,3 +15486,17 @@ async function deleteStudent(studentId) {
     }
 
 }
+
+// ==========================================
+// ADMIN TEACHERS PAGE STARTUP
+// ==========================================
+
+if (
+    window.location.pathname.includes(
+        "admin-teachers.html"
+    )
+) {
+
+    loadAdminTeachers();
+
+}
