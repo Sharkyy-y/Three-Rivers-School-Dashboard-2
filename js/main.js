@@ -14308,72 +14308,218 @@ async function loadTeacherStudents() {
     }
 
 
-    // ==========================================
-    // DISPLAY STUDENTS
-    // ==========================================
+  // ==========================================
+// DISPLAY STUDENTS
+// ==========================================
 
-    function displayStudents(
-        studentsToDisplay
+function displayStudents(
+    studentsToDisplay
+) {
+
+    if (
+        !studentsToDisplay ||
+        studentsToDisplay.length === 0
     ) {
 
-        if (
-            !studentsToDisplay ||
-            studentsToDisplay.length === 0
-        ) {
+        tableBody.innerHTML = `
+            <tr>
+                <td
+                    colspan="4"
+                    class="empty-state"
+                >
+                    No students found.
+                </td>
+            </tr>
+        `;
 
-            tableBody.innerHTML = `
-                <tr>
-                    <td
-                        colspan="4"
-                        class="empty-state"
-                    >
-                        No students found.
-                    </td>
-                </tr>
-            `;
-
-            return;
-        }
-
-
-        tableBody.innerHTML =
-            studentsToDisplay
-                .map(
-                    student => `
-                        <tr>
-
-                            <td>
-                                <span class="student-name">
-                                    ${student.full_name || "Unknown"}
-                                </span>
-                            </td>
-
-                            <td>
-                                <span class="student-admission">
-                                    ${student.admission_number || "—"}
-                                </span>
-                            </td>
-
-                            <td>
-                                <span class="student-class">
-                                    ${student.class_name || "—"}
-                                </span>
-                            </td>
-
-                            <td>
-                                ${student.email || "—"}
-                            </td>
-
-                        </tr>
-                    `
-                )
-                .join("");
+        return;
     }
 
 
-    displayStudents(students);
+    tableBody.innerHTML =
+        studentsToDisplay
+            .map(
+                student => `
+                    <tr
+                        class="teacher-student-row"
+                        data-student-id="${student.id}"
+                        style="cursor: pointer;"
+                    >
+
+                        <td>
+                            <span class="student-name">
+                                ${student.full_name || "Unknown"}
+                            </span>
+                        </td>
+
+                        <td>
+                            <span class="student-admission">
+                                ${student.admission_number || "—"}
+                            </span>
+                        </td>
+
+                        <td>
+                            <span class="student-class">
+                                ${student.class_name || "—"}
+                            </span>
+                        </td>
+
+                        <td>
+                            ${student.email || "—"}
+                        </td>
+
+                    </tr>
+                `
+            )
+            .join("");
 
 
+    // ==========================================
+    // STUDENT CLICK
+    // ==========================================
+
+    const studentRows =
+        tableBody.querySelectorAll(
+            ".teacher-student-row"
+        );
+
+
+    studentRows.forEach(
+        row => {
+
+            row.addEventListener(
+                "click",
+                function () {
+
+                    const studentId =
+                        this.dataset.studentId;
+
+
+                    const selectedStudent =
+                        students.find(
+                            student =>
+                                String(student.id) ===
+                                String(studentId)
+                        );
+
+
+                    if (
+                        selectedStudent
+                    ) {
+
+                        showTeacherStudentDetails(
+                            selectedStudent
+                        );
+
+                    }
+
+                }
+            );
+
+        }
+    );
+
+}
+
+    // ==========================================
+// SHOW STUDENT DETAILS
+// ==========================================
+
+function showTeacherStudentDetails(
+    student
+) {
+
+    const detailsCard =
+        document.getElementById(
+            "teacherStudentDetails"
+        );
+
+    const nameElement =
+        document.getElementById(
+            "selectedStudentName"
+        );
+
+    const admissionElement =
+        document.getElementById(
+            "selectedStudentAdmission"
+        );
+
+    const classElement =
+        document.getElementById(
+            "selectedStudentClass"
+        );
+
+    const emailElement =
+        document.getElementById(
+            "selectedStudentEmail"
+        );
+
+
+    if (!detailsCard) {
+        return;
+    }
+
+
+    nameElement.textContent =
+        student.full_name ||
+        "Unknown Student";
+
+    admissionElement.textContent =
+        student.admission_number ||
+        "No admission number";
+
+    classElement.textContent =
+        student.class_name ||
+        "—";
+
+    emailElement.textContent =
+        student.email ||
+        "—";
+
+
+    detailsCard.style.display =
+        "block";
+
+
+    detailsCard.scrollIntoView({
+        behavior: "smooth",
+        block: "start"
+    });
+
+}
+
+    // ==========================================
+// CLOSE STUDENT DETAILS
+// ==========================================
+
+const closeStudentDetails =
+    document.getElementById(
+        "closeStudentDetails"
+    );
+
+
+if (closeStudentDetails) {
+
+    closeStudentDetails.addEventListener(
+        "click",
+        function () {
+
+            const detailsCard =
+                document.getElementById(
+                    "teacherStudentDetails"
+                );
+
+            if (detailsCard) {
+
+                detailsCard.style.display =
+                    "none";
+
+            }
+
+        }
+    );
+
+}
     // ==========================================
     // SEARCH STUDENTS
     // ==========================================
