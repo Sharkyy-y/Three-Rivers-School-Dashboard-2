@@ -13082,3 +13082,126 @@ if (
     loadTeacherTimetable();
 
 }
+// ==========================================
+// TEACHER ON DUTY
+// ==========================================
+
+async function loadTeacherDuty() {
+
+    console.log("Loading teacher on duty...");
+
+    const teacherDutyContainer =
+        document.getElementById(
+            "teacherDutyContainer"
+        );
+
+    if (!teacherDutyContainer) {
+        return;
+    }
+
+    const today =
+        new Date().toISOString().split("T")[0];
+
+    const {
+        data,
+        error
+    } = await supabase
+        .from("teacher_duty")
+        .select("*")
+        .eq("duty_date", today)
+        .order("start_time", {
+            ascending: true
+        });
+
+    if (error) {
+
+        console.error(
+            "Error loading teacher duty:",
+            error
+        );
+
+        teacherDutyContainer.innerHTML = `
+            <div class="empty-state">
+                <p>
+                    Unable to load teacher duty information.
+                </p>
+            </div>
+        `;
+
+        return;
+    }
+
+    if (!data || data.length === 0) {
+
+        teacherDutyContainer.innerHTML = `
+            <div class="empty-state">
+                <p>
+                    No teacher on duty has been assigned today.
+                </p>
+            </div>
+        `;
+
+        return;
+    }
+
+    teacherDutyContainer.innerHTML =
+        data.map(duty => {
+
+            const startTime =
+                duty.start_time
+                    ? duty.start_time.slice(0, 5)
+                    : "";
+
+            const endTime =
+                duty.end_time
+                    ? duty.end_time.slice(0, 5)
+                    : "";
+
+            const time =
+                startTime && endTime
+                    ? `${startTime} - ${endTime}`
+                    : "Time not specified";
+
+            return `
+                <div class="teacher-duty-item">
+
+                    <div class="duty-info">
+
+                        <h3>
+                            ${duty.teacher_name}
+                        </h3>
+
+                        <p>
+                            Duty Area:
+                            <strong>
+                                ${duty.duty_area}
+                            </strong>
+                        </p>
+
+                        <p>
+                            Time:
+                            <strong>
+                                ${time}
+                            </strong>
+                        </p>
+
+                    </div>
+
+                </div>
+            `;
+
+        }).join("");
+
+    console.log(
+        "Teacher on duty loaded successfully."
+    );
+}
+if (
+    window.location.pathname.includes(
+        "teacher-dashboard.html"
+    )
+) {
+
+    loadTeacherDuty();
+
+}
