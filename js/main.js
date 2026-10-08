@@ -14920,6 +14920,7 @@ if (
 
 }
 
+```js
 // ==========================================
 // ADMIN - LOGIN CREDENTIALS
 // ==========================================
@@ -15009,6 +15010,12 @@ async function loadAdminCredentials() {
                 ? "Active"
                 : "No login account";
 
+        // Get temporary password from this browser session
+        const savedPassword =
+            sessionStorage.getItem(
+                `studentPassword_${student.id}`
+            ) || "";
+
         card.innerHTML = `
 
             <div class="credential-student-info">
@@ -15042,54 +15049,56 @@ async function loadAdminCredentials() {
 
             </div>
 
-<div class="credential-account">
 
-    <span class="credential-status">
-        ${accountStatus}
-    </span>
+            <div class="credential-account">
 
-    ${
-        student.user_id
-        ? `
-            <div class="student-password-box">
+                <span class="credential-status">
+                    ${accountStatus}
+                </span>
 
-                <label>
-                    Student Password
-                </label>
+                ${
+                    student.user_id
+                    ? `
+                        <div class="student-password-box">
 
-                <div class="password-input-row">
+                            <label>
+                                Student Password
+                            </label>
 
-                    <input
-                        type="text"
-                        id="password-${student.id}"
-                        placeholder="No password available"
-                        readonly
-                    >
+                            <div class="password-input-row">
 
-                    <button
-                        type="button"
-                        onclick="copyStudentPassword('${student.id}')">
-                        Copy
-                    </button>
+                                <input
+                                    type="text"
+                                    id="password-${student.id}"
+                                    value="${savedPassword}"
+                                    placeholder="No password available"
+                                    readonly
+                                >
 
-                </div>
+                                <button
+                                    type="button"
+                                    onclick="copyStudentPassword('${student.id}')">
+                                    Copy
+                                </button>
+
+                            </div>
+
+                        </div>
+
+                        <button
+                            class="reset-password-button"
+                            onclick="resetStudentPassword('${student.id}')">
+                            Reset Password
+                        </button>
+                    `
+                    : `
+                        <span class="no-account-text">
+                            No account
+                        </span>
+                    `
+                }
 
             </div>
-
-            <button
-                class="reset-password-button"
-                onclick="resetStudentPassword('${student.id}')">
-                Reset Password
-            </button>
-        `
-        : `
-            <span class="no-account-text">
-                No account
-            </span>
-        `
-    }
-
-</div>
 
         `;
 
@@ -15100,7 +15109,6 @@ async function loadAdminCredentials() {
     });
 
 }
-
 
 // ==========================================
 // SEARCH LOGIN CREDENTIALS
