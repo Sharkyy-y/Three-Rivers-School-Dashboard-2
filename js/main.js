@@ -13580,6 +13580,7 @@ async function loadTeacherProfile() {
 
     console.log("Loading teacher profile...");
 
+
     const teacherProfileName =
         document.getElementById(
             "teacherProfileName"
@@ -13588,6 +13589,16 @@ async function loadTeacherProfile() {
     const teacherProfileEmail =
         document.getElementById(
             "teacherProfileEmail"
+        );
+
+    const teacherProfileNameCard =
+        document.getElementById(
+            "teacherProfileNameCard"
+        );
+
+    const teacherProfileEmailCard =
+        document.getElementById(
+            "teacherProfileEmailCard"
         );
 
     const teacherProfileRole =
@@ -13672,27 +13683,59 @@ async function loadTeacherProfile() {
 
 
         // ==========================================
-        // DISPLAY PROFILE
+        // DISPLAY NAME
         // ==========================================
+
+        const teacherName =
+            profile.full_name ||
+            "Not provided";
+
 
         if (teacherProfileName) {
 
             teacherProfileName.textContent =
-                profile.full_name ||
-                "Not provided";
+                teacherName;
 
         }
+
+
+        if (teacherProfileNameCard) {
+
+            teacherProfileNameCard.textContent =
+                teacherName;
+
+        }
+
+
+        // ==========================================
+        // DISPLAY EMAIL
+        // ==========================================
+
+        const teacherEmail =
+            profile.email ||
+            user.email ||
+            "Not provided";
 
 
         if (teacherProfileEmail) {
 
             teacherProfileEmail.textContent =
-                profile.email ||
-                user.email ||
-                "Not provided";
+                teacherEmail;
 
         }
 
+
+        if (teacherProfileEmailCard) {
+
+            teacherProfileEmailCard.textContent =
+                teacherEmail;
+
+        }
+
+
+        // ==========================================
+        // DISPLAY ROLE
+        // ==========================================
 
         if (teacherProfileRole) {
 
@@ -13705,6 +13748,10 @@ async function loadTeacherProfile() {
         }
 
 
+        // ==========================================
+        // DISPLAY CREATED DATE
+        // ==========================================
+
         if (teacherProfileCreated) {
 
             if (profile.created_at) {
@@ -13713,6 +13760,7 @@ async function loadTeacherProfile() {
                     new Date(
                         profile.created_at
                     );
+
 
                 teacherProfileCreated.textContent =
                     createdDate.toLocaleDateString(
@@ -13748,23 +13796,50 @@ async function loadTeacherProfile() {
 
 
         if (teacherProfileName) {
+
             teacherProfileName.textContent =
                 "Unable to load";
+
         }
+
+
+        if (teacherProfileNameCard) {
+
+            teacherProfileNameCard.textContent =
+                "Unable to load";
+
+        }
+
 
         if (teacherProfileEmail) {
+
             teacherProfileEmail.textContent =
                 "Unable to load";
+
         }
+
+
+        if (teacherProfileEmailCard) {
+
+            teacherProfileEmailCard.textContent =
+                "Unable to load";
+
+        }
+
 
         if (teacherProfileRole) {
+
             teacherProfileRole.textContent =
                 "Unable to load";
+
         }
 
+
         if (teacherProfileCreated) {
+
             teacherProfileCreated.textContent =
                 "Unable to load";
+
         }
 
     }
