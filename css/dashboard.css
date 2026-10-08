@@ -7228,4 +7228,16 @@ body {
     }
 
 }
-```
+
+/* ==========================================
+   TEACHER MODAL
+   ========================================== */
+
+.student-modal {
+    display: none;
+}
+
+.student-modal.active {
+    display: flex;
+}
+
