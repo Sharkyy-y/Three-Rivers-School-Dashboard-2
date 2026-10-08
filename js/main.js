@@ -4968,6 +4968,12 @@ async function loadAdminTeachers() {
             }
         );
 
+    console.log(
+    "ADMIN TEACHERS RESULT:",
+    teachers,
+    error
+);
+
     if (error) {
 
         console.error(
