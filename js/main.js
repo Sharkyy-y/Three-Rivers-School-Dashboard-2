@@ -13095,107 +13095,278 @@ async function loadTeacherDuty() {
             "teacherDutyContainer"
         );
 
-    if (!teacherDutyContainer) {
-        return;
-    }
-
-    const today =
-        new Date().toISOString().split("T")[0];
-
-    const {
-        data,
-        error
-    } = await supabase
-        .from("teacher_duty")
-        .select("*")
-        .eq("duty_date", today)
-        .order("start_time", {
-            ascending: true
-        });
-
-    if (error) {
-
-        console.error(
-            "Error loading teacher duty:",
-            error
+    const teacherTodayDuty =
+        document.getElementById(
+            "teacherTodayDuty"
         );
 
-        teacherDutyContainer.innerHTML = `
-            <div class="empty-state">
-                <p>
-                    Unable to load teacher duty information.
-                </p>
-            </div>
-        `;
 
-        return;
-    }
+    // ==========================================
+    // GET TODAY'S DATE
+    // ==========================================
 
-    if (!data || data.length === 0) {
+    const today =
+        new Date().toLocaleDateString(
+            "en-CA"
+        );
 
-        teacherDutyContainer.innerHTML = `
-            <div class="empty-state">
-                <p>
-                    No teacher on duty has been assigned today.
-                </p>
-            </div>
-        `;
 
-        return;
-    }
+    try {
 
-    teacherDutyContainer.innerHTML =
-        data.map(duty => {
+        // ==========================================
+        // GET TODAY'S DUTY
+        // ==========================================
 
-            const startTime =
-                duty.start_time
-                    ? duty.start_time.slice(0, 5)
-                    : "";
+        const {
+            data,
+            error
+        } = await supabaseClient
+            .from("teacher_duty")
+            .select(`
+                id,
+                teacher_name,
+                duty_date,
+                duty_area,
+                start_time,
+                end_time
+            `)
+            .eq(
+                "duty_date",
+                today
+            )
+            .order(
+                "start_time",
+                {
+                    ascending: true
+                }
+            );
 
-            const endTime =
-                duty.end_time
-                    ? duty.end_time.slice(0, 5)
-                    : "";
 
-            const time =
-                startTime && endTime
-                    ? `${startTime} - ${endTime}`
-                    : "Time not specified";
+        if (error) {
 
-            return `
-                <div class="teacher-duty-item">
+            throw error;
 
-                    <div class="duty-info">
+        }
 
-                        <h3>
-                            ${duty.teacher_name}
-                        </h3>
+
+        console.log(
+            "Today's teacher duty:",
+            data
+        );
+
+
+        // ==========================================
+        // NO DUTY
+        // ==========================================
+
+        if (
+            !data ||
+            data.length === 0
+        ) {
+
+            if (teacherDutyContainer) {
+
+                teacherDutyContainer.innerHTML = `
+                    <div class="empty-state">
 
                         <p>
-                            Duty Area:
-                            <strong>
-                                ${duty.duty_area}
-                            </strong>
-                        </p>
-
-                        <p>
-                            Time:
-                            <strong>
-                                ${time}
-                            </strong>
+                            No teacher on duty has been
+                            assigned today.
                         </p>
 
                     </div>
+                `;
+
+            }
+
+
+            if (teacherTodayDuty) {
+
+                teacherTodayDuty.textContent =
+                    "No teacher on duty today.";
+
+            }
+
+            return;
+
+        }
+
+
+        // ==========================================
+        // FORMAT TIME
+        // ==========================================
+
+        function formatDutyTime(time) {
+
+            if (!time) {
+                return "";
+            }
+
+            const parts =
+                time.split(":");
+
+            let hours =
+                parseInt(
+                    parts[0],
+                    10
+                );
+
+            const minutes =
+                parts[1];
+
+            const period =
+                hours >= 12
+                    ? "PM"
+                    : "AM";
+
+            hours =
+                hours % 12 || 12;
+
+            return `${hours}:${minutes} ${period}`;
+
+        }
+
+
+        // ==========================================
+        // CREATE DUTY HTML
+        // ==========================================
+
+        const dutyHTML =
+            data.map(duty => {
+
+                const startTime =
+                    formatDutyTime(
+                        duty.start_time
+                    );
+
+                const endTime =
+                    formatDutyTime(
+                        duty.end_time
+                    );
+
+                const dutyTime =
+                    startTime && endTime
+                        ? `${startTime} - ${endTime}`
+                        : "Time not specified";
+
+
+                return `
+
+                    <div class="admin-activity-item">
+
+                        <div class="admin-activity-dot"></div>
+
+                        <div>
+
+                            <strong>
+                                ${duty.teacher_name}
+                            </strong>
+
+                            <span>
+                                ${duty.duty_area}
+                                •
+                                ${dutyTime}
+                            </span>
+
+                        </div>
+
+                    </div>
+
+                `;
+
+            }).join("");
+
+
+        // ==========================================
+        // TEACHER DUTY PAGE
+        // ==========================================
+
+        if (teacherDutyContainer) {
+
+            teacherDutyContainer.innerHTML =
+                dutyHTML;
+
+        }
+
+
+        // ==========================================
+        // TEACHER DASHBOARD
+        // ==========================================
+
+        if (teacherTodayDuty) {
+
+            const names =
+                data.map(
+                    duty =>
+                        `${duty.teacher_name} — ${duty.duty_area}`
+                );
+
+            teacherTodayDuty.textContent =
+                names.join(" | ");
+
+        }
+
+
+        console.log(
+            "Teacher on duty loaded successfully."
+        );
+
+    }
+
+    catch (error) {
+
+        console.error(
+            "Teacher duty error:",
+            error
+        );
+
+
+        if (teacherDutyContainer) {
+
+            teacherDutyContainer.innerHTML = `
+                <div class="empty-state">
+
+                    <p>
+                        Unable to load teacher duty information.
+                    </p>
 
                 </div>
             `;
 
-        }).join("");
+        }
 
-    console.log(
-        "Teacher on duty loaded successfully."
-    );
+
+        if (teacherTodayDuty) {
+
+            teacherTodayDuty.textContent =
+                "Unable to load duty information.";
+
+        }
+
+    }
+
 }
+
+
+// ==========================================
+// TEACHER DUTY PAGE
+// ==========================================
+
+if (
+    window.location.pathname.includes(
+        "teacher-duty.html"
+    )
+) {
+
+    loadTeacherDuty();
+
+}
+
+
+// ==========================================
+// TEACHER DASHBOARD DUTY
+// ==========================================
+
 if (
     window.location.pathname.includes(
         "teacher-dashboard.html"
