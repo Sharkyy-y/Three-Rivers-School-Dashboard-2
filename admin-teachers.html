@@ -1,1 +1,513 @@
+<!DOCTYPE html>
+<html lang="en">
 
+<head>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Manage Students</title>
+
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/dashboard.css">
+
+</head>
+
+<body>
+
+<div class="dashboard-layout">
+
+    <!-- ============================= -->
+    <!-- SIDEBAR -->
+    <!-- ============================= -->
+
+    <aside class="sidebar">
+
+        <div class="sidebar-logo">
+
+            <h2>Student Portal</h2>
+
+            <p>Administration</p>
+
+        </div>
+
+        <nav class="sidebar-nav">
+
+            <a href="admin-dashboard.html">
+                🏠 Dashboard
+            </a>
+
+            <a href="admin-students.html" class="active">
+                👥 Students
+            </a>
+
+            <a href="#">
+                👨‍🏫 Teachers
+            </a>
+
+            <a href="#">
+                📊 Grades
+            </a>
+
+            <a href="#">
+                ✅ Attendance
+            </a>
+
+            <a href="#">
+                ⚠️ Conduct
+            </a>
+
+            <a href="#">
+                📢 Announcements
+            </a>
+
+        </nav>
+
+        <button
+            id="logoutButton"
+            class="logout-button">
+
+            Logout
+
+        </button>
+
+    </aside>
+
+
+    <!-- ============================= -->
+    <!-- MAIN CONTENT -->
+    <!-- ============================= -->
+
+    <main class="admin-students-page">
+
+        <!-- PAGE HEADER -->
+
+        <div class="students-hero">
+
+            <div class="students-hero-left">
+
+                <div class="students-icon">
+                    S
+                </div>
+
+                <div>
+
+                    <h1>Students</h1>
+
+                    <p>
+                        View and manage student information
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <div class="administrator-badge">
+
+                <div class="administrator-avatar">
+                    A
+                </div>
+
+                <div>
+
+                    <strong>
+                        Administrator
+                    </strong>
+
+                    <span>
+                        Administrator
+                    </span>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- ============================= -->
+        <!-- STUDENT DIRECTORY -->
+        <!-- ============================= -->
+
+        <section class="student-directory-card">
+
+            <div class="directory-header">
+
+                <div class="directory-title">
+
+                    <div class="directory-icon">
+                        S
+                    </div>
+
+                    <div>
+
+                        <h2>
+                            Student Directory
+                        </h2>
+
+                        <p>
+                            Search for a student to view or edit
+                            their information.
+                        </p>
+
+                    </div>
+
+                </div>
+
+
+                <button
+                    class="add-student-button"
+                    id="addStudentButton">
+
+                    + Add Student
+
+                </button>
+
+            </div>
+
+
+            <!-- SEARCH -->
+
+            <div class="student-search-box">
+
+                <span class="search-icon">
+                    ⌕
+                </span>
+
+                <input
+                    type="text"
+                    id="studentSearch"
+                    placeholder="Search students by name, admission number or class..."
+                    autocomplete="off"
+                >
+
+            </div>
+
+
+            <!-- STUDENT COUNT -->
+
+            <div class="student-directory-summary">
+
+                <div>
+
+                    <strong id="studentCount">
+                        Loading students...
+                    </strong>
+
+                    <span>
+                        registered students
+                    </span>
+
+                </div>
+
+            </div>
+
+
+            <!-- STUDENTS -->
+
+            <div id="studentsContainer">
+
+                <div class="students-loading">
+
+                    <div class="loading-circle"></div>
+
+                    <span>
+                        Loading students...
+                    </span>
+
+                </div>
+
+            </div>
+
+        </section>
+
+    </main>
+
+</div>
+
+
+<!-- ============================= -->
+<!-- EDIT STUDENT MODAL -->
+<!-- ============================= -->
+
+<div
+    id="studentModal"
+    class="student-modal">
+
+    <div class="student-modal-content">
+
+        <div class="student-modal-header">
+
+            <div>
+
+                <h2 id="modalTitle">
+                    Edit Student
+                </h2>
+
+                <p>
+                    Update the student's information below.
+                </p>
+
+            </div>
+
+            <button
+                id="closeStudentModal"
+                class="modal-close">
+
+                ×
+
+            </button>
+
+        </div>
+
+
+      <!-- FORM -->
+
+<form id="studentForm">
+
+    <input
+        type="hidden"
+        id="studentId"
+    >
+
+
+    <div class="form-grid">
+
+
+        <!-- FULL NAME -->
+
+        <div class="form-group">
+
+            <label for="studentFullName">
+                Full Name
+            </label>
+
+            <input
+                type="text"
+                id="studentFullName"
+                required
+            >
+
+        </div>
+
+
+        <!-- ADMISSION NUMBER -->
+
+        <div class="form-group">
+
+            <label for="studentAdmissionNumber">
+                Admission Number
+            </label>
+
+            <input
+                type="text"
+                id="studentAdmissionNumber"
+                required
+            >
+
+        </div>
+
+
+        <!-- CLASS -->
+
+        <div class="form-group">
+
+            <label for="studentClass">
+                Class
+            </label>
+
+            <input
+                type="text"
+                id="studentClass"
+                placeholder="e.g. Year 13B"
+                required
+            >
+
+        </div>
+
+
+        <!-- EMAIL -->
+
+        <div class="form-group">
+
+            <label for="studentEmail">
+                Email
+            </label>
+
+            <input
+    type="email"
+    id="studentEmail"
+    required
+>
+
+        </div>
+
+
+        <!-- PHONE -->
+
+        <div class="form-group">
+
+            <label for="studentPhone">
+                Phone Number
+            </label>
+
+            <input
+                type="tel"
+                id="studentPhone"
+            >
+
+        </div>
+
+
+        <!-- GENDER -->
+
+        <div class="form-group">
+
+            <label for="studentGender">
+                Gender
+            </label>
+
+            <select id="studentGender">
+
+                <option value="">
+                    Select gender
+                </option>
+
+                <option value="Male">
+                    Male
+                </option>
+
+                <option value="Female">
+                    Female
+                </option>
+
+                <option value="Other">
+                    Other
+                </option>
+
+            </select>
+
+        </div>
+
+
+        <!-- DATE OF BIRTH -->
+
+        <div class="form-group">
+
+            <label for="studentDateOfBirth">
+                Date of Birth
+            </label>
+
+            <input
+                type="date"
+                id="studentDateOfBirth"
+            >
+
+        </div>
+
+
+        <!-- GUARDIAN NAME -->
+
+        <div class="form-group">
+
+            <label for="studentGuardianName">
+                Parent / Guardian Name
+            </label>
+
+            <input
+                type="text"
+                id="studentGuardianName"
+            >
+
+        </div>
+
+
+        <!-- GUARDIAN PHONE -->
+
+        <div class="form-group">
+
+            <label for="studentGuardianPhone">
+                Parent / Guardian Phone
+            </label>
+
+            <input
+                type="tel"
+                id="studentGuardianPhone"
+            >
+
+        </div>
+
+
+        <!-- ADDRESS -->
+
+        <div
+            class="form-group"
+            style="grid-column: 1 / -1;"
+        >
+
+            <label for="studentAddress">
+                Address
+            </label>
+
+            <textarea
+                id="studentAddress"
+                rows="3"
+                placeholder="Student's home address"
+            ></textarea>
+
+        </div>
+
+
+    </div>
+
+
+    <!-- MESSAGE -->
+
+    <div
+        id="studentFormMessage"
+        class="form-message">
+    </div>
+
+
+    <!-- ACTIONS -->
+
+    <div class="modal-actions">
+
+        <button
+            type="button"
+            id="cancelStudentButton"
+            class="secondary-button">
+
+            Cancel
+
+        </button>
+
+
+        <button
+            type="submit"
+            class="primary-button">
+
+            Save Student
+
+        </button>
+
+    </div>
+
+</form>
+    </div>
+
+</div>
+
+
+<!-- ============================= -->
+<!-- SUPABASE -->
+<!-- ============================= -->
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<script src="js/main.js"></script>
+
+</body>
+
+</html>
