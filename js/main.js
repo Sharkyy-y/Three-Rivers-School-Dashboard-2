@@ -14823,3 +14823,219 @@ if (
     loadTeacherStudents();
 
 }
+
+// ==========================================
+// ADMIN - LOGIN CREDENTIALS
+// ==========================================
+
+async function loadAdminCredentials() {
+
+    const credentialsContainer =
+        document.getElementById(
+            "credentialsContainer"
+        );
+
+    const credentialsCount =
+        document.getElementById(
+            "credentialsCount"
+        );
+
+    if (!credentialsContainer) {
+        return;
+    }
+
+    credentialsContainer.innerHTML =
+        "<p>Loading student accounts...</p>";
+
+    const {
+        data: students,
+        error
+    } = await supabaseClient
+        .from("students")
+        .select(
+            "id, user_id, full_name, admission_number, class_name, email"
+        )
+        .order(
+            "full_name",
+            {
+                ascending: true
+            }
+        );
+
+    if (error) {
+
+        console.error(
+            "ADMIN CREDENTIALS ERROR:",
+            error
+        );
+
+        credentialsContainer.innerHTML =
+            "<p>Unable to load student accounts.</p>";
+
+        return;
+    }
+
+    credentialsCount.textContent =
+        `${students.length} student${students.length === 1 ? "" : "s"}`;
+
+    if (students.length === 0) {
+
+        credentialsContainer.innerHTML =
+            "<p>No students found.</p>";
+
+        return;
+    }
+
+    credentialsContainer.innerHTML = "";
+
+    students.forEach(student => {
+
+        const card =
+            document.createElement("div");
+
+        card.className =
+            "credential-student-card";
+
+        const initials =
+            student.full_name
+                ? student.full_name
+                    .split(" ")
+                    .map(name =>
+                        name.charAt(0)
+                    )
+                    .slice(0, 2)
+                    .join("")
+                    .toUpperCase()
+                : "S";
+
+        const accountStatus =
+            student.user_id
+                ? "Active"
+                : "No login account";
+
+        card.innerHTML = `
+
+            <div class="credential-student-info">
+
+                <div class="student-admin-avatar">
+                    ${initials}
+                </div>
+
+                <div class="credential-student-details">
+
+                    <h3>
+                        ${student.full_name || "Unnamed Student"}
+                    </h3>
+
+                    <p>
+                        <strong>Admission:</strong>
+                        ${student.admission_number || "—"}
+                    </p>
+
+                    <p>
+                        <strong>Class:</strong>
+                        ${student.class_name || "—"}
+                    </p>
+
+                    <p>
+                        <strong>Email:</strong>
+                        ${student.email || "No email"}
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <div class="credential-account">
+
+                <span class="credential-status">
+                    ${accountStatus}
+                </span>
+
+                ${
+                    student.user_id
+                    ? `
+                        <button
+                            class="reset-password-button"
+                            onclick="resetStudentPassword('${student.id}')">
+                            Reset Password
+                        </button>
+                    `
+                    : `
+                        <span class="no-account-text">
+                            No account
+                        </span>
+                    `
+                }
+
+            </div>
+
+        `;
+
+        credentialsContainer.appendChild(
+            card
+        );
+
+    });
+
+}
+
+
+// ==========================================
+// SEARCH LOGIN CREDENTIALS
+// ==========================================
+
+const credentialsSearch =
+    document.getElementById(
+        "credentialsSearch"
+    );
+
+if (credentialsSearch) {
+
+    credentialsSearch.addEventListener(
+        "input",
+        function () {
+
+            const search =
+                this.value
+                    .trim()
+                    .toLowerCase();
+
+            const cards =
+                document.querySelectorAll(
+                    "#credentialsContainer > *"
+                );
+
+            cards.forEach(card => {
+
+                const text =
+                    card.textContent
+                        .toLowerCase();
+
+                card.style.display =
+                    text.includes(search)
+                        ? ""
+                        : "none";
+
+            });
+
+        }
+    );
+
+}
+
+
+// ==========================================
+// ADMIN CREDENTIALS PAGE STARTUP
+// ==========================================
+
+if (
+    window.location.pathname.includes(
+        "admin-credentials.html"
+    )
+) {
+
+    loadAdminCredentials();
+
+}
