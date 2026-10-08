@@ -4930,6 +4930,62 @@ async function loadAdminStudents() {
 
 }
 
+ // ==========================================
+// ADMIN - LOAD TOTAL TEACHERS
+// ==========================================
+
+async function loadTotalTeachers() {
+
+    const totalTeachers =
+        document.getElementById(
+            "totalTeachers"
+        );
+
+    if (!totalTeachers) {
+        return;
+    }
+
+    const {
+        count,
+        error
+    } =
+        await supabaseClient
+            .from("teachers")
+            .select(
+                "id",
+                {
+                    count: "exact",
+                    head: true
+                }
+            );
+
+    if (error) {
+
+        console.error(
+            "TOTAL TEACHERS ERROR:",
+            error
+        );
+
+        totalTeachers.textContent =
+            "0";
+
+        return;
+    }
+
+    totalTeachers.textContent =
+        count || 0;
+}
+
+if (
+    window.location.pathname.includes(
+        "admin-dashboard.html"
+    )
+) {
+
+    loadTotalTeachers();
+
+}
+
 // ==========================================
 // ADMIN - LOAD TEACHERS
 // ==========================================
