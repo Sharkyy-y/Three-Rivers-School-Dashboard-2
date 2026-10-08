@@ -5418,36 +5418,46 @@ document.addEventListener(
 
                 try {
 
-                    const {
-                        data,
-                        error
-                    } =
-                        await supabaseClient
-                            .functions
-                            .invoke(
-                                "create-teacher",
-                                {
-                                    body: {
-                                        full_name:
-                                            fullName,
-                                        email:
-                                            email,
-                                        phone:
-                                            phone ||
-                                            null,
-                                        gender:
-                                            gender ||
-                                            null,
-                                        date_of_birth:
-                                            dateOfBirth ||
-                                            null,
-                                        address:
-                                            address ||
-                                            null
-                                    }
-                                }
-                            );
+            id="j8x0p4"
+const {
+    data,
+    error
+} =
+    await supabaseClient
+        .functions
+        .invoke(
+            "create-teacher",
+            {
+                body: {
+                    full_name:
+                        fullName,
+                    email:
+                        email,
+                    phone:
+                        phone ||
+                        null,
+                    gender:
+                        gender ||
+                        null,
+                    date_of_birth:
+                        dateOfBirth ||
+                        null,
+                    address:
+                        address ||
+                        null
+                }
+            }
+        );
 
+console.log(
+    "CREATE TEACHER DATA:",
+    data
+);
+
+console.log(
+    "CREATE TEACHER ERROR:",
+    error
+);
 
 if (error) {
 
