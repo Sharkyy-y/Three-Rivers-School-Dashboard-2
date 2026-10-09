@@ -16511,3 +16511,270 @@ if (
     loadAdminTeachers();
 
 }
+
+
+/* ==========================================
+   TEACHER GRADE ENTRY
+   Keeps student-facing grades unchanged.
+========================================== */
+
+async function initTeacherGradeEntry() {
+    const subjectSelect =
+        document.getElementById("teacherGradeSubject");
+
+    const studentList =
+        document.getElementById("teacherAssessmentStudentList");
+
+    const assessmentForm =
+        document.getElementById("teacherAssessmentForm");
+
+    const assessmentMessage =
+        document.getElementById("teacherAssessmentMessage");
+
+    const maxScoreInput =
+        document.getElementById("teacherAssessmentMaxScore");
+
+    if (
+        !subjectSelect ||
+        !studentList ||
+        !assessmentForm ||
+        !assessmentMessage ||
+        !maxScoreInput
+    ) {
+        return;
+    }
+
+    const {
+        data: { user },
+        error: authError
+    } = await supabaseClient.auth.getUser();
+
+    if (authError || !user) {
+        subjectSelect.innerHTML =
+            '<option value="">Please sign in again</option>';
+
+        studentList.textContent =
+            "Your session could not be verified. Please sign in again.";
+
+        return;
+    }
+
+    // Load only this teacher's assigned subjects.
+    const { data: assignments, error: assignmentError } =
+        await supabaseClient
+            .from("teacher_subjects")
+            .select("subject_id")
+            .eq("teacher_id", user.id);
+
+    if (assignmentError) {
+        console.error("Teacher subjects:", assignmentError);
+
+        subjectSelect.innerHTML =
+            '<option value="">Unable to load subjects</option>';
+
+        studentList.textContent =
+            "Could not load your assigned subjects.";
+
+        return;
+    }
+
+    const subjectIds = [
+        ...new Set(
+            (assignments || [])
+                .map(item => item.subject_id)
+                .filter(Boolean)
+        )
+    ];
+
+    if (subjectIds.length === 0) {
+        subjectSelect.innerHTML =
+            '<option value="">No assigned subjects</option>';
+
+        studentList.textContent =
+            "No subjects have been assigned to your teacher account.";
+
+        return;
+    }
+
+    const { data: subjects, error: subjectsError } =
+        await supabaseClient
+            .from("subjects")
+            .select("id, name, code")
+            .in("id", subjectIds)
+            .order("name");
+
+    if (subjectsError) {
+        console.error("Subjects:", subjectsError);
+
+        subjectSelect.innerHTML =
+            '<option value="">Unable to load subjects</option>';
+
+        return;
+    }
+
+    subjectSelect.replaceChildren();
+
+    const placeholder = document.createElement("option");
+    placeholder.value = "";
+    placeholder.textContent = "Choose a subject";
+    subjectSelect.appendChild(placeholder);
+
+    (subjects || []).forEach(subject => {
+        const option = document.createElement("option");
+
+        option.value = subject.id;
+        option.textContent = subject.code
+            ? `${subject.name} (${subject.code})`
+            : subject.name;
+
+        subjectSelect.appendChild(option);
+    });
+
+    // Load students when the teacher selects a subject.
+    async function loadAssessmentStudents() {
+        const subjectId = subjectSelect.value;
+
+        studentList.replaceChildren();
+
+        if (!subjectId) {
+            studentList.textContent =
+                "Select a subject above to load its enrolled students.";
+
+            return;
+        }
+
+        studentList.textContent = "Loading enrolled students...";
+
+        assessmentMessage.textContent = "";
+
+        const { data: enrollments, error: enrollmentError } =
+            await supabaseClient
+                .from("student_subjects")
+                .select("student_id")
+                .eq("subject_id", subjectId);
+
+        if (enrollmentError) {
+            console.error("Student enrollments:", enrollmentError);
+
+            studentList.textContent =
+                "Could not load enrolled students. Check your Supabase permissions.";
+
+            return;
+        }
+
+        const studentIds = [
+            ...new Set(
+                (enrollments || [])
+                    .map(item => item.student_id)
+                    .filter(Boolean)
+            )
+        ];
+
+        if (studentIds.length === 0) {
+            studentList.textContent =
+                "No students are enrolled in this subject yet.";
+
+            return;
+        }
+
+        const { data: students, error: studentsError } =
+            await supabaseClient
+                .from("students")
+                .select("id, full_name, admission_number, class_name")
+                .in("id", studentIds)
+                .order("full_name");
+
+        if (studentsError) {
+            console.error("Enrolled students:", studentsError);
+
+            studentList.textContent =
+                "Could not load student details. Check the teacher's student-view permissions.";
+
+            return;
+        }
+
+        studentList.replaceChildren();
+
+        const heading = document.createElement("h3");
+        heading.textContent =
+            `Enrolled Students (${students.length})`;
+
+        studentList.appendChild(heading);
+
+        students.forEach(student => {
+            const row = document.createElement("div");
+            row.className = "teacher-assessment-student";
+
+            const identity = document.createElement("div");
+            identity.className = "teacher-assessment-student-info";
+
+            const name = document.createElement("strong");
+            name.textContent = student.full_name || "Unnamed student";
+
+            const details = document.createElement("p");
+            details.textContent = [
+                student.admission_number || "No admission number",
+                student.class_name || "No class"
+            ].join(" • ");
+
+            identity.append(name, details);
+
+            const scoreField = document.createElement("div");
+            scoreField.className = "teacher-assessment-score-field";
+
+            const scoreLabel = document.createElement("label");
+            scoreLabel.textContent = "Score";
+            scoreLabel.htmlFor = `teacher-score-${student.id}`;
+
+            const scoreInput = document.createElement("input");
+            scoreInput.type = "number";
+            scoreInput.id = `teacher-score-${student.id}`;
+            scoreInput.className = "teacher-student-score";
+            scoreInput.dataset.studentId = student.id;
+            scoreInput.min = "0";
+            scoreInput.step = "any";
+            scoreInput.placeholder = "Enter marks";
+            scoreInput.setAttribute(
+                "aria-label",
+                `Score for ${student.full_name || "student"}`
+            );
+
+            scoreField.append(scoreLabel, scoreInput);
+
+            const commentField = document.createElement("div");
+            commentField.className = "teacher-assessment-comment-field";
+
+            const commentLabel = document.createElement("label");
+            commentLabel.textContent = "Comment (optional)";
+            commentLabel.htmlFor = `teacher-comment-${student.id}`;
+
+            const commentInput = document.createElement("input");
+            commentInput.type = "text";
+            commentInput.id = `teacher-comment-${student.id}`;
+            commentInput.className = "teacher-student-comment";
+            commentInput.dataset.studentId = student.id;
+            commentInput.maxLength = 500;
+            commentInput.placeholder = "Feedback for this student";
+
+            commentField.append(commentLabel, commentInput);
+
+            row.append(identity, scoreField, commentField);
+            studentList.appendChild(row);
+        });
+
+        // Store the subject's enrolled students for validation on save.
+        studentList.dataset.subjectId = subjectId;
+    }
+
+    subjectSelect.addEventListener("change", loadAssessmentStudents);
+
+    // Saving is connected in Step 2 below.
+}
+
+if (
+    window.location.pathname
+        .toLowerCase()
+        .endsWith("/teacher-grades.html")
+) {
+    initTeacherGradeEntry();
+}
