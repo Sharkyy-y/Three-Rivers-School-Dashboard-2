@@ -15687,458 +15687,274 @@ if (
 
 }
 
-// ==========================================
-// TEACHER - MY STUDENTS
-// ==========================================
+
+ // ==========================================
+ // TEACHER - MY STUDENTS
+ // ==========================================
 
 async function loadTeacherStudents() {
-
     console.log("Loading teacher students...");
 
-    const tableBody =
-        document.getElementById(
-            "teacherStudentsTableBody"
-        );
+    const tableBody = document.getElementById(
+        "teacherStudentsTableBody"
+    );
 
-    const searchInput =
-        document.getElementById(
-            "teacherStudentSearch"
-        );
+    const searchInput = document.getElementById(
+        "teacherStudentSearch"
+    );
 
-    if (!tableBody) {
+    if (!tableBody) return;
+
+    const table = tableBody.closest("table");
+
+    if (!table) {
+        console.error("Teacher students table not found.");
         return;
     }
 
+    // Create the subject selector once.
+    let subjectSelect = document.getElementById(
+        "teacherStudentSubject"
+    );
 
-    // ==========================================
-    // GET CURRENT TEACHER
-    // ==========================================
+    if (!subjectSelect) {
+        subjectSelect = document.createElement("select");
+        subjectSelect.id = "teacherStudentSubject";
+        subjectSelect.style.cssText =
+            "width:100%;max-width:350px;padding:12px;margin:0 0 18px;border-radius:8px;";
 
-    const {
-        data: {
-            user
-        },
-        error: userError
-    } =
+        const label = document.createElement("label");
+        label.htmlFor = "teacherStudentSubject";
+        label.textContent = "Choose the subject you teach";
+
+        table.parentElement.insertBefore(label, table);
+        table.parentElement.insertBefore(subjectSelect, table);
+    }
+
+    const showMessage = (message) => {
+        tableBody.innerHTML = "";
+
+        const row = document.createElement("tr");
+        const cell = document.createElement("td");
+
+        cell.colSpan = 4;
+        cell.className = "empty-state";
+        cell.textContent = message;
+
+        row.appendChild(cell);
+        tableBody.appendChild(row);
+    };
+
+    // Get the signed-in teacher.
+    const { data: { user }, error: userError } =
         await supabaseClient.auth.getUser();
 
-
     if (userError || !user) {
-
-        console.error(
-            "Unable to get current teacher.",
-            userError
-        );
-
-        tableBody.innerHTML = `
-            <tr>
-                <td colspan="4" class="empty-state">
-                    Unable to identify the teacher.
-                </td>
-            </tr>
-        `;
-
+        console.error("Unable to identify teacher:", userError);
+        showMessage("Please sign in again.");
         return;
     }
 
-
-    // ==========================================
-    // GET TEACHER TIMETABLE
-    // ==========================================
-
-    const {
-        data: timetable,
-        error: timetableError
-    } =
+    // Get this teacher's assigned subjects.
+    const { data: assignments, error: assignmentError } =
         await supabaseClient
-            .from("timetable")
-            .select(`
-                class_name,
-                subject_id,
-                subjects (
-                    name
-                )
-            `)
+            .from("teacher_subjects")
+            .select("subject_id")
             .eq("teacher_id", user.id);
 
-
-    if (timetableError) {
-
-        console.error(
-            "Teacher timetable error:",
-            timetableError
-        );
-
-        tableBody.innerHTML = `
-            <tr>
-                <td colspan="4" class="empty-state">
-                    Unable to load your teaching classes.
-                </td>
-            </tr>
-        `;
-
+    if (assignmentError) {
+        console.error("Teacher subjects error:", assignmentError);
+        showMessage("Unable to load your assigned subjects.");
         return;
     }
 
+    const subjectIds = [
+        ...new Set((assignments || []).map(item => item.subject_id))
+    ];
 
-    // ==========================================
-    // GET UNIQUE CLASSES
-    // ==========================================
+    if (subjectIds.length === 0) {
+        subjectSelect.innerHTML =
+            '<option value="">No subjects assigned</option>';
+        showMessage("No subjects have been assigned to you yet.");
+        return;
+    }
 
-    const teacherClasses =
-        [
+    // Load subject names.
+    const { data: subjects, error: subjectsError } =
+        await supabaseClient
+            .from("subjects")
+            .select("id, name")
+            .in("id", subjectIds)
+            .order("name");
+
+    if (subjectsError) {
+        console.error("Subjects error:", subjectsError);
+        showMessage("Unable to load subject names.");
+        return;
+    }
+
+    subjectSelect.innerHTML =
+        '<option value="">Select a subject</option>';
+
+    (subjects || []).forEach(subject => {
+        const option = document.createElement("option");
+        option.value = subject.id;
+        option.textContent = subject.name;
+        subjectSelect.appendChild(option);
+    });
+
+    let currentStudents = [];
+
+    // Load students enrolled in the selected subject only.
+    async function loadSelectedSubject() {
+        const subjectId = subjectSelect.value;
+        currentStudents = [];
+
+        if (!subjectId) {
+            showMessage("Select a subject to view its students.");
+            return;
+        }
+
+        showMessage("Loading students...");
+
+        const { data: enrollments, error: enrollmentError } =
+            await supabaseClient
+                .from("student_subjects")
+                .select("student_id")
+                .eq("subject_id", subjectId);
+
+        if (enrollmentError) {
+            console.error("Student enrollment error:", enrollmentError);
+            showMessage("Unable to load subject enrollments.");
+            return;
+        }
+
+        const studentIds = [
             ...new Set(
-                (timetable || [])
-                    .map(
-                        entry =>
-                            entry.class_name
-                    )
-                    .filter(Boolean)
+                (enrollments || []).map(item => item.student_id)
             )
         ];
 
-
-    console.log(
-        "Teacher classes:",
-        teacherClasses
-    );
-
-
-    if (teacherClasses.length === 0) {
-
-        tableBody.innerHTML = `
-            <tr>
-                <td colspan="4" class="empty-state">
-                    No students are currently assigned to you.
-                </td>
-            </tr>
-        `;
-
-        return;
-    }
-
-
-    // ==========================================
-    // GET STUDENTS
-    // ==========================================
-
-    const {
-        data: students,
-        error: studentsError
-    } =
-        await supabaseClient
-            .from("students")
-            .select(`
-                id,
-                full_name,
-                admission_number,
-                class_name,
-                email
-            `)
-            .in(
-                "class_name",
-                teacherClasses
-            )
-            .order(
-                "full_name",
-                {
-                    ascending: true
-                }
-            );
-
-
-    if (studentsError) {
-
-        console.error(
-            "Teacher students error:",
-            studentsError
-        );
-
-        tableBody.innerHTML = `
-            <tr>
-                <td colspan="4" class="empty-state">
-                    Unable to load students.
-                </td>
-            </tr>
-        `;
-
-        return;
-    }
-
-
-  // ==========================================
-// DISPLAY STUDENTS
-// ==========================================
-
-function displayStudents(
-    studentsToDisplay
-) {
-
-    if (
-        !studentsToDisplay ||
-        studentsToDisplay.length === 0
-    ) {
-
-        tableBody.innerHTML = `
-            <tr>
-                <td
-                    colspan="4"
-                    class="empty-state"
-                >
-                    No students found.
-                </td>
-            </tr>
-        `;
-
-        return;
-    }
-
-
-    tableBody.innerHTML =
-        studentsToDisplay
-            .map(
-                student => `
-                    <tr
-                        class="teacher-student-row"
-                        data-student-id="${student.id}"
-                        style="cursor: pointer;"
-                    >
-
-                        <td>
-                            <span class="student-name">
-                                ${student.full_name || "Unknown"}
-                            </span>
-                        </td>
-
-                        <td>
-                            <span class="student-admission">
-                                ${student.admission_number || "—"}
-                            </span>
-                        </td>
-
-                        <td>
-                            <span class="student-class">
-                                ${student.class_name || "—"}
-                            </span>
-                        </td>
-
-                        <td>
-                            ${student.email || "—"}
-                        </td>
-
-                    </tr>
-                `
-            )
-            .join("");
-
-
-    // ==========================================
-    // STUDENT CLICK
-    // ==========================================
-
-    const studentRows =
-        tableBody.querySelectorAll(
-            ".teacher-student-row"
-        );
-
-
-    studentRows.forEach(
-        row => {
-
-            row.addEventListener(
-                "click",
-                function () {
-
-                    const studentId =
-                        this.dataset.studentId;
-
-
-                    const selectedStudent =
-                        students.find(
-                            student =>
-                                String(student.id) ===
-                                String(studentId)
-                        );
-
-
-                    if (
-                        selectedStudent
-                    ) {
-
-                        showTeacherStudentDetails(
-                            selectedStudent
-                        );
-
-                    }
-
-                }
-            );
-
+        if (studentIds.length === 0) {
+            showMessage("No students are enrolled in this subject.");
+            return;
         }
-    );
 
+        const { data: students, error: studentsError } =
+            await supabaseClient
+                .from("students")
+                .select(
+                    "id, full_name, admission_number, class_name, email"
+                )
+                .in("id", studentIds)
+                .order("full_name");
+
+        if (studentsError) {
+            console.error("Teacher students error:", studentsError);
+            showMessage("Unable to load students.");
+            return;
+        }
+
+        currentStudents = students || [];
+        displayStudents(currentStudents);
+    }
+
+    // Display the filtered students.
+    function displayStudents(list) {
+        tableBody.innerHTML = "";
+
+        if (!list.length) {
+            showMessage("No students found for this search.");
+            return;
+        }
+
+        list.forEach(student => {
+            const row = document.createElement("tr");
+            row.className = "teacher-student-row";
+            row.style.cursor = "pointer";
+
+            [
+                student.full_name || "Unknown",
+                student.admission_number || "—",
+                student.class_name || "—",
+                student.email || "—"
+            ].forEach(value => {
+                const cell = document.createElement("td");
+                cell.textContent = value;
+                row.appendChild(cell);
+            });
+
+            row.addEventListener("click", () => {
+                showTeacherStudentDetails(student);
+            });
+
+            tableBody.appendChild(row);
+        });
+    }
+
+    // Search only within the selected subject.
+    if (searchInput && searchInput.dataset.subjectSearchBound !== "true") {
+        searchInput.dataset.subjectSearchBound = "true";
+
+        searchInput.addEventListener("input", () => {
+            const term = searchInput.value.trim().toLowerCase();
+
+            const filtered = currentStudents.filter(student =>
+                (student.full_name || "").toLowerCase().includes(term) ||
+                (student.admission_number || "").toLowerCase().includes(term)
+            );
+
+            displayStudents(filtered);
+        });
+    }
+
+    if (subjectSelect.dataset.subjectChangeBound !== "true") {
+        subjectSelect.dataset.subjectChangeBound = "true";
+        subjectSelect.addEventListener("change", loadSelectedSubject);
+    }
+
+    const closeButton = document.getElementById("closeStudentDetails");
+
+    if (closeButton && closeButton.dataset.closeBound !== "true") {
+        closeButton.dataset.closeBound = "true";
+
+        closeButton.addEventListener("click", () => {
+            const details = document.getElementById("teacherStudentDetails");
+            if (details) details.style.display = "none";
+        });
+    }
+
+    console.log("Teacher students page ready.");
 }
 
-    // ==========================================
-// SHOW STUDENT DETAILS
+
+// ==========================================
+// SHOW TEACHER STUDENT DETAILS
 // ==========================================
 
-function showTeacherStudentDetails(
-    student
-) {
+function showTeacherStudentDetails(student) {
+    const detailsCard = document.getElementById("teacherStudentDetails");
 
-    const detailsCard =
-        document.getElementById(
-            "teacherStudentDetails"
-        );
+    if (!detailsCard) return;
 
-    const nameElement =
-        document.getElementById(
-            "selectedStudentName"
-        );
+    const fields = {
+        selectedStudentName: student.full_name || "Unknown Student",
+        selectedStudentAdmission: student.admission_number || "No admission number",
+        selectedStudentClass: student.class_name || "—",
+        selectedStudentEmail: student.email || "—"
+    };
 
-    const admissionElement =
-        document.getElementById(
-            "selectedStudentAdmission"
-        );
+    Object.entries(fields).forEach(([id, value]) => {
+        const element = document.getElementById(id);
+        if (element) element.textContent = value;
+    });
 
-    const classElement =
-        document.getElementById(
-            "selectedStudentClass"
-        );
-
-    const emailElement =
-        document.getElementById(
-            "selectedStudentEmail"
-        );
-
-
-    if (!detailsCard) {
-        return;
-    }
-
-
-    nameElement.textContent =
-        student.full_name ||
-        "Unknown Student";
-
-    admissionElement.textContent =
-        student.admission_number ||
-        "No admission number";
-
-    classElement.textContent =
-        student.class_name ||
-        "—";
-
-    emailElement.textContent =
-        student.email ||
-        "—";
-
-
-    detailsCard.style.display =
-        "block";
-
-
+    detailsCard.style.display = "block";
     detailsCard.scrollIntoView({
         behavior: "smooth",
         block: "start"
     });
-
 }
-
-    // ==========================================
-// CLOSE STUDENT DETAILS
-// ==========================================
-
-const closeStudentDetails =
-    document.getElementById(
-        "closeStudentDetails"
-    );
-
-
-if (closeStudentDetails) {
-
-    closeStudentDetails.addEventListener(
-        "click",
-        function () {
-
-            const detailsCard =
-                document.getElementById(
-                    "teacherStudentDetails"
-                );
-
-            if (detailsCard) {
-
-                detailsCard.style.display =
-                    "none";
-
-            }
-
-        }
-    );
-
-}
-    // ==========================================
-    // SEARCH STUDENTS
-    // ==========================================
-
-    if (searchInput) {
-
-        searchInput.addEventListener(
-            "input",
-            function () {
-
-                const searchTerm =
-                    this.value
-                        .trim()
-                        .toLowerCase();
-
-
-                const filteredStudents =
-                    (students || []).filter(
-                        student => {
-
-                            const name =
-                                (
-                                    student.full_name ||
-                                    ""
-                                ).toLowerCase();
-
-                            const admission =
-                                (
-                                    student.admission_number ||
-                                    ""
-                                ).toLowerCase();
-
-                            return (
-                                name.includes(
-                                    searchTerm
-                                ) ||
-                                admission.includes(
-                                    searchTerm
-                                )
-                            );
-
-                        }
-                    );
-
-
-                displayStudents(
-                    filteredStudents
-                );
-
-            }
-        );
-
-    }
-
-
-    console.log(
-        "Teacher students loaded successfully."
-    );
-
-}
-
 
 // ==========================================
 // TEACHER STUDENTS PAGE
