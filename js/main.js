@@ -16771,6 +16771,7 @@ async function initTeacherGradeEntry() {
    
     // Save marks for the selected assessment.
     assessmentForm.addEventListener("submit", async function (event) {
+        console.log("SAVE BUTTON HANDLER TRIGGERED");
         event.preventDefault();
 
         assessmentMessage.textContent = "";
