@@ -16768,7 +16768,170 @@ async function initTeacherGradeEntry() {
 
     subjectSelect.addEventListener("change", loadAssessmentStudents);
 
-    // Saving is connected in Step 2 below.
+   
+    // Save marks for the selected assessment.
+    assessmentForm.addEventListener("submit", async function (event) {
+        event.preventDefault();
+
+        assessmentMessage.textContent = "";
+
+        const subjectId = subjectSelect.value;
+        const assessmentName = document
+            .getElementById("teacherAssessmentName")
+            .value.trim();
+
+        const maxScore = Number(maxScoreInput.value);
+
+        if (!subjectId || !assessmentName) {
+            assessmentMessage.textContent =
+                "Please select a subject and enter an assessment name.";
+            return;
+        }
+
+        if (!Number.isFinite(maxScore) || maxScore <= 0) {
+            assessmentMessage.textContent =
+                "Maximum marks must be greater than zero.";
+            return;
+        }
+
+        if (studentList.dataset.subjectId !== subjectId) {
+            assessmentMessage.textContent =
+                "Please wait for the selected subject's students to finish loading.";
+            return;
+        }
+
+        const scoreInputs = [
+            ...studentList.querySelectorAll(".teacher-student-score")
+        ];
+
+        const commentInputs = [
+            ...studentList.querySelectorAll(".teacher-student-comment")
+        ];
+
+        const commentsByStudent = new Map(
+            commentInputs.map(input => [
+                input.dataset.studentId,
+                input.value.trim()
+            ])
+        );
+
+        const rows = [];
+        let invalidScore = false;
+
+        for (const input of scoreInputs) {
+            const rawScore = input.value.trim();
+
+            // Blank means no mark recorded for this student.
+            if (rawScore === "") {
+                continue;
+            }
+
+            const score = Number(rawScore);
+
+            if (
+                !Number.isFinite(score) ||
+                score < 0 ||
+                score > maxScore
+            ) {
+                input.focus();
+                invalidScore = true;
+                break;
+            }
+
+            rows.push({
+                student_id: input.dataset.studentId,
+                subject_id: subjectId,
+                assessment: assessmentName,
+                score: score,
+                max_score: maxScore,
+                comments: commentsByStudent.get(input.dataset.studentId) || null
+            });
+        }
+
+        if (invalidScore) {
+            assessmentMessage.textContent =
+                `Every score must be between 0 and ${maxScore}.`;
+            return;
+        }
+
+        if (rows.length === 0) {
+            assessmentMessage.textContent =
+                "Enter at least one student's mark before saving.";
+            return;
+        }
+
+        // Prevent accidental duplicate assessment entries.
+        const { data: existingGrades, error: duplicateCheckError } =
+            await supabaseClient
+                .from("grades")
+                .select("student_id")
+                .eq("subject_id", subjectId)
+                .ilike("assessment", assessmentName);
+
+        if (duplicateCheckError) {
+            console.error("Duplicate assessment check:", duplicateCheckError);
+
+            assessmentMessage.textContent =
+                "Could not check existing assessments. Nothing was saved.";
+            return;
+        }
+
+        const existingStudentIds = new Set(
+            (existingGrades || []).map(grade => grade.student_id)
+        );
+
+        const duplicates = rows.filter(row =>
+            existingStudentIds.has(row.student_id)
+        );
+
+        if (duplicates.length > 0) {
+            assessmentMessage.textContent =
+                "This assessment already has marks for one or more students in this subject. No marks were saved. Use a different assessment name or check the existing gradebook.";
+            return;
+        }
+
+        const saveButton = document.getElementById(
+            "teacherSaveAssessmentButton"
+        );
+
+        saveButton.disabled = true;
+        saveButton.textContent = "Saving marks...";
+
+        try {
+            const { error: saveError } = await supabaseClient
+                .from("grades")
+                .insert(rows);
+
+            if (saveError) {
+                console.error("Saving teacher grades:", saveError);
+
+                assessmentMessage.textContent =
+                    "Marks were not saved. Check the console for the Supabase error.";
+                return;
+            }
+
+            assessmentMessage.textContent =
+                `Successfully saved marks for ${rows.length} student(s).`;
+
+            // Clear entered marks and comments after successful saving.
+            scoreInputs.forEach(input => {
+                input.value = "";
+            });
+
+            commentInputs.forEach(input => {
+                input.value = "";
+            });
+
+            // Refresh the existing gradebook if its loader is available.
+            if (typeof loadTeacherGrades === "function") {
+                await loadTeacherGrades();
+            }
+
+        } finally {
+            saveButton.disabled = false;
+            saveButton.textContent = "Save Assessment Marks";
+        }
+    });
 }
 
 if (
