@@ -10815,50 +10815,61 @@ if (percentages.length > 0) {
 }
 
 
-// ==========================================
-// ASSESSMENT GROUPS
-// ==========================================
 
-const assessmentGroups = {
-    "Opener": [],
-    "Midterm": [],
-    "End Term": [],
-    "Internal Test": []
-};
+/* ==========================================
+   ASSESSMENT GROUPS
+========================================== */
 
+const assessmentGroups = {};
 
-// ==========================================
-// GROUP GRADES
-// ==========================================
+/* ==========================================
+   GROUP ALL GRADES
+   Standard assessments get their own sections.
+   Other assessment names are shown too.
+========================================== */
 
 grades.forEach(grade => {
+    const originalName =
+        (grade.assessment || "").trim();
 
     const assessment =
-        (grade.assessment || "").toLowerCase();
+        originalName.toLowerCase();
+
+    let sectionName =
+        originalName || "Other Assessments";
 
     if (assessment.includes("opener")) {
-
-        assessmentGroups["Opener"].push(grade);
-
-    } else if (assessment.includes("midterm") ||
-               assessment.includes("mid-term")) {
-
-        assessmentGroups["Midterm"].push(grade);
-
-    } else if (assessment.includes("end term") ||
-               assessment.includes("end-term")) {
-
-        assessmentGroups["End Term"].push(grade);
-
+        sectionName = "Opener";
+    } else if (
+        assessment.includes("midterm") ||
+        assessment.includes("mid-term")
+    ) {
+        sectionName = "Midterm";
+    } else if (
+        assessment.includes("end term") ||
+        assessment.includes("end-term") ||
+        assessment.includes("endterm")
+    ) {
+        sectionName = "End Term";
     } else if (assessment.includes("internal")) {
-
-        assessmentGroups["Internal Test"].push(grade);
-
+        sectionName = "Internal Test";
     }
 
+    if (!assessmentGroups[sectionName]) {
+        assessmentGroups[sectionName] = [];
+    }
+
+    assessmentGroups[sectionName].push(grade);
 });
 
-
+/* Keep the standard sections visible. */
+["Opener", "Midterm", "End Term", "Internal Test"]
+    .forEach(sectionName => {
+        if (!assessmentGroups[sectionName]) {
+            assessmentGroups[sectionName] = [];
+        }
+    });
+        
 // ==========================================
 // CREATE SECTIONS
 // ==========================================
