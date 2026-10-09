@@ -289,6 +289,97 @@
 
         </section>
 
+        
+<!-- ======================================
+     RECORD A NEW ASSESSMENT
+======================================= -->
+
+<section class="admin-dashboard-section teacher-assessment-entry">
+
+    <div class="admin-section-header">
+        <div>
+            <span class="teacher-section-label">
+                NEW ASSESSMENT
+            </span>
+
+            <h2>Record Student Marks</h2>
+
+            <p>
+                Choose an assessment and enter marks for students
+                enrolled in your selected subject.
+            </p>
+        </div>
+    </div>
+
+    <form id="teacherAssessmentForm">
+
+        <div class="teacher-assessment-details">
+
+            <div class="teacher-assessment-field">
+                <label for="teacherAssessmentName">
+                    Assessment Name
+                </label>
+
+                <input
+                    type="text"
+                    id="teacherAssessmentName"
+                    list="teacherAssessmentOptions"
+                    placeholder="e.g. Mid-Term Exam"
+                    maxlength="100"
+                    required
+                >
+
+                <datalist id="teacherAssessmentOptions">
+                    <option value="Opener Exam"></option>
+                    <option value="Mid-Term Exam"></option>
+                    <option value="End-Term Exam"></option>
+                    <option value="Internal Test"></option>
+                </datalist>
+            </div>
+
+            <div class="teacher-assessment-field">
+                <label for="teacherAssessmentMaxScore">
+                    Maximum Marks
+                </label>
+
+                <input
+                    type="number"
+                    id="teacherAssessmentMaxScore"
+                    min="0.01"
+                    step="any"
+                    value="100"
+                    required
+                >
+            </div>
+
+        </div>
+
+        <div
+            id="teacherAssessmentStudentList"
+            aria-live="polite"
+        >
+            <p>
+                Select a subject above to load its enrolled students.
+            </p>
+        </div>
+
+        <button
+            type="submit"
+            id="teacherSaveAssessmentButton"
+            class="btn btn-primary"
+        >
+            Save Assessment Marks
+        </button>
+
+        <p
+            id="teacherAssessmentMessage"
+            role="status"
+            aria-live="polite"
+        ></p>
+
+    </form>
+
+</section>
 
         <!-- ======================================
              GRADES
