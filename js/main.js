@@ -1260,14 +1260,13 @@ if (
 
 }
 
+
 if (
-    window.location.pathname.includes(
-        "attendance.html"
-    )
+    window.location.pathname.endsWith("/attendance.html") &&
+    !window.location.pathname.endsWith("/teacher-attendance.html") &&
+    !window.location.pathname.endsWith("/admin-attendance.html")
 ) {
-
     loadStudentAttendance();
-
 }
 
 async function loadStudentProfile() {
