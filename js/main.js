@@ -16769,3 +16769,445 @@ if (
 ) {
     initTeacherGradeEntry();
 }
+
+
+ // ==========================================
+ // TEACHER - LESSON ATTENDANCE
+ // ==========================================
+
+async function initTeacherAttendance() {
+    const lessonSelect = document.getElementById("attendanceLesson");
+    const dateInput = document.getElementById("attendanceDate");
+    const tableBody = document.getElementById("teacherAttendanceTableBody");
+    const loadButton = document.getElementById("loadAttendanceButton");
+    const saveButton = document.getElementById("saveAttendanceButton");
+    const markAllButton = document.getElementById("markAllPresentButton");
+    const messageBox = document.getElementById("attendanceMessage");
+    const lessonInfo = document.getElementById("attendanceLessonInfo");
+
+    if (
+        !lessonSelect || !dateInput || !tableBody ||
+        !loadButton || !saveButton || !markAllButton
+    ) return;
+
+    if (lessonSelect.dataset.initialized === "true") return;
+    lessonSelect.dataset.initialized = "true";
+
+    let teacherLessons = [];
+    let currentStudents = [];
+
+    function showMessage(message, isError = false) {
+        messageBox.textContent = message;
+        messageBox.style.display = "block";
+        messageBox.style.background = isError ? "#fee2e2" : "#dcfce7";
+        messageBox.style.color = isError ? "#991b1b" : "#166534";
+    }
+
+    function hideMessage() {
+        messageBox.style.display = "none";
+        messageBox.textContent = "";
+    }
+
+    function showTableMessage(message) {
+        tableBody.innerHTML = "";
+        const row = document.createElement("tr");
+        const cell = document.createElement("td");
+        cell.colSpan = 4;
+        cell.className = "attendance-empty";
+        cell.textContent = message;
+        row.appendChild(cell);
+        tableBody.appendChild(row);
+    }
+
+    function localToday() {
+        const now = new Date();
+        const year = now.getFullYear();
+        const month = String(now.getMonth() + 1).padStart(2, "0");
+        const day = String(now.getDate()).padStart(2, "0");
+        return `${year}-${month}-${day}`;
+    }
+
+    dateInput.value = localToday();
+
+    // Get the signed-in teacher.
+    const {
+        data: { user },
+        error: userError
+    } = await supabaseClient.auth.getUser();
+
+    if (userError || !user) {
+        showMessage("Please sign in again to take attendance.", true);
+        showTableMessage("Teacher login required.");
+        return;
+    }
+
+    // Load only this teacher's scheduled lessons.
+    const {
+        data: lessons,
+        error: lessonsError
+    } = await supabaseClient
+        .from("timetable")
+        .select(`
+            id,
+            class_name,
+            subject_id,
+            teacher_id,
+            day_of_week,
+            start_time,
+            end_time,
+            room,
+            subjects (
+                name
+            )
+        `)
+        .eq("teacher_id", user.id)
+        .order("day_of_week")
+        .order("start_time");
+
+    if (lessonsError) {
+        console.error("Attendance timetable error:", lessonsError);
+        showMessage("Could not load your timetable. Check the console.", true);
+        showTableMessage("Unable to load lessons.");
+        return;
+    }
+
+    teacherLessons = lessons || [];
+
+    lessonSelect.innerHTML = "";
+
+    const defaultOption = document.createElement("option");
+    defaultOption.value = "";
+    defaultOption.textContent = teacherLessons.length
+        ? "Select a lesson"
+        : "No lessons assigned";
+    lessonSelect.appendChild(defaultOption);
+
+    teacherLessons.forEach(lesson => {
+        const subject = Array.isArray(lesson.subjects)
+            ? lesson.subjects[0]
+            : lesson.subjects;
+
+        const subjectName = subject?.name || "Unknown subject";
+        const label = [
+            subjectName,
+            lesson.class_name || "No class",
+            lesson.day_of_week || "",
+            lesson.start_time
+                ? String(lesson.start_time).slice(0, 5)
+                : ""
+        ].filter(Boolean).join(" — ");
+
+        const option = document.createElement("option");
+        option.value = lesson.id;
+        option.textContent = label;
+        lessonSelect.appendChild(option);
+    });
+
+    if (!teacherLessons.length) {
+        showMessage(
+            "No lessons were found for your teacher account. Check your timetable assignments.",
+            true
+        );
+        showTableMessage("No scheduled lessons available.");
+        return;
+    }
+
+    function getSelectedLesson() {
+        return teacherLessons.find(
+            lesson => String(lesson.id) === String(lessonSelect.value)
+        );
+    }
+
+    function updateLessonInfo() {
+        const lesson = getSelectedLesson();
+
+        if (!lesson) {
+            lessonInfo.textContent = "Select a lesson to view its details.";
+            return;
+        }
+
+        const subject = Array.isArray(lesson.subjects)
+            ? lesson.subjects[0]
+            : lesson.subjects;
+
+        lessonInfo.textContent =
+            `${subject?.name || "Subject"} | Class: ${lesson.class_name || "—"} | ` +
+            `Room: ${lesson.room || "—"} | ` +
+            `${lesson.start_time ? String(lesson.start_time).slice(0, 5) : ""}` +
+            `${lesson.end_time ? "–" + String(lesson.end_time).slice(0, 5) : ""}`;
+    }
+
+    function renderStudents(students, savedStatuses = {}) {
+        tableBody.innerHTML = "";
+
+        if (!students.length) {
+            showTableMessage(
+                "No enrolled students were found for this subject and class."
+            );
+            saveButton.disabled = true;
+            return;
+        }
+
+        students.forEach(student => {
+            const row = document.createElement("tr");
+
+            const nameCell = document.createElement("td");
+            nameCell.textContent = student.full_name || "Unknown";
+
+            const admissionCell = document.createElement("td");
+            admissionCell.textContent = student.admission_number || "—";
+
+            const classCell = document.createElement("td");
+            classCell.textContent = student.class_name || "—";
+
+            const statusCell = document.createElement("td");
+            const statusSelect = document.createElement("select");
+
+            statusSelect.className = "attendance-status";
+            statusSelect.dataset.studentId = student.id;
+            statusSelect.setAttribute(
+                "aria-label",
+                `Attendance for ${student.full_name || "student"}`
+            );
+
+            [
+                ["present", "Present"],
+                ["absent", "Absent"],
+                ["late", "Late"],
+                ["excused", "Excused"]
+            ].forEach(([value, label]) => {
+                const option = document.createElement("option");
+                option.value = value;
+                option.textContent = label;
+                statusSelect.appendChild(option);
+            });
+
+            statusSelect.value = savedStatuses[student.id] || "present";
+
+            statusCell.appendChild(statusSelect);
+            row.append(nameCell, admissionCell, classCell, statusCell);
+            tableBody.appendChild(row);
+        });
+
+        saveButton.disabled = false;
+    }
+
+    // Load enrolled students and any attendance already saved.
+    async function loadLessonStudents() {
+        hideMessage();
+
+        const lesson = getSelectedLesson();
+        const date = dateInput.value;
+
+        currentStudents = [];
+        saveButton.disabled = true;
+
+        if (!lesson || !date) {
+            showTableMessage("Choose a lesson and date first.");
+            return;
+        }
+
+        showTableMessage("Loading enrolled students...");
+        loadButton.disabled = true;
+
+        try {
+            // Get students enrolled in the lesson's subject.
+            const {
+                data: enrollments,
+                error: enrollmentError
+            } = await supabaseClient
+                .from("student_subjects")
+                .select("student_id")
+                .eq("subject_id", lesson.subject_id);
+
+            if (enrollmentError) throw enrollmentError;
+
+            const studentIds = [
+                ...new Set((enrollments || []).map(item => item.student_id))
+            ];
+
+            if (!studentIds.length) {
+                showTableMessage("No students are enrolled in this subject.");
+                return;
+            }
+
+            const {
+                data: students,
+                error: studentsError
+            } = await supabaseClient
+                .from("students")
+                .select("id, full_name, admission_number, class_name")
+                .in("id", studentIds)
+                .order("full_name");
+
+            if (studentsError) throw studentsError;
+
+            // Keep students belonging to this lesson's class only.
+            currentStudents = (students || []).filter(student =>
+                String(student.class_name || "").trim() ===
+                String(lesson.class_name || "").trim()
+            );
+
+            // Load records already saved for this lesson and date.
+            const {
+                data: records,
+                error: recordsError
+            } = await supabaseClient
+                .from("attendance")
+                .select("id, student_id, status")
+                .eq("timetable_id", lesson.id)
+                .eq("date", date);
+
+            if (recordsError) throw recordsError;
+
+            const savedStatuses = {};
+
+            (records || []).forEach(record => {
+                savedStatuses[record.student_id] = record.status;
+            });
+
+            renderStudents(currentStudents, savedStatuses);
+
+            showMessage(
+                `Loaded ${currentStudents.length} student(s). ` +
+                "Review the statuses before saving."
+            );
+
+        } catch (error) {
+            console.error("Load lesson attendance error:", error);
+            showTableMessage("Unable to load attendance. Check the console.");
+            showMessage(
+                error.message || "Could not load lesson attendance.",
+                true
+            );
+        } finally {
+            loadButton.disabled = false;
+        }
+    }
+
+    // Load students when requested.
+    loadButton.addEventListener("click", loadLessonStudents);
+
+    lessonSelect.addEventListener("change", () => {
+        updateLessonInfo();
+        showTableMessage("Click Load Students to open this lesson's register.");
+        saveButton.disabled = true;
+    });
+
+    dateInput.addEventListener("change", () => {
+        showTableMessage("Click Load Students to load attendance for this date.");
+        saveButton.disabled = true;
+    });
+
+    markAllButton.addEventListener("click", () => {
+        tableBody.querySelectorAll(".attendance-status").forEach(select => {
+            select.value = "present";
+        });
+    });
+
+    // Insert new attendance records or update existing ones.
+    saveButton.addEventListener("click", async () => {
+        const lesson = getSelectedLesson();
+        const date = dateInput.value;
+
+        if (!lesson || !date || !currentStudents.length) {
+            showMessage("Load a lesson's students before saving.", true);
+            return;
+        }
+
+        const statusSelects = [
+            ...tableBody.querySelectorAll(".attendance-status")
+        ];
+
+        if (statusSelects.length !== currentStudents.length) {
+            showMessage("The student register is incomplete. Reload it first.", true);
+            return;
+        }
+
+        saveButton.disabled = true;
+        loadButton.disabled = true;
+        markAllButton.disabled = true;
+
+        let savedCount = 0;
+
+        try {
+            for (const select of statusSelects) {
+                const studentId = select.dataset.studentId;
+                const status = select.value;
+
+                // Look for an existing record for this student, lesson and date.
+                const {
+                    data: existing,
+                    error: existingError
+                } = await supabaseClient
+                    .from("attendance")
+                    .select("id")
+                    .eq("student_id", studentId)
+                    .eq("timetable_id", lesson.id)
+                    .eq("date", date)
+                    .maybeSingle();
+
+                if (existingError) throw existingError;
+
+                if (existing) {
+                    const { error: updateError } = await supabaseClient
+                        .from("attendance")
+                        .update({
+                            status,
+                            subject_id: lesson.subject_id
+                        })
+                        .eq("id", existing.id);
+
+                    if (updateError) throw updateError;
+
+                } else {
+                    const { error: insertError } = await supabaseClient
+                        .from("attendance")
+                        .insert({
+                            student_id: studentId,
+                            date,
+                            status,
+                            subject_id: lesson.subject_id,
+                            timetable_id: lesson.id
+                        });
+
+                    if (insertError) throw insertError;
+                }
+
+                savedCount++;
+            }
+
+            showMessage(
+                `Saved attendance for ${savedCount} student(s).`
+            );
+
+        } catch (error) {
+            console.error("Save lesson attendance error:", error);
+            showMessage(
+                `Attendance save stopped after ${savedCount} student(s). ` +
+                (error.message || "Check the console for details."),
+                true
+            );
+
+        } finally {
+            saveButton.disabled = false;
+            loadButton.disabled = false;
+            markAllButton.disabled = false;
+        }
+    });
+
+    updateLessonInfo();
+    showTableMessage("Select a lesson and click Load Students.");
+    console.log("Teacher lesson attendance initialized.");
+}
+
+
+// ==========================================
+// INITIALIZE TEACHER ATTENDANCE PAGE
+// ==========================================
+
+if (
+    window.location.pathname.includes("teacher-attendance.html")
+) {
+    initTeacherAttendance();
+}
