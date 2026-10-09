@@ -1,0 +1,275 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Take Attendance | Student Management Portal</title>
+
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/dashboard.css">
+
+    <style>
+        .attendance-page {
+            padding: 28px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .attendance-header {
+            margin-bottom: 25px;
+        }
+
+        .attendance-header h1 {
+            margin-bottom: 8px;
+        }
+
+        .attendance-controls {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 18px;
+            margin-bottom: 25px;
+        }
+
+        .attendance-field {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .attendance-field label {
+            font-weight: 600;
+        }
+
+        .attendance-field input,
+        .attendance-field select {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #d1d5db;
+            border-radius: 8px;
+            background: white;
+            color: #1f2937;
+        }
+
+        .attendance-panel {
+            background: white;
+            border-radius: 12px;
+            padding: 22px;
+            margin-bottom: 22px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+        }
+
+        .attendance-actions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            margin: 18px 0;
+        }
+
+        .attendance-actions button {
+            padding: 11px 18px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+        }
+
+        #loadAttendanceButton,
+        #saveAttendanceButton {
+            background: #15803d;
+            color: white;
+        }
+
+        #markAllPresentButton {
+            background: #e5e7eb;
+            color: #1f2937;
+        }
+
+        #saveAttendanceButton:disabled {
+            opacity: 0.55;
+            cursor: not-allowed;
+        }
+
+        .attendance-table-wrapper {
+            width: 100%;
+            overflow-x: auto;
+        }
+
+        .attendance-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .attendance-table th,
+        .attendance-table td {
+            padding: 13px 12px;
+            border-bottom: 1px solid #e5e7eb;
+            text-align: left;
+        }
+
+        .attendance-table th {
+            background: #f9fafb;
+        }
+
+        .attendance-status {
+            min-width: 125px;
+            padding: 9px;
+            border: 1px solid #d1d5db;
+            border-radius: 7px;
+            background: white;
+        }
+
+        .attendance-message {
+            margin: 14px 0;
+            padding: 12px;
+            border-radius: 8px;
+            display: none;
+        }
+
+        .attendance-empty {
+            text-align: center !important;
+            padding: 30px !important;
+            color: #6b7280;
+        }
+
+        @media (max-width: 600px) {
+            .attendance-page {
+                padding: 15px;
+            }
+
+            .attendance-panel {
+                padding: 14px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <main class="attendance-page">
+
+        <header class="attendance-header">
+            <h1>Take Lesson Attendance</h1>
+            <p>
+                Select one of your scheduled lessons and record
+                attendance for its enrolled students.
+            </p>
+        </header>
+
+        <section class="attendance-panel">
+
+            <h2>Lesson Details</h2>
+
+            <div class="attendance-controls">
+
+                <div class="attendance-field">
+                    <label for="attendanceDate">
+                        Attendance Date
+                    </label>
+                    <input
+                        type="date"
+                        id="attendanceDate"
+                        required
+                    >
+                </div>
+
+                <div class="attendance-field">
+                    <label for="attendanceLesson">
+                        Your Scheduled Lesson
+                    </label>
+                    <select id="attendanceLesson">
+                        <option value="">
+                            Loading your lessons...
+                        </option>
+                    </select>
+                </div>
+
+            </div>
+
+            <div id="attendanceLessonInfo" aria-live="polite">
+                Select a lesson to view its details.
+            </div>
+
+            <div class="attendance-actions">
+                <button
+                    type="button"
+                    id="loadAttendanceButton"
+                >
+                    Load Students
+                </button>
+            </div>
+
+        </section>
+
+        <section class="attendance-panel">
+
+            <h2>Student Register</h2>
+
+            <p>
+                Choose the correct attendance status for every student.
+            </p>
+
+            <div
+                id="attendanceMessage"
+                class="attendance-message"
+                role="status"
+                aria-live="polite"
+            ></div>
+
+            <div class="attendance-actions">
+
+                <button
+                    type="button"
+                    id="markAllPresentButton"
+                >
+                    Mark All Present
+                </button>
+
+                <button
+                    type="button"
+                    id="saveAttendanceButton"
+                    disabled
+                >
+                    Save Attendance
+                </button>
+
+            </div>
+
+            <div class="attendance-table-wrapper">
+
+                <table class="attendance-table">
+
+                    <thead>
+                        <tr>
+                            <th>Student Name</th>
+                            <th>Admission Number</th>
+                            <th>Class</th>
+                            <th>Attendance Status</th>
+                        </tr>
+                    </thead>
+
+                    <tbody id="teacherAttendanceTableBody">
+                        <tr>
+                            <td
+                                colspan="4"
+                                class="attendance-empty"
+                            >
+                                Select a lesson and click
+                                "Load Students".
+                            </td>
+                        </tr>
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        </section>
+
+    </main>
+
+    <script src="main.js"></script>
+
+</body>
+</html>
