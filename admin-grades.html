@@ -1,409 +1,663 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-
     <meta charset="UTF-8">
-
-    <meta
-        name="viewport"
-        content="width=device-width, initial-scale=1.0"
-    >
-
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Grades | Student Management Portal</title>
 
-    <link
-        rel="stylesheet"
-        href="css/style.css"
-    >
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/dashboard.css">
 
-    <link
-        rel="stylesheet"
-        href="css/dashboard.css"
-    >
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
-    <script
-        src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"
-    ></script>
+    <style>
+        .grades-hero {
+            background: linear-gradient(120deg, #123f35, #16745b, #27a47b);
+            color: white;
+            padding: 30px;
+            border-radius: 20px;
+            margin-bottom: 26px;
+            box-shadow: 0 12px 28px rgba(18, 63, 53, .16);
+        }
 
+        .grades-hero h1 {
+            color: white;
+            margin: 0 0 8px;
+            font-size: 28px;
+        }
+
+        .grades-hero p {
+            color: rgba(255,255,255,.85);
+            margin: 0;
+        }
+
+        .grades-hero-label {
+            display: inline-block;
+            padding: 6px 12px;
+            border-radius: 30px;
+            background: rgba(255,255,255,.15);
+            margin-bottom: 13px;
+            font-size: 12px;
+            font-weight: 700;
+            letter-spacing: .7px;
+        }
+
+        .admin-grades-overview {
+            display: grid;
+            grid-template-columns: repeat(4, minmax(0, 1fr));
+            gap: 17px;
+            margin-bottom: 28px;
+        }
+
+        .admin-grade-stat-card {
+            background: white;
+            border: 1px solid #e7eee9;
+            border-radius: 17px;
+            padding: 21px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            box-shadow: 0 5px 18px rgba(20, 50, 40, .045);
+        }
+
+        .grade-stat-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 14px;
+            display: grid;
+            place-items: center;
+            font-size: 23px;
+            flex-shrink: 0;
+        }
+
+        .admin-grade-stat-card:nth-child(1) .grade-stat-icon {
+            background: #e6f1ff;
+        }
+
+        .admin-grade-stat-card:nth-child(2) .grade-stat-icon {
+            background: #e5f8ee;
+        }
+
+        .admin-grade-stat-card:nth-child(3) .grade-stat-icon {
+            background: #fff1df;
+        }
+
+        .admin-grade-stat-card:nth-child(4) .grade-stat-icon {
+            background: #f0eaff;
+        }
+
+        .admin-grade-stat-card span {
+            display: block;
+            color: #748078;
+            font-size: 12px;
+            margin-bottom: 6px;
+        }
+
+        .admin-grade-stat-card h2 {
+            color: #183c30;
+            margin: 0;
+            font-size: 25px;
+        }
+
+        .admin-grades-section {
+            background: white;
+            border: 1px solid #e8eee9;
+            border-radius: 19px;
+            padding: 25px;
+            margin-bottom: 25px;
+            box-shadow: 0 5px 20px rgba(20, 50, 40, .04);
+        }
+
+        .section-heading {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .section-heading h2 {
+            margin: 0 0 6px;
+            color: #193d31;
+        }
+
+        .section-heading p {
+            color: #7b8780;
+            margin: 0;
+            font-size: 13px;
+        }
+
+        .grades-search-box {
+            position: relative;
+            margin-bottom: 22px;
+        }
+
+        .grades-search-box input {
+            width: 100%;
+            box-sizing: border-box;
+            padding: 15px 17px 15px 45px;
+            border: 1px solid #dfe9e2;
+            border-radius: 13px;
+            background: #f9fbf9;
+            font-size: 14px;
+            outline: none;
+        }
+
+        .grades-search-box input:focus {
+            border-color: #23966f;
+            box-shadow: 0 0 0 3px rgba(35,150,111,.10);
+        }
+
+        .grades-search-icon {
+            position: absolute;
+            left: 16px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 17px;
+        }
+
+        .admin-grades-student-list {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 17px;
+        }
+
+        .admin-grade-student-card {
+            background: linear-gradient(145deg, #ffffff, #f7fbf8);
+            border: 1px solid #e4eee7;
+            border-radius: 17px;
+            padding: 20px;
+            transition: .2s ease;
+        }
+
+        .admin-grade-student-card:hover {
+            transform: translateY(-3px);
+            border-color: #8bcbb0;
+            box-shadow: 0 10px 24px rgba(25, 100, 70, .09);
+        }
+
+        .student-grade-info {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            margin-bottom: 17px;
+        }
+
+        .student-grade-avatar {
+            width: 53px;
+            height: 53px;
+            flex-shrink: 0;
+            display: grid;
+            place-items: center;
+            border-radius: 16px;
+            background: linear-gradient(135deg, #d7f4e5, #a9dfc5);
+            color: #155d43;
+            font-size: 22px;
+            font-weight: 800;
+        }
+
+        .student-grade-info h3 {
+            color: #183c30;
+            margin: 0 0 6px;
+            font-size: 16px;
+        }
+
+        .student-grade-info p {
+            color: #78847d;
+            margin: 3px 0;
+            font-size: 12px;
+        }
+
+        .student-grade-card-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 10px;
+            padding-top: 14px;
+            border-top: 1px solid #e8eee9;
+        }
+
+        .grade-record-count {
+            color: #748078;
+            font-size: 12px;
+        }
+
+        .view-grades-button {
+            border: none;
+            background: #167b5b;
+            color: white;
+            border-radius: 10px;
+            padding: 10px 15px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: .2s;
+        }
+
+        .view-grades-button:hover {
+            background: #105b43;
+            transform: translateY(-1px);
+        }
+
+        .grades-back-button {
+            border: none;
+            background: #eaf5ee;
+            color: #176344;
+            padding: 11px 16px;
+            border-radius: 10px;
+            font-weight: 700;
+            cursor: pointer;
+            margin-bottom: 20px;
+        }
+
+        .grades-back-button:hover {
+            background: #d8eee1;
+        }
+
+        .selected-student-banner {
+            background: linear-gradient(120deg, #153f35, #20795c);
+            border-radius: 19px;
+            padding: 25px;
+            color: white;
+            display: flex;
+            align-items: center;
+            gap: 18px;
+            margin-bottom: 22px;
+        }
+
+        .selected-student-avatar {
+            width: 67px;
+            height: 67px;
+            border-radius: 20px;
+            background: rgba(255,255,255,.18);
+            display: grid;
+            place-items: center;
+            font-size: 27px;
+            font-weight: 800;
+            flex-shrink: 0;
+        }
+
+        .selected-student-banner h2 {
+            color: white;
+            margin: 0 0 8px;
+        }
+
+        .selected-student-banner p {
+            color: rgba(255,255,255,.85);
+            margin: 4px 0;
+            font-size: 13px;
+        }
+
+        .student-grade-summary {
+            display: grid;
+            grid-template-columns: repeat(4, minmax(0, 1fr));
+            gap: 15px;
+            margin-bottom: 24px;
+        }
+
+        .student-summary-card {
+            padding: 20px;
+            border-radius: 16px;
+            border: 1px solid transparent;
+        }
+
+        .student-summary-card:nth-child(1) {
+            background: #e9f7ef;
+            border-color: #d3eddd;
+        }
+
+        .student-summary-card:nth-child(2) {
+            background: #eaf2ff;
+            border-color: #d9e6ff;
+        }
+
+        .student-summary-card:nth-child(3) {
+            background: #fff4df;
+            border-color: #f5e7c5;
+        }
+
+        .student-summary-card:nth-child(4) {
+            background: #f1ebff;
+            border-color: #e4d9ff;
+        }
+
+        .student-summary-card span {
+            display: block;
+            color: #68766e;
+            font-size: 12px;
+            margin-bottom: 9px;
+        }
+
+        .student-summary-card strong {
+            color: #183c30;
+            font-size: 27px;
+        }
+
+        .student-results-card {
+            background: white;
+            border: 1px solid #e8eee9;
+            border-radius: 18px;
+            padding: 24px;
+            box-shadow: 0 5px 18px rgba(20,50,40,.04);
+        }
+
+        .grades-table-wrapper {
+            width: 100%;
+            overflow-x: auto;
+        }
+
+        .admin-grades-table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+            min-width: 720px;
+        }
+
+        .admin-grades-table th {
+            background: #edf6f0;
+            color: #285b45;
+            padding: 15px 13px;
+            text-align: left;
+            font-size: 12px;
+            white-space: nowrap;
+        }
+
+        .admin-grades-table th:first-child {
+            border-radius: 10px 0 0 10px;
+        }
+
+        .admin-grades-table th:last-child {
+            border-radius: 0 10px 10px 0;
+        }
+
+        .admin-grades-table td {
+            padding: 15px 13px;
+            border-bottom: 1px solid #edf1ed;
+            color: #526158;
+            font-size: 13px;
+            vertical-align: top;
+        }
+
+        .admin-grades-table tbody tr:hover {
+            background: #f8fbf9;
+        }
+
+        .grade-subject-name {
+            color: #1d4d39;
+            font-weight: 700;
+        }
+
+        .grade-subject-code {
+            display: block;
+            color: #8a968e;
+            font-size: 11px;
+            margin-top: 4px;
+        }
+
+        .grade-assessment-badge {
+            display: inline-block;
+            padding: 6px 10px;
+            border-radius: 20px;
+            background: #eef2ff;
+            color: #4d5ca4;
+            font-size: 11px;
+            font-weight: 700;
+        }
+
+        .grade-score-pill {
+            display: inline-block;
+            padding: 6px 10px;
+            border-radius: 8px;
+            background: #f0f5f1;
+            color: #285b45;
+            font-weight: 700;
+        }
+
+        .grade-percentage {
+            font-weight: 800;
+        }
+
+        .grade-percentage.excellent {
+            color: #168454;
+        }
+
+        .grade-percentage.good {
+            color: #3979c8;
+        }
+
+        .grade-percentage.average {
+            color: #c18a25;
+        }
+
+        .grade-percentage.low {
+            color: #cf5b5b;
+        }
+
+        .grade-comment {
+            min-width: 180px;
+            max-width: 260px;
+            line-height: 1.5;
+            color: #65736a;
+        }
+
+        .grades-empty-state {
+            text-align: center;
+            padding: 38px 20px;
+            background: #f8fbf9;
+            border-radius: 14px;
+            color: #78847d;
+        }
+
+        .grades-empty-state h3 {
+            color: #254a38;
+            margin-bottom: 8px;
+        }
+
+        @media (max-width: 1000px) {
+            .admin-grades-overview,
+            .student-grade-summary {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+            }
+        }
+
+        @media (max-width: 700px) {
+            .admin-grades-student-list {
+                grid-template-columns: 1fr;
+            }
+
+            .grades-hero {
+                padding: 23px;
+            }
+
+            .admin-grades-section,
+            .student-results-card {
+                padding: 17px;
+            }
+
+            .selected-student-banner {
+                align-items: flex-start;
+                padding: 19px;
+            }
+        }
+
+        @media (max-width: 460px) {
+            .admin-grades-overview,
+            .student-grade-summary {
+                grid-template-columns: 1fr 1fr;
+                gap: 10px;
+            }
+
+            .admin-grade-stat-card,
+            .student-summary-card {
+                padding: 14px;
+            }
+
+            .admin-grade-stat-card h2,
+            .student-summary-card strong {
+                font-size: 21px;
+            }
+
+            .student-grade-card-footer {
+                align-items: flex-start;
+                flex-direction: column;
+            }
+        }
+    </style>
 </head>
 
 <body>
-
 <div class="dashboard-layout">
 
-    <!-- ============================= -->
-    <!-- SIDEBAR -->
-    <!-- ============================= -->
-
     <aside class="sidebar">
-
         <div class="sidebar-header">
-
             <h2>Student Portal</h2>
-
             <p>Administration</p>
-
         </div>
 
         <nav class="sidebar-nav">
-
-            <a href="admin-dashboard.html">
-                <span> 🏠 Dashboard</span>
-            </a>
-
-            <a href="admin-students.html">
-                <span> 👥 Students</span>
-            </a>
-
-            <a href="admin-credentials.html">
-                    👨‍🏫 Login Credentials
-                </a>
-
-            <a href="admin-attendance.html">
-                <span> ✅ Attendance</span>
-            </a>
-
-             <a href="admin-conduct.html">
-                 ⚠️ conduct
-                 </a>
-
-             <a href="admin-teachers.html">
-                <span> 👨‍🏫 Teachers</span>
-               </a>
-
-            <a
-                href="admin-grades.html"
-                class="active"
-            >
-                <span> 📊 Grades</span>
-            </a>
-
-            <a href="admin-announcements.html">
-                <span> 📢 Announcements</span>
-            </a>
-
+            <a href="admin-dashboard.html"><span>🏠 Dashboard</span></a>
+            <a href="admin-students.html"><span>👥 Students</span></a>
+            <a href="admin-credentials.html">👨‍🏫 Login Credentials</a>
+            <a href="admin-attendance.html"><span>✅ Attendance</span></a>
+            <a href="admin-conduct.html">⚠️ Conduct</a>
+            <a href="admin-teachers.html"><span>👨‍🏫 Teachers</span></a>
+            <a href="admin-grades.html" class="active"><span>📊 Grades</span></a>
+            <a href="admin-announcements.html"><span>📢 Announcements</span></a>
         </nav>
-
     </aside>
-
-
-    <!-- ============================= -->
-    <!-- MAIN CONTENT -->
-    <!-- ============================= -->
 
     <main class="dashboard-main">
 
-        <!-- HEADER -->
-
         <header class="dashboard-header">
-
             <div>
-
-                <h1>Grades</h1>
-
-                <p>
-                    View and monitor student academic performance
-                </p>
-
+                <h1>Academic Performance</h1>
+                <p>Monitor and review student academic results</p>
             </div>
 
             <div class="admin-header-user">
-
-                <div class="admin-avatar">
-                    A
-                </div>
-
+                <div class="admin-avatar">A</div>
                 <div>
-
                     <strong>Administrator</strong>
-
                     <small>Admin</small>
-
                 </div>
-
             </div>
-
         </header>
 
-
-        <!-- ============================= -->
-        <!-- OVERVIEW CARDS -->
-        <!-- ============================= -->
-
-        <section class="admin-grades-overview">
-
-            <div class="admin-grade-stat-card">
-
-                <div class="grade-stat-icon">
-                    👨‍🎓
-                </div>
-
-                <div>
-
-                    <span>Total Students</span>
-
-                    <h2 id="adminGradesTotalStudents">
-                        —
-                    </h2>
-
-                </div>
-
-            </div>
-
-
-            <div class="admin-grade-stat-card">
-
-                <div class="grade-stat-icon">
-                    📊
-                </div>
-
-                <div>
-
-                    <span>Students With Grades</span>
-
-                    <h2 id="adminGradesStudentsWithGrades">
-                        —
-                    </h2>
-
-                </div>
-
-            </div>
-
-
-            <div class="admin-grade-stat-card">
-
-                <div class="grade-stat-icon">
-                    📝
-                </div>
-
-                <div>
-
-                    <span>Total Results</span>
-
-                    <h2 id="adminGradesTotalResults">
-                        —
-                    </h2>
-
-                </div>
-
-            </div>
-
-
-            <div class="admin-grade-stat-card">
-
-                <div class="grade-stat-icon">
-                    🎯
-                </div>
-
-                <div>
-
-                    <span>Overall Average</span>
-
-                    <h2 id="adminGradesOverallAverage">
-                        —
-                    </h2>
-
-                </div>
-
-            </div>
-
+        <section class="grades-hero">
+            <span class="grades-hero-label">ACADEMIC OVERVIEW</span>
+            <h1>Student Grades</h1>
+            <p>Review recorded assessments, subject performance and teacher comments.</p>
         </section>
 
-        <div class="admin-grades-summary-grid">
-
-    <div class="admin-grade-stat-card">
-        <span>Total Students</span>
-        <strong id="adminGradesTotalStudents">—</strong>
-    </div>
-
-    <div class="admin-grade-stat-card">
-        <span>Students With Grades</span>
-        <strong id="adminGradesStudentsWithGrades">—</strong>
-    </div>
-
-    <div class="admin-grade-stat-card">
-        <span>Total Results</span>
-        <strong id="adminGradesTotalResults">—</strong>
-    </div>
-
-    <div class="admin-grade-stat-card">
-        <span>Overall Average</span>
-        <strong id="adminGradesOverallAverage">—</strong>
-    </div>
-
-</div>
-
-        <!-- ============================= -->
-        <!-- STUDENT DIRECTORY -->
-        <!-- ============================= -->
-
-        <section
-            id="adminStudentSection"
-            class="admin-grades-section"
-        >
-
-            <div class="section-heading">
-
+        <section class="admin-grades-overview">
+            <div class="admin-grade-stat-card">
+                <div class="grade-stat-icon">👨‍🎓</div>
                 <div>
-
-                    <h2>Student Results</h2>
-
-                    <p>
-                        Select a student to view their academic results.
-                    </p>
-
+                    <span>Total Students</span>
+                    <h2 id="adminGradesTotalStudents">—</h2>
                 </div>
-
             </div>
 
+            <div class="admin-grade-stat-card">
+                <div class="grade-stat-icon">📊</div>
+                <div>
+                    <span>Students With Grades</span>
+                    <h2 id="adminGradesStudentsWithGrades">—</h2>
+                </div>
+            </div>
 
-            <!-- SEARCH -->
+            <div class="admin-grade-stat-card">
+                <div class="grade-stat-icon">📝</div>
+                <div>
+                    <span>Total Results</span>
+                    <h2 id="adminGradesTotalResults">—</h2>
+                </div>
+            </div>
 
-            <div class="admin-grades-search">
+            <div class="admin-grade-stat-card">
+                <div class="grade-stat-icon">🎯</div>
+                <div>
+                    <span>Overall Average</span>
+                    <h2 id="adminGradesOverallAverage">—</h2>
+                </div>
+            </div>
+        </section>
 
+        <section id="adminStudentSection" class="admin-grades-section">
+            <div class="section-heading">
+                <div>
+                    <h2>Student Directory</h2>
+                    <p>Select a student to view their complete academic results.</p>
+                </div>
+            </div>
+
+            <div class="grades-search-box">
+                <span class="grades-search-icon">🔎</span>
                 <input
                     type="text"
                     id="adminGradesSearch"
-                    placeholder="Search by student name or admission number..."
+                    placeholder="Search by student name, admission number or class..."
                 >
-
             </div>
 
-
-            <!-- STUDENTS -->
-
-            <div
-                id="adminGradesStudentList"
-                class="admin-grades-student-list"
-            >
-
-                <div class="loading-state">
-                    Loading students...
-                </div>
-
+            <div id="adminGradesStudentList" class="admin-grades-student-list">
+                <div class="grades-empty-state">Loading students...</div>
             </div>
-
         </section>
-
-
-        <!-- ============================= -->
-        <!-- STUDENT RESULTS -->
-        <!-- ============================= -->
 
         <section
             id="adminStudentResultsSection"
             class="admin-grades-section"
             style="display:none;"
         >
-
             <button
                 type="button"
                 id="adminGradesBackButton"
-                class="back-button"
+                class="grades-back-button"
             >
                 ← Back to Students
             </button>
 
-
-            <!-- STUDENT HEADER -->
-
-            <div
-                id="adminSelectedStudent"
-                class="admin-selected-student"
-            >
-            </div>
-
-
-            <!-- PERFORMANCE CARDS -->
+            <div id="adminSelectedStudent"></div>
 
             <div class="student-grade-summary">
-
                 <div class="student-summary-card">
-
                     <span>Overall Average</span>
-
-                    <strong id="adminStudentAverage">
-                        —
-                    </strong>
-
+                    <strong id="adminStudentAverage">—</strong>
                 </div>
 
-
                 <div class="student-summary-card">
-
                     <span>Total Results</span>
-
-                    <strong id="adminStudentResultCount">
-                        —
-                    </strong>
-
+                    <strong id="adminStudentResultCount">—</strong>
                 </div>
 
-
                 <div class="student-summary-card">
-
                     <span>Highest Score</span>
-
-                    <strong id="adminStudentHighest">
-                        —
-                    </strong>
-
+                    <strong id="adminStudentHighest">—</strong>
                 </div>
-
 
                 <div class="student-summary-card">
-
                     <span>Lowest Score</span>
-
-                    <strong id="adminStudentLowest">
-                        —
-                    </strong>
-
+                    <strong id="adminStudentLowest">—</strong>
                 </div>
-
             </div>
-
-
-            <!-- RESULTS -->
 
             <div class="student-results-card">
-
                 <div class="section-heading">
-
                     <div>
-
                         <h2>Academic Results</h2>
-
-                        <p>
-                            Complete recorded results for this student.
-                        </p>
-
+                        <p>All recorded assessments and comments from teachers.</p>
                     </div>
-
                 </div>
 
-
-                <div
-                    id="adminStudentGradesContainer"
-                    class="admin-student-grades-container"
-                >
-
-                    <p>Loading grades...</p>
-
+                <div id="adminStudentGradesContainer">
+                    <div class="grades-empty-state">Loading grades...</div>
                 </div>
-
             </div>
-
         </section>
 
     </main>
-
 </div>
 
-
 <script src="js/main.js"></script>
-
 </body>
-
 </html>
