@@ -7238,70 +7238,99 @@ body {
 
 
 /* ==========================================
-   LOGIN CREDENTIALS - LAYOUT FIX
+   LOGIN CREDENTIALS - FULL LAYOUT FIX
+   Keep all content clear of the sidebar
    ========================================== */
 
+/* Main layout */
 .dashboard-layout {
     width: 100%;
-    overflow-x: hidden;
-}
-
-.sidebar {
-    width: 245px;
-    box-sizing: border-box;
-    z-index: 1000;
-    overflow-y: auto;
-}
-
-.main-content {
-    margin-left: 245px;
-    width: calc(100% - 245px);
-    min-width: 0;
-    box-sizing: border-box;
-    overflow-x: hidden;
-}
-
-/* Keep credential content inside available space */
-
-.credentials-page,
-.credentials-hero,
-.credentials-overview,
-.credentials-directory {
     max-width: 100%;
     min-width: 0;
     box-sizing: border-box;
 }
 
+/* Desktop sidebar */
+.sidebar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    width: 294px;
+    max-width: 294px;
+    box-sizing: border-box;
+    z-index: 1000;
+    overflow-y: auto;
+    overflow-x: hidden;
+}
+
+/* Main content starts AFTER the sidebar */
+.main-content {
+    position: relative;
+    margin-left: 294px;
+    width: calc(100% - 294px);
+    max-width: calc(100% - 294px);
+    min-width: 0;
+    padding: 30px;
+    box-sizing: border-box;
+    overflow-x: auto;
+}
+
+/* Credentials page sections */
+.credentials-page,
+.credentials-hero,
+.credentials-overview,
+.credentials-directory {
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+    box-sizing: border-box;
+}
+
+/* Overview cards */
 .credentials-overview {
     display: grid;
     grid-template-columns: repeat(3, minmax(0, 1fr));
     gap: 16px;
 }
 
-.credentials-directory {
-    width: 100%;
-    overflow: hidden;
-}
-
-#credentialsContainer {
-    width: 100%;
-    min-width: 0;
-    display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 18px;
-}
-
-#credentialsContainer .credential-student-card {
+.credentials-overview > * {
     min-width: 0;
     max-width: 100%;
     box-sizing: border-box;
-    overflow: hidden;
 }
 
+/* Credentials directory */
+.credentials-directory {
+    overflow: visible;
+}
+
+/* Account cards */
+#credentialsContainer {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 18px;
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+    box-sizing: border-box;
+}
+
+#credentialsContainer .credential-student-card {
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+    box-sizing: border-box;
+    overflow-wrap: anywhere;
+}
+
+/* Allow long account details to wrap */
 .credential-student-info,
 .credential-account,
 .credential-student-details {
     min-width: 0;
+    max-width: 100%;
+    overflow-wrap: anywhere;
 }
 
 .saved-password-box {
@@ -7318,32 +7347,35 @@ body {
 }
 
 /* Medium screens */
+@media (max-width: 1100px) and (min-width: 751px) {
 
-@media (max-width: 1100px) {
-
-    #credentialsContainer {
-        grid-template-columns: 1fr;
+    .main-content {
+        padding: 22px;
     }
 
     .credentials-overview {
         grid-template-columns: repeat(2, minmax(0, 1fr));
     }
 
+    #credentialsContainer {
+        grid-template-columns: 1fr;
+    }
 }
 
-/* Small screens */
-
+/* Mobile and narrow screens */
 @media (max-width: 750px) {
 
     .sidebar {
         width: 65px;
-        padding: 20px 10px;
+        max-width: 65px;
+        padding: 20px 8px;
     }
 
     .main-content {
         margin-left: 65px;
         width: calc(100% - 65px);
-        padding: 20px;
+        max-width: calc(100% - 65px);
+        padding: 16px;
     }
 
     .credentials-overview {
@@ -7354,57 +7386,24 @@ body {
         grid-template-columns: 1fr;
     }
 
+    .credentials-hero {
+        overflow-wrap: anywhere;
+    }
 }
 
 /* Very small screens */
-
 @media (max-width: 500px) {
 
     .main-content {
-        padding: 12px;
+        padding: 10px;
     }
 
+    .credentials-overview {
+        gap: 12px;
+    }
+
+    #credentialsContainer {
+        gap: 12px;
+    }
 }
 
-
-/* ==========================================
-   LOGIN CREDENTIALS - FIX CONTENT POSITION
-   ========================================== */
-
-@media (min-width: 780px) {
-
-    body:has(#credentialsContainer) .main-content {
-        margin-left: 294px;
-        width: calc(100% - 294px);
-        padding-left: 30px;
-        padding-right: 30px;
-        box-sizing: border-box;
-        min-width: 0;
-    }
-
-    body:has(#credentialsContainer) #credentialsContainer {
-        width: 100%;
-        max-width: 100%;
-        box-sizing: border-box;
-        margin-left: 0;
-    }
-
-}
-
-@media (max-width: 779px) {
-
-    body:has(#credentialsContainer) .main-content {
-        margin-left: 0;
-        width: 100%;
-        padding: 20px;
-        box-sizing: border-box;
-    }
-
-    body:has(#credentialsContainer) #credentialsContainer {
-        width: 100%;
-        max-width: 100%;
-        box-sizing: border-box;
-        margin-left: 0;
-    }
-
-}
