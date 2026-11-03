@@ -7407,3 +7407,191 @@ body {
     }
 }
 
+
+/* ==========================================
+   LOGIN CREDENTIALS - COMPLETE DISPLAY FIX
+   ========================================== */
+
+/* Prevent horizontal clipping */
+body:has(#credentialsContainer) {
+    margin: 0;
+    width: 100%;
+    overflow-x: hidden;
+}
+
+body:has(#credentialsContainer) .dashboard-layout {
+    display: flex;
+    width: 100%;
+    min-height: 100vh;
+    overflow: visible;
+}
+
+/* Sidebar */
+body:has(#credentialsContainer) .sidebar {
+    position: fixed;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 294px;
+    flex: 0 0 294px;
+    box-sizing: border-box;
+    z-index: 1000;
+}
+
+/* Main content */
+body:has(#credentialsContainer) .main-content {
+    position: relative;
+    margin-left: 294px !important;
+    width: calc(100% - 294px) !important;
+    max-width: none !important;
+    min-width: 0;
+    flex: 1 1 auto;
+    padding: 30px 35px !important;
+    box-sizing: border-box;
+    overflow: visible;
+}
+
+/* Make every section fit */
+body:has(#credentialsContainer) .credentials-page,
+body:has(#credentialsContainer) .credentials-hero,
+body:has(#credentialsContainer) .credentials-overview,
+body:has(#credentialsContainer) .credentials-directory {
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+    box-sizing: border-box;
+}
+
+/* Full heading visibility */
+body:has(#credentialsContainer) .credentials-hero {
+    display: block;
+    overflow: visible;
+    min-height: auto;
+}
+
+body:has(#credentialsContainer) .credentials-hero h1 {
+    display: block;
+    width: 100%;
+    max-width: 100%;
+    white-space: normal;
+    overflow: visible;
+    overflow-wrap: anywhere;
+    font-size: clamp(24px, 3vw, 34px);
+}
+
+/* Overview */
+body:has(#credentialsContainer) .credentials-overview {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 16px;
+}
+
+body:has(#credentialsContainer) .credentials-overview > * {
+    min-width: 0;
+    box-sizing: border-box;
+}
+
+/* Search and filters */
+body:has(#credentialsContainer) .credentials-search-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    width: 100%;
+    min-width: 0;
+}
+
+body:has(#credentialsContainer) .credentials-search {
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+    box-sizing: border-box;
+}
+
+body:has(#credentialsContainer) .credentials-filters {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    max-width: 100%;
+}
+
+/* Account cards */
+body:has(#credentialsContainer) #credentialsContainer {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 18px;
+    width: 100%;
+    min-width: 0;
+}
+
+body:has(#credentialsContainer) .credential-student-card {
+    min-width: 0;
+    max-width: 100%;
+    box-sizing: border-box;
+    overflow-wrap: anywhere;
+}
+
+body:has(#credentialsContainer) .credential-student-info,
+body:has(#credentialsContainer) .credential-account,
+body:has(#credentialsContainer) .credential-student-details {
+    min-width: 0;
+    max-width: 100%;
+    overflow-wrap: anywhere;
+}
+
+body:has(#credentialsContainer) .saved-password-box {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    max-width: 100%;
+}
+
+body:has(#credentialsContainer) .saved-password-text {
+    overflow-wrap: anywhere;
+    word-break: break-word;
+}
+
+/* Smaller desktop and tablet */
+@media (max-width: 1100px) and (min-width: 751px) {
+
+    body:has(#credentialsContainer) .main-content {
+        padding: 24px !important;
+    }
+
+    body:has(#credentialsContainer) .credentials-overview {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    body:has(#credentialsContainer) #credentialsContainer {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* Mobile */
+@media (max-width: 750px) {
+
+    body:has(#credentialsContainer) .sidebar {
+        width: 65px;
+        flex-basis: 65px;
+    }
+
+    body:has(#credentialsContainer) .main-content {
+        margin-left: 65px !important;
+        width: calc(100% - 65px) !important;
+        padding: 18px 14px !important;
+    }
+
+    body:has(#credentialsContainer) .credentials-overview {
+        grid-template-columns: 1fr;
+    }
+
+    body:has(#credentialsContainer) #credentialsContainer {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 500px) {
+
+    body:has(#credentialsContainer) .main-content {
+        padding: 12px !important;
+    }
+}
