@@ -5145,32 +5145,6 @@ console.log(
 
 <div class="student-admin-actions">
 
-    <div class="teacher-password-box">
-
-        <label>
-            Temporary Password
-        </label>
-
-        <input
-            type="text"
-            id="teacher-password-${teacher.id}"
-            value="${sessionStorage.getItem(`teacherPassword_${teacher.id}`) || ""}"
-            placeholder="No password stored"
-            readonly
-        >
-
-        <button
-            type="button"
-            class="secondary-button"
-            onclick="copyTeacherPassword('${teacher.id}')">
-
-            Copy Password
-
-        </button>
-
-    </div>
-
-
     <button
         class="secondary-button"
         type="button"
