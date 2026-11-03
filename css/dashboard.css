@@ -7366,29 +7366,45 @@ body {
 
 }
 
+
 /* ==========================================
-   LOGIN CREDENTIALS - SHIFT EVERYTHING RIGHT
+   LOGIN CREDENTIALS - FIX CONTENT POSITION
    ========================================== */
 
 @media (min-width: 780px) {
 
     body:has(#credentialsContainer) .main-content {
-        margin-left: 350px;
-        width: calc(100% - 350px);
-        padding-left: 50px;
-        padding-right: 50px;
+        margin-left: 294px;
+        width: calc(100% - 294px);
+        padding-left: 30px;
+        padding-right: 30px;
         box-sizing: border-box;
+        min-width: 0;
+    }
+
+    body:has(#credentialsContainer) #credentialsContainer {
+        width: 100%;
+        max-width: 100%;
+        box-sizing: border-box;
+        margin-left: 0;
     }
 
 }
 
-@media (max-width: 750px) {
+@media (max-width: 779px) {
 
     body:has(#credentialsContainer) .main-content {
-        margin-left: 100px;
-        width: calc(100% - 85px);
-        padding: 35px;
+        margin-left: 0;
+        width: 100%;
+        padding: 20px;
         box-sizing: border-box;
+    }
+
+    body:has(#credentialsContainer) #credentialsContainer {
+        width: 100%;
+        max-width: 100%;
+        box-sizing: border-box;
+        margin-left: 0;
     }
 
 }
