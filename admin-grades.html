@@ -452,6 +452,114 @@
             margin-bottom: 8px;
         }
 
+.grade-category-panel {
+    background: #f7fbf8;
+    border: 1px solid #e3eee6;
+    border-radius: 16px;
+    padding: 22px;
+    margin-bottom: 24px;
+}
+
+.grade-category-panel h3 {
+    color: #194b37;
+    margin: 0 0 7px;
+}
+
+.grade-category-panel p {
+    color: #77847b;
+    font-size: 13px;
+    margin: 0 0 20px;
+}
+
+.grade-category-buttons {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 13px;
+}
+
+.grade-category-button {
+    padding: 17px 12px;
+    border: 2px solid transparent;
+    border-radius: 13px;
+    cursor: pointer;
+    text-align: left;
+    transition: .2s ease;
+}
+
+.grade-category-button span,
+.grade-category-button strong {
+    display: block;
+}
+
+.grade-category-button span {
+    font-size: 15px;
+    font-weight: 800;
+    margin-bottom: 8px;
+}
+
+.grade-category-button strong {
+    font-size: 11px;
+    opacity: .8;
+}
+
+.grade-category-button:hover {
+    transform: translateY(-3px);
+}
+
+.grade-category-button.category-0 {
+    background: #e5f5eb;
+    color: #176b45;
+}
+
+.grade-category-button.category-1 {
+    background: #e8efff;
+    color: #355ba6;
+}
+
+.grade-category-button.category-2 {
+    background: #fff1dc;
+    color: #a66a16;
+}
+
+.grade-category-button.category-3 {
+    background: #f1eaff;
+    color: #7650a8;
+}
+
+.grade-category-button.selected {
+    border-color: currentColor;
+    box-shadow: 0 5px 15px rgba(30, 70, 50, .12);
+}
+
+.grade-category-results-heading {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin: 20px 0;
+}
+
+.grade-category-results-heading h3 {
+    color: #194b37;
+    margin: 0;
+}
+
+.grade-category-results-heading span {
+    color: #64756a;
+    background: #eaf4ed;
+    border-radius: 20px;
+    padding: 7px 12px;
+    font-size: 12px;
+    font-weight: 700;
+}
+
+@media (max-width: 700px) {
+    .grade-category-buttons {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+        
         @media (max-width: 1000px) {
             .admin-grades-overview,
             .student-grade-summary {
