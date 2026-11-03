@@ -7367,16 +7367,17 @@ body {
 }
 
 /* ==========================================
-   LOGIN CREDENTIALS - EXTRA LEFT SPACING
+   LOGIN CREDENTIALS - SHIFT EVERYTHING RIGHT
    ========================================== */
 
 @media (min-width: 751px) {
 
     body:has(#credentialsContainer) .main-content {
-        margin-left: 275px;
-        width: calc(100% - 275px);
-        padding-left: 35px;
+        margin-left: 310px;
+        width: calc(100% - 310px);
+        padding-left: 40px;
         padding-right: 40px;
+        box-sizing: border-box;
     }
 
 }
@@ -7386,7 +7387,8 @@ body {
     body:has(#credentialsContainer) .main-content {
         margin-left: 65px;
         width: calc(100% - 65px);
-        padding-left: 20px;
+        padding: 20px;
+        box-sizing: border-box;
     }
 
 }
