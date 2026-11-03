@@ -7658,3 +7658,70 @@ body:has(#credentialsContainer) .saved-password-text {
 
 }
 
+
+/* ==========================================
+   FINAL LOGIN CREDENTIALS SIDEBAR FIX
+   ========================================== */
+
+/* Desktop and tablet */
+@media (min-width: 751px) {
+
+    .dashboard-layout > .admin-students-page {
+        margin-left: 294px !important;
+        width: calc(100% - 294px) !important;
+        max-width: calc(100% - 294px) !important;
+
+        padding: 30px !important;
+        min-width: 0 !important;
+
+        box-sizing: border-box !important;
+        position: relative !important;
+    }
+
+    .dashboard-layout > .sidebar {
+        width: 294px !important;
+    }
+
+}
+
+/* Mobile */
+@media (max-width: 750px) {
+
+    .dashboard-layout > .sidebar {
+        width: 65px !important;
+    }
+
+    .dashboard-layout > .admin-students-page {
+        margin-left: 65px !important;
+        width: calc(100% - 65px) !important;
+        max-width: calc(100% - 65px) !important;
+
+        padding: 16px !important;
+        min-width: 0 !important;
+
+        box-sizing: border-box !important;
+    }
+
+}
+
+/* Prevent the heading from being cut off */
+.students-hero {
+    min-width: 0;
+    max-width: 100%;
+    flex-wrap: wrap;
+    gap: 18px;
+}
+
+.students-hero-left {
+    min-width: 0;
+    flex: 1 1 300px;
+}
+
+.students-hero h1 {
+    white-space: normal;
+    overflow-wrap: anywhere;
+}
+
+.administrator-badge {
+    flex-shrink: 0;
+}
