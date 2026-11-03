@@ -2,7 +2,6 @@
 <html lang="en">
 
 <head>
-
     <meta charset="UTF-8">
 
     <meta
@@ -10,325 +9,535 @@
         content="width=device-width, initial-scale=1.0"
     >
 
-    <title>Conduct | Student Management Portal</title>
+    <title>Student Conduct | Administration</title>
 
-    <link
-        rel="stylesheet"
-        href="css/style.css"
-    >
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/dashboard.css">
 
-    <link
-        rel="stylesheet"
-        href="css/dashboard.css"
-    >
+    <style>
+        /* =====================================
+           ADMIN CONDUCT PAGE
+        ===================================== */
+
+        .dashboard-main {
+            min-width: 0;
+            box-sizing: border-box;
+        }
+
+        .admin-conduct-hero {
+            background: linear-gradient(135deg, #0f5132, #198754);
+            border-radius: 20px;
+            padding: 30px 34px;
+            color: white;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 20px;
+            margin-bottom: 28px;
+            box-shadow: 0 10px 28px rgba(25, 135, 84, 0.16);
+        }
+
+        .admin-conduct-hero h1 {
+            font-size: 30px;
+            margin: 8px 0;
+            color: white;
+        }
+
+        .admin-conduct-hero p {
+            margin: 0;
+            color: rgba(255,255,255,.88);
+            line-height: 1.6;
+        }
+
+        .conduct-eyebrow {
+            font-size: 11px;
+            font-weight: 800;
+            letter-spacing: 2px;
+            color: #c7f5dc;
+        }
+
+        .conduct-hero-icon {
+            width: 75px;
+            height: 75px;
+            flex-shrink: 0;
+            border-radius: 22px;
+            background: rgba(255,255,255,.16);
+            display: grid;
+            place-items: center;
+            font-size: 38px;
+        }
+
+        /* OVERVIEW */
+
+        .admin-conduct-overview {
+            display: grid;
+            grid-template-columns: repeat(4, minmax(0, 1fr));
+            gap: 18px;
+            margin-bottom: 28px;
+        }
+
+        .conduct-stat-card {
+            background: white;
+            border: 1px solid #e7eee9;
+            border-radius: 17px;
+            padding: 23px;
+            box-shadow: 0 5px 18px rgba(20, 50, 35, .045);
+            transition: transform .2s ease, box-shadow .2s ease;
+        }
+
+        .conduct-stat-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 10px 24px rgba(20, 50, 35, .09);
+        }
+
+        .conduct-stat-card span {
+            display: block;
+            color: #64748b;
+            font-size: 13px;
+            font-weight: 600;
+        }
+
+        .conduct-stat-card strong {
+            display: block;
+            font-size: 30px;
+            margin: 12px 0 5px;
+            color: #173c2b;
+        }
+
+        .conduct-stat-card small {
+            color: #84918a;
+            font-size: 12px;
+        }
+
+        /* SECTIONS */
+
+        .admin-conduct-section {
+            background: white;
+            border: 1px solid #e7eee9;
+            border-radius: 19px;
+            padding: 26px;
+            margin-bottom: 26px;
+            box-shadow: 0 5px 18px rgba(20, 50, 35, .04);
+        }
+
+        .section-heading {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 22px;
+        }
+
+        .section-heading h2 {
+            color: #173c2b;
+            font-size: 20px;
+            margin: 0 0 6px;
+        }
+
+        .section-heading p {
+            color: #84918a;
+            font-size: 13px;
+            margin: 0;
+        }
+
+        /* SEARCH */
+
+        .admin-conduct-search {
+            margin-bottom: 22px;
+        }
+
+        .admin-conduct-search input {
+            width: 100%;
+            box-sizing: border-box;
+            padding: 15px 18px;
+            border: 1px solid #dce8df;
+            border-radius: 12px;
+            outline: none;
+            background: #f9fcfa;
+            font-size: 14px;
+            transition: border .2s, box-shadow .2s;
+        }
+
+        .admin-conduct-search input:focus {
+            border-color: #198754;
+            box-shadow: 0 0 0 3px rgba(25,135,84,.10);
+        }
+
+        /* STUDENT CARDS CONTAINER */
+
+        .admin-conduct-student-list {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 17px;
+        }
+
+        .admin-conduct-student-list > * {
+            min-width: 0;
+        }
+
+        /* STUDENT DETAILS */
+
+        .back-button {
+            border: none;
+            background: #eaf5ee;
+            color: #12643d;
+            padding: 11px 17px;
+            border-radius: 10px;
+            font-weight: 700;
+            cursor: pointer;
+            margin-bottom: 22px;
+        }
+
+        .back-button:hover {
+            background: #d9eddf;
+        }
+
+        .admin-selected-student {
+            margin-bottom: 22px;
+        }
+
+        .student-grade-summary {
+            display: grid;
+            grid-template-columns: repeat(4, minmax(0, 1fr));
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+
+        .student-summary-card {
+            background: #f7faf8;
+            border: 1px solid #e4eee7;
+            border-radius: 15px;
+            padding: 20px;
+        }
+
+        .student-summary-card span {
+            display: block;
+            color: #64748b;
+            font-size: 13px;
+            font-weight: 600;
+        }
+
+        .student-summary-card strong {
+            display: block;
+            font-size: 26px;
+            margin-top: 9px;
+            color: #173c2b;
+        }
+
+        .student-results-card {
+            background: white;
+            border: 1px solid #e7eee9;
+            border-radius: 18px;
+            padding: 25px;
+        }
+
+        .admin-student-grades-container {
+            width: 100%;
+            overflow-x: auto;
+        }
+
+        /* LOADING / EMPTY STATES */
+
+        .loading-state,
+        .conduct-empty-state {
+            padding: 35px 20px;
+            text-align: center;
+            color: #84918a;
+            background: #f8fbf9;
+            border-radius: 13px;
+        }
+
+        /* RESPONSIVE */
+
+        @media (max-width: 1100px) {
+            .admin-conduct-overview {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+            }
+
+            .student-grade-summary {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+            }
+        }
+
+        @media (max-width: 750px) {
+            .admin-conduct-hero {
+                padding: 23px;
+            }
+
+            .admin-conduct-hero h1 {
+                font-size: 24px;
+            }
+
+            .conduct-hero-icon {
+                width: 55px;
+                height: 55px;
+                font-size: 28px;
+            }
+
+            .admin-conduct-section {
+                padding: 18px;
+            }
+
+            .admin-conduct-student-list {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .admin-conduct-overview,
+            .student-grade-summary {
+                grid-template-columns: 1fr;
+            }
+
+            .conduct-hero-icon {
+                display: none;
+            }
+        }
+    </style>
 
 </head>
 
 <body>
 
-    <div class="dashboard-layout">
+<div class="dashboard-layout">
 
-        <!-- ============================= -->
-        <!-- SIDEBAR -->
-        <!-- ============================= -->
+    <!-- SIDEBAR -->
 
-        <aside class="sidebar">
+    <aside class="sidebar">
 
-            <div class="sidebar-logo">
-                <h2>Student Portal</h2>
-                <span>Administration</span>
+        <div class="sidebar-logo">
+            <h2>Student Portal</h2>
+            <span>Administration</span>
+        </div>
+
+        <nav class="sidebar-nav">
+
+            <a href="admin-dashboard.html">🏠 Dashboard</a>
+
+            <a href="admin-students.html">👥 Students</a>
+
+            <a href="admin-teachers.html">👨‍🏫 Teachers</a>
+
+            <a href="admin-grades.html">📊 Grades</a>
+
+            <a href="admin-attendance.html">✅ Attendance</a>
+
+            <a href="admin-conduct.html" class="active">
+                ⚠️ Conduct
+            </a>
+
+            <a href="admin-announcements.html">📢 Announcements</a>
+
+            <a href="admin-credentials.html">🔑 Login Credentials</a>
+
+        </nav>
+
+    </aside>
+
+
+    <!-- MAIN CONTENT -->
+
+    <main class="dashboard-main">
+
+        <!-- HERO -->
+
+        <section class="admin-conduct-hero">
+
+            <div>
+                <span class="conduct-eyebrow">
+                    STUDENT WELLBEING
+                </span>
+
+                <h1>Student Conduct Overview</h1>
+
+                <p>
+                    Monitor student behaviour and review conduct
+                    records submitted by teachers.
+                </p>
             </div>
 
-            <nav class="sidebar-nav">
+            <div class="conduct-hero-icon">
+                📋
+            </div>
 
-                <a href="admin-dashboard.html">
-                     🏠 Dashboard
-                </a>
-
-                <a href="admin-students.html">
-                     👥 Students
-                </a>
-
-                <a href="admin-teachers.html">
-                     👨‍🏫 Teachers
-                </a>
-
-                <a href="admin-grades.html">
-                     📊 Grades
-                </a>
-
-                <a href="admin-attendance.html">
-                    ✅ Attendance
-                </a>
-
-                <a
-                    href="admin-conduct.html"
-                    class="active"
-                >
-                    ⚠️ Conduct
-                </a>
-
-                <a href="admin-announcements.html">
-                    📢 Announcements
-                </a>
-
-                <a href="admin-credentials.html">
-                     👨‍🏫 Login Credentials
-                </a>
-
-            </nav>
-
-        </aside>
+        </section>
 
 
-        <!-- ============================= -->
-        <!-- MAIN CONTENT -->
-        <!-- ============================= -->
+        <!-- OVERVIEW CARDS -->
 
-        <main class="dashboard-main">
+        <section class="admin-conduct-overview">
 
-            <header class="dashboard-header">
+            <div class="conduct-stat-card">
+                <span>Total Records</span>
+
+                <strong id="adminConductTotalRecords">—</strong>
+
+                <small>Recorded conduct entries</small>
+            </div>
+
+            <div class="conduct-stat-card">
+                <span>Students With Records</span>
+
+                <strong id="adminConductStudents">—</strong>
+
+                <small>Students with conduct entries</small>
+            </div>
+
+            <div class="conduct-stat-card">
+                <span>Positive Records</span>
+
+                <strong id="adminConductPositive">—</strong>
+
+                <small>Positive conduct entries</small>
+            </div>
+
+            <div class="conduct-stat-card">
+                <span>Concerns</span>
+
+                <strong id="adminConductNegativeRecords">—</strong>
+
+                <small>Negative conduct entries</small>
+            </div>
+
+        </section>
+
+
+        <!-- STUDENT DIRECTORY -->
+
+        <section class="admin-conduct-section">
+
+            <div class="section-heading">
 
                 <div>
-                    <h1>Conduct</h1>
+                    <h2>Student Conduct Directory</h2>
 
                     <p>
-                        Monitor and review student conduct records.
+                        Select a student to review their complete conduct profile.
                     </p>
                 </div>
 
-                <div class="admin-profile">
+            </div>
 
-                    <div class="admin-avatar">
-                        A
-                    </div>
+            <div class="admin-conduct-search">
 
-                    <div>
-                        <strong>Administrator</strong>
-                        <span>Admin</span>
-                    </div>
+                <input
+                    type="text"
+                    id="adminConductSearch"
+                    placeholder="🔍 Search by student name or admission number..."
+                >
 
+            </div>
+
+            <div
+                id="adminConductStudentList"
+                class="admin-conduct-student-list"
+            >
+
+                <div class="loading-state">
+                    Loading student conduct records...
                 </div>
 
-            </header>
+            </div>
+
+        </section>
 
 
-            <!-- ============================= -->
-            <!-- OVERVIEW CARDS -->
-            <!-- ============================= -->
+        <!-- SELECTED STUDENT DETAILS -->
 
-            <section class="admin-conduct-overview">
+        <section
+            id="adminConductResultsSection"
+            class="admin-conduct-section"
+            style="display:none;"
+        >
 
-                <div class="conduct-stat-card">
+            <button
+                type="button"
+                id="adminConductBackButton"
+                class="back-button"
+            >
+                ← Back to Students
+            </button>
 
+
+            <!-- STUDENT PROFILE -->
+
+            <div
+                id="adminSelectedConductStudent"
+                class="admin-selected-student"
+            ></div>
+
+
+            <!-- STUDENT STATISTICS -->
+
+            <div class="student-grade-summary">
+
+                <div class="student-summary-card">
                     <span>Total Records</span>
 
-                    <strong id="adminConductTotalRecords">
-                        —
-                    </strong>
-
-                    <small>
-                        Recorded conduct entries
-                    </small>
-
+                    <strong id="adminStudentConductCount">—</strong>
                 </div>
 
-
-                <div class="conduct-stat-card">
-
-                    <span>Students With Records</span>
-
-                    <strong id="adminConductStudents">
-                        —
-                    </strong>
-
-                    <small>
-                        Students with conduct entries
-                    </small>
-
-                </div>
-
-
-                <div class="conduct-stat-card">
-
+                <div class="student-summary-card">
                     <span>Positive Records</span>
 
-                    <strong id="adminConductPositive">
-                        —
-                    </strong>
-
-                    <small>
-                        Positive conduct entries
-                    </small>
-
+                    <strong id="adminStudentPositive">—</strong>
                 </div>
 
-
-                <div class="conduct-stat-card">
-
+                <div class="student-summary-card">
                     <span>Negative Records</span>
 
-                    <strong id="adminConductNegativeRecords">
-                        —
-                    </strong>
-
-                    <small>
-                        Negative conduct entries
-                    </small>
-
+                    <strong id="adminStudentNegativeRecords">—</strong>
                 </div>
 
-            </section>
+                <div class="student-summary-card">
+                    <span>Net Conduct Points</span>
+
+                    <strong id="adminStudentNetPoints">—</strong>
+                </div>
+
+            </div>
 
 
-            <!-- ============================= -->
-            <!-- SEARCH -->
-            <!-- ============================= -->
+            <!-- CONDUCT HISTORY -->
 
-            <section class="admin-conduct-section">
+            <div class="student-results-card">
 
                 <div class="section-heading">
 
                     <div>
-
-                        <h2>Student Conduct</h2>
+                        <h2>Conduct History</h2>
 
                         <p>
-                            Search and review student conduct information.
+                            Teacher-recorded behaviour, remarks and comments.
                         </p>
-
                     </div>
 
                 </div>
 
-
-                <div class="admin-conduct-search">
-
-                    <input
-                        type="text"
-                        id="adminConductSearch"
-                        placeholder="Search by student name or admission number..."
-                    >
-
-                </div>
-
-
                 <div
-                    id="adminConductStudentList"
-                    class="admin-conduct-student-list"
+                    id="adminStudentConductContainer"
+                    class="admin-student-grades-container"
                 >
 
                     <div class="loading-state">
-                        Loading conduct records...
+                        Loading conduct history...
                     </div>
 
                 </div>
 
-            </section>
+            </div>
+
+        </section>
+
+    </main>
+
+</div>
 
 
-            <!-- ============================= -->
-            <!-- STUDENT CONDUCT DETAILS -->
-            <!-- ============================= -->
+<!-- SCRIPTS -->
 
-            <section
-                id="adminConductResultsSection"
-                class="admin-conduct-section"
-                style="display:none;"
-            >
-
-                <button
-                    type="button"
-                    id="adminConductBackButton"
-                    class="back-button"
-                >
-                    ← Back to Students
-                </button>
-
-
-                <div
-                    id="adminSelectedConductStudent"
-                    class="admin-selected-student"
-                >
-                </div>
-
-
-                <div class="student-grade-summary">
-
-                    <div class="student-summary-card">
-
-                        <span>Total Records</span>
-
-                        <strong id="adminStudentConductCount">
-                            —
-                        </strong>
-
-                    </div>
-
-
-                    <div class="student-summary-card">
-
-                        <span>Positive</span>
-
-                        <strong id="adminStudentPositive">
-                            —
-                        </strong>
-
-                    </div>
-
-
-                    <div class="student-summary-card">
-
-                        <span>Negative Records</span>
-
-                        <strong id="adminStudentNegativeRecords">
-                            —
-                        </strong>
-
-                    </div>
-
-                </div>
-
-
-                <div class="student-results-card">
-
-                    <div class="section-heading">
-
-                        <div>
-
-                            <h2>Conduct History</h2>
-
-                            <p>
-                                Complete recorded conduct information for this student.
-                            </p>
-
-                        </div>
-
-                    </div>
-
-
-                    <div
-                        id="adminStudentConductContainer"
-                        class="admin-student-grades-container"
-                    >
-
-                        <p>
-                            Loading conduct records...
-                        </p>
-
-                    </div>
-
-                </div>
-
-            </section>
-
-        </main>
-
-    </div>
-
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <script src="js/main.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="js/main.js"></script>
 
 </body>
-
 </html>
