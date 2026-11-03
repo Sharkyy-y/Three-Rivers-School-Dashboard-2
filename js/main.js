@@ -8855,768 +8855,333 @@ if (
 // ==========================================
 
 async function loadAdminConduct() {
-
-    const studentList =
-        document.getElementById("adminConductStudentList");
-
+    const studentList = document.getElementById("adminConductStudentList");
     if (!studentList) return;
+
+    const escapeHTML = (value) =>
+        String(value ?? "").replace(/[&<>"']/g, char => ({
+            "&": "&amp;",
+            "<": "&lt;",
+            ">": "&gt;",
+            '"': "&quot;",
+            "'": "&#39;"
+        })[char]);
 
     console.log("Loading admin conduct records...");
 
-    // ------------------------------------------
-    // LOAD STUDENTS
-    // ------------------------------------------
-
-    const {
-        data: students,
-        error: studentsError
-    } = await supabaseClient
-        .from("students")
-        .select(`
-            id,
-            full_name,
-            admission_number,
-            class_name
-        `)
-        .order("full_name", { ascending: true });
+    const { data: students, error: studentsError } =
+        await supabaseClient
+            .from("students")
+            .select("id, full_name, admission_number, class_name")
+            .order("full_name", { ascending: true });
 
     if (studentsError) {
-
-        console.error(
-            "ADMIN CONDUCT STUDENTS ERROR:",
-            studentsError
-        );
-
-        studentList.innerHTML = `
-            <div class="empty-state">
-                Unable to load students.
-            </div>
-        `;
-
+        console.error("ADMIN CONDUCT STUDENTS ERROR:", studentsError);
+        studentList.innerHTML = `<div class="empty-state">Unable to load students.</div>`;
         return;
     }
 
-
-    // ------------------------------------------
-    // LOAD CONDUCT RECORDS
-    // ------------------------------------------
-
-    const {
-        data: conductRecords,
-        error: conductError
-    } = await supabaseClient
-        .from("conduct_records")
-        .select(`
-            id,
-            student_id,
-            type,
-            title,
-            description,
-            points,
-            created_at
-        `)
-        .order("created_at", {
-            ascending: false
-        });
-
-    console.log(
-        "ADMIN CONDUCT RECORDS:",
-        conductRecords
-    );
-
-    console.log(
-        "ADMIN CONDUCT ERROR:",
-        conductError
-    );
+    const { data: conductRecords, error: conductError } =
+        await supabaseClient
+            .from("conduct_records")
+            .select("id, student_id, type, title, description, points, created_at")
+            .order("created_at", { ascending: false });
 
     if (conductError) {
-
-        studentList.innerHTML = `
-            <div class="empty-state">
-                Unable to load conduct records.
-            </div>
-        `;
-
+        console.error("ADMIN CONDUCT ERROR:", conductError);
+        studentList.innerHTML = `<div class="empty-state">Unable to load conduct records.</div>`;
         return;
     }
 
+    const records = conductRecords || [];
+    const allStudents = students || [];
 
-    // ------------------------------------------
-    // OVERVIEW STATISTICS
-    // ------------------------------------------
+    const positiveRecords = records.filter(
+        record => String(record.type || "").toLowerCase() === "positive"
+    );
 
-    const totalRecordsElement =
-        document.getElementById(
-            "adminConductTotalRecords"
-        );
+    const negativeRecords = records.filter(
+        record => String(record.type || "").toLowerCase() === "negative"
+    );
 
-    const studentsElement =
-        document.getElementById(
-            "adminConductStudents"
-        );
+    const setText = (id, value) => {
+        const element = document.getElementById(id);
+        if (element) element.textContent = value;
+    };
 
-    const positiveElement =
-        document.getElementById(
-            "adminConductPositive"
-        );
+    setText("adminConductTotalRecords", records.length);
 
-    const concernsElement =
-        document.getElementById(
-            "adminConductConcerns"
-        );
+    setText(
+        "adminConductStudents",
+        new Set(records.map(record => record.student_id)).size
+    );
 
+    setText("adminConductPositive", positiveRecords.length);
+    setText("adminConductNegativeRecords", negativeRecords.length);
 
-    // Total records
-
-    if (totalRecordsElement) {
-
-        totalRecordsElement.textContent =
-            conductRecords.length;
+    function getStudentRecords(studentId) {
+        return records.filter(record => record.student_id === studentId);
     }
 
-
-    // Students with records
-
-    const studentsWithRecords =
-        new Set(
-            conductRecords.map(function (record) {
-
-                return record.student_id;
-
-            })
-        );
-
-
-    if (studentsElement) {
-
-        studentsElement.textContent =
-            studentsWithRecords.size;
+    function getNetPoints(studentRecords) {
+        return studentRecords.reduce((total, record) => {
+            const points = Number(record.points) || 0;
+            return String(record.type || "").toLowerCase() === "negative"
+                ? total - points
+                : total + points;
+        }, 0);
     }
-
-
-    // Positive records
-
-    const positiveRecords =
-        conductRecords.filter(function (record) {
-
-            return String(
-                record.type || ""
-            ).toLowerCase() === "positive";
-
-        });
-
-
-    // Negative records
-
-    const negativeRecords =
-        conductRecords.filter(function (record) {
-
-            return String(
-                record.type || ""
-            ).toLowerCase() === "negative";
-
-        });
-
-
-    if (positiveElement) {
-
-        positiveElement.textContent =
-            positiveRecords.length;
-    }
-
-
-    if (concernsElement) {
-
-        concernsElement.textContent =
-            negativeRecords.length;
-    }
-
-
-    // ------------------------------------------
-    // RENDER STUDENTS
-    // ------------------------------------------
 
     function renderStudents(searchTerm = "") {
+        const search = searchTerm.trim().toLowerCase();
 
-        const search =
-            searchTerm.trim().toLowerCase();
+        const filteredStudents = allStudents.filter(student => {
+            const name = String(student.full_name || "").toLowerCase();
+            const admission = String(student.admission_number || "").toLowerCase();
+            const className = String(student.class_name || "").toLowerCase();
 
-
-        const filteredStudents =
-            students.filter(function (student) {
-
-                const name =
-                    String(
-                        student.full_name || ""
-                    ).toLowerCase();
-
-
-                const admission =
-                    String(
-                        student.admission_number || ""
-                    ).toLowerCase();
-
-
-                return (
-                    name.includes(search) ||
-                    admission.includes(search)
-                );
-
-            });
-
+            return name.includes(search) ||
+                admission.includes(search) ||
+                className.includes(search);
+        });
 
         if (filteredStudents.length === 0) {
-
             studentList.innerHTML = `
-                <div class="empty-state">
-                    No students found.
-                </div>
+                <div class="empty-state">No students found.</div>
             `;
-
             return;
         }
 
-
         studentList.innerHTML = "";
 
+        filteredStudents.forEach(student => {
+            const studentRecords = getStudentRecords(student.id);
 
-        filteredStudents.forEach(
-            function (student) {
+            const positiveCount = studentRecords.filter(
+                record => String(record.type || "").toLowerCase() === "positive"
+            ).length;
 
-                const studentConduct =
-                    conductRecords.filter(
-                        function (record) {
+            const negativeCount = studentRecords.filter(
+                record => String(record.type || "").toLowerCase() === "negative"
+            ).length;
 
-                            return (
-                                record.student_id ===
-                                student.id
-                            );
+            const netPoints = getNetPoints(studentRecords);
 
-                        }
-                    );
+            const card = document.createElement("button");
+            card.type = "button";
+            card.className = "admin-conduct-student-card";
 
-
-                const positiveCount =
-                    studentConduct.filter(
-                        function (record) {
-
-                            return String(
-                                record.type || ""
-                            ).toLowerCase() ===
-                            "positive";
-
-                        }
-                    ).length;
-
-
-                const negativeCount =
-                    studentConduct.filter(
-                        function (record) {
-
-                            return String(
-                                record.type || ""
-                            ).toLowerCase() ===
-                            "negative";
-
-                        }
-                    ).length;
-
-
-                const totalPoints =
-                    studentConduct.reduce(
-                        function (total, record) {
-
-                            return (
-                                total +
-                                Number(
-                                    record.points || 0
-                                )
-                            );
-
-                        },
-                        0
-                    );
-
-
-                const card =
-                    document.createElement("div");
-
-
-                card.className =
-                    "admin-conduct-student-card";
-
-
-                card.innerHTML = `
-                    <div>
-
-                        <h3>
-                            ${
-                                student.full_name ||
-                                "Unnamed Student"
-                            }
-                        </h3>
-
-                        <p>
-                            Admission:
-                            ${
-                                student.admission_number ||
-                                "—"
-                            }
-                        </p>
-
-                        <p>
-                            Class:
-                            ${
-                                student.class_name ||
-                                "—"
-                            }
-                        </p>
-
+            card.innerHTML = `
+                <div class="conduct-student-main">
+                    <div class="conduct-student-avatar">
+                        ${escapeHTML((student.full_name || "S").charAt(0).toUpperCase())}
                     </div>
 
-
-                    <div class="conduct-card-summary">
-
-                        <strong>
-                            ${studentConduct.length}
-                        </strong>
-
-                        <span>
-                            Records
-                        </span>
-
-                        <small>
-                            +${positiveCount}
-                            positive
-                            •
-                            ${negativeCount}
-                            negative
-                        </small>
-
-                        <small>
-                            ${totalPoints}
-                            points
-                        </small>
-
+                    <div class="conduct-student-info">
+                        <h3>${escapeHTML(student.full_name || "Unnamed Student")}</h3>
+                        <p>${escapeHTML(student.admission_number || "No admission number")}</p>
+                        <p>${escapeHTML(student.class_name || "Class not assigned")}</p>
                     </div>
-                `;
+                </div>
 
+                <div class="conduct-card-summary">
+                    <strong>${studentRecords.length}</strong>
+                    <span>Records</span>
 
-                card.addEventListener(
-                    "click",
-                    function () {
+                    <div class="conduct-card-breakdown">
+                        <span class="positive-text">+${positiveCount} positive</span>
+                        <span class="negative-text">${negativeCount} concerns</span>
+                    </div>
 
-                        loadAdminStudentConduct(
-                            student
-                        );
+                    <small>Net points: ${netPoints > 0 ? "+" : ""}${netPoints}</small>
+                </div>
 
-                    }
-                );
+                <div class="conduct-card-arrow">View details →</div>
+            `;
 
+            card.addEventListener("click", () => {
+                loadAdminStudentConduct(student);
+            });
 
-                studentList.appendChild(card);
-
-            }
-        );
+            studentList.appendChild(card);
+        });
     }
-
 
     renderStudents();
 
-
-    // ------------------------------------------
-    // SEARCH
-    // ------------------------------------------
-
-    const searchInput =
-        document.getElementById(
-            "adminConductSearch"
-        );
-
+    const searchInput = document.getElementById("adminConductSearch");
 
     if (searchInput) {
-
-        searchInput.addEventListener(
-            "input",
-            function () {
-
-                renderStudents(
-                    this.value
-                );
-
-            }
-        );
-
+        searchInput.addEventListener("input", function () {
+            renderStudents(this.value);
+        });
     }
 }
-
 
 // ==========================================
 // ADMIN STUDENT CONDUCT
 // ==========================================
 
 async function loadAdminStudentConduct(student) {
+    const resultsSection = document.getElementById("adminConductResultsSection");
+    const selectedStudent = document.getElementById("adminSelectedConductStudent");
+    const container = document.getElementById("adminStudentConductContainer");
 
-    const resultsSection =
-        document.getElementById(
-            "adminConductResultsSection"
-        );
+    if (!resultsSection || !container) return;
 
+    const escapeHTML = (value) =>
+        String(value ?? "").replace(/[&<>"']/g, char => ({
+            "&": "&amp;",
+            "<": "&lt;",
+            ">": "&gt;",
+            '"': "&quot;",
+            "'": "&#39;"
+        })[char]);
 
-    const selectedStudent =
-        document.getElementById(
-            "adminSelectedConductStudent"
-        );
+    const setText = (id, value) => {
+        const element = document.getElementById(id);
+        if (element) element.textContent = value;
+    };
 
-
-    const container =
-        document.getElementById(
-            "adminStudentConductContainer"
-        );
-
-
-    if (
-        !resultsSection ||
-        !container
-    ) {
-        return;
-    }
-
-
-    resultsSection.style.display =
-        "block";
-
+    resultsSection.style.display = "block";
 
     if (selectedStudent) {
-
         selectedStudent.innerHTML = `
+            <div class="conduct-selected-profile">
+                <div class="conduct-student-avatar">
+                    ${escapeHTML((student.full_name || "S").charAt(0).toUpperCase())}
+                </div>
 
-            <h2>
-                ${
-                    student.full_name ||
-                    "Student"
-                }
-            </h2>
-
-            <p>
-                Admission:
-                ${
-                    student.admission_number ||
-                    "—"
-                }
-
-                &nbsp; | &nbsp;
-
-                Class:
-                ${
-                    student.class_name ||
-                    "—"
-                }
-            </p>
-
+                <div>
+                    <h2>${escapeHTML(student.full_name || "Student")}</h2>
+                    <p>
+                        Admission: ${escapeHTML(student.admission_number || "—")}
+                        &nbsp; | &nbsp;
+                        Class: ${escapeHTML(student.class_name || "—")}
+                    </p>
+                </div>
+            </div>
         `;
     }
 
+    container.innerHTML = "<p>Loading conduct records...</p>";
 
-    container.innerHTML =
-        "<p>Loading conduct records...</p>";
-
-
-    // ------------------------------------------
-    // LOAD STUDENT CONDUCT
-    // ------------------------------------------
-
-    const {
-        data: records,
-        error
-    } = await supabaseClient
+    const { data: records, error } = await supabaseClient
         .from("conduct_records")
-        .select(`
-            id,
-            student_id,
-            type,
-            title,
-            description,
-            points,
-            created_at
-        `)
+        .select("id, student_id, type, title, description, points, created_at")
         .eq("student_id", student.id)
-        .order("created_at", {
-            ascending: false
-        });
-
-
-    console.log(
-        "ADMIN STUDENT CONDUCT:",
-        records
-    );
-
-    console.log(
-        "ADMIN STUDENT CONDUCT ERROR:",
-        error
-    );
-
+        .order("created_at", { ascending: false });
 
     if (error) {
-
+        console.error("ADMIN STUDENT CONDUCT ERROR:", error);
         container.innerHTML = `
-            <div class="empty-state">
-                Unable to load conduct records.
-            </div>
+            <div class="empty-state">Unable to load conduct records.</div>
         `;
-
         return;
     }
 
+    const studentRecords = records || [];
 
-    // ------------------------------------------
-    // STUDENT SUMMARY
-    // ------------------------------------------
+    const positiveRecords = studentRecords.filter(
+        record => String(record.type || "").toLowerCase() === "positive"
+    );
 
-    const countElement =
-        document.getElementById(
-            "adminStudentConductCount"
-        );
+    const negativeRecords = studentRecords.filter(
+        record => String(record.type || "").toLowerCase() === "negative"
+    );
 
+    const netPoints = studentRecords.reduce((total, record) => {
+        const points = Number(record.points) || 0;
 
-    const positiveElement =
-        document.getElementById(
-            "adminStudentPositive"
-        );
+        return String(record.type || "").toLowerCase() === "negative"
+            ? total - points
+            : total + points;
+    }, 0);
 
+    setText("adminStudentConductCount", studentRecords.length);
+    setText("adminStudentPositive", positiveRecords.length);
+    setText("adminStudentNegativeRecords", negativeRecords.length);
+    setText(
+        "adminStudentNetPoints",
+        `${netPoints > 0 ? "+" : ""}${netPoints}`
+    );
 
-    const concernsElement =
-        document.getElementById(
-            "adminStudentConcerns"
-        );
-
-
-    const positiveRecords =
-        records.filter(function (record) {
-
-            return String(
-                record.type || ""
-            ).toLowerCase() === "positive";
-
-        });
-
-
-    const negativeRecords =
-        records.filter(function (record) {
-
-            return String(
-                record.type || ""
-            ).toLowerCase() === "negative";
-
-        });
-
-
-    if (countElement) {
-
-        countElement.textContent =
-            records.length;
-    }
-
-
-    if (positiveElement) {
-
-        positiveElement.textContent =
-            positiveRecords.length;
-    }
-
-
-    if (concernsElement) {
-
-        concernsElement.textContent =
-            negativeRecords.length;
-    }
-
-
-    // ------------------------------------------
-    // NO RECORDS
-    // ------------------------------------------
-
-    if (records.length === 0) {
-
+    if (studentRecords.length === 0) {
         container.innerHTML = `
             <div class="empty-state">
-                No conduct records found
-                for this student.
+                <h3>No conduct records yet</h3>
+                <p>There are currently no teacher-entered records for this student.</p>
             </div>
         `;
-
         return;
     }
-
-
-    // ------------------------------------------
-    // CALCULATE POINTS
-    // ------------------------------------------
-
-    const totalPoints =
-        records.reduce(
-            function (total, record) {
-
-                const points =
-                    Number(
-                        record.points || 0
-                    );
-
-                if (
-                    String(
-                        record.type || ""
-                    ).toLowerCase() ===
-                    "negative"
-                ) {
-
-                    return total - points;
-
-                }
-
-                return total + points;
-
-            },
-            0
-        );
-
-
-    // ------------------------------------------
-    // CONDUCT TABLE
-    // ------------------------------------------
 
     let tableHTML = `
-
         <div class="table-wrapper">
-
             <table class="admin-grades-table">
-
                 <thead>
-
                     <tr>
-
                         <th>Type</th>
-
                         <th>Title</th>
-
-                        <th>Description</th>
-
+                        <th>Teacher's Comments</th>
                         <th>Points</th>
-
                         <th>Date</th>
-
                     </tr>
-
                 </thead>
-
                 <tbody>
     `;
 
+    studentRecords.forEach(record => {
+        const type = String(record.type || "").toLowerCase();
+        const points = Number(record.points) || 0;
 
-    records.forEach(
-        function (record) {
+        const displayPoints = type === "negative"
+            ? `-${points}`
+            : `+${points}`;
 
-            const date =
-                record.created_at
-                    ? new Date(
-                        record.created_at
-                    ).toLocaleDateString(
-                        "en-GB"
-                    )
-                    : "—";
+        const date = record.created_at
+            ? new Date(record.created_at).toLocaleDateString("en-GB", {
+                day: "numeric",
+                month: "short",
+                year: "numeric"
+            })
+            : "—";
 
+        const typeLabel = type === "positive" ? "Positive" :
+            type === "negative" ? "Concern" : (record.type || "—");
 
-            const type =
-                String(
-                    record.type || ""
-                ).toLowerCase();
+        tableHTML += `
+            <tr>
+                <td>
+                    <span class="conduct-type-label ${type === "negative" ? "negative" : "positive"}">
+                        ${escapeHTML(typeLabel)}
+                    </span>
+                </td>
 
+                <td><strong>${escapeHTML(record.title || "Untitled record")}</strong></td>
 
-            const points =
-                Number(
-                    record.points || 0
-                );
+                <td>${escapeHTML(record.description || "No teacher comments provided.")}</td>
 
+                <td><strong>${displayPoints}</strong></td>
 
-            const displayPoints =
-                type === "negative"
-                    ? `-${points}`
-                    : `+${points}`;
-
-
-            tableHTML += `
-
-                <tr>
-
-                    <td>
-                        <strong>
-                            ${
-                                record.type ||
-                                "—"
-                            }
-                        </strong>
-                    </td>
-
-
-                    <td>
-                        ${
-                            record.title ||
-                            "—"
-                        }
-                    </td>
-
-
-                    <td>
-                        ${
-                            record.description ||
-                            "No description"
-                        }
-                    </td>
-
-
-                    <td>
-                        ${displayPoints}
-                    </td>
-
-
-                    <td>
-                        ${date}
-                    </td>
-
-                </tr>
-
-            `;
-        }
-    );
-
+                <td>${escapeHTML(date)}</td>
+            </tr>
+        `;
+    });
 
     tableHTML += `
-
                 </tbody>
-
             </table>
-
         </div>
-
 
         <div class="conduct-total-points">
-
-            <strong>
-                Conduct Points:
-            </strong>
-
-            <span>
-                ${totalPoints}
-            </span>
-
+            <strong>Net Conduct Points</strong>
+            <span>${netPoints > 0 ? "+" : ""}${netPoints}</span>
         </div>
-
     `;
 
-
-    container.innerHTML =
-        tableHTML;
+    container.innerHTML = tableHTML;
 }
-
 
 // ==========================================
 // ADMIN CONDUCT BACK BUTTON
