@@ -7370,13 +7370,13 @@ body {
    LOGIN CREDENTIALS - SHIFT EVERYTHING RIGHT
    ========================================== */
 
-@media (min-width: 751px) {
+@media (min-width: 780px) {
 
     body:has(#credentialsContainer) .main-content {
-        margin-left: 310px;
-        width: calc(100% - 310px);
-        padding-left: 40px;
-        padding-right: 40px;
+        margin-left: 350px;
+        width: calc(100% - 350px);
+        padding-left: 50px;
+        padding-right: 50px;
         box-sizing: border-box;
     }
 
@@ -7385,9 +7385,9 @@ body {
 @media (max-width: 750px) {
 
     body:has(#credentialsContainer) .main-content {
-        margin-left: 65px;
-        width: calc(100% - 65px);
-        padding: 20px;
+        margin-left: 100px;
+        width: calc(100% - 85px);
+        padding: 35px;
         box-sizing: border-box;
     }
 
