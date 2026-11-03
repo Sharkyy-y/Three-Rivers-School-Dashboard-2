@@ -5952,42 +5952,6 @@ if (error) {
 
                     }
 
- // ==========================================
-// STORE NEW TEACHER PASSWORD
-// ==========================================
-
-if (
-    data &&
-    data.temporaryPassword
-) {
-
-    const {
-        data: createdTeacher,
-        error: createdTeacherError
-    } =
-        await supabaseClient
-            .from("teachers")
-            .select("id")
-            .eq("email", email)
-            .single();
-
-    if (
-        !createdTeacherError &&
-        createdTeacher
-    ) {
-
-        sessionStorage.setItem(
-            `teacherPassword_${createdTeacher.id}`,
-            data.temporaryPassword
-        );
-
-        console.log(
-            "Teacher temporary password stored."
-        );
-    }
-}
-
-
 // ==========================================
 // SHOW LOGIN DETAILS
 // ==========================================
