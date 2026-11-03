@@ -15810,6 +15810,11 @@ if (
 // ADMIN - LOGIN CREDENTIALS
 // ==========================================
 
+
+// ==========================================
+// ADMIN - LOGIN CREDENTIALS
+// ==========================================
+
 async function loadAdminCredentials() {
 
     const credentialsContainer =
@@ -15825,7 +15830,10 @@ async function loadAdminCredentials() {
 
     try {
 
-        // Fetch students
+        // ==========================================
+        // FETCH STUDENTS
+        // ==========================================
+
         const {
             data: students,
             error: studentError
@@ -15836,7 +15844,10 @@ async function loadAdminCredentials() {
 
         if (studentError) throw studentError;
 
-        // Fetch teachers
+        // ==========================================
+        // FETCH TEACHERS
+        // ==========================================
+
         const {
             data: teachers,
             error: teacherError
@@ -15850,7 +15861,63 @@ async function loadAdminCredentials() {
         const studentList = students || [];
         const teacherList = teachers || [];
 
-        // Fetch password reset dates only
+        // ==========================================
+        // FETCH PASSWORDS FROM SECURE EDGE FUNCTION
+        // ==========================================
+
+        const {
+            data: credentialData,
+            error: credentialError
+        } = await supabaseClient.functions.invoke(
+            "get-admin-credentials",
+            {
+                method: "POST",
+                body: {}
+            }
+        );
+
+        if (credentialError) {
+            console.error(
+                "PASSWORD RETRIEVAL ERROR:",
+                credentialError
+            );
+
+            throw new Error(
+                "Could not retrieve saved passwords. Check the get-admin-credentials function."
+            );
+        }
+
+        const savedCredentials =
+            credentialData?.credentials || [];
+
+        // Map passwords using account type and ID
+        const passwordMap = {};
+
+        savedCredentials.forEach(record => {
+
+            const accountId =
+                record.account_id || record.id;
+
+            const accountType =
+                record.account_type || record.type;
+
+            if (accountId && accountType) {
+
+                passwordMap[
+                    `${accountType}:${accountId}`
+                ] = {
+                    password: record.password,
+                    updated_at: record.updated_at
+                };
+
+            }
+
+        });
+
+        // ==========================================
+        // FETCH PASSWORD RESET DATES
+        // ==========================================
+
         const accountIds = [
             ...studentList.map(s => s.id),
             ...teacherList.map(t => t.id)
@@ -15865,24 +15932,36 @@ async function loadAdminCredentials() {
                 error: securityError
             } = await supabaseClient
                 .from("admin_account_security")
-                .select("account_id, account_type, last_password_reset_at")
+                .select(
+                    "account_id, account_type, last_password_reset_at"
+                )
                 .in("account_id", accountIds);
 
             if (securityError) {
-                console.warn("Could not load reset dates:", securityError);
+                console.warn(
+                    "Could not load reset dates:",
+                    securityError
+                );
             } else {
                 securityRecords = data || [];
             }
+
         }
 
         const resetDates = {};
 
         securityRecords.forEach(record => {
-            resetDates[`${record.account_type}:${record.account_id}`] =
-                record.last_password_reset_at;
+
+            resetDates[
+                `${record.account_type}:${record.account_id}`
+            ] = record.last_password_reset_at;
+
         });
 
-        // Combine students and teachers
+        // ==========================================
+        // COMBINE STUDENTS AND TEACHERS
+        // ==========================================
+
         const accounts = [
 
             ...studentList.map(student => ({
@@ -15891,9 +15970,15 @@ async function loadAdminCredentials() {
                 email: student.email,
                 type: "student",
                 active: Boolean(student.user_id),
+
                 extra: `
-                    <p><strong>Admission:</strong> ${escapeCredentialHTML(student.admission_number || "—")}</p>
-                    <p><strong>Class:</strong> ${escapeCredentialHTML(student.class_name || "—")}</p>
+                    <p><strong>Admission:</strong>
+                        ${escapeCredentialHTML(student.admission_number || "—")}
+                    </p>
+
+                    <p><strong>Class:</strong>
+                        ${escapeCredentialHTML(student.class_name || "—")}
+                    </p>
                 `
             })),
 
@@ -15903,45 +15988,66 @@ async function loadAdminCredentials() {
                 email: teacher.email,
                 type: "teacher",
                 active: Boolean(teacher.id),
+
                 extra: `
-                    <p><strong>Phone:</strong> ${escapeCredentialHTML(teacher.phone || "—")}</p>
+                    <p><strong>Phone:</strong>
+                        ${escapeCredentialHTML(teacher.phone || "—")}
+                    </p>
                 `
             }))
 
         ];
 
-        credentialsCount.textContent =
-            `${accounts.length} account${accounts.length === 1 ? "" : "s"}`;
+        if (credentialsCount) {
+            credentialsCount.textContent =
+                `${accounts.length} account${accounts.length === 1 ? "" : "s"}`;
+        }
 
         credentialsContainer.innerHTML = "";
 
         if (!accounts.length) {
+
             credentialsContainer.innerHTML =
                 "<p>No student or teacher accounts found.</p>";
+
             return;
         }
+
+        // ==========================================
+        // DISPLAY ACCOUNT CARDS
+        // ==========================================
 
         accounts.forEach(account => {
 
             const card = document.createElement("div");
+
             card.className = "credential-student-card";
 
             const initials = account.name
-                ? account.name.split(" ")
+                ? account.name
+                    .split(" ")
                     .map(part => part.charAt(0))
                     .slice(0, 2)
                     .join("")
                     .toUpperCase()
                 : "U";
 
+            const accountKey =
+                `${account.type}:${account.id}`;
+
+            const savedPassword =
+                passwordMap[accountKey]?.password || "";
+
             const resetDate =
-                resetDates[`${account.type}:${account.id}`];
+                resetDates[accountKey] ||
+                passwordMap[accountKey]?.updated_at;
 
             const formattedDate = resetDate
                 ? new Date(resetDate).toLocaleString()
                 : "No reset recorded";
 
             card.innerHTML = `
+
                 <div class="credential-student-info">
 
                     <div class="student-admin-avatar">
@@ -15950,13 +16056,17 @@ async function loadAdminCredentials() {
 
                     <div class="credential-student-details">
 
-                        <h3>${escapeCredentialHTML(account.name || "Unnamed account")}</h3>
+                        <h3>
+                            ${escapeCredentialHTML(account.name || "Unnamed account")}
+                        </h3>
 
-                        <p><strong>Account type:</strong>
+                        <p>
+                            <strong>Account type:</strong>
                             ${account.type === "student" ? "Student" : "Teacher"}
                         </p>
 
-                        <p><strong>Email:</strong>
+                        <p>
+                            <strong>Email:</strong>
                             ${escapeCredentialHTML(account.email || "No email")}
                         </p>
 
@@ -15973,6 +16083,34 @@ async function loadAdminCredentials() {
                     </span>
 
                     <p>
+                        <strong>Saved Password:</strong>
+                    </p>
+
+                    ${
+                        savedPassword
+                        ? `
+                            <div class="saved-password-box">
+
+                                <code class="saved-password-text">
+                                    ${escapeCredentialHTML(savedPassword)}
+                                </code>
+
+                                <button
+                                    type="button"
+                                    class="copy-saved-password">
+                                    Copy
+                                </button>
+
+                            </div>
+                        `
+                        : `
+                            <p class="no-account-text">
+                                No saved password. Reset password to generate one.
+                            </p>
+                        `
+                    }
+
+                    <p>
                         <strong>Last password reset:</strong><br>
                         ${escapeCredentialHTML(formattedDate)}
                     </p>
@@ -15986,25 +16124,81 @@ async function loadAdminCredentials() {
                                 Reset Password
                             </button>
                         `
-                        : `<span class="no-account-text">No account</span>`
+                        : `
+                            <span class="no-account-text">
+                                No account
+                            </span>
+                        `
                     }
 
                 </div>
+
             `;
+
+            // ==========================================
+            // COPY PASSWORD
+            // ==========================================
+
+            const copyButton =
+                card.querySelector(".copy-saved-password");
+
+            if (copyButton && savedPassword) {
+
+                copyButton.addEventListener(
+                    "click",
+                    async () => {
+
+                        try {
+
+                            await navigator.clipboard.writeText(
+                                savedPassword
+                            );
+
+                            copyButton.textContent = "Copied!";
+
+                            setTimeout(() => {
+                                copyButton.textContent = "Copy";
+                            }, 1500);
+
+                        } catch (error) {
+
+                            alert(
+                                "Could not copy password. Please select and copy it manually."
+                            );
+
+                        }
+
+                    }
+                );
+
+            }
+
+            // ==========================================
+            // RESET PASSWORD
+            // ==========================================
 
             const resetButton =
                 card.querySelector(".reset-password-button");
 
             if (resetButton) {
-                resetButton.addEventListener("click", () => {
 
-                    if (account.type === "student") {
-                        resetStudentPassword(account.id);
-                    } else {
-                        resetTeacherPassword(account.id);
+                resetButton.addEventListener(
+                    "click",
+                    () => {
+
+                        if (account.type === "student") {
+
+                            resetStudentPassword(account.id);
+
+                        } else {
+
+                            resetTeacherPassword(account.id);
+
+                        }
+
                     }
+                );
 
-                });
             }
 
             credentialsContainer.appendChild(card);
@@ -16013,30 +16207,24 @@ async function loadAdminCredentials() {
 
     } catch (error) {
 
-        console.error("ADMIN CREDENTIALS ERROR:", error);
+        console.error(
+            "ADMIN CREDENTIALS ERROR:",
+            error
+        );
 
-        credentialsContainer.innerHTML =
-            "<p>Unable to load accounts. Check Supabase permissions.</p>";
+        credentialsContainer.innerHTML = `
+            <p>
+                Unable to load credentials:
+                ${escapeCredentialHTML(error.message)}
+            </p>
+        `;
 
         if (credentialsCount) {
-            credentialsCount.textContent = "Accounts unavailable";
+            credentialsCount.textContent =
+                "Credentials unavailable";
         }
 
     }
-
-}
-
-
-// Safely display database text inside HTML
-function escapeCredentialHTML(value) {
-
-    return String(value ?? "").replace(/[&<>"']/g, char => ({
-        "&": "&amp;",
-        "<": "&lt;",
-        ">": "&gt;",
-        '"': "&quot;",
-        "'": "&#39;"
-    })[char]);
 
 }
 
