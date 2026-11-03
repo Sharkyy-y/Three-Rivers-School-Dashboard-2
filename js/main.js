@@ -5426,53 +5426,34 @@ window.deleteTeacher = async function (teacherId) {
 // RESET TEACHER PASSWORD
 // ==========================================
 
+
+// ==========================================
+// RESET TEACHER PASSWORD
+// ==========================================
+
 window.resetTeacherPassword = async function (teacherId) {
 
-    console.log(
-        "RESET TEACHER PASSWORD:",
-        teacherId
+    const confirmed = confirm(
+        "Are you sure you want to reset this teacher's password?\n\n" +
+        "The current password will stop working."
     );
 
-    const confirmed =
-        confirm(
-            "Are you sure you want to reset this teacher's password?\n\n" +
-            "The current password will stop working."
-        );
-
-    if (!confirmed) {
-        return;
-    }
+    if (!confirmed) return;
 
     try {
-
-        alert("Resetting teacher password...");
 
         const {
             data,
             error
-        } =
-            await supabaseClient
-                .functions
-                .invoke(
-                    "reset-teacher-password",
-                    {
-                        body: {
-                            teacherId: teacherId
-                        }
-                    }
-                );
-
-        console.log(
-            "RESET TEACHER PASSWORD DATA:",
-            data
-        );
-
-        console.log(
-            "RESET TEACHER PASSWORD ERROR:",
-            error
+        } = await supabaseClient.functions.invoke(
+            "reset-teacher-password",
+            {
+                body: { teacherId: teacherId }
+            }
         );
 
         if (error) {
+            console.error("TEACHER RESET ERROR:", error);
 
             alert(
                 "Unable to reset password:\n\n" +
@@ -5482,58 +5463,50 @@ window.resetTeacherPassword = async function (teacherId) {
             return;
         }
 
-        if (
-            !data ||
-            !data.success
-        ) {
-
-            alert(
-                data?.error ||
-                "Unable to reset password."
-            );
-
+        if (!data || !data.success) {
+            alert(data?.error || "Unable to reset password.");
             return;
         }
 
         const newPassword =
             data.teacher.temporary_password;
 
-        // Store password in this browser session
-        sessionStorage.setItem(
-            `teacherPassword_${teacherId}`,
-            newPassword
+        const copyPassword = confirm(
+            "TEACHER PASSWORD RESET SUCCESSFUL!\n\n" +
+            "Teacher: " + data.teacher.full_name +
+            "\nEmail: " + data.teacher.email +
+            "\n\nNEW PASSWORD:\n" + newPassword +
+            "\n\nPress OK to copy this password."
         );
 
-        // Put password directly into the box
-        const passwordInput =
-            document.getElementById(
-                `teacher-password-${teacherId}`
-            );
+        if (copyPassword) {
 
-        if (passwordInput) {
+            try {
 
-            passwordInput.value =
-                newPassword;
+                await navigator.clipboard.writeText(newPassword);
+
+                alert(
+                    "Password copied successfully. Share it securely with the teacher."
+                );
+
+            } catch (error) {
+
+                alert(
+                    "Automatic copying failed.\n\nNew password:\n" +
+                    newPassword
+                );
+
+            }
         }
 
-        alert(
-            "Teacher password reset successfully!\n\n" +
-            "Teacher: " +
-            data.teacher.full_name +
-            "\n\n" +
-            "Email: " +
-            data.teacher.email +
-            "\n\n" +
-            "New Temporary Password: " +
-            newPassword
-        );
+        // Refresh credentials and reset date
+        if (typeof loadAdminCredentials === "function") {
+            await loadAdminCredentials();
+        }
 
     } catch (error) {
 
-        console.error(
-            "RESET TEACHER PASSWORD ERROR:",
-            error
-        );
+        console.error("RESET TEACHER PASSWORD ERROR:", error);
 
         alert(
             error.message ||
@@ -5541,7 +5514,6 @@ window.resetTeacherPassword = async function (teacherId) {
         );
     }
 };
-
 
 // ==========================================
 // COPY TEACHER PASSWORD
@@ -6006,8 +5978,7 @@ if (error) {
 
                     }
 
-
-                    // ==========================================
+ // ==========================================
 // STORE NEW TEACHER PASSWORD
 // ==========================================
 
@@ -6096,11 +6067,6 @@ alert(
 
     }
 );
-
-// ==========================================
-// RESET STUDENT PASSWORD
-// ==========================================
-
 
 // ==========================================
 // RESET STUDENT PASSWORD
