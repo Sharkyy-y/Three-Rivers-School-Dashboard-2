@@ -6101,16 +6101,18 @@ alert(
 // RESET STUDENT PASSWORD
 // ==========================================
 
+
+// ==========================================
+// RESET STUDENT PASSWORD
+// ==========================================
+
 async function resetStudentPassword(studentId) {
 
-    const confirmed =
-        confirm(
-            "Are you sure you want to reset this student's password?"
-        );
+    const confirmed = confirm(
+        "Are you sure you want to reset this student's password?\n\nThe current password will stop working."
+    );
 
-    if (!confirmed) {
-        return;
-    }
+    if (!confirmed) return;
 
     try {
 
@@ -6120,131 +6122,62 @@ async function resetStudentPassword(studentId) {
         } = await supabaseClient.functions.invoke(
             "reset-student-password",
             {
-                body: {
-                    studentId: studentId
-                }
+                body: { studentId }
             }
         );
 
         if (accountError) {
+            console.error("PASSWORD RESET ERROR:", accountError);
 
-            console.error(
-                "PASSWORD RESET ERROR:",
-                accountError
-            );
-
-            alert(
-                "Password reset failed: " +
-                accountError.message
-            );
-
+            alert("Password reset failed: " + accountError.message);
             return;
         }
 
-        if (
-            !accountData ||
-            !accountData.success
-        ) {
+        if (!accountData || !accountData.success) {
+            console.error("PASSWORD RESET RESPONSE:", accountData);
 
-            console.error(
-                "PASSWORD RESET RESPONSE:",
-                accountData
-            );
-
-            alert(
-                accountData?.error ||
-                "Password reset failed."
-            );
-
+            alert(accountData?.error || "Password reset failed.");
             return;
         }
-        
-       // ==========================================
-// SHOW AND COPY NEW PASSWORD
-// ==========================================
 
-const newPassword =
-    accountData.student.temporary_password;
+        const newPassword =
+            accountData.student.temporary_password;
 
-        // Save password for this browser session
-sessionStorage.setItem(
-    `studentPassword_${studentId}`,
-    newPassword
-);
-
-// Find this student's password box
-const passwordInput =
-    document.getElementById(
-        `student-password-${studentId}`
-    );
-
-// Put the new password into the box
-if (passwordInput) {
-
-    passwordInput.value =
-        newPassword;
-
-}
-
-
-if (passwordInput) {
-
-    passwordInput.value =
-        newPassword;
-
-}
-
-const copyPassword =
-    confirm(
-        "Password reset successfully!\n\n" +
-        "Student: " +
-        accountData.student.full_name +
-        "\n\n" +
-        "Login email: " +
-        accountData.student.email +
-        "\n\n" +
-        "New temporary password:\n" +
-        newPassword +
-        "\n\n" +
-        "Press OK to copy the password."
-    );
-
-if (copyPassword) {
-
-    try {
-
-        await navigator.clipboard.writeText(
-            newPassword
+        const copyPassword = confirm(
+            "PASSWORD RESET SUCCESSFUL!\n\n" +
+            "Student: " + accountData.student.full_name +
+            "\nLogin email: " + accountData.student.email +
+            "\n\nNEW PASSWORD:\n" + newPassword +
+            "\n\nPress OK to copy the password."
         );
 
-        alert(
-            "Password copied to clipboard!"
-        );
+        if (copyPassword) {
+            try {
+                await navigator.clipboard.writeText(newPassword);
+
+                alert(
+                    "Password copied successfully. Share it securely with the student."
+                );
+
+            } catch (error) {
+                alert(
+                    "Automatic copying failed.\n\nNew password:\n" +
+                    newPassword
+                );
+            }
+        }
+
+        // Refresh credentials and reset date
+        if (typeof loadAdminCredentials === "function") {
+            await loadAdminCredentials();
+        }
 
     } catch (error) {
 
-        console.error(
-            "COPY PASSWORD ERROR:",
-            error
-        );
+        console.error("PASSWORD RESET ERROR:", error);
 
         alert(
-            "The password could not be copied automatically.\n\n" +
-            "Password:\n" +
-            newPassword
-        );
-    }
-}
-
-    } catch (error) {
-
-        console.error(
-            "PASSWORD RESET ERROR:",
-            error
-        );
-
-        alert(
-            "An unexpected error occurred."
+            error.message || "An unexpected error occurred."
         );
     }
 }
