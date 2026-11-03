@@ -15806,10 +15806,19 @@ if (
 
 }
 
-// ==========================================
-// ADMIN - LOGIN CREDENTIALS
-// ==========================================
+function escapeCredentialHTML(value) {
+    return String(value ?? "").replace(/[&<>"']/g, function (char) {
+        const entities = {
+            "&": "&amp;",
+            "<": "&lt;",
+            ">": "&gt;",
+            '"': "&quot;",
+            "'": "&#39;"
+        };
 
+        return entities[char];
+    });
+}
 
 // ==========================================
 // ADMIN - LOGIN CREDENTIALS
