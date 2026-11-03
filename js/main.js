@@ -16174,14 +16174,6 @@ async function deleteStudent(studentId) {
         }
 
         // ==========================================
-        // REMOVE SAVED PASSWORD
-        // ==========================================
-
-        sessionStorage.removeItem(
-            `studentPassword_${studentId}`
-        );
-
-        // ==========================================
         // REFRESH STUDENT LIST
         // ==========================================
 
