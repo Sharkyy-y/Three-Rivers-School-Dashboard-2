@@ -15976,185 +15976,230 @@ if (
 async function loadAdminCredentials() {
 
     const credentialsContainer =
-        document.getElementById(
-            "credentialsContainer"
-        );
+        document.getElementById("credentialsContainer");
 
     const credentialsCount =
-        document.getElementById(
-            "credentialsCount"
-        );
+        document.getElementById("credentialsCount");
 
-    if (!credentialsContainer) {
-        return;
-    }
+    if (!credentialsContainer) return;
 
     credentialsContainer.innerHTML =
-        "<p>Loading student accounts...</p>";
+        "<p>Loading student and teacher accounts...</p>";
 
-    const {
-        data: students,
-        error
-    } = await supabaseClient
-        .from("students")
-        .select(
-            "id, user_id, full_name, admission_number, class_name, email"
-        )
-        .order(
-            "full_name",
-            {
-                ascending: true
+    try {
+
+        // Fetch students
+        const {
+            data: students,
+            error: studentError
+        } = await supabaseClient
+            .from("students")
+            .select("id, user_id, full_name, admission_number, class_name, email")
+            .order("full_name", { ascending: true });
+
+        if (studentError) throw studentError;
+
+        // Fetch teachers
+        const {
+            data: teachers,
+            error: teacherError
+        } = await supabaseClient
+            .from("teachers")
+            .select("id, full_name, email, phone")
+            .order("full_name", { ascending: true });
+
+        if (teacherError) throw teacherError;
+
+        const studentList = students || [];
+        const teacherList = teachers || [];
+
+        // Fetch password reset dates only
+        const accountIds = [
+            ...studentList.map(s => s.id),
+            ...teacherList.map(t => t.id)
+        ];
+
+        let securityRecords = [];
+
+        if (accountIds.length) {
+
+            const {
+                data,
+                error: securityError
+            } = await supabaseClient
+                .from("admin_account_security")
+                .select("account_id, account_type, last_password_reset_at")
+                .in("account_id", accountIds);
+
+            if (securityError) {
+                console.warn("Could not load reset dates:", securityError);
+            } else {
+                securityRecords = data || [];
             }
-        );
+        }
 
-    if (error) {
+        const resetDates = {};
 
-        console.error(
-            "ADMIN CREDENTIALS ERROR:",
-            error
-        );
+        securityRecords.forEach(record => {
+            resetDates[`${record.account_type}:${record.account_id}`] =
+                record.last_password_reset_at;
+        });
 
-        credentialsContainer.innerHTML =
-            "<p>Unable to load student accounts.</p>";
+        // Combine students and teachers
+        const accounts = [
 
-        return;
-    }
+            ...studentList.map(student => ({
+                id: student.id,
+                name: student.full_name,
+                email: student.email,
+                type: "student",
+                active: Boolean(student.user_id),
+                extra: `
+                    <p><strong>Admission:</strong> ${escapeCredentialHTML(student.admission_number || "—")}</p>
+                    <p><strong>Class:</strong> ${escapeCredentialHTML(student.class_name || "—")}</p>
+                `
+            })),
 
-    credentialsCount.textContent =
-        `${students.length} student${students.length === 1 ? "" : "s"}`;
+            ...teacherList.map(teacher => ({
+                id: teacher.id,
+                name: teacher.full_name,
+                email: teacher.email,
+                type: "teacher",
+                active: Boolean(teacher.id),
+                extra: `
+                    <p><strong>Phone:</strong> ${escapeCredentialHTML(teacher.phone || "—")}</p>
+                `
+            }))
 
-    if (students.length === 0) {
+        ];
 
-        credentialsContainer.innerHTML =
-            "<p>No students found.</p>";
+        credentialsCount.textContent =
+            `${accounts.length} account${accounts.length === 1 ? "" : "s"}`;
 
-        return;
-    }
+        credentialsContainer.innerHTML = "";
 
-    credentialsContainer.innerHTML = "";
+        if (!accounts.length) {
+            credentialsContainer.innerHTML =
+                "<p>No student or teacher accounts found.</p>";
+            return;
+        }
 
-    students.forEach(student => {
+        accounts.forEach(account => {
 
-        const card =
-            document.createElement("div");
+            const card = document.createElement("div");
+            card.className = "credential-student-card";
 
-        card.className =
-            "credential-student-card";
-
-        const initials =
-            student.full_name
-                ? student.full_name
-                    .split(" ")
-                    .map(name =>
-                        name.charAt(0)
-                    )
+            const initials = account.name
+                ? account.name.split(" ")
+                    .map(part => part.charAt(0))
                     .slice(0, 2)
                     .join("")
                     .toUpperCase()
-                : "S";
+                : "U";
 
-        const accountStatus =
-            student.user_id
-                ? "Active"
-                : "No login account";
+            const resetDate =
+                resetDates[`${account.type}:${account.id}`];
 
-        // Get temporary password from this browser session
-        const savedPassword =
-            sessionStorage.getItem(
-                `studentPassword_${student.id}`
-            ) || "";
+            const formattedDate = resetDate
+                ? new Date(resetDate).toLocaleString()
+                : "No reset recorded";
 
-        card.innerHTML = `
+            card.innerHTML = `
+                <div class="credential-student-info">
 
-            <div class="credential-student-info">
+                    <div class="student-admin-avatar">
+                        ${escapeCredentialHTML(initials)}
+                    </div>
 
-                <div class="student-admin-avatar">
-                    ${initials}
-                </div>
+                    <div class="credential-student-details">
 
-                <div class="credential-student-details">
+                        <h3>${escapeCredentialHTML(account.name || "Unnamed account")}</h3>
 
-                    <h3>
-                        ${student.full_name || "Unnamed Student"}
-                    </h3>
+                        <p><strong>Account type:</strong>
+                            ${account.type === "student" ? "Student" : "Teacher"}
+                        </p>
 
-                    <p>
-                        <strong>Admission:</strong>
-                        ${student.admission_number || "—"}
-                    </p>
+                        <p><strong>Email:</strong>
+                            ${escapeCredentialHTML(account.email || "No email")}
+                        </p>
 
-                    <p>
-                        <strong>Class:</strong>
-                        ${student.class_name || "—"}
-                    </p>
+                        ${account.extra}
 
-                    <p>
-                        <strong>Email:</strong>
-                        ${student.email || "No email"}
-                    </p>
+                    </div>
 
                 </div>
 
-            </div>
+                <div class="credential-account">
+
+                    <span class="credential-status">
+                        ${account.active ? "Active" : "No login account"}
+                    </span>
+
+                    <p>
+                        <strong>Last password reset:</strong><br>
+                        ${escapeCredentialHTML(formattedDate)}
+                    </p>
+
+                    ${
+                        account.active
+                        ? `
+                            <button
+                                type="button"
+                                class="reset-password-button">
+                                Reset Password
+                            </button>
+                        `
+                        : `<span class="no-account-text">No account</span>`
+                    }
+
+                </div>
+            `;
+
+            const resetButton =
+                card.querySelector(".reset-password-button");
+
+            if (resetButton) {
+                resetButton.addEventListener("click", () => {
+
+                    if (account.type === "student") {
+                        resetStudentPassword(account.id);
+                    } else {
+                        resetTeacherPassword(account.id);
+                    }
+
+                });
+            }
+
+            credentialsContainer.appendChild(card);
+
+        });
+
+    } catch (error) {
+
+        console.error("ADMIN CREDENTIALS ERROR:", error);
+
+        credentialsContainer.innerHTML =
+            "<p>Unable to load accounts. Check Supabase permissions.</p>";
+
+        if (credentialsCount) {
+            credentialsCount.textContent = "Accounts unavailable";
+        }
+
+    }
+
+}
 
 
-            <div class="credential-account">
+// Safely display database text inside HTML
+function escapeCredentialHTML(value) {
 
-                <span class="credential-status">
-                    ${accountStatus}
-                </span>
-
-                ${
-                    student.user_id
-                    ? `
-                        <div class="student-password-box">
-
-                            <label>
-                                Student Password
-                            </label>
-
-                            <div class="password-input-row">
-
-                                <input
-                                    type="text"
-                                    id="student-password-${student.id}"
-                                    value="${savedPassword}"
-                                    placeholder="No password available"
-                                    readonly
-                                >
-
-                                <button
-                                    type="button"
-                                    onclick="copyStudentPassword('${student.id}')">
-                                    Copy
-                                </button>
-
-                            </div>
-
-                        </div>
-
-                        <button
-                            class="reset-password-button"
-                            onclick="resetStudentPassword('${student.id}')">
-                            Reset Password
-                        </button>
-                    `
-                    : `
-                        <span class="no-account-text">
-                            No account
-                        </span>
-                    `
-                }
-
-            </div>
-
-        `;
-
-        credentialsContainer.appendChild(
-            card
-        );
-
-    });
+    return String(value ?? "").replace(/[&<>"']/g, char => ({
+        "&": "&amp;",
+        "<": "&lt;",
+        ">": "&gt;",
+        '"': "&quot;",
+        "'": "&#39;"
+    })[char]);
 
 }
 
