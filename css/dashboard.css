@@ -7235,3 +7235,133 @@ body {
     }
 
 }
+
+
+/* ==========================================
+   LOGIN CREDENTIALS - LAYOUT FIX
+   ========================================== */
+
+.dashboard-layout {
+    width: 100%;
+    overflow-x: hidden;
+}
+
+.sidebar {
+    width: 245px;
+    box-sizing: border-box;
+    z-index: 1000;
+    overflow-y: auto;
+}
+
+.main-content {
+    margin-left: 245px;
+    width: calc(100% - 245px);
+    min-width: 0;
+    box-sizing: border-box;
+    overflow-x: hidden;
+}
+
+/* Keep credential content inside available space */
+
+.credentials-page,
+.credentials-hero,
+.credentials-overview,
+.credentials-directory {
+    max-width: 100%;
+    min-width: 0;
+    box-sizing: border-box;
+}
+
+.credentials-overview {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 16px;
+}
+
+.credentials-directory {
+    width: 100%;
+    overflow: hidden;
+}
+
+#credentialsContainer {
+    width: 100%;
+    min-width: 0;
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 18px;
+}
+
+#credentialsContainer .credential-student-card {
+    min-width: 0;
+    max-width: 100%;
+    box-sizing: border-box;
+    overflow: hidden;
+}
+
+.credential-student-info,
+.credential-account,
+.credential-student-details {
+    min-width: 0;
+}
+
+.saved-password-box {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 8px;
+    max-width: 100%;
+}
+
+.saved-password-text {
+    overflow-wrap: anywhere;
+    word-break: break-word;
+}
+
+/* Medium screens */
+
+@media (max-width: 1100px) {
+
+    #credentialsContainer {
+        grid-template-columns: 1fr;
+    }
+
+    .credentials-overview {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+}
+
+/* Small screens */
+
+@media (max-width: 750px) {
+
+    .sidebar {
+        width: 65px;
+        padding: 20px 10px;
+    }
+
+    .main-content {
+        margin-left: 65px;
+        width: calc(100% - 65px);
+        padding: 20px;
+    }
+
+    .credentials-overview {
+        grid-template-columns: 1fr;
+    }
+
+    #credentialsContainer {
+        grid-template-columns: 1fr;
+    }
+
+}
+
+/* Very small screens */
+
+@media (max-width: 500px) {
+
+    .main-content {
+        padding: 12px;
+    }
+
+}
