@@ -7947,552 +7947,246 @@ if (
 
 }
 
-
 // ==========================================
 // ADMIN GRADES
 // ==========================================
 
 async function loadAdminGrades() {
-
     console.log("Loading admin grades...");
 
-    const studentList =
-        document.getElementById(
-            "adminGradesStudentList"
-        );
+    const studentList = document.getElementById("adminGradesStudentList");
+    const searchInput = document.getElementById("adminGradesSearch");
+    const studentSection = document.getElementById("adminStudentSection");
+    const resultsSection = document.getElementById("adminStudentResultsSection");
+    const backButton = document.getElementById("adminGradesBackButton");
+    const selectedStudent = document.getElementById("adminSelectedStudent");
+    const gradesContainer = document.getElementById("adminStudentGradesContainer");
 
-    const searchInput =
-        document.getElementById(
-            "adminGradesSearch"
-        );
+    if (!studentList) return;
 
-    const studentSection =
-        document.getElementById(
-            "adminStudentSection"
-        );
+    const escapeHTML = (value) =>
+        String(value ?? "").replace(/[&<>"']/g, char => ({
+            "&": "&amp;",
+            "<": "&lt;",
+            ">": "&gt;",
+            '"': "&quot;",
+            "'": "&#39;"
+        })[char]);
 
-    const resultsSection =
-        document.getElementById(
-            "adminStudentResultsSection"
-        );
+    const setText = (id, value) => {
+        const element = document.getElementById(id);
+        if (element) element.textContent = value;
+    };
 
-    const backButton =
-        document.getElementById(
-            "adminGradesBackButton"
-        );
+    // ------------------------------------------
+    // LOAD STUDENTS
+    // ------------------------------------------
 
-    const selectedStudent =
-        document.getElementById(
-            "adminSelectedStudent"
-        );
+    studentList.innerHTML = `
+        <div class="grades-empty-state">Loading students...</div>
+    `;
 
-    const gradesContainer =
-        document.getElementById(
-            "adminStudentGradesContainer"
-        );
+    const { data: students, error: studentsError } = await supabaseClient
+        .from("students")
+        .select("id, full_name, admission_number, class_name")
+        .order("full_name", { ascending: true });
 
-
-    // ==========================================
-    // CHECK ELEMENTS
-    // ==========================================
-
-    if (!studentList) {
-
-        console.error(
-            "Admin grades student list not found."
-        );
-
+    if (studentsError) {
+        console.error("ADMIN GRADES STUDENTS ERROR:", studentsError);
+        studentList.innerHTML = `
+            <div class="grades-empty-state">
+                <h3>Unable to load students</h3>
+                <p>Please refresh the page and try again.</p>
+            </div>
+        `;
         return;
     }
 
+    const studentRecords = students || [];
 
-    // ==========================================
-    // GET STUDENTS
-    // ==========================================
+    // ------------------------------------------
+    // LOAD ALL GRADES FOR OVERVIEW
+    // ------------------------------------------
 
-    const {
-        data: students,
-        error: studentsError
-    } = await supabaseClient
-        .from("students")
-        .select(`
-            id,
-            full_name,
-            admission_number,
-            class_name
-        `)
-        .order(
-            "full_name",
-            {
-                ascending: true
-            }
-        );
+    const { data: allGrades, error: allGradesError } = await supabaseClient
+        .from("grades")
+        .select("id, student_id, score, max_score");
 
-
-    console.log(
-        "ADMIN GRADES STUDENTS:",
-        students
-    );
-
-    console.log(
-        "ADMIN GRADES STUDENT ERROR:",
-        studentsError
-    );
-
-
-   // ==========================================
-// ADMIN GRADES OVERVIEW
-// ==========================================
-
-const totalStudentsElement =
-    document.getElementById("adminGradesTotalStudents");
-
-const studentsWithGradesElement =
-    document.getElementById("adminGradesStudentsWithGrades");
-
-const totalResultsElement =
-    document.getElementById("adminGradesTotalResults");
-
-const overallAverageElement =
-    document.getElementById("adminGradesOverallAverage");
-
-
-/* TOTAL STUDENTS */
-
-if (totalStudentsElement) {
-
-    totalStudentsElement.textContent =
-        students.length;
-
-}
-
-
-/* GET ALL GRADES */
-
-const {
-    data: allGrades,
-    error: allGradesError
-} = await supabaseClient
-    .from("grades")
-    .select(`
-        id,
-        student_id,
-        score,
-        max_score
-    `);
-
-
-console.log(
-    "ADMIN ALL GRADES:",
-    allGrades
-);
-
-console.log(
-    "ADMIN ALL GRADES ERROR:",
-    allGradesError
-);
-
-
-if (allGradesError) {
-
-    console.error(
-        "Unable to load admin grade statistics:",
-        allGradesError
-    );
-
-}
-else {
-
-    /* TOTAL RESULTS */
-
-    if (totalResultsElement) {
-
-        totalResultsElement.textContent =
-            allGrades.length;
-
+    if (allGradesError) {
+        console.error("ADMIN ALL GRADES ERROR:", allGradesError);
+        studentList.innerHTML = `
+            <div class="grades-empty-state">
+                <h3>Unable to load grade statistics</h3>
+                <p>Please check the grades access permissions.</p>
+            </div>
+        `;
+        return;
     }
 
+    const gradeRecords = allGrades || [];
 
-    /* STUDENTS WITH GRADES */
-
-    const studentsWithGrades =
-        new Set(
-            allGrades.map(
-                function (grade) {
-                    return grade.student_id;
-                }
-            )
-        );
-
-
-    if (studentsWithGradesElement) {
-
-        studentsWithGradesElement.textContent =
-            studentsWithGrades.size;
-
-    }
-
-
-    /* OVERALL AVERAGE */
-
-    let totalScore = 0;
-    let totalMaxScore = 0;
-
-
-    allGrades.forEach(
-        function (grade) {
-
-            const score =
-                Number(grade.score) || 0;
-
-            const maxScore =
-                Number(grade.max_score) || 0;
-
-
-            totalScore += score;
-            totalMaxScore += maxScore;
-
-        }
+    const totalScore = gradeRecords.reduce(
+        (sum, grade) => sum + (Number(grade.score) || 0), 0
     );
 
-
-    const overallAverage =
-        totalMaxScore > 0
-            ? (totalScore / totalMaxScore) * 100
-            : 0;
-
-
-    if (overallAverageElement) {
-
-        overallAverageElement.textContent =
-            Math.round(overallAverage) + "%";
-
-    }
-
-}
-    
-// ======================================
-// EXTRA ADMIN GRADE STATISTICS
-// ======================================
-
-const classAverageElement =
-    document.getElementById("adminClassAverage");
-
-const highestStudentAverageElement =
-    document.getElementById(
-        "adminHighestStudentAverage"
+    const totalMaxScore = gradeRecords.reduce(
+        (sum, grade) => sum + (Number(grade.max_score) || 0), 0
     );
 
-const subjectsGradedElement =
-    document.getElementById(
-        "adminSubjectsGraded"
+    const overallAverage = totalMaxScore > 0
+        ? (totalScore / totalMaxScore) * 100
+        : 0;
+
+    const studentsWithGrades = new Set(
+        gradeRecords.map(grade => grade.student_id)
     );
 
-if (allGrades && allGrades.length > 0) {
-
-    // ------------------------------
-    // CLASS AVERAGE
-    // ------------------------------
-
-    if (classAverageElement) {
-        classAverageElement.textContent =
-            Math.round(overallAverage) + "%";
-    }
-
-
-    // ------------------------------
-    // SUBJECTS GRADED
-    // ------------------------------
-
-    const subjectIds =
-        new Set();
-
-    allGrades.forEach(
-        function (grade) {
-
-            if (grade.subject_id) {
-                subjectIds.add(
-                    grade.subject_id
-                );
-            }
-
-        }
+    setText("adminGradesTotalStudents", studentRecords.length);
+    setText("adminGradesStudentsWithGrades", studentsWithGrades.size);
+    setText("adminGradesTotalResults", gradeRecords.length);
+    setText(
+        "adminGradesOverallAverage",
+        gradeRecords.length ? `${Math.round(overallAverage)}%` : "—"
     );
 
-    if (subjectsGradedElement) {
-        subjectsGradedElement.textContent =
-            subjectIds.size;
-    }
+    // ------------------------------------------
+    // STUDENT DIRECTORY
+    // ------------------------------------------
 
-}
+    function renderStudents(searchTerm = "") {
+        const search = searchTerm.trim().toLowerCase();
 
-    
-    // ==========================================
-    // DISPLAY STUDENTS
-    // ==========================================
+        const filteredStudents = studentRecords.filter(student => {
+            const name = String(student.full_name || "").toLowerCase();
+            const admission = String(student.admission_number || "").toLowerCase();
+            const className = String(student.class_name || "").toLowerCase();
 
-    function displayStudents(
-        studentArray
-    ) {
+            return name.includes(search) ||
+                admission.includes(search) ||
+                className.includes(search);
+        });
 
-        studentList.innerHTML = "";
-
-
-        if (
-            !studentArray ||
-            studentArray.length === 0
-        ) {
-
+        if (filteredStudents.length === 0) {
             studentList.innerHTML = `
-                <div class="empty-state">
-
-                    <h3>
-                        No students found
-                    </h3>
-
-                    <p>
-                        Try a different name or admission number.
-                    </p>
-
+                <div class="grades-empty-state">
+                    <h3>No students found</h3>
+                    <p>Try another name, admission number or class.</p>
                 </div>
             `;
-
             return;
         }
 
+        studentList.innerHTML = "";
 
-        studentArray.forEach(
-            function (student) {
+        filteredStudents.forEach(student => {
+            const studentGradeRecords = gradeRecords.filter(
+                grade => grade.student_id === student.id
+            );
 
-                const studentCard =
-                    document.createElement(
-                        "div"
-                    );
+            const card = document.createElement("article");
+            card.className = "admin-grade-student-card";
 
-
-                studentCard.className =
-                    "admin-grade-student-card";
-
-
-                studentCard.innerHTML = `
-
-                    <div class="student-grade-info">
-
-                        <div class="student-grade-avatar">
-
-                            ${
-                                student.full_name
-                                    ? student.full_name
-                                        .charAt(0)
-                                        .toUpperCase()
-                                    : "S"
-                            }
-
-                        </div>
-
-
-                        <div>
-
-                            <h3>
-                                ${student.full_name}
-                            </h3>
-
-                            <p>
-                                Admission No:
-                                ${student.admission_number || "N/A"}
-                            </p>
-
-                            <p>
-                                Class:
-                                ${student.class_name || "N/A"}
-                            </p>
-
-                        </div>
-
+            card.innerHTML = `
+                <div class="student-grade-info">
+                    <div class="student-grade-avatar">
+                        ${escapeHTML(
+                            (student.full_name || "S").charAt(0).toUpperCase()
+                        )}
                     </div>
 
+                    <div>
+                        <h3>${escapeHTML(student.full_name || "Unnamed Student")}</h3>
+                        <p>Admission No: ${escapeHTML(student.admission_number || "N/A")}</p>
+                        <p>Class: ${escapeHTML(student.class_name || "N/A")}</p>
+                    </div>
+                </div>
 
-                    <button
-                        type="button"
-                        class="view-grades-button"
-                    >
+                <div class="student-grade-card-footer">
+                    <span class="grade-record-count">
+                        📝 ${studentGradeRecords.length} recorded results
+                    </span>
+
+                    <button type="button" class="view-grades-button">
                         View Grades →
                     </button>
+                </div>
+            `;
 
-                `;
+            card.querySelector(".view-grades-button").addEventListener(
+                "click",
+                () => loadAdminStudentGrades(student)
+            );
 
-
-                const viewButton =
-                    studentCard.querySelector(
-                        ".view-grades-button"
-                    );
-
-
-                viewButton.addEventListener(
-                    "click",
-                    function () {
-
-                        loadAdminStudentGrades(
-                            student
-                        );
-
-                    }
-                );
-
-
-                studentList.appendChild(
-                    studentCard
-                );
-
-            }
-        );
-
+            studentList.appendChild(card);
+        });
     }
 
+    renderStudents();
 
-    displayStudents(
-        students
-    );
+    if (searchInput && !searchInput.dataset.gradesSearchBound) {
+        searchInput.dataset.gradesSearchBound = "true";
 
-
-    // ==========================================
-    // SEARCH STUDENTS
-    // ==========================================
-
-    if (searchInput) {
-
-        searchInput.addEventListener(
-            "input",
-            function () {
-
-                const searchTerm =
-                    searchInput.value
-                        .trim()
-                        .toLowerCase();
-
-
-                const filteredStudents =
-                    students.filter(
-                        function (student) {
-
-                            const name =
-                                (
-                                    student.full_name || ""
-                                ).toLowerCase();
-
-
-                            const admission =
-                                (
-                                    student.admission_number || ""
-                                ).toLowerCase();
-
-
-                            return (
-                                name.includes(searchTerm) ||
-                                admission.includes(searchTerm)
-                            );
-
-                        }
-                    );
-
-
-                displayStudents(
-                    filteredStudents
-                );
-
-            }
-        );
-
+        searchInput.addEventListener("input", function () {
+            renderStudents(this.value);
+        });
     }
 
+    // ------------------------------------------
+    // BACK TO STUDENT DIRECTORY
+    // ------------------------------------------
 
-    // ==========================================
-    // BACK BUTTON
-    // ==========================================
+    if (backButton && !backButton.dataset.gradesBackBound) {
+        backButton.dataset.gradesBackBound = "true";
 
-    if (backButton) {
+        backButton.addEventListener("click", function () {
+            if (resultsSection) resultsSection.style.display = "none";
+            if (studentSection) studentSection.style.display = "block";
 
-        backButton.addEventListener(
-            "click",
-            function () {
-
-                resultsSection.style.display =
-                    "none";
-
-                studentSection.style.display =
-                    "block";
-
-                if (searchInput) {
-
-                    searchInput.focus();
-
-                }
-
-            }
-        );
-
+            window.scrollTo({ top: 0, behavior: "smooth" });
+        });
     }
 
+    // ------------------------------------------
+    // LOAD ONE STUDENT'S GRADES
+    // ------------------------------------------
 
-    // ==========================================
-    // LOAD STUDENT GRADES
-    // ==========================================
+    async function loadAdminStudentGrades(student) {
+        if (studentSection) studentSection.style.display = "none";
+        if (resultsSection) resultsSection.style.display = "block";
 
-    async function loadAdminStudentGrades(
-        student
-    ) {
+        window.scrollTo({ top: 0, behavior: "smooth" });
 
-        studentSection.style.display =
-            "none";
+        if (selectedStudent) {
+            selectedStudent.innerHTML = `
+                <div class="selected-student-banner">
+                    <div class="selected-student-avatar">
+                        ${escapeHTML(
+                            (student.full_name || "S").charAt(0).toUpperCase()
+                        )}
+                    </div>
 
-        resultsSection.style.display =
-            "block";
-
-
-        selectedStudent.innerHTML = `
-
-            <div>
-
-                <h2>
-                    ${student.full_name}
-                </h2>
-
-                <p>
-                    Admission No:
-                    ${student.admission_number || "N/A"}
-                </p>
-
-                <p>
-                    Class:
-                    ${student.class_name || "N/A"}
-                </p>
-
-            </div>
-
-        `;
-
+                    <div>
+                        <h2>${escapeHTML(student.full_name || "Student")}</h2>
+                        <p>Admission No: ${escapeHTML(student.admission_number || "N/A")}</p>
+                        <p>Class: ${escapeHTML(student.class_name || "N/A")}</p>
+                    </div>
+                </div>
+            `;
+        }
 
         gradesContainer.innerHTML = `
-            <p>
-                Loading grades...
-            </p>
+            <div class="grades-empty-state">Loading academic results...</div>
         `;
 
-
-        // ======================================
-        // GET GRADES
-        // ======================================
-
-        const {
-            data: grades,
-            error: gradesError
-        } = await supabaseClient
+        // Fetch the student's results, including teacher comments.
+        const { data: grades, error: gradesError } = await supabaseClient
             .from("grades")
             .select(`
                 id,
                 assessment,
                 score,
                 max_score,
+                comments,
                 created_at,
                 subjects (
                     id,
@@ -8500,339 +8194,186 @@ if (allGrades && allGrades.length > 0) {
                     code
                 )
             `)
-            .eq(
-                "student_id",
-                student.id
-            )
-            .order(
-                "created_at",
-                {
-                    ascending: false
-                }
-            );
+            .eq("student_id", student.id)
+            .order("created_at", { ascending: false });
 
-
-        console.log(
-            "ADMIN STUDENT GRADES:",
-            grades
-        );
-
-        console.log(
-            "ADMIN STUDENT GRADES ERROR:",
-            gradesError
-        );
-
-        // ======================================
-// INDIVIDUAL STUDENT GRADE SUMMARY
-// ======================================
-
-const studentAverageElement =
-    document.getElementById("adminStudentAverage");
-
-const studentResultCountElement =
-    document.getElementById("adminStudentResultCount");
-
-const studentHighestElement =
-    document.getElementById("adminStudentHighest");
-
-const studentLowestElement =
-    document.getElementById("adminStudentLowest");
-
-if (grades && grades.length > 0) {
-
-    let totalScore = 0;
-    let totalMaxScore = 0;
-
-    let highestPercentage = 0;
-    let lowestPercentage = 100;
-
-    grades.forEach(function (grade) {
-
-        const score =
-            Number(grade.score) || 0;
-
-        const maxScore =
-            Number(grade.max_score) || 0;
-
-        totalScore += score;
-        totalMaxScore += maxScore;
-
-        if (maxScore > 0) {
-
-            const percentage =
-                (score / maxScore) * 100;
-
-            if (percentage > highestPercentage) {
-                highestPercentage = percentage;
-            }
-
-            if (percentage < lowestPercentage) {
-                lowestPercentage = percentage;
-            }
-        }
-    });
-
-    const average =
-        totalMaxScore > 0
-            ? (totalScore / totalMaxScore) * 100
-            : 0;
-
-    if (studentAverageElement) {
-        studentAverageElement.textContent =
-            Math.round(average) + "%";
-    }
-
-    if (studentResultCountElement) {
-        studentResultCountElement.textContent =
-            grades.length;
-    }
-
-    if (studentHighestElement) {
-        studentHighestElement.textContent =
-            Math.round(highestPercentage) + "%";
-    }
-
-    if (studentLowestElement) {
-        studentLowestElement.textContent =
-            Math.round(lowestPercentage) + "%";
-    }
-
-} else {
-
-    if (studentAverageElement) {
-        studentAverageElement.textContent = "—";
-    }
-
-    if (studentResultCountElement) {
-        studentResultCountElement.textContent = "0";
-    }
-
-    if (studentHighestElement) {
-        studentHighestElement.textContent = "—";
-    }
-
-    if (studentLowestElement) {
-        studentLowestElement.textContent = "—";
-    }
-}
-
-        // ======================================
-        // ERROR
-        // ======================================
+        console.log("ADMIN STUDENT GRADES:", grades);
+        console.log("ADMIN STUDENT GRADES ERROR:", gradesError);
 
         if (gradesError) {
-
-            console.error(
-                gradesError
-            );
+            console.error("Unable to load student grades:", gradesError);
 
             gradesContainer.innerHTML = `
-                <div class="empty-state">
-
-                    <h3>
-                        Unable to load grades
-                    </h3>
-
-                    <p>
-                        Please try again later.
-                    </p>
-
+                <div class="grades-empty-state">
+                    <h3>Unable to load grades</h3>
+                    <p>Please try again later.</p>
                 </div>
             `;
-
             return;
         }
 
+        const results = grades || [];
 
-        // ======================================
-        // NO GRADES
-        // ======================================
+        // ------------------------------------------
+        // CALCULATE STUDENT SUMMARY
+        // ------------------------------------------
 
-        if (
-            !grades ||
-            grades.length === 0
-        ) {
+        let totalStudentScore = 0;
+        let totalStudentMaxScore = 0;
+        let highestPercentage = null;
+        let lowestPercentage = null;
 
-            gradesContainer.innerHTML = `
-                <div class="empty-state">
+        results.forEach(grade => {
+            const score = Number(grade.score) || 0;
+            const maxScore = Number(grade.max_score) || 0;
 
-                    <h3>
-                        No grades found
-                    </h3>
+            totalStudentScore += score;
+            totalStudentMaxScore += maxScore;
 
-                    <p>
-                        This student does not have any recorded grades yet.
-                    </p>
+            if (maxScore > 0) {
+                const percentage = (score / maxScore) * 100;
 
-                </div>
-            `;
+                highestPercentage = highestPercentage === null
+                    ? percentage
+                    : Math.max(highestPercentage, percentage);
 
-            return;
-        }
-
-
-        // ======================================
-        // DISPLAY GRADES
-        // ======================================
-
-        gradesContainer.innerHTML = `
-
-            <div class="grades-table-wrapper">
-
-                <table class="admin-grades-table">
-
-                    <thead>
-
-                        <tr>
-
-                            <th>
-                                Subject
-                            </th>
-
-                            <th>
-                                Assessment
-                            </th>
-
-                            <th>
-                                Score
-                            </th>
-
-                            <th>
-                                Percentage
-                            </th>
-
-                            <th>
-                                Date
-                            </th>
-
-                        </tr>
-
-                    </thead>
-
-                    <tbody>
-
-                    </tbody>
-
-                </table>
-
-            </div>
-
-        `;
-
-
-        const tableBody =
-            gradesContainer.querySelector(
-                "tbody"
-            );
-
-
-        grades.forEach(
-            function (grade) {
-
-                const row =
-                    document.createElement(
-                        "tr"
-                    );
-
-
-                const score =
-                    Number(
-                        grade.score
-                    );
-
-
-                const maxScore =
-                    Number(
-                        grade.max_score
-                    );
-
-
-                let percentage = 0;
-
-
-                if (maxScore > 0) {
-
-                    percentage =
-                        (
-                            score /
-                            maxScore
-                        ) * 100;
-
-                }
-
-
-                const gradeDate =
-                    grade.created_at
-                        ? new Date(
-                            grade.created_at
-                        ).toLocaleDateString(
-                            "en-GB",
-                            {
-                                day: "numeric",
-                                month: "short",
-                                year: "numeric"
-                            }
-                        )
-                        : "N/A";
-
-
-                row.innerHTML = `
-
-                    <td>
-
-                        <strong>
-                            ${
-                                grade.subjects
-                                    ? grade.subjects.name
-                                    : "Unknown Subject"
-                            }
-                        </strong>
-
-                        ${
-                            grade.subjects &&
-                            grade.subjects.code
-                                ? `
-                                    <small>
-                                        ${grade.subjects.code}
-                                    </small>
-                                `
-                                : ""
-                        }
-
-                    </td>
-
-
-                    <td>
-                        ${grade.assessment || "N/A"}
-                    </td>
-
-
-                    <td>
-                        ${score} / ${maxScore}
-                    </td>
-
-
-                    <td>
-                        ${Math.round(percentage)}%
-                    </td>
-
-
-                    <td>
-                        ${gradeDate}
-                    </td>
-
-                `;
-
-
-                tableBody.appendChild(
-                    row
-                );
-
+                lowestPercentage = lowestPercentage === null
+                    ? percentage
+                    : Math.min(lowestPercentage, percentage);
             }
+        });
+
+        const average = totalStudentMaxScore > 0
+            ? (totalStudentScore / totalStudentMaxScore) * 100
+            : null;
+
+        setText(
+            "adminStudentAverage",
+            average === null ? "—" : `${Math.round(average)}%`
         );
 
-    }
+        setText("adminStudentResultCount", results.length);
 
+        setText(
+            "adminStudentHighest",
+            highestPercentage === null ? "—" : `${Math.round(highestPercentage)}%`
+        );
+
+        setText(
+            "adminStudentLowest",
+            lowestPercentage === null ? "—" : `${Math.round(lowestPercentage)}%`
+        );
+
+        // ------------------------------------------
+        // NO RESULTS
+        // ------------------------------------------
+
+        if (results.length === 0) {
+            gradesContainer.innerHTML = `
+                <div class="grades-empty-state">
+                    <h3>📚 No grades recorded yet</h3>
+                    <p>This student does not have any recorded academic results.</p>
+                </div>
+            `;
+            return;
+        }
+
+        // ------------------------------------------
+        // RESULTS TABLE
+        // ------------------------------------------
+
+        gradesContainer.innerHTML = `
+            <div class="grades-table-wrapper">
+                <table class="admin-grades-table">
+                    <thead>
+                        <tr>
+                            <th>Subject</th>
+                            <th>Assessment</th>
+                            <th>Score</th>
+                            <th>Percentage</th>
+                            <th>Teacher's Comments</th>
+                            <th>Date</th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+        `;
+
+        const tableBody = gradesContainer.querySelector("tbody");
+
+        results.forEach(grade => {
+            const score = Number(grade.score) || 0;
+            const maxScore = Number(grade.max_score) || 0;
+
+            const percentage = maxScore > 0
+                ? (score / maxScore) * 100
+                : null;
+
+            let performanceClass = "low";
+
+            if (percentage !== null) {
+                if (percentage >= 80) performanceClass = "excellent";
+                else if (percentage >= 70) performanceClass = "good";
+                else if (percentage >= 50) performanceClass = "average";
+            }
+
+            const gradeDate = grade.created_at
+                ? new Date(grade.created_at).toLocaleDateString("en-GB", {
+                    day: "numeric",
+                    month: "short",
+                    year: "numeric"
+                })
+                : "N/A";
+
+            const subjectName = grade.subjects?.name || "Unknown Subject";
+            const subjectCode = grade.subjects?.code || "";
+            const comment = grade.comments || "No teacher comment provided.";
+
+            const row = document.createElement("tr");
+
+            row.innerHTML = `
+                <td>
+                    <span class="grade-subject-name">
+                        ${escapeHTML(subjectName)}
+                    </span>
+                    ${
+                        subjectCode
+                            ? `<span class="grade-subject-code">${escapeHTML(subjectCode)}</span>`
+                            : ""
+                    }
+                </td>
+
+                <td>
+                    <span class="grade-assessment-badge">
+                        ${escapeHTML(grade.assessment || "Assessment")}
+                    </span>
+                </td>
+
+                <td>
+                    <span class="grade-score-pill">
+                        ${score} / ${maxScore}
+                    </span>
+                </td>
+
+                <td>
+                    <span class="grade-percentage ${performanceClass}">
+                        ${percentage === null ? "—" : `${Math.round(percentage)}%`}
+                    </span>
+                </td>
+
+                <td>
+                    <div class="grade-comment">
+                        ${escapeHTML(comment)}
+                    </div>
+                </td>
+
+                <td>${escapeHTML(gradeDate)}</td>
+            `;
+
+            tableBody.appendChild(row);
+        });
+    }
 }
 
 // ==========================================
