@@ -15824,6 +15824,9 @@ function escapeCredentialHTML(value) {
 // ADMIN - LOGIN CREDENTIALS
 // ==========================================
 
+let adminCredentialAccounts = [];
+let activeCredentialFilter = "all";
+
 async function loadAdminCredentials() {
 
     const credentialsContainer =
@@ -15832,17 +15835,24 @@ async function loadAdminCredentials() {
     const credentialsCount =
         document.getElementById("credentialsCount");
 
+    const studentCount =
+        document.getElementById("credentialsStudentCount");
+
+    const teacherCount =
+        document.getElementById("credentialsTeacherCount");
+
     if (!credentialsContainer) return;
 
-    credentialsContainer.innerHTML =
-        "<p>Loading student and teacher accounts...</p>";
+    credentialsContainer.innerHTML = `
+        <div class="credentials-loading">
+            <div class="credentials-spinner"></div>
+            <p>Loading student and teacher accounts...</p>
+        </div>
+    `;
 
     try {
 
-        // ==========================================
         // FETCH STUDENTS
-        // ==========================================
-
         const {
             data: students,
             error: studentError
@@ -15853,10 +15863,7 @@ async function loadAdminCredentials() {
 
         if (studentError) throw studentError;
 
-        // ==========================================
         // FETCH TEACHERS
-        // ==========================================
-
         const {
             data: teachers,
             error: teacherError
@@ -15870,10 +15877,7 @@ async function loadAdminCredentials() {
         const studentList = students || [];
         const teacherList = teachers || [];
 
-        // ==========================================
-        // FETCH PASSWORDS FROM SECURE EDGE FUNCTION
-        // ==========================================
-
+        // FETCH SAVED PASSWORDS
         const {
             data: credentialData,
             error: credentialError
@@ -15886,6 +15890,7 @@ async function loadAdminCredentials() {
         );
 
         if (credentialError) {
+
             console.error(
                 "PASSWORD RETRIEVAL ERROR:",
                 credentialError
@@ -15899,7 +15904,6 @@ async function loadAdminCredentials() {
         const savedCredentials =
             credentialData?.credentials || [];
 
-        // Map passwords using account type and ID
         const passwordMap = {};
 
         savedCredentials.forEach(record => {
@@ -15923,10 +15927,7 @@ async function loadAdminCredentials() {
 
         });
 
-        // ==========================================
         // FETCH PASSWORD RESET DATES
-        // ==========================================
-
         const accountIds = [
             ...studentList.map(s => s.id),
             ...teacherList.map(t => t.id)
@@ -15947,12 +15948,16 @@ async function loadAdminCredentials() {
                 .in("account_id", accountIds);
 
             if (securityError) {
+
                 console.warn(
                     "Could not load reset dates:",
                     securityError
                 );
+
             } else {
+
                 securityRecords = data || [];
+
             }
 
         }
@@ -15967,11 +15972,8 @@ async function loadAdminCredentials() {
 
         });
 
-        // ==========================================
-        // COMBINE STUDENTS AND TEACHERS
-        // ==========================================
-
-        const accounts = [
+        // COMBINE ACCOUNTS
+        adminCredentialAccounts = [
 
             ...studentList.map(student => ({
                 id: student.id,
@@ -16007,30 +16009,59 @@ async function loadAdminCredentials() {
 
         ];
 
+        // UPDATE OVERVIEW COUNTS
         if (credentialsCount) {
             credentialsCount.textContent =
-                `${accounts.length} account${accounts.length === 1 ? "" : "s"}`;
+                adminCredentialAccounts.length;
         }
 
+        if (studentCount) {
+            studentCount.textContent =
+                studentList.length;
+        }
+
+        if (teacherCount) {
+            teacherCount.textContent =
+                teacherList.length;
+        }
+
+        // RESET FILTER
+        activeCredentialFilter = "all";
+
+        document.querySelectorAll(
+            ".credentials-filter"
+        ).forEach(button => {
+
+            button.classList.toggle(
+                "active",
+                button.dataset.filter === "all"
+            );
+
+        });
+
+        // DISPLAY ACCOUNTS
         credentialsContainer.innerHTML = "";
 
-        if (!accounts.length) {
+        if (!adminCredentialAccounts.length) {
 
-            credentialsContainer.innerHTML =
-                "<p>No student or teacher accounts found.</p>";
+            credentialsContainer.innerHTML = `
+                <div class="credentials-empty">
+                    <h3>No accounts found</h3>
+                    <p>There are currently no student or teacher accounts.</p>
+                </div>
+            `;
 
+            updateAdminCredentialView();
             return;
         }
 
-        // ==========================================
-        // DISPLAY ACCOUNT CARDS
-        // ==========================================
-
-        accounts.forEach(account => {
+        adminCredentialAccounts.forEach(account => {
 
             const card = document.createElement("div");
 
             card.className = "credential-student-card";
+
+            card.dataset.type = account.type;
 
             const initials = account.name
                 ? account.name
@@ -16069,10 +16100,9 @@ async function loadAdminCredentials() {
                             ${escapeCredentialHTML(account.name || "Unnamed account")}
                         </h3>
 
-                        <p>
-                            <strong>Account type:</strong>
-                            ${account.type === "student" ? "Student" : "Teacher"}
-                        </p>
+                        <span class="credential-type-label ${account.type}">
+                            ${account.type === "student" ? "🎓 Student" : "👨‍🏫 Teacher"}
+                        </span>
 
                         <p>
                             <strong>Email:</strong>
@@ -16087,12 +16117,12 @@ async function loadAdminCredentials() {
 
                 <div class="credential-account">
 
-                    <span class="credential-status">
-                        ${account.active ? "Active" : "No login account"}
+                    <span class="credential-status ${account.active ? "active" : "inactive"}">
+                        ${account.active ? "● Active Account" : "● No Login Account"}
                     </span>
 
                     <p>
-                        <strong>Saved Password:</strong>
+                        <strong>Saved Password</strong>
                     </p>
 
                     ${
@@ -16100,14 +16130,22 @@ async function loadAdminCredentials() {
                         ? `
                             <div class="saved-password-box">
 
-                                <code class="saved-password-text">
-                                    ${escapeCredentialHTML(savedPassword)}
+                                <code class="saved-password-text"
+                                    data-password="${escapeCredentialHTML(savedPassword)}">
+                                    •••••••••
                                 </code>
 
                                 <button
                                     type="button"
+                                    class="toggle-saved-password"
+                                    title="Show or hide password">
+                                    <span>Show</span>
+                                </button>
+
+                                <button
+                                    type="button"
                                     class="copy-saved-password">
-                                    Copy
+                                    <span>Copy</span>
                                 </button>
 
                             </div>
@@ -16119,7 +16157,7 @@ async function loadAdminCredentials() {
                         `
                     }
 
-                    <p>
+                    <p class="credential-reset-date">
                         <strong>Last password reset:</strong><br>
                         ${escapeCredentialHTML(formattedDate)}
                     </p>
@@ -16130,7 +16168,7 @@ async function loadAdminCredentials() {
                             <button
                                 type="button"
                                 class="reset-password-button">
-                                Reset Password
+                                ↻ Reset Password
                             </button>
                         `
                         : `
@@ -16144,10 +16182,34 @@ async function loadAdminCredentials() {
 
             `;
 
-            // ==========================================
-            // COPY PASSWORD
-            // ==========================================
+            // SHOW / HIDE PASSWORD
+            const toggleButton =
+                card.querySelector(".toggle-saved-password");
 
+            const passwordText =
+                card.querySelector(".saved-password-text");
+
+            if (toggleButton && passwordText) {
+
+                let passwordVisible = false;
+
+                toggleButton.addEventListener("click", () => {
+
+                    passwordVisible = !passwordVisible;
+
+                    passwordText.textContent =
+                        passwordVisible
+                            ? passwordText.dataset.password
+                            : "•••••••••";
+
+                    toggleButton.querySelector("span").textContent =
+                        passwordVisible ? "Hide" : "Show";
+
+                });
+
+            }
+
+            // COPY PASSWORD
             const copyButton =
                 card.querySelector(".copy-saved-password");
 
@@ -16163,10 +16225,14 @@ async function loadAdminCredentials() {
                                 savedPassword
                             );
 
-                            copyButton.textContent = "Copied!";
+                            copyButton.querySelector("span").textContent =
+                                "Copied!";
 
                             setTimeout(() => {
-                                copyButton.textContent = "Copy";
+
+                                copyButton.querySelector("span").textContent =
+                                    "Copy";
+
                             }, 1500);
 
                         } catch (error) {
@@ -16182,37 +16248,33 @@ async function loadAdminCredentials() {
 
             }
 
-            // ==========================================
             // RESET PASSWORD
-            // ==========================================
-
             const resetButton =
                 card.querySelector(".reset-password-button");
 
             if (resetButton) {
 
-                resetButton.addEventListener(
-                    "click",
-                    () => {
+                resetButton.addEventListener("click", () => {
 
-                        if (account.type === "student") {
+                    if (account.type === "student") {
 
-                            resetStudentPassword(account.id);
+                        resetStudentPassword(account.id);
 
-                        } else {
+                    } else {
 
-                            resetTeacherPassword(account.id);
-
-                        }
+                        resetTeacherPassword(account.id);
 
                     }
-                );
+
+                });
 
             }
 
             credentialsContainer.appendChild(card);
 
         });
+
+        updateAdminCredentialView();
 
     } catch (error) {
 
@@ -16222,64 +16284,166 @@ async function loadAdminCredentials() {
         );
 
         credentialsContainer.innerHTML = `
-            <p>
-                Unable to load credentials:
-                ${escapeCredentialHTML(error.message)}
-            </p>
+            <div class="credentials-empty">
+                <h3>Unable to load credentials</h3>
+                <p>${escapeCredentialHTML(error.message)}</p>
+            </div>
         `;
 
         if (credentialsCount) {
             credentialsCount.textContent =
-                "Credentials unavailable";
+                "Unavailable";
         }
 
     }
 
 }
 
+
 // ==========================================
-// SEARCH LOGIN CREDENTIALS
+// FILTER + SEARCH LOGIN CREDENTIALS
 // ==========================================
 
-const credentialsSearch =
-    document.getElementById(
-        "credentialsSearch"
+function updateAdminCredentialView() {
+
+    const searchInput =
+        document.getElementById("credentialsSearch");
+
+    const container =
+        document.getElementById("credentialsContainer");
+
+    const title =
+        document.getElementById("credentialsListTitle");
+
+    const visibleCount =
+        document.getElementById("credentialsVisibleCount");
+
+    if (!container) return;
+
+    const search = searchInput
+        ? searchInput.value.trim().toLowerCase()
+        : "";
+
+    const cards = container.querySelectorAll(
+        ".credential-student-card"
     );
+
+    let visible = 0;
+
+    cards.forEach(card => {
+
+        const matchesFilter =
+            activeCredentialFilter === "all" ||
+            card.dataset.type === activeCredentialFilter;
+
+        const matchesSearch =
+            card.textContent.toLowerCase().includes(search);
+
+        const shouldShow =
+            matchesFilter && matchesSearch;
+
+        card.style.display =
+            shouldShow ? "" : "none";
+
+        if (shouldShow) visible++;
+
+    });
+
+    // UPDATE HEADING
+    if (title) {
+
+        const titles = {
+            all: "All Accounts",
+            student: "Student Accounts",
+            teacher: "Teacher Accounts"
+        };
+
+        title.textContent =
+            titles[activeCredentialFilter] || "All Accounts";
+
+    }
+
+    // UPDATE VISIBLE COUNT
+    if (visibleCount) {
+
+        visibleCount.textContent =
+            `Showing ${visible} of ${adminCredentialAccounts.length} accounts`;
+
+    }
+
+    // EMPTY SEARCH/FILTER MESSAGE
+    let emptyMessage =
+        container.querySelector(".credentials-no-results");
+
+    if (visible === 0 && cards.length > 0) {
+
+        if (!emptyMessage) {
+
+            emptyMessage = document.createElement("div");
+
+            emptyMessage.className =
+                "credentials-empty credentials-no-results";
+
+            emptyMessage.innerHTML = `
+                <h3>No matching accounts</h3>
+                <p>Try another search or select a different filter.</p>
+            `;
+
+            container.appendChild(emptyMessage);
+
+        }
+
+        emptyMessage.style.display = "";
+
+    } else if (emptyMessage) {
+
+        emptyMessage.style.display = "none";
+
+    }
+
+}
+
+
+// SEARCH INPUT
+const credentialsSearch =
+    document.getElementById("credentialsSearch");
 
 if (credentialsSearch) {
 
     credentialsSearch.addEventListener(
         "input",
-        function () {
-
-            const search =
-                this.value
-                    .trim()
-                    .toLowerCase();
-
-            const cards =
-                document.querySelectorAll(
-                    "#credentialsContainer > *"
-                );
-
-            cards.forEach(card => {
-
-                const text =
-                    card.textContent
-                        .toLowerCase();
-
-                card.style.display =
-                    text.includes(search)
-                        ? ""
-                        : "none";
-
-            });
-
-        }
+        updateAdminCredentialView
     );
 
 }
 
+
+// FILTER BUTTONS
+document.querySelectorAll(
+    ".credentials-filter"
+).forEach(button => {
+
+    button.addEventListener("click", () => {
+
+        activeCredentialFilter =
+            button.dataset.filter || "all";
+
+        document.querySelectorAll(
+            ".credentials-filter"
+        ).forEach(filterButton => {
+
+            filterButton.classList.toggle(
+                "active",
+                filterButton === button
+            );
+
+        });
+
+        updateAdminCredentialView();
+
+    });
+
+});
 
 // ==========================================
 // ADMIN CREDENTIALS PAGE STARTUP
