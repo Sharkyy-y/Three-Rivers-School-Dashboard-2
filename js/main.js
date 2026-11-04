@@ -4909,6 +4909,17 @@ async function loadAdminStudents() {
         Edit
     </button>
 
+<button
+    class="secondary-button"
+    type="button"
+    onclick="openSubjectAssignment('student', {
+        id: '${student.id}',
+        name: '${student.full_name}',
+        admission_number: '${student.admission_number}'
+    })">
+    Assign Subjects
+</button>
+
     <button
     class="delete-student-button"
     onclick="deleteStudent('${student.id}')">
