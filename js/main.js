@@ -16536,6 +16536,24 @@ async function openSubjectAssignment(type, teacher) {
 
         if (subjectsError) throw subjectsError;
 
+// Get the teacher's profile ID
+const { data: profile, error: profileError } =
+    await supabaseClient
+        .from("profiles")
+        .select("id")
+        .eq("email", teacher.email)
+        .eq("role", "teacher")
+        .maybeSingle();
+
+if (profileError) throw profileError;
+
+if (!profile) {
+    throw new Error("Teacher login profile not found.");
+}
+
+teacher.id = profile.id;
+currentSubjectTeacher = teacher;
+        
         // Get subjects already assigned to this teacher
         const { data: assigned, error: assignedError } =
             await supabaseClient
@@ -16584,6 +16602,108 @@ async function openSubjectAssignment(type, teacher) {
 
         message.textContent = error.message;
         list.textContent = "Could not load subjects.";
+
+    }
+}
+
+// ==========================================
+// SAVE TEACHER SUBJECT ASSIGNMENTS
+// ==========================================
+
+async function saveTeacherSubjectAssignments() {
+
+    if (!currentSubjectTeacher) return;
+
+    const saveButton = document.getElementById(
+        "saveSubjectAssignments"
+    );
+
+    const message = document.getElementById(
+        "subjectAssignmentMessage"
+    );
+
+    const selectedSubjects = Array.from(
+        document.querySelectorAll(
+            "#subjectAssignmentList input[type='checkbox']:checked"
+        )
+    ).map(input => input.value);
+
+    saveButton.disabled = true;
+    message.textContent = "Saving assignments...";
+
+    try {
+
+        const teacherId = currentSubjectTeacher.id;
+
+        // Get existing assignments
+        const { data: existing, error: fetchError } =
+            await supabaseClient
+                .from("teacher_subjects")
+                .select("subject_id")
+                .eq("teacher_id", teacherId);
+
+        if (fetchError) throw fetchError;
+
+        const existingIds = (existing || []).map(
+            item => item.subject_id
+        );
+
+        // Identify new and removed subjects
+        const toAdd = selectedSubjects.filter(
+            id => !existingIds.includes(id)
+        );
+
+        const toRemove = existingIds.filter(
+            id => !selectedSubjects.includes(id)
+        );
+
+        // Insert new assignments
+        if (toAdd.length > 0) {
+
+            const rows = toAdd.map(subjectId => ({
+                teacher_id: teacherId,
+                subject_id: subjectId
+            }));
+
+            const { error: insertError } =
+                await supabaseClient
+                    .from("teacher_subjects")
+                    .insert(rows);
+
+            if (insertError) throw insertError;
+        }
+
+        // Remove unchecked assignments
+        if (toRemove.length > 0) {
+
+            const { error: deleteError } =
+                await supabaseClient
+                    .from("teacher_subjects")
+                    .delete()
+                    .eq("teacher_id", teacherId)
+                    .in("subject_id", toRemove);
+
+            if (deleteError) throw deleteError;
+        }
+
+        message.textContent =
+            "Teacher subjects saved successfully!";
+
+        setTimeout(() => {
+            document.getElementById("subjectAssignmentModal")
+                ?.classList.remove("active");
+        }, 1200);
+
+    } catch (error) {
+
+        console.error("SAVE TEACHER SUBJECTS ERROR:", error);
+
+        message.textContent =
+            error.message || "Unable to save subjects.";
+
+    } finally {
+
+        saveButton.disabled = false;
 
     }
 }
