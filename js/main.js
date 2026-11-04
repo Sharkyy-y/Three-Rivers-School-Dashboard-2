@@ -13933,6 +13933,15 @@ async function loadTeacherDuty() {
     }
 }
 
+// ==========================================
+// LOAD TEACHER DUTY PAGE
+// ==========================================
+
+if (
+    window.location.pathname.includes("teacher-duty.html")
+) {
+    loadTeacherDuty();
+}
 
 // ==========================================
 // TEACHER PROFILE
