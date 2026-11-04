@@ -8686,3 +8686,75 @@ body:has(.attendance-overview) .admin-avatar {
         font-size: 10px;
     }
 }
+
+/* SUBJECT ASSIGNMENT WINDOW */
+
+#subjectAssignmentModal {
+    display: none;
+    position: fixed;
+    inset: 0;
+    z-index: 9999;
+    background: rgba(0, 0, 0, 0.55);
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+}
+
+#subjectAssignmentModal.active {
+    display: flex;
+}
+
+#subjectAssignmentModal .student-modal-content {
+    width: 100%;
+    max-width: 550px;
+    max-height: 85vh;
+    overflow-y: auto;
+    background: #fff;
+    border-radius: 18px;
+    padding: 25px;
+}
+
+#subjectAssignmentList {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 10px;
+    max-height: 350px;
+    overflow-y: auto;
+    margin: 20px 0;
+}
+
+.subject-assignment-option {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 13px;
+    border: 1px solid #e1eae4;
+    border-radius: 10px;
+    background: #f8fbf9;
+    color: #244332;
+    font-size: 13px;
+    cursor: pointer;
+}
+
+.subject-assignment-option:has(input:checked) {
+    background: #e8f6ed;
+    border-color: #24965b;
+}
+
+.subject-assignment-option input {
+    accent-color: #16834a;
+    width: 17px;
+    height: 17px;
+}
+
+#subjectAssignmentMessage {
+    margin: 12px 0;
+    color: #16834a;
+    font-size: 13px;
+}
+
+@media (max-width: 600px) {
+    #subjectAssignmentList {
+        grid-template-columns: 1fr;
+    }
+}
