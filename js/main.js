@@ -5164,6 +5164,18 @@ console.log(
 
     </button>
 
+<button
+    class="secondary-button"
+    type="button"
+    onclick="openSubjectAssignment('teacher', {
+        id: '${teacher.id}',
+        name: '${teacher.full_name}',
+        email: '${teacher.email}'
+    })">
+
+    Assign Subjects
+
+</button>
 
     <button
         class="delete-student-button"
@@ -16421,4 +16433,154 @@ if (
     window.location.pathname.includes("teacher-attendance.html")
 ) {
     initTeacherAttendance();
+}
+
+function createSubjectAssignmentModal() {
+
+    if (document.getElementById("subjectAssignmentModal")) return;
+
+    const modal = document.createElement("div");
+
+    modal.id = "subjectAssignmentModal";
+    modal.className = "student-modal";
+
+    modal.innerHTML = `
+        <div class="student-modal-content">
+
+            <div class="student-modal-header">
+                <div>
+                    <h2>Assign Subjects</h2>
+                    <p id="subjectAssignmentSubtitle"></p>
+                </div>
+
+                <button
+                    type="button"
+                    id="closeSubjectAssignment"
+                    class="modal-close">
+                    ×
+                </button>
+            </div>
+
+            <div id="subjectAssignmentMessage"></div>
+
+            <div id="subjectAssignmentList">
+                Loading subjects...
+            </div>
+
+            <div class="student-admin-actions">
+                <button
+                    type="button"
+                    id="saveSubjectAssignments"
+                    class="add-student-button">
+                    Save Assignments
+                </button>
+
+                <button
+                    type="button"
+                    id="cancelSubjectAssignments"
+                    class="secondary-button">
+                    Cancel
+                </button>
+            </div>
+
+        </div>
+    `;
+
+    document.body.appendChild(modal);
+
+    const closeModal = () => {
+        modal.classList.remove("active");
+    };
+
+    document.getElementById("closeSubjectAssignment")
+        .addEventListener("click", closeModal);
+
+    document.getElementById("cancelSubjectAssignments")
+        .addEventListener("click", closeModal);
+}
+
+// ==========================================
+// OPEN SUBJECT ASSIGNMENT WINDOW
+// ==========================================
+
+let currentSubjectTeacher = null;
+
+async function openSubjectAssignment(type, teacher) {
+
+    createSubjectAssignmentModal();
+
+    currentSubjectTeacher = teacher;
+
+    const modal = document.getElementById("subjectAssignmentModal");
+    const subtitle = document.getElementById("subjectAssignmentSubtitle");
+    const list = document.getElementById("subjectAssignmentList");
+    const message = document.getElementById("subjectAssignmentMessage");
+
+    modal.classList.add("active");
+
+    subtitle.textContent = teacher.name;
+    message.textContent = "";
+    list.textContent = "Loading subjects...";
+
+    try {
+
+        // Get all available subjects
+        const { data: subjects, error: subjectsError } =
+            await supabaseClient
+                .from("subjects")
+                .select("id, name, code")
+                .order("name");
+
+        if (subjectsError) throw subjectsError;
+
+        // Get subjects already assigned to this teacher
+        const { data: assigned, error: assignedError } =
+            await supabaseClient
+                .from("teacher_subjects")
+                .select("subject_id")
+                .eq("teacher_id", teacher.id);
+
+        if (assignedError) throw assignedError;
+
+        const assignedIds = (assigned || []).map(
+            item => item.subject_id
+        );
+
+        list.innerHTML = "";
+
+        if (!subjects || subjects.length === 0) {
+            list.textContent = "No subjects found.";
+            return;
+        }
+
+        subjects.forEach(subject => {
+
+            const label = document.createElement("label");
+            label.className = "subject-assignment-option";
+
+            const checkbox = document.createElement("input");
+            checkbox.type = "checkbox";
+            checkbox.value = subject.id;
+            checkbox.checked = assignedIds.includes(subject.id);
+
+            const name = document.createElement("span");
+            name.textContent = subject.code
+                ? `${subject.name} (${subject.code})`
+                : subject.name;
+
+            label.appendChild(checkbox);
+            label.appendChild(name);
+
+            list.appendChild(label);
+
+        });
+
+    } catch (error) {
+
+        console.error("SUBJECT LOADING ERROR:", error);
+
+        message.textContent = error.message;
+        list.textContent = "Could not load subjects.";
+
+    }
 }
