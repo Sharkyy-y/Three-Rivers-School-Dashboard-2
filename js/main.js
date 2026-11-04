@@ -16634,9 +16634,9 @@ async function saveTeacherSubjectAssignments() {
         // Get existing assignments
         const { data: existing, error: fetchError } =
             await supabaseClient
-                .from("teacher_subjects")
-                .select("subject_id")
-                .eq("teacher_id", teacherId);
+                .from(type === "student" ? "student_subjects" : "teacher_subjects")
+.select("subject_id")
+.eq(type === "student" ? "student_id" : "teacher_id", teacher.id);
 
         if (fetchError) throw fetchError;
 
