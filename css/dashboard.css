@@ -8149,3 +8149,115 @@ body:has(#credentialsContainer) .saved-password-text {
         padding: 16px !important;
     }
 }
+
+
+/* ==========================================
+   ADMIN ATTENDANCE - ACTUAL LAYOUT FIX
+========================================== */
+
+/* Desktop: correctly position main content */
+@media (min-width: 751px) {
+    body:has(.attendance-overview) > .sidebar {
+        width: 294px !important;
+        max-width: 294px !important;
+    }
+
+    body:has(.attendance-overview) > .dashboard-main {
+        position: relative !important;
+        margin-left: 294px !important;
+        width: calc(100% - 294px) !important;
+        max-width: calc(100% - 294px) !important;
+        min-width: 0 !important;
+        box-sizing: border-box !important;
+        padding: 30px !important;
+    }
+}
+
+/* Mobile */
+@media (max-width: 750px) {
+    body:has(.attendance-overview) > .sidebar {
+        width: 65px !important;
+        max-width: 65px !important;
+    }
+
+    body:has(.attendance-overview) > .dashboard-main {
+        margin-left: 65px !important;
+        width: calc(100% - 65px) !important;
+        max-width: calc(100% - 65px) !important;
+        min-width: 0 !important;
+        box-sizing: border-box !important;
+        padding: 16px !important;
+    }
+}
+
+/* ==========================================
+   ATTENDANCE - NEW HERO HEADER
+========================================== */
+
+body:has(.attendance-overview) .dashboard-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 22px;
+    padding: 30px 34px;
+    margin-bottom: 28px;
+    border-radius: 20px;
+    color: white;
+    background: linear-gradient(120deg, #103d2b, #198754, #38a169);
+    box-shadow: 0 12px 30px rgba(25, 135, 84, 0.16);
+    overflow: hidden;
+}
+
+body:has(.attendance-overview) .dashboard-header h1 {
+    color: white;
+    font-size: clamp(26px, 3vw, 36px);
+    font-weight: 800;
+    letter-spacing: -0.8px;
+    margin-bottom: 9px;
+}
+
+body:has(.attendance-overview) .dashboard-header p {
+    color: rgba(255,255,255,0.85);
+    font-size: 14px;
+    line-height: 1.6;
+}
+
+body:has(.attendance-overview) .admin-user {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 17px;
+    border: 1px solid rgba(255,255,255,0.2);
+    border-radius: 14px;
+    background: rgba(255,255,255,0.13);
+    color: white;
+}
+
+body:has(.attendance-overview) .admin-user strong,
+body:has(.attendance-overview) .admin-user span {
+    display: block;
+    color: white;
+}
+
+body:has(.attendance-overview) .admin-user span {
+    margin-top: 4px;
+    font-size: 12px;
+    opacity: 0.8;
+}
+
+body:has(.attendance-overview) .admin-avatar {
+    background: white;
+    color: #198754;
+    font-weight: 800;
+}
+
+@media (max-width: 600px) {
+    body:has(.attendance-overview) .dashboard-header {
+        padding: 23px;
+    }
+
+    body:has(.attendance-overview) .admin-user {
+        width: 100%;
+    }
+}
