@@ -7756,3 +7756,34 @@ body:has(#credentialsContainer) .saved-password-text {
         padding: 16px !important;
     }
 }
+
+/* ==========================================
+   ADMIN ATTENDANCE - SIDEBAR OVERLAP FIX
+========================================== */
+
+@media (min-width: 751px) {
+    .dashboard-layout > .dashboard-main {
+        margin-left: 294px !important;
+        width: calc(100% - 294px) !important;
+        max-width: calc(100% - 294px) !important;
+        min-width: 0;
+        box-sizing: border-box;
+        padding: 30px !important;
+    }
+}
+
+/* Mobile and tablet */
+@media (max-width: 750px) {
+    .dashboard-layout > .sidebar {
+        width: 65px !important;
+    }
+
+    .dashboard-layout > .dashboard-main {
+        margin-left: 65px !important;
+        width: calc(100% - 65px) !important;
+        max-width: calc(100% - 65px) !important;
+        min-width: 0;
+        box-sizing: border-box;
+        padding: 16px !important;
+    }
+}
