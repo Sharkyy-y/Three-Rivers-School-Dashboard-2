@@ -16486,22 +16486,22 @@ function createSubjectAssignmentModal() {
         </div>
     `;
 
-    document.body.appendChild(modal);
+   document.body.appendChild(modal);
 
-    const closeModal = () => {
-        modal.classList.remove("active");
-    };
+const closeModal = () => {
+    modal.classList.remove("active");
+};
 
-    document.getElementById("closeSubjectAssignment")
-        .addEventListener("click", closeModal);
+document.getElementById("closeSubjectAssignment")
+    .addEventListener("click", closeModal);
 
-    document.getElementById("cancelSubjectAssignments")
-        .addEventListener("click", closeModal);
-}
+document.getElementById("cancelSubjectAssignments")
+    .addEventListener("click", closeModal);
 
 document.getElementById("saveSubjectAssignments")
     .addEventListener("click", saveTeacherSubjectAssignments);
 
+}
 // ==========================================
 // OPEN SUBJECT ASSIGNMENT WINDOW
 // ==========================================
