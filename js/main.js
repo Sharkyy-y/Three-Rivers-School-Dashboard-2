@@ -13822,86 +13822,86 @@ async function loadTeacherDuty() {
             }
         }
 
-        // ==========================================
-        // COMPLETE WEEKLY SCHEDULE
-        // ==========================================
+// ==========================================
+// COMPLETE WEEKLY SCHEDULE - DAY CARDS
+// ==========================================
 
-        if (!scheduleData || scheduleData.length === 0) {
+const dayOrder = [
+    "Monday",
+    "Tuesday",
+    "Wednesday",
+    "Thursday",
+    "Friday",
+    "Saturday",
+    "Sunday"
+];
 
-            if (teacherDutySchedule) {
-                teacherDutySchedule.innerHTML = `
-                    <div class="empty-state">
-                        <p>No weekly duty assignments found.</p>
+if (teacherDutySchedule) {
+
+    const scheduleHTML = dayOrder.map(day => {
+
+        const duties = (scheduleData || []).filter(
+            duty => duty.duty_day === day
+        );
+
+        const isToday = day === today;
+
+        const teachersHTML = duties.length
+            ? duties.map(duty => `
+                <div class="duty-teacher-row">
+
+                    <div class="duty-teacher-icon">
+                        <i class="fas fa-user-tie"></i>
                     </div>
-                `;
-            }
 
-        } else {
-
-            const dayOrder = {
-                Monday: 1,
-                Tuesday: 2,
-                Wednesday: 3,
-                Thursday: 4,
-                Friday: 5,
-                Saturday: 6,
-                Sunday: 7
-            };
-
-            // Sort Monday through Sunday
-            scheduleData.sort((a, b) => {
-
-                const dayDifference =
-                    (dayOrder[a.duty_day] || 99) -
-                    (dayOrder[b.duty_day] || 99);
-
-                if (dayDifference !== 0) {
-                    return dayDifference;
-                }
-
-                return (a.start_time || "").localeCompare(
-                    b.start_time || ""
-                );
-            });
-
-            const scheduleHTML = scheduleData.map(duty => {
-
-                const dutyTime =
-                    `${formatDutyTime(duty.start_time)} - ${formatDutyTime(duty.end_time)}`;
-
-                const isToday =
-                    duty.duty_day === today;
-
-                return `
-                    <div class="admin-activity-item">
-
-                        <div class="admin-activity-dot"></div>
-
-                        <div>
-                            <strong>
-                                ${duty.teacher_name}
-                                ${isToday ? '<span> • TODAY</span>' : ''}
-                            </strong>
-
-                            <span>
-                                ${duty.duty_day}
-                                •
-                                ${duty.duty_area}
-                                •
-                                ${dutyTime}
-                            </span>
-                        </div>
-
+                    <div class="duty-teacher-info">
+                        <strong>${duty.teacher_name}</strong>
+                        <span>${duty.duty_area}</span>
                     </div>
-                `;
 
-            }).join("");
+                    <div class="duty-teacher-time">
+                        ${formatDutyTime(duty.start_time)}
+                        <span>to ${formatDutyTime(duty.end_time)}</span>
+                    </div>
 
-            if (teacherDutySchedule) {
-                teacherDutySchedule.innerHTML = scheduleHTML;
-            }
-        }
+                </div>
+            `).join("")
+            : `<p class="duty-no-assignment">No teachers assigned.</p>`;
 
+        return `
+            <div class="teacher-duty-day-card ${isToday ? "today-duty-card" : ""}">
+
+                <div class="duty-day-card-header">
+
+                    <div>
+                        <span class="duty-day-label">WEEKLY DUTY</span>
+                        <h3>${day}</h3>
+                    </div>
+
+                    ${isToday
+                        ? '<span class="duty-today-badge">TODAY</span>'
+                        : ''
+                    }
+
+                </div>
+
+                <div class="duty-teacher-count">
+                    ${duties.length}
+                    ${duties.length === 1 ? "Teacher assigned" : "Teachers assigned"}
+                </div>
+
+                <div class="duty-day-teachers">
+                    ${teachersHTML}
+                </div>
+
+            </div>
+        `;
+
+    }).join("");
+
+    teacherDutySchedule.innerHTML = scheduleHTML;
+}
+        
         console.log(
             "Weekly teacher duty loaded successfully."
         );
