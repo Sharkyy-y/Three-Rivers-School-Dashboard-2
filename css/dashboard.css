@@ -7756,3 +7756,364 @@ body:has(#credentialsContainer) .saved-password-text {
         padding: 16px !important;
     }
 }
+
+
+/* ==========================================
+   ADMIN ATTENDANCE - LAYOUT AND DESIGN UPGRADE
+========================================== */
+
+/* SIDEBAR SPACING */
+@media (min-width: 751px) {
+    .dashboard-layout > .dashboard-main {
+        margin-left: 294px !important;
+        width: calc(100% - 294px) !important;
+        max-width: calc(100% - 294px) !important;
+        min-width: 0;
+        box-sizing: border-box;
+        padding: 30px !important;
+    }
+}
+
+/* ATTENDANCE OVERVIEW */
+.attendance-overview {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 20px;
+    margin: 25px 0 30px;
+}
+
+.attendance-stat-card {
+    position: relative;
+    overflow: hidden;
+    min-width: 0;
+    padding: 24px;
+    border-radius: 18px;
+    background: #ffffff;
+    border: 1px solid #e8edf0;
+    box-shadow: 0 5px 18px rgba(0, 0, 0, 0.045);
+    transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+
+.attendance-stat-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 12px 28px rgba(0, 0, 0, 0.09);
+}
+
+.attendance-stat-card::after {
+    content: "";
+    position: absolute;
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    right: -35px;
+    top: -40px;
+    opacity: 0.65;
+    pointer-events: none;
+}
+
+.attendance-stat-card:nth-child(1)::after {
+    background: #dbeafe;
+}
+
+.attendance-stat-card:nth-child(2)::after {
+    background: #d1fae5;
+}
+
+.attendance-stat-card:nth-child(3)::after {
+    background: #fef3c7;
+}
+
+.attendance-stat-card:nth-child(4)::after {
+    background: #fee2e2;
+}
+
+.attendance-stat-icon {
+    position: relative;
+    z-index: 1;
+    width: 52px;
+    height: 52px;
+    border-radius: 15px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 24px;
+    flex-shrink: 0;
+}
+
+.attendance-stat-card:nth-child(1) .attendance-stat-icon {
+    background: #eaf2ff;
+}
+
+.attendance-stat-card:nth-child(2) .attendance-stat-icon {
+    background: #e6f8ef;
+}
+
+.attendance-stat-card:nth-child(3) .attendance-stat-icon {
+    background: #fff5dc;
+}
+
+.attendance-stat-card:nth-child(4) .attendance-stat-icon {
+    background: #fff0f0;
+}
+
+.attendance-stat-card p {
+    position: relative;
+    z-index: 1;
+    font-size: 12px;
+    font-weight: 700;
+    color: #778196;
+    margin-bottom: 8px;
+}
+
+.attendance-stat-card h2 {
+    position: relative;
+    z-index: 1;
+    font-size: 29px;
+    font-weight: 800;
+    color: #172033;
+}
+
+/* STUDENT ATTENDANCE SECTION */
+.admin-content-card {
+    border-radius: 20px;
+    padding: 28px;
+    border: 1px solid #e8edf0;
+    box-shadow: 0 6px 22px rgba(0, 0, 0, 0.045);
+}
+
+.admin-section-header {
+    margin-bottom: 24px;
+}
+
+.admin-section-header h2 {
+    font-size: 22px;
+    font-weight: 800;
+}
+
+.attendance-search input {
+    padding: 15px 18px;
+    border-radius: 12px;
+    border: 1px solid #dfe5eb;
+    background: #f9fbfc;
+    transition: border 0.2s ease, box-shadow 0.2s ease;
+}
+
+.attendance-search input:focus {
+    border-color: #198754;
+    box-shadow: 0 0 0 4px rgba(25, 135, 84, 0.10);
+}
+
+/* STUDENT RECORD CARDS */
+.admin-attendance-list {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 16px;
+}
+
+.admin-attendance-card {
+    display: grid;
+    grid-template-columns: minmax(180px, 1.4fr) minmax(100px, 0.6fr) minmax(220px, 1.5fr) auto;
+    align-items: center;
+    gap: 20px;
+    padding: 20px;
+    background: #ffffff;
+    border: 1px solid #e8edf0;
+    border-radius: 17px;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.admin-attendance-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 9px 24px rgba(0, 0, 0, 0.07);
+}
+
+.admin-attendance-student {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    min-width: 0;
+}
+
+.admin-attendance-avatar {
+    width: 49px;
+    height: 49px;
+    min-width: 49px;
+    border-radius: 15px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, #198754, #42b883);
+    color: white;
+    font-size: 17px;
+    font-weight: 800;
+}
+
+.admin-attendance-student-info {
+    min-width: 0;
+}
+
+.admin-attendance-student-info h3 {
+    font-size: 15px;
+    font-weight: 800;
+    color: #172033;
+    overflow-wrap: anywhere;
+}
+
+.admin-attendance-student-info p,
+.admin-attendance-student-info span {
+    display: block;
+    margin-top: 5px;
+    color: #7b8494;
+    font-size: 12px;
+}
+
+.admin-attendance-percentage {
+    text-align: center;
+    padding: 10px;
+    border-radius: 12px;
+    background: #effaf3;
+}
+
+.admin-attendance-percentage strong {
+    display: block;
+    color: #16834c;
+    font-size: 24px;
+    font-weight: 800;
+}
+
+.admin-attendance-percentage span {
+    color: #668575;
+    font-size: 11px;
+    font-weight: 700;
+}
+
+.admin-attendance-stats {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 8px;
+}
+
+.attendance-mini-stat {
+    text-align: center;
+    padding: 10px 5px;
+    border-radius: 11px;
+}
+
+.attendance-mini-stat strong {
+    display: block;
+    font-size: 18px;
+    font-weight: 800;
+}
+
+.attendance-mini-stat span {
+    display: block;
+    margin-top: 4px;
+    font-size: 10px;
+    font-weight: 700;
+}
+
+.attendance-mini-stat.present {
+    background: #eaf8ef;
+    color: #16834c;
+}
+
+.attendance-mini-stat.late {
+    background: #fff6df;
+    color: #b7791f;
+}
+
+.attendance-mini-stat.absent {
+    background: #fff0f0;
+    color: #d14343;
+}
+
+.attendance-mini-stat.total {
+    background: #eff3ff;
+    color: #4f63bd;
+}
+
+.view-attendance-button {
+    border: none;
+    border-radius: 10px;
+    padding: 11px 15px;
+    background: #198754;
+    color: white;
+    font-size: 12px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: background 0.2s ease, transform 0.2s ease;
+}
+
+.view-attendance-button:hover {
+    background: #146c43;
+    transform: translateY(-2px);
+}
+
+/* RESPONSIVE */
+@media (max-width: 1200px) {
+    .attendance-overview {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .admin-attendance-card {
+        grid-template-columns: 1fr 140px;
+    }
+
+    .admin-attendance-stats {
+        grid-column: 1 / -1;
+    }
+
+    .view-attendance-button {
+        grid-column: 1 / -1;
+    }
+}
+
+@media (max-width: 750px) {
+    .dashboard-layout > .sidebar {
+        width: 65px !important;
+    }
+
+    .dashboard-layout > .dashboard-main {
+        margin-left: 65px !important;
+        width: calc(100% - 65px) !important;
+        max-width: calc(100% - 65px) !important;
+        min-width: 0;
+        box-sizing: border-box;
+        padding: 16px !important;
+    }
+
+    .admin-content-card {
+        padding: 18px;
+    }
+
+    .admin-attendance-card {
+        grid-template-columns: 1fr;
+    }
+
+    .admin-attendance-stats {
+        grid-column: auto;
+    }
+
+    .view-attendance-button {
+        grid-column: auto;
+        width: 100%;
+    }
+}
+
+@media (max-width: 500px) {
+    .attendance-overview {
+        grid-template-columns: 1fr;
+    }
+
+    .attendance-stat-card {
+        padding: 19px;
+    }
+
+    .admin-attendance-stats {
+        gap: 5px;
+    }
+
+    .attendance-mini-stat {
+        padding: 9px 3px;
+    }
+}
