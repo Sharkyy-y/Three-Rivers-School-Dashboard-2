@@ -16499,6 +16499,9 @@ function createSubjectAssignmentModal() {
         .addEventListener("click", closeModal);
 }
 
+document.getElementById("saveSubjectAssignments")
+    .addEventListener("click", saveTeacherSubjectAssignments);
+
 // ==========================================
 // OPEN SUBJECT ASSIGNMENT WINDOW
 // ==========================================
