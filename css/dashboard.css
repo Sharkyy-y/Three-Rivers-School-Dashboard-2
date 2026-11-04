@@ -8261,3 +8261,241 @@ body:has(.attendance-overview) .admin-avatar {
         width: 100%;
     }
 }
+
+
+/* ==========================================
+   TEACHER GRADES - STUDENT CARD REDESIGN
+========================================== */
+
+/* Arrange student cards in a responsive grid */
+.teacher-grade-section-content {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 390px), 1fr));
+    gap: 20px;
+    padding: 22px;
+    align-items: start;
+}
+
+/* Individual student card */
+.teacher-grade-card {
+    position: relative;
+    min-width: 0;
+    margin: 0 !important;
+    padding: 0 !important;
+    overflow: hidden;
+    border: 1px solid #e2e8f0 !important;
+    border-radius: 20px !important;
+    background: #ffffff;
+    box-shadow: 0 5px 18px rgba(15, 23, 42, 0.045) !important;
+    transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+
+.teacher-grade-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 14px 30px rgba(15, 23, 42, 0.10) !important;
+    border-color: #86efac !important;
+}
+
+.teacher-grade-card::before {
+    height: 5px;
+    background: linear-gradient(90deg, #15803d, #4ade80, #86efac);
+}
+
+/* Student name and identity */
+.teacher-grade-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 14px;
+    padding: 22px !important;
+    margin: 0 0 16px !important;
+    background: linear-gradient(135deg, #f0fdf4, #f8fafc) !important;
+    border-bottom: 1px solid #e5e7eb;
+}
+
+.teacher-grade-header > div:first-child {
+    flex: 1;
+    min-width: 0;
+}
+
+.teacher-grade-header h3 {
+    font-size: 17px !important;
+    line-height: 1.4;
+    font-weight: 800;
+    color: #172033 !important;
+    overflow-wrap: anywhere;
+}
+
+.teacher-grade-header p {
+    margin-top: 6px !important;
+    font-size: 12px !important;
+    color: #64748b !important;
+    font-weight: 600;
+    overflow-wrap: anywhere;
+}
+
+/* Performance display */
+.teacher-grade-score-summary {
+    flex-shrink: 0;
+    align-items: center !important;
+    gap: 6px !important;
+}
+
+.teacher-grade-score-label {
+    font-size: 10px;
+    color: #64748b;
+}
+
+.teacher-grade-percentage {
+    min-width: 82px;
+    padding: 10px 12px;
+    border-radius: 13px;
+    background: #dcfce7;
+    color: #166534;
+    font-size: 20px;
+    font-weight: 900;
+}
+
+.teacher-grade-performance-label {
+    padding: 5px 10px;
+    border-radius: 20px;
+    background: #f0fdf4;
+    color: #15803d;
+    font-size: 10px;
+    font-weight: 800;
+}
+
+/* Progress bar */
+.teacher-grade-progress {
+    padding: 0 22px 18px !important;
+    gap: 12px;
+}
+
+.teacher-grade-progress-track {
+    height: 9px;
+    border-radius: 20px;
+    background: #edf2f7;
+}
+
+.teacher-grade-progress-fill {
+    border-radius: 20px;
+    background: linear-gradient(90deg, #15803d, #4ade80);
+}
+
+.teacher-grade-progress > span {
+    font-size: 12px;
+    white-space: nowrap;
+}
+
+/* Assessment input fields */
+.teacher-grade-fields {
+    grid-template-columns: 1fr 1fr !important;
+    gap: 13px;
+    padding: 18px 22px 0 !important;
+}
+
+.teacher-grade-fields .teacher-grade-field:first-child {
+    grid-column: 1 / -1;
+}
+
+.teacher-grade-field {
+    min-width: 0;
+    margin-bottom: 13px;
+}
+
+.teacher-grade-field label {
+    font-size: 11px;
+    letter-spacing: 0.04em;
+}
+
+.teacher-grade-field input,
+.teacher-grade-field textarea {
+    min-width: 0;
+    border-radius: 11px;
+    padding: 12px;
+    background: #f9fbfc;
+}
+
+.teacher-grade-field input:focus,
+.teacher-grade-field textarea:focus {
+    background: #ffffff;
+    border-color: #16a34a;
+    box-shadow: 0 0 0 3px rgba(22, 163, 74, 0.10);
+}
+
+/* Comments */
+.teacher-grade-card > .teacher-grade-field {
+    padding: 0 22px;
+}
+
+.teacher-grade-card .teacher-grade-comments {
+    min-height: 85px;
+}
+
+/* Save button */
+.teacher-grade-actions {
+    padding: 18px 22px 22px !important;
+    border-top: 1px solid #f1f5f9;
+    margin-top: 15px;
+    flex-wrap: wrap;
+}
+
+.teacher-grade-save {
+    padding: 12px 20px;
+    border-radius: 11px;
+    background: linear-gradient(135deg, #15803d, #22a35a);
+    box-shadow: 0 4px 10px rgba(21, 128, 61, 0.16);
+}
+
+.teacher-grade-save:hover {
+    background: #166534;
+    box-shadow: 0 6px 14px rgba(21, 128, 61, 0.2);
+}
+
+.teacher-grade-message {
+    font-size: 12px;
+}
+
+/* Assessment section spacing */
+.teacher-grade-section {
+    border-radius: 19px;
+    margin-top: 26px;
+    border: 1px solid #e2e8f0;
+    box-shadow: 0 5px 18px rgba(15, 23, 42, 0.035);
+}
+
+.teacher-grade-section-header {
+    padding: 22px 25px;
+    background: linear-gradient(120deg, #ecfdf5, #f8fafc);
+}
+
+/* Responsive */
+@media (max-width: 650px) {
+    .teacher-grade-section-content {
+        grid-template-columns: 1fr;
+        padding: 13px;
+        gap: 15px;
+    }
+
+    .teacher-grade-header {
+        padding: 17px !important;
+        flex-wrap: wrap;
+    }
+
+    .teacher-grade-fields {
+        grid-template-columns: 1fr !important;
+        padding: 15px 17px 0 !important;
+    }
+
+    .teacher-grade-fields .teacher-grade-field:first-child {
+        grid-column: auto;
+    }
+
+    .teacher-grade-card > .teacher-grade-field {
+        padding: 0 17px;
+    }
+
+    .teacher-grade-actions {
+        padding: 15px 17px 18px !important;
+    }
+}
