@@ -8451,6 +8451,9 @@ async function loadAdminStudentGrades(student) {
         });
     });
 }
+
+// CLOSE loadAdminGrades()
+}
     
 // ==========================================
 // ADMIN CONDUCT
