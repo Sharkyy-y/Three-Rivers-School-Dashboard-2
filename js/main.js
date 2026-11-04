@@ -16536,22 +16536,7 @@ async function openSubjectAssignment(type, teacher) {
 
         if (subjectsError) throw subjectsError;
 
-// Get the teacher's profile ID
-const { data: profile, error: profileError } =
-    await supabaseClient
-        .from("profiles")
-        .select("id")
-        .eq("email", teacher.email)
-        .eq("role", "teacher")
-        .maybeSingle();
-
-if (profileError) throw profileError;
-
-if (!profile) {
-    throw new Error("Teacher login profile not found.");
-}
-
-teacher.id = profile.id;
+// Teacher table ID matches profile ID
 currentSubjectTeacher = teacher;
         
         // Get subjects already assigned to this teacher
