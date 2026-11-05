@@ -9095,3 +9095,587 @@ body:has(.attendance-overview) .admin-avatar {
         min-width: 68px;
     }
 }
+
+
+/* ==========================================
+   THREE RIVERS — PREMIUM PARENT PORTAL
+========================================== */
+
+.parent-portal {
+    background: #f5f7f6;
+    color: #1e293b;
+}
+
+.parent-portal .parent-sidebar {
+    background: #123b30;
+    color: #fff;
+}
+
+.parent-portal .sidebar-logo {
+    color: #fff;
+}
+
+.parent-portal .logo-icon {
+    background: #d6b66b;
+    color: #173b30;
+}
+
+.parent-portal .sidebar-nav {
+    margin-top: 30px;
+}
+
+.parent-portal .nav-item {
+    color: #d5e4dd;
+    border-radius: 9px;
+    transition: background 0.2s ease;
+}
+
+.parent-portal .nav-item:hover,
+.parent-portal .nav-item.active {
+    background: #245546;
+    color: #fff;
+}
+
+.parent-portal .logout {
+    color: #f5c6c6;
+}
+
+.parent-portal .main-content {
+    background: #f5f7f6;
+    padding: 28px;
+}
+
+.parent-portal .topbar {
+    margin-bottom: 26px;
+}
+
+.parent-portal .school-name {
+    color: #a17d37;
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: 2px;
+    margin-bottom: 5px;
+}
+
+.parent-portal .topbar h1 {
+    color: #173b30;
+    font-size: 26px;
+    margin: 0;
+}
+
+.parent-portal .student-profile {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.parent-portal .profile-avatar {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 43px;
+    height: 43px;
+    border-radius: 50%;
+    background: #e9dfc4;
+    color: #173b30;
+    font-weight: 800;
+}
+
+.parent-portal .profile-details {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+}
+
+.parent-portal .profile-details strong {
+    color: #173b30;
+    font-size: 13px;
+}
+
+.parent-portal .profile-details small {
+    color: #84918b;
+    font-size: 11px;
+}
+
+.parent-portal .notification {
+    position: relative;
+    color: #173b30;
+    font-size: 23px;
+    margin-right: 8px;
+}
+
+.parent-portal #parentNotificationCount {
+    position: absolute;
+    top: -5px;
+    right: -9px;
+    min-width: 17px;
+    height: 17px;
+    padding: 0 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    background: #c99c4a;
+    color: white;
+    font-size: 9px;
+}
+
+/* WELCOME */
+
+.parent-welcome {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 25px;
+    padding: 35px;
+    margin-bottom: 30px;
+    overflow: hidden;
+    border-radius: 18px;
+    background: linear-gradient(120deg, #123b30, #285b48);
+    color: white;
+}
+
+.parent-welcome::after {
+    content: "";
+    position: absolute;
+    width: 240px;
+    height: 240px;
+    right: 12%;
+    top: -130px;
+    border: 1px solid rgba(255,255,255,0.12);
+    border-radius: 50%;
+    box-shadow: 0 0 0 35px rgba(255,255,255,0.035),
+                0 0 0 70px rgba(255,255,255,0.025);
+}
+
+.parent-welcome-content {
+    position: relative;
+    z-index: 1;
+}
+
+.parent-eyebrow {
+    color: #e2c889;
+    font-size: 10px;
+    font-weight: 800;
+    letter-spacing: 2px;
+    margin-bottom: 12px;
+}
+
+.parent-welcome h2 {
+    margin: 0 0 10px;
+    font-size: 29px;
+    color: white;
+}
+
+.parent-welcome h2 span {
+    color: #e5c982;
+}
+
+.parent-welcome-content > p:last-child {
+    color: #d1e1d9;
+    font-size: 13px;
+    margin: 0;
+}
+
+.parent-date {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    padding: 15px 19px;
+    border: 1px solid rgba(255,255,255,0.2);
+    border-radius: 12px;
+    background: rgba(255,255,255,0.08);
+}
+
+.parent-date span {
+    color: #e5c982;
+    font-size: 10px;
+    font-weight: 800;
+    letter-spacing: 1px;
+}
+
+.parent-date strong {
+    color: white;
+    font-size: 14px;
+}
+
+/* SECTION HEADINGS */
+
+.parent-child-section {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+    margin-bottom: 15px;
+}
+
+.parent-section-label {
+    display: block;
+    margin-bottom: 7px;
+    color: #a17d37;
+    font-size: 10px;
+    font-weight: 800;
+    letter-spacing: 1.5px;
+}
+
+.parent-child-section h2 {
+    margin: 0 0 5px;
+    color: #173b30;
+    font-size: 20px;
+}
+
+.parent-child-section p {
+    margin: 0;
+    color: #829087;
+    font-size: 12px;
+}
+
+#parentChildSelect {
+    min-width: 220px;
+    padding: 12px 14px;
+    border: 1px solid #dce5df;
+    border-radius: 10px;
+    background: white;
+    color: #173b30;
+    font-weight: 600;
+    outline: none;
+}
+
+/* CHILD CARD */
+
+.parent-child-card {
+    display: flex;
+    align-items: center;
+    gap: 17px;
+    padding: 20px;
+    margin-bottom: 22px;
+    border: 1px solid #e3eae5;
+    border-radius: 14px;
+    background: white;
+    box-shadow: 0 3px 12px rgba(20,55,42,0.035);
+}
+
+.parent-child-avatar {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 57px;
+    height: 57px;
+    flex-shrink: 0;
+    border-radius: 14px;
+    background: #e8f0eb;
+    color: #245541;
+    font-size: 23px;
+    font-weight: 800;
+}
+
+.parent-child-details {
+    flex: 1;
+    min-width: 0;
+}
+
+.parent-child-details > span,
+.parent-relationship > span {
+    color: #a17d37;
+    font-size: 9px;
+    font-weight: 800;
+    letter-spacing: 1px;
+}
+
+.parent-child-details h2 {
+    margin: 5px 0;
+    color: #173b30;
+    font-size: 19px;
+}
+
+.parent-child-details p {
+    margin: 0;
+    color: #819087;
+    font-size: 12px;
+}
+
+.parent-dot {
+    margin: 0 5px;
+}
+
+.parent-relationship {
+    display: flex;
+    flex-direction: column;
+    gap: 7px;
+    padding-left: 25px;
+    border-left: 1px solid #e7ece8;
+}
+
+.parent-relationship strong {
+    color: #245541;
+    font-size: 13px;
+}
+
+/* STATISTICS */
+
+.parent-stats-grid {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 15px;
+    margin-bottom: 24px;
+}
+
+.parent-stat-card {
+    display: flex;
+    align-items: center;
+    gap: 13px;
+    padding: 19px 15px;
+    border: 1px solid #e6ece8;
+    border-radius: 13px;
+    background: white;
+}
+
+.parent-stat-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 43px;
+    height: 43px;
+    flex-shrink: 0;
+    border-radius: 12px;
+    font-size: 19px;
+    font-weight: 800;
+}
+
+.academic-icon {
+    background: #e8f0eb;
+    color: #245541;
+}
+
+.attendance-icon {
+    background: #e8f1fa;
+    color: #3474ad;
+}
+
+.assignment-icon {
+    background: #fbf1df;
+    color: #a8792c;
+}
+
+.conduct-icon {
+    background: #f3ebfa;
+    color: #8757aa;
+}
+
+.parent-stat-card > div:last-child {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    min-width: 0;
+}
+
+.parent-stat-card span {
+    color: #84918a;
+    font-size: 10px;
+}
+
+.parent-stat-card strong {
+    color: #173b30;
+    font-size: 23px;
+}
+
+.parent-stat-card small {
+    color: #a1aaa4;
+    font-size: 10px;
+}
+
+/* CONTENT PANELS */
+
+.parent-content-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 20px;
+    margin-bottom: 22px;
+}
+
+.parent-panel {
+    min-width: 0;
+    padding: 23px;
+    margin-bottom: 22px;
+    border: 1px solid #e5ebe7;
+    border-radius: 15px;
+    background: white;
+    box-shadow: 0 3px 12px rgba(20,55,42,0.025);
+}
+
+.parent-content-grid .parent-panel {
+    margin-bottom: 0;
+}
+
+.parent-panel-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 15px;
+    margin-bottom: 20px;
+}
+
+.parent-panel-header h3,
+.parent-family-panel h3 {
+    margin: 0 0 7px;
+    color: #173b30;
+    font-size: 17px;
+}
+
+.parent-panel-header p,
+.parent-family-panel > div:first-child > p {
+    margin: 0;
+    color: #8b9790;
+    font-size: 11px;
+    line-height: 1.6;
+}
+
+.parent-panel-symbol {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 38px;
+    height: 38px;
+    flex-shrink: 0;
+    border-radius: 11px;
+    background: #f5f0e4;
+    color: #a17d37;
+    font-size: 19px;
+}
+
+.parent-loading {
+    padding: 20px 0;
+    color: #94a199;
+    font-size: 12px;
+    text-align: center;
+}
+
+/* ACHIEVEMENTS */
+
+.parent-achievements {
+    margin-top: 22px;
+}
+
+.parent-family-panel {
+    margin-top: 22px;
+    background: #fbfcfa;
+}
+
+.parent-family-links {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 13px;
+    margin-top: 20px;
+}
+
+.parent-family-link {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    padding: 17px;
+    border: 1px solid #e6ece8;
+    border-radius: 11px;
+    background: white;
+}
+
+.parent-family-link > span {
+    color: #a17d37;
+    font-size: 22px;
+}
+
+.parent-family-link strong {
+    color: #245541;
+    font-size: 12px;
+}
+
+.parent-family-link small {
+    color: #9ba59e;
+    font-size: 10px;
+}
+
+/* FOOTER */
+
+.parent-profile-footer {
+    display: flex;
+    justify-content: space-between;
+    gap: 15px;
+    padding: 20px 0 5px;
+    border-top: 1px solid #e2e9e4;
+    margin-top: 25px;
+}
+
+.parent-profile-footer p,
+.parent-profile-footer span {
+    margin: 0;
+    color: #84918a;
+    font-size: 11px;
+}
+
+/* RESPONSIVE DESIGN */
+
+@media (max-width: 1100px) {
+    .parent-stats-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+
+@media (max-width: 750px) {
+    .parent-portal .main-content {
+        padding: 17px;
+    }
+
+    .parent-content-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .parent-welcome {
+        align-items: flex-start;
+        flex-direction: column;
+        padding: 25px;
+    }
+
+    .parent-date {
+        width: fit-content;
+    }
+
+    .parent-child-section {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+
+    #parentChildSelect {
+        width: 100%;
+    }
+
+    .parent-family-links {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 480px) {
+    .parent-stats-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .parent-child-card {
+        flex-wrap: wrap;
+    }
+
+    .parent-relationship {
+        width: 100%;
+        padding: 12px 0 0;
+        border-left: none;
+        border-top: 1px solid #e7ece8;
+    }
+
+    .parent-welcome h2 {
+        font-size: 23px;
+    }
+
+    .parent-profile-footer {
+        flex-direction: column;
+    }
+}
