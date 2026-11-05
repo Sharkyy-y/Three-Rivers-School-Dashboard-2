@@ -16703,3 +16703,618 @@ async function saveTeacherSubjectAssignments() {
 
     }
 }
+
+
+// ==========================================
+// ADMIN TIMETABLE MANAGEMENT
+// ==========================================
+
+const SCHOOL_CLASSES = [
+    "Year 7",
+    "Year 8",
+    "Year 9",
+    "Year 10A",
+    "Year 10B",
+    "Year 11A",
+    "Year 11B",
+    "Year 12",
+    "Year 13A",
+    "Year 13B"
+];
+
+const SCHOOL_DAYS = [
+    "Monday",
+    "Tuesday",
+    "Wednesday",
+    "Thursday",
+    "Friday",
+    "Saturday"
+];
+
+let adminTimetableLessons = [];
+let adminTimetableTeachers = [];
+let adminTimetableSubjects = [];
+let editingTimetableId = null;
+
+
+// SAFE HTML DISPLAY
+function timetableEscape(value) {
+    return String(value ?? "").replace(/[&<>"']/g, char => ({
+        "&": "&amp;",
+        "<": "&lt;",
+        ">": "&gt;",
+        '"': "&quot;",
+        "'": "&#39;"
+    })[char]);
+}
+
+
+// TIME FORMATTING
+function timetableFormatTime(value) {
+    if (!value) return "";
+
+    const parts = value.slice(0, 5).split(":");
+    let hour = Number(parts[0]);
+    const minute = parts[1];
+
+    const suffix = hour >= 12 ? "PM" : "AM";
+    hour = hour % 12 || 12;
+
+    return `${hour}:${minute} ${suffix}`;
+}
+
+
+// COLOURFUL SUBJECT CARDS
+function timetableSubjectColor(subject) {
+    const colors = [
+        "#e0f2fe",
+        "#fce7f3",
+        "#ede9fe",
+        "#dcfce7",
+        "#fef3c7",
+        "#ffedd5",
+        "#cffafe",
+        "#f3e8ff"
+    ];
+
+    let hash = 0;
+
+    for (let i = 0; i < subject.length; i++) {
+        hash = subject.charCodeAt(i) + ((hash << 5) - hash);
+    }
+
+    return colors[Math.abs(hash) % colors.length];
+}
+
+
+// LOAD TEACHERS AND SUBJECTS
+async function loadAdminTimetableOptions() {
+
+    const teacherSelect =
+        document.getElementById("timetableTeacher");
+
+    const subjectSelect =
+        document.getElementById("timetableSubject");
+
+    const teacherFilter =
+        document.getElementById("filterTimetableTeacher");
+
+    const { data: teachers, error: teacherError } =
+        await supabaseClient
+            .from("teachers")
+            .select("id, full_name")
+            .order("full_name");
+
+    if (teacherError) {
+        console.error("Teacher loading error:", teacherError);
+        teacherSelect.innerHTML =
+            '<option value="">Could not load teachers</option>';
+        return;
+    }
+
+    adminTimetableTeachers = teachers || [];
+
+    teacherSelect.innerHTML =
+        '<option value="">Select teacher</option>' +
+        adminTimetableTeachers.map(teacher => `
+            <option value="${timetableEscape(teacher.id)}">
+                ${timetableEscape(teacher.full_name)}
+            </option>
+        `).join("");
+
+    teacherFilter.innerHTML =
+        '<option value="">All Teachers</option>' +
+        adminTimetableTeachers.map(teacher => `
+            <option value="${timetableEscape(teacher.id)}">
+                ${timetableEscape(teacher.full_name)}
+            </option>
+        `).join("");
+
+
+    const { data: subjects, error: subjectError } =
+        await supabaseClient
+            .from("subjects")
+            .select("id, name, code")
+            .order("name");
+
+    if (subjectError) {
+        console.error("Subject loading error:", subjectError);
+        subjectSelect.innerHTML =
+            '<option value="">Could not load subjects</option>';
+        return;
+    }
+
+    adminTimetableSubjects = subjects || [];
+
+    subjectSelect.innerHTML =
+        '<option value="">Select subject</option>' +
+        adminTimetableSubjects.map(subject => `
+            <option value="${timetableEscape(subject.id)}">
+                ${timetableEscape(subject.name)}
+            </option>
+        `).join("");
+}
+
+
+// LOAD ALL TIMETABLE LESSONS
+async function loadAdminTimetable() {
+
+    const container =
+        document.getElementById("adminTimetableContainer");
+
+    container.innerHTML = "<p>Loading timetable...</p>";
+
+    const { data, error } = await supabaseClient
+        .from("timetable")
+        .select("*");
+
+    if (error) {
+        console.error("Timetable loading error:", error);
+
+        container.innerHTML =
+            "<p>Unable to load timetable. Check your permissions.</p>";
+
+        return;
+    }
+
+    adminTimetableLessons = data || [];
+
+    renderAdminTimetable();
+    updateAdminTimetableStats();
+}
+
+
+// UPDATE STATISTICS
+function updateAdminTimetableStats() {
+
+    document.getElementById("timetableTotalLessons").textContent =
+        adminTimetableLessons.length;
+
+    const teachers = new Set(
+        adminTimetableLessons
+            .map(lesson => lesson.teacher_id)
+            .filter(Boolean)
+    );
+
+    const classes = new Set(
+        adminTimetableLessons
+            .map(lesson => lesson.class_name)
+            .filter(Boolean)
+    );
+
+    document.getElementById("timetableTotalTeachers").textContent =
+        teachers.size;
+
+    document.getElementById("timetableTotalClasses").textContent =
+        classes.size;
+}
+
+
+// DISPLAY TIMETABLE CARDS
+function renderAdminTimetable() {
+
+    const container =
+        document.getElementById("adminTimetableContainer");
+
+    const classFilter =
+        document.getElementById("filterTimetableClass").value;
+
+    const dayFilter =
+        document.getElementById("filterTimetableDay").value;
+
+    const teacherFilter =
+        document.getElementById("filterTimetableTeacher").value;
+
+    const filtered = adminTimetableLessons.filter(lesson => {
+
+        return (
+            (!classFilter || lesson.class_name === classFilter) &&
+            (!dayFilter || lesson.day_of_week === dayFilter) &&
+            (!teacherFilter || lesson.teacher_id === teacherFilter)
+        );
+
+    });
+
+    const dayOrder = SCHOOL_DAYS;
+
+    filtered.sort((a, b) => {
+
+        const dayDifference =
+            dayOrder.indexOf(a.day_of_week) -
+            dayOrder.indexOf(b.day_of_week);
+
+        if (dayDifference !== 0) return dayDifference;
+
+        return a.start_time.localeCompare(b.start_time);
+    });
+
+    if (!filtered.length) {
+        container.innerHTML = `
+            <div class="timetable-empty">
+                <h3>📚 No lessons found</h3>
+                <p>Try changing your filters or add a new lesson.</p>
+            </div>
+        `;
+        return;
+    }
+
+    container.innerHTML = `
+        <div class="admin-timetable-card-grid">
+
+            ${filtered.map(lesson => {
+
+                const teacher = adminTimetableTeachers.find(
+                    item => item.id === lesson.teacher_id
+                );
+
+                const subject = adminTimetableSubjects.find(
+                    item => item.id === lesson.subject_id
+                );
+
+                const teacherName =
+                    teacher?.full_name ||
+                    lesson.teacher_name ||
+                    "Unassigned";
+
+                const subjectName =
+                    subject?.name || "Unknown Subject";
+
+                const background =
+                    timetableSubjectColor(subjectName);
+
+                return `
+                    <div class="admin-timetable-card"
+                         style="--lesson-color:${background}">
+
+                        <div class="admin-timetable-card-top">
+                            <span class="timetable-day">
+                                ${timetableEscape(lesson.day_of_week)}
+                            </span>
+
+                            <span class="timetable-class">
+                                ${timetableEscape(lesson.class_name)}
+                            </span>
+                        </div>
+
+                        <h3>
+                            ${timetableEscape(subjectName)}
+                        </h3>
+
+                        <p>
+                            👨‍🏫 ${timetableEscape(teacherName)}
+                        </p>
+
+                        <p>
+                            🕒 ${timetableFormatTime(lesson.start_time)}
+                            – ${timetableFormatTime(lesson.end_time)}
+                        </p>
+
+                        <p>
+                            📍 ${timetableEscape(lesson.room || "No room assigned")}
+                        </p>
+
+                        <div class="timetable-card-actions">
+
+                            <button type="button"
+                                class="edit-timetable-lesson"
+                                data-id="${timetableEscape(lesson.id)}">
+                                ✏️ Edit
+                            </button>
+
+                            <button type="button"
+                                class="delete-timetable-lesson"
+                                data-id="${timetableEscape(lesson.id)}">
+                                🗑️ Delete
+                            </button>
+
+                        </div>
+
+                    </div>
+                `;
+
+            }).join("")}
+
+        </div>
+    `;
+}
+
+
+// CHECK FOR OVERLAPPING LESSONS
+function timetableHasConflict(newLesson) {
+
+    const newStart = newLesson.start_time.slice(0, 5);
+    const newEnd = newLesson.end_time.slice(0, 5);
+
+    return adminTimetableLessons.some(existing => {
+
+        if (existing.id === editingTimetableId) return false;
+
+        if (existing.day_of_week !== newLesson.day_of_week) {
+            return false;
+        }
+
+        const existingStart = existing.start_time.slice(0, 5);
+        const existingEnd = existing.end_time.slice(0, 5);
+
+        const overlaps =
+            newStart < existingEnd &&
+            newEnd > existingStart;
+
+        if (!overlaps) return false;
+
+        const sameTeacher =
+            existing.teacher_id === newLesson.teacher_id;
+
+        const sameClass =
+            existing.class_name === newLesson.class_name;
+
+        return sameTeacher || sameClass;
+    });
+}
+
+
+// SAVE OR UPDATE LESSON
+async function saveAdminTimetableLesson(event) {
+
+    event.preventDefault();
+
+    const message =
+        document.getElementById("timetableFormMessage");
+
+    const teacherId =
+        document.getElementById("timetableTeacher").value;
+
+    const subjectId =
+        document.getElementById("timetableSubject").value;
+
+    const teacher = adminTimetableTeachers.find(
+        item => item.id === teacherId
+    );
+
+    const lesson = {
+
+        class_name:
+            document.getElementById("timetableClass").value,
+
+        teacher_id: teacherId,
+
+        teacher_name: teacher?.full_name || "",
+
+        subject_id: subjectId,
+
+        day_of_week:
+            document.getElementById("timetableDay").value,
+
+        start_time:
+            document.getElementById("timetableStart").value,
+
+        end_time:
+            document.getElementById("timetableEnd").value,
+
+        room:
+            document.getElementById("timetableRoom").value.trim()
+
+    };
+
+    if (!teacherId || !subjectId) {
+        message.textContent =
+            "Please select a teacher and subject.";
+        return;
+    }
+
+    if (lesson.end_time <= lesson.start_time) {
+        message.textContent =
+            "The ending time must be later than the starting time.";
+        return;
+    }
+
+    if (timetableHasConflict(lesson)) {
+        message.textContent =
+            "Conflict detected! This teacher or class already has a lesson during that time.";
+        return;
+    }
+
+    const saveButton =
+        document.getElementById("saveTimetableLesson");
+
+    saveButton.disabled = true;
+    saveButton.textContent = "Saving...";
+
+    let result;
+
+    if (editingTimetableId) {
+
+        result = await supabaseClient
+            .from("timetable")
+            .update(lesson)
+            .eq("id", editingTimetableId);
+
+    } else {
+
+        result = await supabaseClient
+            .from("timetable")
+            .insert([lesson]);
+
+    }
+
+    saveButton.disabled = false;
+    saveButton.textContent = "Add Lesson";
+
+    if (result.error) {
+
+        console.error("Timetable save error:", result.error);
+
+        message.textContent =
+            "Could not save lesson: " + result.error.message;
+
+        return;
+    }
+
+    message.textContent = editingTimetableId
+        ? "Lesson updated successfully!"
+        : "Lesson added successfully!";
+
+    resetAdminTimetableForm();
+
+    await loadAdminTimetable();
+}
+
+
+// EDIT LESSON
+function editAdminTimetableLesson(id) {
+
+    const lesson = adminTimetableLessons.find(
+        item => item.id === id
+    );
+
+    if (!lesson) return;
+
+    editingTimetableId = id;
+
+    document.getElementById("timetableClass").value =
+        lesson.class_name;
+
+    document.getElementById("timetableTeacher").value =
+        lesson.teacher_id || "";
+
+    document.getElementById("timetableSubject").value =
+        lesson.subject_id || "";
+
+    document.getElementById("timetableDay").value =
+        lesson.day_of_week;
+
+    document.getElementById("timetableStart").value =
+        lesson.start_time.slice(0, 5);
+
+    document.getElementById("timetableEnd").value =
+        lesson.end_time.slice(0, 5);
+
+    document.getElementById("timetableRoom").value =
+        lesson.room || "";
+
+    document.getElementById("saveTimetableLesson").textContent =
+        "Update Lesson";
+
+    document.getElementById("cancelTimetableEdit").style.display =
+        "inline-block";
+
+    document.getElementById("timetableFormMessage").textContent =
+        "Editing lesson...";
+
+    document.getElementById("adminTimetableForm")
+        .scrollIntoView({ behavior: "smooth" });
+}
+
+
+// DELETE LESSON
+async function deleteAdminTimetableLesson(id) {
+
+    const confirmed = confirm(
+        "Are you sure you want to delete this lesson?"
+    );
+
+    if (!confirmed) return;
+
+    const { error } = await supabaseClient
+        .from("timetable")
+        .delete()
+        .eq("id", id);
+
+    if (error) {
+
+        console.error("Timetable delete error:", error);
+
+        alert("Could not delete lesson: " + error.message);
+
+        return;
+    }
+
+    await loadAdminTimetable();
+}
+
+
+// RESET FORM
+function resetAdminTimetableForm() {
+
+    editingTimetableId = null;
+
+    document.getElementById("adminTimetableForm").reset();
+
+    document.getElementById("saveTimetableLesson").textContent =
+        "Add Lesson";
+
+    document.getElementById("cancelTimetableEdit").style.display =
+        "none";
+
+    document.getElementById("timetableFormMessage").textContent =
+        "";
+}
+
+
+// INITIALISE ADMIN TIMETABLE
+async function initialiseAdminTimetable() {
+
+    await loadAdminTimetableOptions();
+
+    await loadAdminTimetable();
+
+    document.getElementById("adminTimetableForm")
+        .addEventListener("submit", saveAdminTimetableLesson);
+
+    document.getElementById("cancelTimetableEdit")
+        .addEventListener("click", resetAdminTimetableForm);
+
+    document.getElementById("filterTimetableClass")
+        .addEventListener("change", renderAdminTimetable);
+
+    document.getElementById("filterTimetableDay")
+        .addEventListener("change", renderAdminTimetable);
+
+    document.getElementById("filterTimetableTeacher")
+        .addEventListener("change", renderAdminTimetable);
+
+    document.getElementById("adminTimetableContainer")
+        .addEventListener("click", event => {
+
+            const editButton =
+                event.target.closest(".edit-timetable-lesson");
+
+            const deleteButton =
+                event.target.closest(".delete-timetable-lesson");
+
+            if (editButton) {
+                editAdminTimetableLesson(editButton.dataset.id);
+            }
+
+            if (deleteButton) {
+                deleteAdminTimetableLesson(deleteButton.dataset.id);
+            }
+
+        });
+}
+
+
+// PAGE INITIALISATION
+if (window.location.pathname.includes("admin-timetable.html")) {
+    initialiseAdminTimetable();
+}
