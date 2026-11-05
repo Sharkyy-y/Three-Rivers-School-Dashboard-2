@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>School Timetable | Admin Portal</title>
+
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/dashboard.css">
+</head>
+
+<body>
+
+<div class="dashboard-layout">
+
+    <!-- SIDEBAR -->
+    <aside class="sidebar">
+
+        <div class="sidebar-logo">
+            <h2>Student Portal</h2>
+            <p>Administration</p>
+        </div>
+
+        <nav class="sidebar-nav">
+
+            <a href="admin-dashboard.html">🏠 Dashboard</a>
+            <a href="admin-students.html">👥 Students</a>
+            <a href="admin-credentials.html">👨‍🏫 Login Credentials</a>
+            <a href="admin-teachers.html">👨‍🏫 Teachers</a>
+            <a href="admin-timetable.html" class="active">🗓️ Timetable</a>
+            <a href="admin-grades.html">📊 Grades</a>
+            <a href="admin-attendance.html">✅ Attendance</a>
+            <a href="admin-conduct.html">⚠️ Conduct</a>
+            <a href="admin-announcements.html">📢 Announcements</a>
+
+        </nav>
+
+        <div class="sidebar-logout">
+            <button id="logoutButton" class="logout-button">
+                🚪 Logout
+            </button>
+        </div>
+
+    </aside>
+
+    <!-- MAIN CONTENT -->
+    <main class="dashboard-main">
+
+        <section class="admin-dashboard-header">
+            <h1>School Timetable</h1>
+            <p>Organise lessons, teachers, classrooms and class schedules.</p>
+        </section>
+
+        <!-- STATISTICS -->
+        <section class="admin-stats-grid">
+
+            <div class="admin-stat-card">
+                <div class="admin-stat-icon">📚</div>
+                <div>
+                    <h2 id="timetableTotalLessons">0</h2>
+                    <p>Total Lessons</p>
+                </div>
+            </div>
+
+            <div class="admin-stat-card">
+                <div class="admin-stat-icon">👨‍🏫</div>
+                <div>
+                    <h2 id="timetableTotalTeachers">0</h2>
+                    <p>Teachers Scheduled</p>
+                </div>
+            </div>
+
+            <div class="admin-stat-card">
+                <div class="admin-stat-icon">🏫</div>
+                <div>
+                    <h2 id="timetableTotalClasses">10</h2>
+                    <p>Class Categories</p>
+                </div>
+            </div>
+
+        </section>
+
+        <!-- ADD LESSON -->
+        <section class="admin-dashboard-section timetable-form-section">
+
+            <div class="admin-section-header">
+                <div>
+                    <h2>➕ Add a Lesson</h2>
+                    <p>Assign a teacher, subject, class and lesson time.</p>
+                </div>
+            </div>
+
+            <form id="adminTimetableForm">
+
+                <div class="timetable-form-grid">
+
+                    <div>
+                        <label for="timetableClass">Class</label>
+                        <select id="timetableClass" required>
+                            <option value="">Select class</option>
+                            <option>Year 7</option>
+                            <option>Year 8</option>
+                            <option>Year 9</option>
+                            <option>Year 10A</option>
+                            <option>Year 10B</option>
+                            <option>Year 11A</option>
+                            <option>Year 11B</option>
+                            <option>Year 12</option>
+                            <option>Year 13A</option>
+                            <option>Year 13B</option>
+                        </select>
+                    </div>
+
+                    <div>
+                        <label for="timetableTeacher">Teacher</label>
+                        <select id="timetableTeacher" required>
+                            <option value="">Loading teachers...</option>
+                        </select>
+                    </div>
+
+                    <div>
+                        <label for="timetableSubject">Subject</label>
+                        <select id="timetableSubject" required>
+                            <option value="">Loading subjects...</option>
+                        </select>
+                    </div>
+
+                    <div>
+                        <label for="timetableDay">Day</label>
+                        <select id="timetableDay" required>
+                            <option value="">Select day</option>
+                            <option>Monday</option>
+                            <option>Tuesday</option>
+                            <option>Wednesday</option>
+                            <option>Thursday</option>
+                            <option>Friday</option>
+                            <option>Saturday</option>
+                        </select>
+                    </div>
+
+                    <div>
+                        <label for="timetableStart">Start Time</label>
+                        <input type="time" id="timetableStart" required>
+                    </div>
+
+                    <div>
+                        <label for="timetableEnd">End Time</label>
+                        <input type="time" id="timetableEnd" required>
+                    </div>
+
+                    <div>
+                        <label for="timetableRoom">Classroom</label>
+                        <input type="text" id="timetableRoom"
+                               placeholder="e.g. Room 204" required>
+                    </div>
+
+                </div>
+
+                <button type="submit" id="saveTimetableLesson">
+                    Add Lesson
+                </button>
+
+                <button type="button" id="cancelTimetableEdit"
+                        style="display:none;">
+                    Cancel Edit
+                </button>
+
+            </form>
+
+            <p id="timetableFormMessage"></p>
+
+        </section>
+
+        <!-- TIMETABLE FILTERS -->
+        <section class="admin-dashboard-section">
+
+            <div class="admin-section-header">
+                <div>
+                    <h2>📅 Lesson Schedule</h2>
+                    <p>View and manage the school's complete timetable.</p>
+                </div>
+            </div>
+
+            <div class="timetable-filters">
+
+                <select id="filterTimetableClass">
+                    <option value="">All Classes</option>
+                    <option>Year 7</option>
+                    <option>Year 8</option>
+                    <option>Year 9</option>
+                    <option>Year 10A</option>
+                    <option>Year 10B</option>
+                    <option>Year 11A</option>
+                    <option>Year 11B</option>
+                    <option>Year 12</option>
+                    <option>Year 13A</option>
+                    <option>Year 13B</option>
+                </select>
+
+                <select id="filterTimetableDay">
+                    <option value="">All Days</option>
+                    <option>Monday</option>
+                    <option>Tuesday</option>
+                    <option>Wednesday</option>
+                    <option>Thursday</option>
+                    <option>Friday</option>
+                    <option>Saturday</option>
+                </select>
+
+                <select id="filterTimetableTeacher">
+                    <option value="">All Teachers</option>
+                </select>
+
+            </div>
+
+            <div id="adminTimetableContainer">
+                <p>Timetable lessons will appear here.</p>
+            </div>
+
+        </section>
+
+    </main>
+
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="js/main.js"></script>
+
+</body>
+</html>
