@@ -17775,7 +17775,108 @@ async function initialiseParentDashboard() {
             );
         }
 
+
+        // ======================================
+        // PARENT PORTAL SECTION NAVIGATION
+        // ======================================
+
+        const parentViews = {
+            "#overview": {
+                id: "parentViewOverview",
+                title: "Parent Overview"
+            },
+            "#academics": {
+                id: "parentViewAcademics",
+                title: "Academic Progress"
+            },
+            "#attendance": {
+                id: "parentViewAttendance",
+                title: "Attendance"
+            },
+            "#assignments": {
+                id: "parentViewAssignments",
+                title: "Assignments"
+            },
+            "#communication": {
+                id: "parentViewAnnouncements",
+                title: "Announcements"
+            },
+            "#achievements": {
+                id: "parentViewAchievements",
+                title: "Achievement Portfolio"
+            },
+            "#family": {
+                id: "parentViewFamily",
+                title: "Family Centre"
+            },
+            "#profile": {
+                id: "parentViewProfile",
+                title: "My Profile"
+            }
+        };
+
+        const parentSidebarLinks = document.querySelectorAll(
+            ".parent-sidebar .nav-item[href^='#']"
+        );
+
+        function showParentView(hash) {
+
+            const selectedView = parentViews[hash] || parentViews["#overview"];
+
+            document.querySelectorAll(".parent-view").forEach(view => {
+                view.classList.remove("active");
+            });
+
+            const targetView = document.getElementById(selectedView.id);
+
+            if (targetView) {
+                targetView.classList.add("active");
+            }
+
+            parentSidebarLinks.forEach(link => {
+                link.classList.toggle(
+                    "active",
+                    link.getAttribute("href") === hash
+                );
+            });
+
+            const pageTitle = document.getElementById("parentPageTitle");
+
+            if (pageTitle) {
+                pageTitle.textContent = selectedView.title;
+            }
+
+            if (hash === "#profile") {
+                setText("parentProfileName", profile.full_name || "Parent");
+                setText("parentProfileEmail", profile.email || user.email || "Not available");
+            }
+
+            window.scrollTo({
+                top: 0,
+                behavior: "smooth"
+            });
+        }
+
+        parentSidebarLinks.forEach(link => {
+
+            link.addEventListener("click", event => {
+
+                event.preventDefault();
+
+                const hash = link.getAttribute("href");
+
+                showParentView(hash);
+
+                history.replaceState(null, "", hash);
+            });
+        });
+
+        // Always open Overview when the parent dashboard loads.
+        showParentView("#overview");
+
+        // ======================================
         // 6. SELECT FIRST CHILD
+        // ======================================
 
         if (childSelect) {
             childSelect.value = parentLinkedChildren[0].id;
