@@ -17109,6 +17109,7 @@ if (window.location.pathname.includes("admin-timetable.html")) {
 let parentLinkedChildren = [];
 let selectedParentChild = null;
 
+
 async function initialiseParentDashboard() {
 
     const getElement = id => document.getElementById(id);
@@ -17126,25 +17127,44 @@ async function initialiseParentDashboard() {
             value.length === 10 ? value + "T00:00:00" : value
         );
 
-        return parsed.toLocaleDateString("en-GB", {
-            day: "numeric",
-            month: "short",
-            year: "numeric"
-        });
+        return Number.isNaN(parsed.getTime())
+            ? "Date unavailable"
+            : parsed.toLocaleDateString("en-GB", {
+                day: "numeric",
+                month: "short",
+                year: "numeric"
+            });
     };
 
-    function showList(containerId, items, emptyMessage, renderItem) {
+    const showError = (id, message) => {
+        const container = getElement(id);
+        if (!container) return;
 
+        container.innerHTML = "";
+        const p = document.createElement("p");
+        p.className = "parent-loading";
+        p.textContent = message;
+        container.appendChild(p);
+    };
+
+    const addText = (parent, tag, value, className = "") => {
+        const element = document.createElement(tag);
+        element.textContent = value ?? "";
+
+        if (className) element.className = className;
+
+        parent.appendChild(element);
+        return element;
+    };
+
+    const showList = (containerId, items, emptyMessage, renderItem) => {
         const container = getElement(containerId);
         if (!container) return;
 
         container.innerHTML = "";
 
         if (!items || items.length === 0) {
-            const message = document.createElement("p");
-            message.className = "parent-loading";
-            message.textContent = emptyMessage;
-            container.appendChild(message);
+            addText(container, "p", emptyMessage, "parent-loading");
             return;
         }
 
@@ -17153,35 +17173,13 @@ async function initialiseParentDashboard() {
             element.className = "parent-data-item";
 
             renderItem(element, item);
-
             container.appendChild(element);
         });
-    }
-
-    function addText(parent, tag, text, className = "") {
-        const element = document.createElement(tag);
-        element.textContent = text || "";
-
-        if (className) {
-            element.className = className;
-        }
-
-        parent.appendChild(element);
-        return element;
-    }
-
-    function showError(containerId, message) {
-        const container = getElement(containerId);
-        if (!container) return;
-
-        container.textContent = message;
-    }
+    };
 
     try {
 
-        // ======================================
         // 1. VERIFY PARENT LOGIN
-        // ======================================
 
         const {
             data: { user },
@@ -17204,15 +17202,15 @@ async function initialiseParentDashboard() {
 
         if (profileError || !profile || profile.role !== "parent") {
             console.error("Parent verification error:", profileError);
+
             alert("This account is not authorised to access the Parent Portal.");
+
             await supabaseClient.auth.signOut();
             window.location.href = "login.html";
             return;
         }
 
-        // ======================================
         // 2. PARENT INFORMATION
-        // ======================================
 
         const parentName = profile.full_name || "Parent";
 
@@ -17230,9 +17228,7 @@ async function initialiseParentDashboard() {
             })
         );
 
-        // ======================================
         // 3. GET LINKED CHILDREN
-        // ======================================
 
         const {
             data: links,
@@ -17265,6 +17261,7 @@ async function initialiseParentDashboard() {
             showError("parentAttendanceContent", "No linked student available.");
             showError("parentAssignmentsList", "No linked student available.");
             showError("parentAnnouncementsList", "No linked student available.");
+            showError("parentAchievementsContent", "No linked student available.");
 
             return;
         }
@@ -17287,7 +17284,6 @@ async function initialiseParentDashboard() {
         }
 
         parentLinkedChildren = students.map(student => {
-
             const link = links.find(
                 item => item.student_id === student.id
             );
@@ -17298,16 +17294,12 @@ async function initialiseParentDashboard() {
             };
         });
 
-        // ======================================
         // 4. POPULATE CHILD SELECTOR
-        // ======================================
 
         if (childSelect) {
-
             childSelect.innerHTML = "";
 
             parentLinkedChildren.forEach(student => {
-
                 const option = document.createElement("option");
 
                 option.value = student.id;
@@ -17318,9 +17310,7 @@ async function initialiseParentDashboard() {
             });
         }
 
-        // ======================================
-        // 5. LOAD DATA FOR SELECTED CHILD
-        // ======================================
+        // 5. LOAD SELECTED CHILD
 
         async function loadSelectedChild(studentId) {
 
@@ -17345,499 +17335,472 @@ async function initialiseParentDashboard() {
                 "parentAdmission",
                 student.admission_number || "—"
             );
-            setText(
-                "parentRelationship",
-                student.relationship
-            );
+            setText("parentRelationship", student.relationship);
 
             setText("parentAcademicAverage", "Loading...");
             setText("parentAttendance", "Loading...");
             setText("parentUpcomingAssignments", "Loading...");
             setText("parentConduct", "Loading...");
 
-            // ==================================
-            // A. GRADES
-            // ==================================
+            // Clear old child information immediately.
+
+            [
+                "parentAcademicContent",
+                "parentAttendanceContent",
+                "parentAssignmentsList",
+                "parentAnnouncementsList",
+                "parentAchievementsContent"
+            ].forEach(id => {
+                const element = getElement(id);
+                if (element) element.textContent = "Loading...";
+            });
+
+            // Each section has its own error handling.
+            // One failed query will not stop the others.
+
+            const loadGrades = async () => {
+                try {
+                    const { data, error } = await supabaseClient
+                        .from("grades")
+                        .select(`
+                            id,
+                            assessment,
+                            score,
+                            max_score,
+                            comments,
+                            created_at,
+                            subjects (
+                                name,
+                                code
+                            )
+                        `)
+                        .eq("student_id", student.id)
+                        .order("created_at", { ascending: false });
+
+                    if (error) throw error;
+
+                    const gradeList = data || [];
+
+                    const totalScore = gradeList.reduce(
+                        (sum, grade) =>
+                            sum + (Number(grade.score) || 0),
+                        0
+                    );
+
+                    const totalMaximum = gradeList.reduce(
+                        (sum, grade) =>
+                            sum + (Number(grade.max_score) || 0),
+                        0
+                    );
+
+                    const average = totalMaximum > 0
+                        ? (totalScore / totalMaximum) * 100
+                        : null;
+
+                    setText(
+                        "parentAcademicAverage",
+                        average === null
+                            ? "No grades"
+                            : Math.round(average) + "%"
+                    );
+
+                    showList(
+                        "parentAcademicContent",
+                        gradeList.slice(0, 8),
+                        "No academic records have been published yet.",
+                        (element, grade) => {
+
+                            const subject = Array.isArray(grade.subjects)
+                                ? grade.subjects[0]
+                                : grade.subjects;
 
-            const {
-                data: grades,
-                error: gradesError
-            } = await supabaseClient
-                .from("grades")
-                .select(`
-                    id,
-                    assessment,
-                    score,
-                    max_score,
-                    comments,
-                    created_at,
-                    subjects (
-                        name,
-                        code
-                    )
-                `)
-                .eq("student_id", student.id)
-                .order("created_at", { ascending: false });
-
-            if (gradesError) {
-
-                console.error("Parent grades error:", gradesError);
-
-                setText("parentAcademicAverage", "Unavailable");
-                showError(
-                    "parentAcademicContent",
-                    "Unable to load academic records."
-                );
-
-            } else {
-
-                const gradeList = grades || [];
-
-                let totalScore = 0;
-                let totalMaximum = 0;
-
-                gradeList.forEach(grade => {
-
-                    const score = Number(grade.score);
-                    const maximum = Number(grade.max_score);
-
-                    if (
-                        Number.isFinite(score) &&
-                        Number.isFinite(maximum) &&
-                        maximum > 0
-                    ) {
-                        totalScore += score;
-                        totalMaximum += maximum;
-                    }
-                });
-
-                const average = totalMaximum > 0
-                    ? (totalScore / totalMaximum) * 100
-                    : null;
-
-                setText(
-                    "parentAcademicAverage",
-                    average === null
-                        ? "No grades"
-                        : Math.round(average) + "%"
-                );
-
-                showList(
-                    "parentAcademicContent",
-                    gradeList.slice(0, 8),
-                    "No academic records have been published yet.",
-                    (element, grade) => {
-
-                        const subject = Array.isArray(grade.subjects)
-                            ? grade.subjects[0]
-                            : grade.subjects;
-
-                        addText(
-                            element,
-                            "strong",
-                            subject?.name || "Subject"
-                        );
-
-                        addText(
-                            element,
-                            "span",
-                            grade.assessment || "Assessment"
-                        );
-
-                        const score = Number(grade.score) || 0;
-                        const maximum = Number(grade.max_score) || 0;
-
-                        addText(
-                            element,
-                            "strong",
-                            maximum > 0
-                                ? `${score} / ${maximum} (${Math.round(score / maximum * 100)}%)`
-                                : `${score}`
-                        );
-
-                        if (grade.comments) {
-                            addText(
-                                element,
-                                "small",
-                                grade.comments
-                            );
-                        }
-
-                        addText(
-                            element,
-                            "small",
-                            formatDate(grade.created_at)
-                        );
-                    }
-                );
-            }
-
-            // ==================================
-            // B. ATTENDANCE
-            // ==================================
-
-            const {
-                data: attendance,
-                error: attendanceError
-            } = await supabaseClient
-                .from("attendance")
-                .select("id, date, status")
-                .eq("student_id", student.id)
-                .order("date", { ascending: false });
-
-            if (attendanceError) {
-
-                console.error(
-                    "Parent attendance error:",
-                    attendanceError
-                );
-
-                setText("parentAttendance", "Unavailable");
-
-                showError(
-                    "parentAttendanceContent",
-                    "Unable to load attendance records."
-                );
-
-            } else {
-
-                const attendanceList = attendance || [];
-
-                const total = attendanceList.length;
-
-                const present = attendanceList.filter(record =>
-                    String(record.status).toLowerCase() === "present"
-                ).length;
-
-                const late = attendanceList.filter(record =>
-                    String(record.status).toLowerCase() === "late"
-                ).length;
-
-                const absent = attendanceList.filter(record =>
-                    String(record.status).toLowerCase() === "absent"
-                ).length;
-
-                const percentage = total > 0
-                    ? Math.round(((present + late) / total) * 100)
-                    : null;
-
-                setText(
-                    "parentAttendance",
-                    percentage === null
-                        ? "No records"
-                        : percentage + "%"
-                );
-
-                const summary = document.createElement("div");
-                summary.className = "parent-attendance-summary";
-
-                addText(summary, "strong", `Attendance: ${percentage === null ? "No records" : percentage + "%"}`);
-                addText(summary, "p", `${present} Present · ${late} Late · ${absent} Absent`);
-
-                const attendanceContainer =
-                    getElement("parentAttendanceContent");
-
-                if (attendanceContainer) {
-                    attendanceContainer.innerHTML = "";
-                    attendanceContainer.appendChild(summary);
-                }
-
-                showList(
-                    "parentAttendanceContent",
-                    attendanceList.slice(0, 6),
-                    "No attendance records available.",
-                    (element, record) => {
-
-                        addText(
-                            element,
-                            "strong",
-                            formatDate(record.date)
-                        );
-
-                        addText(
-                            element,
-                            "span",
-                            String(record.status || "Unknown").toUpperCase()
-                        );
-                    }
-                );
-
-                // Reinsert summary after rendering recent records.
-                if (attendanceContainer && total > 0) {
-                    attendanceContainer.prepend(summary);
-                }
-            }
-
-            // ==================================
-            // C. UPCOMING ASSIGNMENTS
-            // ==================================
-
-            const now = new Date();
-            const today = [
-                now.getFullYear(),
-                String(now.getMonth() + 1).padStart(2, "0"),
-                String(now.getDate()).padStart(2, "0")
-            ].join("-");
-
-            const {
-                data: assignments,
-                error: assignmentsError
-            } = await supabaseClient
-                .from("assignments")
-                .select(`
-                    id,
-                    title,
-                    description,
-                    due_date,
-                    subjects (
-                        name,
-                        code
-                    )
-                `)
-                .eq("class_name", student.class_name)
-                .gte("due_date", today)
-                .order("due_date", { ascending: true });
-
-            if (assignmentsError) {
-
-                console.error(
-                    "Parent assignments error:",
-                    assignmentsError
-                );
-
-                setText("parentUpcomingAssignments", "Unavailable");
-
-                showError(
-                    "parentAssignmentsList",
-                    "Unable to load assignments."
-                );
-
-            } else {
-
-                const assignmentList = assignments || [];
-
-                setText(
-                    "parentUpcomingAssignments",
-                    String(assignmentList.length)
-                );
-
-                showList(
-                    "parentAssignmentsList",
-                    assignmentList,
-                    "No upcoming assignments.",
-                    (element, assignment) => {
-
-                        const subject = Array.isArray(assignment.subjects)
-                            ? assignment.subjects[0]
-                            : assignment.subjects;
-
-                        addText(
-                            element,
-                            "strong",
-                            assignment.title || "Assignment"
-                        );
-
-                        addText(
-                            element,
-                            "span",
-                            subject?.name || "Subject"
-                        );
-
-                        if (assignment.description) {
-                            addText(
-                                element,
-                                "small",
-                                assignment.description
-                            );
-                        }
-
-                        addText(
-                            element,
-                            "small",
-                            "Due: " + formatDate(assignment.due_date)
-                        );
-                    }
-                );
-            }
-
-            // ==================================
-            // D. CONDUCT RECORDS
-            // ==================================
-
-            const {
-                data: conduct,
-                error: conductError
-            } = await supabaseClient
-                .from("conduct_records")
-                .select("id, type, title, description, points, created_at")
-                .eq("student_id", student.id)
-                .order("created_at", { ascending: false });
-
-            if (conductError) {
-
-                console.error(
-                    "Parent conduct error:",
-                    conductError
-                );
-
-                setText("parentConduct", "Unavailable");
-
-                showError(
-                    "parentAchievementsContent",
-                    "Unable to load conduct records."
-                );
-
-            } else {
-
-                const conductList = conduct || [];
-
-                setText(
-                    "parentConduct",
-                    String(conductList.length)
-                );
-
-                showList(
-                    "parentAchievementsContent",
-                    conductList.slice(0, 8),
-                    "No achievements or conduct records have been added yet.",
-                    (element, record) => {
-
-                        addText(
-                            element,
-                            "strong",
-                            record.title || record.type || "Conduct record"
-                        );
-
-                        addText(
-                            element,
-                            "span",
-                            record.type || "Record"
-                        );
-
-                        if (record.description) {
-                            addText(
-                                element,
-                                "p",
-                                record.description
-                            );
-                        }
-
-                        if (record.points !== null && record.points !== undefined) {
                             addText(
                                 element,
                                 "strong",
-                                `${record.points > 0 ? "+" : ""}${record.points} points`
+                                subject?.name || "Subject"
+                            );
+
+                            addText(
+                                element,
+                                "span",
+                                grade.assessment || "Assessment"
+                            );
+
+                            const score = Number(grade.score) || 0;
+                            const maximum = Number(grade.max_score) || 0;
+
+                            addText(
+                                element,
+                                "strong",
+                                maximum > 0
+                                    ? `${score} / ${maximum} (${Math.round(score / maximum * 100)}%)`
+                                    : String(score)
+                            );
+
+                            if (grade.comments) {
+                                addText(element, "small", grade.comments);
+                            }
+
+                            addText(
+                                element,
+                                "small",
+                                formatDate(grade.created_at)
                             );
                         }
+                    );
+
+                } catch (error) {
+                    console.error("Parent grades error:", error);
+                    setText("parentAcademicAverage", "Unavailable");
+                    showError(
+                        "parentAcademicContent",
+                        "Unable to load academic records."
+                    );
+                }
+            };
+
+            const loadAttendance = async () => {
+                try {
+                    const { data, error } = await supabaseClient
+                        .from("attendance")
+                        .select("id, date, status")
+                        .eq("student_id", student.id)
+                        .order("date", { ascending: false });
+
+                    if (error) throw error;
+
+                    const records = data || [];
+
+                    const present = records.filter(record =>
+                        String(record.status).toLowerCase() === "present"
+                    ).length;
+
+                    const late = records.filter(record =>
+                        String(record.status).toLowerCase() === "late"
+                    ).length;
+
+                    const absent = records.filter(record =>
+                        String(record.status).toLowerCase() === "absent"
+                    ).length;
+
+                    const percentage = records.length > 0
+                        ? Math.round(
+                            ((present + late) / records.length) * 100
+                        )
+                        : null;
+
+                    setText(
+                        "parentAttendance",
+                        percentage === null
+                            ? "No records"
+                            : percentage + "%"
+                    );
+
+                    showList(
+                        "parentAttendanceContent",
+                        records.slice(0, 6),
+                        "No attendance records available.",
+                        (element, record) => {
+                            addText(
+                                element,
+                                "strong",
+                                formatDate(record.date)
+                            );
+
+                            addText(
+                                element,
+                                "span",
+                                String(record.status || "Unknown").toUpperCase()
+                            );
+                        }
+                    );
+
+                    const container = getElement("parentAttendanceContent");
+
+                    if (container) {
+                        const summary = document.createElement("div");
+                        summary.className = "parent-attendance-summary";
 
                         addText(
-                            element,
-                            "small",
-                            formatDate(record.created_at)
-                        );
-                    }
-                );
-            }
-
-            // ==================================
-            // E. PARENT ANNOUNCEMENTS
-            // ==================================
-
-            const {
-                data: announcements,
-                error: announcementsError
-            } = await supabaseClient
-                .from("announcements")
-                .select("id, title, message, target_role, target_class, created_at")
-                .in("target_role", ["parent", "all"])
-                .in("target_class", ["all", student.class_name])
-                .order("created_at", { ascending: false })
-                .limit(10);
-
-            if (announcementsError) {
-
-                console.error(
-                    "Parent announcements error:",
-                    announcementsError
-                );
-
-                showError(
-                    "parentAnnouncementsList",
-                    "Unable to load announcements."
-                );
-
-                setText("parentNotificationCount", "0");
-
-            } else {
-
-                const announcementList = announcements || [];
-
-                setText(
-                    "parentNotificationCount",
-                    String(announcementList.length)
-                );
-
-                showList(
-                    "parentAnnouncementsList",
-                    announcementList,
-                    "No announcements for this child at the moment.",
-                    (element, announcement) => {
-
-                        addText(
-                            element,
+                            summary,
                             "strong",
-                            announcement.title || "School announcement"
+                            `Attendance: ${percentage === null ? "No records" : percentage + "%"}`
                         );
 
                         addText(
-                            element,
+                            summary,
                             "p",
-                            announcement.message || ""
+                            `${present} Present · ${late} Late · ${absent} Absent`
                         );
 
-                        addText(
-                            element,
-                            "small",
-                            formatDate(announcement.created_at)
-                        );
+                        container.prepend(summary);
                     }
-                );
-            }
 
+                } catch (error) {
+                    console.error("Parent attendance error:", error);
+                    setText("parentAttendance", "Unavailable");
+                    showError(
+                        "parentAttendanceContent",
+                        "Unable to load attendance records."
+                    );
+                }
+            };
+
+            const loadAssignments = async () => {
+                try {
+                    const now = new Date();
+
+                    const today = [
+                        now.getFullYear(),
+                        String(now.getMonth() + 1).padStart(2, "0"),
+                        String(now.getDate()).padStart(2, "0")
+                    ].join("-");
+
+                    const { data, error } = await supabaseClient
+                        .from("assignments")
+                        .select(`
+                            id,
+                            title,
+                            description,
+                            due_date,
+                            subjects (
+                                name,
+                                code
+                            )
+                        `)
+                        .eq("class_name", student.class_name)
+                        .gte("due_date", today)
+                        .order("due_date", { ascending: true });
+
+                    if (error) throw error;
+
+                    const assignments = data || [];
+
+                    setText(
+                        "parentUpcomingAssignments",
+                        String(assignments.length)
+                    );
+
+                    showList(
+                        "parentAssignmentsList",
+                        assignments,
+                        "No upcoming assignments.",
+                        (element, assignment) => {
+
+                            const subject = Array.isArray(assignment.subjects)
+                                ? assignment.subjects[0]
+                                : assignment.subjects;
+
+                            addText(
+                                element,
+                                "strong",
+                                assignment.title || "Assignment"
+                            );
+
+                            addText(
+                                element,
+                                "span",
+                                subject?.name || "Subject"
+                            );
+
+                            if (assignment.description) {
+                                addText(
+                                    element,
+                                    "small",
+                                    assignment.description
+                                );
+                            }
+
+                            addText(
+                                element,
+                                "small",
+                                "Due: " + formatDate(assignment.due_date)
+                            );
+                        }
+                    );
+
+                } catch (error) {
+                    console.error("Parent assignments error:", error);
+                    setText("parentUpcomingAssignments", "Unavailable");
+                    showError(
+                        "parentAssignmentsList",
+                        "Unable to load assignments."
+                    );
+                }
+            };
+
+            const loadConduct = async () => {
+                try {
+                    const { data, error } = await supabaseClient
+                        .from("conduct_records")
+                        .select("id, type, title, description, points, created_at")
+                        .eq("student_id", student.id)
+                        .order("created_at", { ascending: false });
+
+                    if (error) throw error;
+
+                    const records = data || [];
+
+                    setText("parentConduct", String(records.length));
+
+                    showList(
+                        "parentAchievementsContent",
+                        records.slice(0, 8),
+                        "No achievements or conduct records have been added yet.",
+                        (element, record) => {
+
+                            addText(
+                                element,
+                                "strong",
+                                record.title || record.type || "Conduct record"
+                            );
+
+                            addText(
+                                element,
+                                "span",
+                                record.type || "Record"
+                            );
+
+                            if (record.description) {
+                                addText(
+                                    element,
+                                    "p",
+                                    record.description
+                                );
+                            }
+
+                            if (
+                                record.points !== null &&
+                                record.points !== undefined
+                            ) {
+                                addText(
+                                    element,
+                                    "strong",
+                                    `${record.points > 0 ? "+" : ""}${record.points} points`
+                                );
+                            }
+
+                            addText(
+                                element,
+                                "small",
+                                formatDate(record.created_at)
+                            );
+                        }
+                    );
+
+                } catch (error) {
+                    console.error("Parent conduct error:", error);
+                    setText("parentConduct", "Unavailable");
+                    showError(
+                        "parentAchievementsContent",
+                        "Unable to load conduct records."
+                    );
+                }
+            };
+
+            const loadAnnouncements = async () => {
+                try {
+                    const classTargets = ["all"];
+
+                    if (student.class_name) {
+                        classTargets.push(student.class_name);
+                    }
+
+                    const { data, error } = await supabaseClient
+                        .from("announcements")
+                        .select("id, title, message, target_role, target_class, created_at")
+                        .in("target_role", ["parent", "all"])
+                        .in("target_class", classTargets)
+                        .order("created_at", { ascending: false })
+                        .limit(10);
+
+                    if (error) throw error;
+
+                    const announcements = data || [];
+
+                    setText(
+                        "parentNotificationCount",
+                        String(announcements.length)
+                    );
+
+                    showList(
+                        "parentAnnouncementsList",
+                        announcements,
+                        "No announcements for this child at the moment.",
+                        (element, announcement) => {
+
+                            addText(
+                                element,
+                                "strong",
+                                announcement.title || "School announcement"
+                            );
+
+                            addText(
+                                element,
+                                "p",
+                                announcement.message || ""
+                            );
+
+                            addText(
+                                element,
+                                "small",
+                                formatDate(announcement.created_at)
+                            );
+                        }
+                    );
+
+                } catch (error) {
+                    console.error("Parent announcements error:", error);
+                    setText("parentNotificationCount", "—");
+                    showError(
+                        "parentAnnouncementsList",
+                        "Unable to load announcements."
+                    );
+                }
+            };
+
+            // LOAD ALL FIVE SECTIONS INDEPENDENTLY.
+
+            await Promise.all([
+                loadGrades(),
+                loadAttendance(),
+                loadAssignments(),
+                loadConduct(),
+                loadAnnouncements()
+            ]);
+
+            console.log(
+                "Parent child information loaded:",
+                student.full_name
+            );
         }
 
-        // ======================================
         // 6. SELECT FIRST CHILD
-        // ======================================
 
         if (childSelect) {
-
             childSelect.value = parentLinkedChildren[0].id;
 
             await loadSelectedChild(childSelect.value);
 
-            // ==================================
             // 7. SWITCH BETWEEN CHILDREN
-            // ==================================
 
-            childSelect.addEventListener("change", async () => {
-                await loadSelectedChild(childSelect.value);
-            });
+            if (!childSelect.dataset.initialized) {
+                childSelect.dataset.initialized = "true";
 
+                childSelect.addEventListener("change", async () => {
+                    await loadSelectedChild(childSelect.value);
+                });
+            }
         }
 
-        // ======================================
         // 8. LOGOUT
-        // ======================================
 
         const logoutButton = getElement("parentLogout");
 
         if (logoutButton && !logoutButton.dataset.initialized) {
-
             logoutButton.dataset.initialized = "true";
 
             logoutButton.addEventListener("click", async event => {
-
                 event.preventDefault();
 
                 const { error } = await supabaseClient.auth.signOut();
@@ -17869,7 +17832,7 @@ async function initialiseParentDashboard() {
     }
 }
 
-
+        
 // ==========================================
 // START PARENT PORTAL
 // ==========================================
