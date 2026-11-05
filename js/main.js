@@ -17098,3 +17098,297 @@ async function initialiseAdminTimetable() {
 if (window.location.pathname.includes("admin-timetable.html")) {
     initialiseAdminTimetable();
 }
+
+
+/* ==========================================
+   THREE RIVERS — PARENT PORTAL
+   PHASE 1: PARENT AND CHILD CONNECTION
+========================================== */
+
+let parentLinkedChildren = [];
+let selectedParentChild = null;
+
+async function initialiseParentDashboard() {
+
+    const childSelect =
+        document.getElementById("parentChildSelect");
+
+    const studentName =
+        document.getElementById("parentStudentName");
+
+    const studentClass =
+        document.getElementById("parentStudentClass");
+
+    const admission =
+        document.getElementById("parentAdmission");
+
+    const relationship =
+        document.getElementById("parentRelationship");
+
+    const parentName =
+        document.getElementById("parentName");
+
+    const welcomeName =
+        document.getElementById("parentWelcomeName");
+
+    const parentInitial =
+        document.getElementById("parentInitial");
+
+    const studentInitial =
+        document.getElementById("parentStudentInitial");
+
+    const dateElement =
+        document.getElementById("parentTodayDate");
+
+    const logoutButton =
+        document.getElementById("parentLogout");
+
+    function showParentMessage(message) {
+        childSelect.innerHTML =
+            `<option value="">${message}</option>`;
+
+        studentName.textContent = message;
+        studentClass.textContent = "";
+        admission.textContent = "—";
+        relationship.textContent = "—";
+    }
+
+    try {
+
+        // 1. GET LOGGED-IN PARENT
+
+        const {
+            data: { user },
+            error: authError
+        } = await supabaseClient.auth.getUser();
+
+        if (authError) throw authError;
+
+        if (!user) {
+            window.location.href = "login.html";
+            return;
+        }
+
+        // 2. GET PARENT PROFILE
+
+        const {
+            data: profile,
+            error: profileError
+        } = await supabaseClient
+            .from("profiles")
+            .select("id, full_name, email, role")
+            .eq("id", user.id)
+            .single();
+
+        if (profileError) throw profileError;
+
+        if (profile.role !== "parent") {
+            window.location.href = "login.html";
+            return;
+        }
+
+        const name = profile.full_name || "Parent";
+
+        parentName.textContent = name;
+        welcomeName.textContent = name;
+
+        parentInitial.textContent =
+            name.charAt(0).toUpperCase();
+
+        // 3. DISPLAY TODAY'S DATE
+
+        dateElement.textContent =
+            new Date().toLocaleDateString("en-KE", {
+                weekday: "long",
+                day: "numeric",
+                month: "long",
+                year: "numeric"
+            });
+
+        // 4. GET PARENT'S LINKED CHILDREN
+
+        const {
+            data: links,
+            error: linksError
+        } = await supabaseClient
+            .from("parent_students")
+            .select("student_id, relationship")
+            .eq("parent_id", user.id);
+
+        if (linksError) throw linksError;
+
+        if (!links || links.length === 0) {
+
+            parentLinkedChildren = [];
+
+            showParentMessage(
+                "No children linked to this account"
+            );
+
+            document.getElementById(
+                "parentAcademicAverage"
+            ).textContent = "—";
+
+            document.getElementById(
+                "parentAttendance"
+            ).textContent = "—";
+
+            document.getElementById(
+                "parentUpcomingAssignments"
+            ).textContent = "—";
+
+            document.getElementById(
+                "parentConduct"
+            ).textContent = "—";
+
+            return;
+        }
+
+        // 5. GET THE ACTUAL STUDENT RECORDS
+
+        const studentIds = links.map(link =>
+            link.student_id
+        );
+
+        const {
+            data: students,
+            error: studentsError
+        } = await supabaseClient
+            .from("students")
+            .select(`
+                id,
+                full_name,
+                admission_number,
+                class_name
+            `)
+            .in("id", studentIds);
+
+        if (studentsError) throw studentsError;
+
+        if (!students || students.length === 0) {
+            showParentMessage(
+                "Linked student records could not be found"
+            );
+            return;
+        }
+
+        // 6. COMBINE STUDENT AND RELATIONSHIP DETAILS
+
+        parentLinkedChildren = students.map(student => {
+
+            const link = links.find(item =>
+                item.student_id === student.id
+            );
+
+            return {
+                ...student,
+                relationship: link?.relationship || "Parent"
+            };
+
+        });
+
+        // 7. FILL CHILD SELECTOR
+
+        childSelect.innerHTML = "";
+
+        parentLinkedChildren.forEach(student => {
+
+            const option = document.createElement("option");
+
+            option.value = student.id;
+            option.textContent =
+                `${student.full_name} — ${student.class_name || "Class not set"}`;
+
+            childSelect.appendChild(option);
+
+        });
+
+        // 8. DISPLAY SELECTED CHILD
+
+        function displayParentChild(studentId) {
+
+            const student = parentLinkedChildren.find(item =>
+                item.id === studentId
+            );
+
+            if (!student) return;
+
+            selectedParentChild = student;
+
+            studentName.textContent =
+                student.full_name || "Student";
+
+            studentClass.textContent =
+                student.class_name || "Class not assigned";
+
+            admission.textContent =
+                student.admission_number || "Not assigned";
+
+            relationship.textContent =
+                student.relationship;
+
+            studentInitial.textContent =
+                (student.full_name || "S")
+                    .charAt(0)
+                    .toUpperCase();
+
+        }
+
+        // SELECT FIRST CHILD BY DEFAULT
+
+        childSelect.value = parentLinkedChildren[0].id;
+
+        displayParentChild(parentLinkedChildren[0].id);
+
+        // 9. CHILD SWITCHER
+
+        childSelect.addEventListener("change", function () {
+
+            displayParentChild(this.value);
+
+        });
+
+        // 10. LOGOUT
+
+        logoutButton.addEventListener("click", async function(event) {
+
+            event.preventDefault();
+
+            const {
+                error: logoutError
+            } = await supabaseClient.auth.signOut();
+
+            if (logoutError) {
+                alert("Unable to log out. Please try again.");
+                return;
+            }
+
+            window.location.href = "login.html";
+
+        });
+
+        console.log(
+            "Parent Portal connected successfully.",
+            parentLinkedChildren
+        );
+
+    } catch (error) {
+
+        console.error("Parent Portal error:", error);
+
+        showParentMessage(
+            "Unable to load your family information"
+        );
+
+    }
+
+}
+
+
+// START PARENT PORTAL
+
+if (
+    window.location.pathname.includes("parent-dashboard.html")
+) {
+    initialiseParentDashboard();
+}
