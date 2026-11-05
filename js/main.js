@@ -17392,3 +17392,217 @@ if (
 ) {
     initialiseParentDashboard();
 }
+
+
+// ==========================================
+// PARENT PORTAL - DASHBOARD FOUNDATION
+// ==========================================
+
+async function loadParentDashboard() {
+    console.log("Loading Parent Portal...");
+
+    const setText = (id, value) => {
+        const element = document.getElementById(id);
+        if (element) element.textContent = value;
+    };
+
+    const {
+        data: { user },
+        error: userError
+    } = await supabaseClient.auth.getUser();
+
+    if (userError || !user) {
+        window.location.href = "login.html";
+        return;
+    }
+
+    // Verify that this account is a parent.
+    const { data: profile, error: profileError } =
+        await supabaseClient
+            .from("profiles")
+            .select("id, full_name, email, role")
+            .eq("id", user.id)
+            .single();
+
+    if (profileError || !profile || profile.role !== "parent") {
+        console.error("Parent profile verification failed:", profileError);
+        alert("This account is not authorised to access the Parent Portal.");
+        await supabaseClient.auth.signOut();
+        window.location.href = "login.html";
+        return;
+    }
+
+    // Parent identity.
+    const parentName = profile.full_name || "Parent";
+
+    setText("parentName", parentName);
+    setText("parentWelcomeName", parentName);
+    setText(
+        "parentInitial",
+        parentName.charAt(0).toUpperCase()
+    );
+
+    setText(
+        "parentTodayDate",
+        new Date().toLocaleDateString("en-GB", {
+            weekday: "long",
+            day: "numeric",
+            month: "long",
+            year: "numeric"
+        })
+    );
+
+    setText("parentNotificationCount", "0");
+
+    // Load only this parent's child links.
+    const {
+        data: links,
+        error: linksError
+    } = await supabaseClient
+        .from("parent_students")
+        .select("student_id, relationship")
+        .eq("parent_id", user.id);
+
+    const childSelect =
+        document.getElementById("parentChildSelect");
+
+    if (linksError) {
+        console.error("Parent-child links error:", linksError);
+        setText("parentStudentName", "Unable to load children");
+        if (childSelect) {
+            childSelect.innerHTML =
+                '<option value="">Unable to load children</option>';
+        }
+        return;
+    }
+
+    if (!links || links.length === 0) {
+        if (childSelect) {
+            childSelect.innerHTML =
+                '<option value="">No children linked yet</option>';
+        }
+
+        setText("parentStudentName", "No linked students");
+        setText(
+            "parentAcademicAverage",
+            "—"
+        );
+        setText("parentAttendance", "—");
+        setText("parentUpcomingAssignments", "—");
+        setText("parentConduct", "—");
+
+        return;
+    }
+
+    const studentIds = links.map(link => link.student_id);
+
+    // Retrieve only students connected to this parent.
+    const {
+        data: students,
+        error: studentsError
+    } = await supabaseClient
+        .from("students")
+        .select("id, full_name, admission_number, class_name")
+        .in("id", studentIds)
+        .order("full_name");
+
+    if (studentsError) {
+        console.error("Linked students error:", studentsError);
+        setText("parentStudentName", "Unable to load student details");
+        return;
+    }
+
+    if (!students || students.length === 0) {
+        setText("parentStudentName", "No student records available");
+        return;
+    }
+
+    const relationshipByStudent = {};
+    links.forEach(link => {
+        relationshipByStudent[link.student_id] =
+            link.relationship || "Parent";
+    });
+
+    // Populate the child selector.
+    if (childSelect) {
+        childSelect.innerHTML = "";
+
+        students.forEach(student => {
+            const option = document.createElement("option");
+            option.value = student.id;
+            option.textContent =
+                `${student.full_name} (${student.admission_number})`;
+            childSelect.appendChild(option);
+        });
+    }
+
+    // Display the selected child.
+    function displaySelectedChild(studentId) {
+        const student = students.find(
+            item => item.id === studentId
+        );
+
+        if (!student) return;
+
+        setText("parentStudentName", student.full_name);
+        setText(
+            "parentStudentInitial",
+            student.full_name
+                ? student.full_name.charAt(0).toUpperCase()
+                : "S"
+        );
+        setText(
+            "parentStudentClass",
+            student.class_name || "Class not assigned"
+        );
+        setText(
+            "parentAdmission",
+            student.admission_number || "—"
+        );
+        setText(
+            "parentRelationship",
+            relationshipByStudent[student.id] || "Parent"
+        );
+
+        // Academic data will be connected in the next stage.
+        setText("parentAcademicAverage", "Loading...");
+        setText("parentAttendance", "Loading...");
+        setText("parentUpcomingAssignments", "Loading...");
+        setText("parentConduct", "Loading...");
+    }
+
+    if (childSelect) {
+        childSelect.addEventListener("change", () => {
+            displaySelectedChild(childSelect.value);
+        });
+
+        childSelect.value = students[0].id;
+    }
+
+    displaySelectedChild(students[0].id);
+
+    console.log(
+        `Parent Portal loaded. ${students.length} linked student(s) found.`
+    );
+}
+
+// Initialise only on the Parent Dashboard.
+if (
+    window.location.pathname
+        .toLowerCase()
+        .endsWith("/parent-dashboard.html")
+) {
+    loadParentDashboard();
+}
+
+// Parent logout.
+const parentLogoutButton =
+    document.getElementById("parentLogout");
+
+if (parentLogoutButton) {
+    parentLogoutButton.addEventListener("click", async event => {
+        event.preventDefault();
+        await supabaseClient.auth.signOut();
+        window.location.href = "login.html";
+    });
+}
