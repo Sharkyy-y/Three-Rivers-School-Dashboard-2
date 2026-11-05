@@ -1,0 +1,470 @@
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Parent Portal | Three Rivers Academy</title>
+
+    <link rel="stylesheet" href="css/dashboard.css">
+    <link rel="icon" type="image/png" href="favicon.png">
+</head>
+
+<body class="parent-portal">
+
+<div class="dashboard-layout">
+
+    <!-- SIDEBAR -->
+    <aside class="sidebar parent-sidebar">
+
+        <div class="sidebar-logo">
+            <div class="logo-icon">T</div>
+            <span>Parent Portal</span>
+        </div>
+
+        <nav class="sidebar-nav">
+
+            <a href="#overview" class="nav-item active">
+                <span>⌂</span>
+                Overview
+            </a>
+
+            <a href="#academics" class="nav-item">
+                <span>◈</span>
+                Academic Progress
+            </a>
+
+            <a href="#attendance" class="nav-item">
+                <span>◷</span>
+                Attendance
+            </a>
+
+            <a href="#assignments" class="nav-item">
+                <span>✓</span>
+                Assignments
+            </a>
+
+            <a href="#communication" class="nav-item">
+                <span>▤</span>
+                Announcements
+            </a>
+
+            <a href="#achievements" class="nav-item">
+                <span>★</span>
+                Achievements
+            </a>
+
+            <a href="#family" class="nav-item">
+                <span>♧</span>
+                Family Centre
+            </a>
+
+        </nav>
+
+        <div class="sidebar-bottom">
+
+            <a href="#profile" class="nav-item">
+                <span>⚙</span>
+                My Profile
+            </a>
+
+            <a href="#" class="logout" id="parentLogout">
+                <span>↪</span>
+                Logout
+            </a>
+
+        </div>
+
+    </aside>
+
+
+    <!-- MAIN CONTENT -->
+    <main class="main-content">
+
+        <!-- TOP BAR -->
+        <header class="topbar">
+
+            <div>
+                <p class="school-name">
+                    THREE RIVERS ACADEMY
+                </p>
+
+                <h1>Parent Dashboard</h1>
+            </div>
+
+            <div class="student-profile">
+
+                <div class="notification">
+                    ♢
+                    <span id="parentNotificationCount">0</span>
+                </div>
+
+                <div class="profile-avatar" id="parentInitial">
+                    P
+                </div>
+
+                <div class="profile-details">
+                    <strong id="parentName">Loading...</strong>
+                    <small>Parent / Guardian</small>
+                </div>
+
+            </div>
+
+        </header>
+
+
+        <!-- WELCOME SECTION -->
+        <section class="parent-welcome" id="overview">
+
+            <div class="parent-welcome-content">
+
+                <p class="parent-eyebrow">
+                    YOUR FAMILY. YOUR SCHOOL. ONE PLACE.
+                </p>
+
+                <h2>
+                    Welcome back,
+                    <span id="parentWelcomeName">Parent</span>
+                </h2>
+
+                <p>
+                    Stay connected with your child's learning,
+                    achievements and school life.
+                </p>
+
+            </div>
+
+            <div class="parent-date">
+                <span>TODAY</span>
+                <strong id="parentTodayDate">Loading...</strong>
+            </div>
+
+        </section>
+
+
+        <!-- CHILD SELECTOR -->
+        <section class="parent-child-section">
+
+            <div>
+                <p class="parent-section-label">
+                    FAMILY OVERVIEW
+                </p>
+
+                <h2>Your Children</h2>
+
+                <p>
+                    Select a child to view their school information.
+                </p>
+            </div>
+
+            <select id="parentChildSelect">
+                <option value="">Loading children...</option>
+            </select>
+
+        </section>
+
+
+        <!-- CHILD INFORMATION -->
+        <section class="parent-child-card">
+
+            <div class="parent-child-avatar" id="parentStudentInitial">
+                S
+            </div>
+
+            <div class="parent-child-details">
+
+                <span>SELECTED STUDENT</span>
+
+                <h2 id="parentStudentName">
+                    Loading...
+                </h2>
+
+                <p>
+                    <span id="parentStudentClass">Class —</span>
+                    <span class="parent-dot">•</span>
+                    Admission No:
+                    <strong id="parentAdmission">—</strong>
+                </p>
+
+            </div>
+
+            <div class="parent-relationship">
+                <span>RELATIONSHIP</span>
+                <strong id="parentRelationship">Parent</strong>
+            </div>
+
+        </section>
+
+
+        <!-- STATISTICS -->
+        <section class="parent-stats-grid">
+
+            <div class="parent-stat-card">
+                <div class="parent-stat-icon academic-icon">%</div>
+
+                <div>
+                    <span>Academic Average</span>
+                    <strong id="parentAcademicAverage">—</strong>
+                    <small>Overall performance</small>
+                </div>
+            </div>
+
+            <div class="parent-stat-card">
+                <div class="parent-stat-icon attendance-icon">✓</div>
+
+                <div>
+                    <span>Attendance</span>
+                    <strong id="parentAttendance">—</strong>
+                    <small>Attendance record</small>
+                </div>
+            </div>
+
+            <div class="parent-stat-card">
+                <div class="parent-stat-icon assignment-icon">!</div>
+
+                <div>
+                    <span>Upcoming Assignments</span>
+                    <strong id="parentUpcomingAssignments">—</strong>
+                    <small>Work due soon</small>
+                </div>
+            </div>
+
+            <div class="parent-stat-card">
+                <div class="parent-stat-icon conduct-icon">★</div>
+
+                <div>
+                    <span>Conduct Records</span>
+                    <strong id="parentConduct">—</strong>
+                    <small>Recorded achievements and conduct</small>
+                </div>
+            </div>
+
+        </section>
+
+
+        <!-- ACADEMIC PROGRESS -->
+        <section class="parent-content-grid" id="academics">
+
+            <div class="parent-panel">
+
+                <div class="parent-panel-header">
+
+                    <div>
+                        <span class="parent-section-label">
+                            ACADEMIC PERFORMANCE
+                        </span>
+
+                        <h3>Learning Progress</h3>
+
+                        <p>
+                            An overview of your child's academic performance.
+                        </p>
+                    </div>
+
+                    <span class="parent-panel-symbol">◈</span>
+
+                </div>
+
+                <div id="parentAcademicContent">
+                    <p class="parent-loading">
+                        Loading academic information...
+                    </p>
+                </div>
+
+            </div>
+
+
+            <!-- ATTENDANCE -->
+            <div class="parent-panel" id="attendance">
+
+                <div class="parent-panel-header">
+
+                    <div>
+                        <span class="parent-section-label">
+                            SCHOOL PARTICIPATION
+                        </span>
+
+                        <h3>Attendance Overview</h3>
+
+                        <p>
+                            Stay informed about school attendance.
+                        </p>
+                    </div>
+
+                    <span class="parent-panel-symbol">◷</span>
+
+                </div>
+
+                <div id="parentAttendanceContent">
+                    <p class="parent-loading">
+                        Loading attendance...
+                    </p>
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- ASSIGNMENTS AND ANNOUNCEMENTS -->
+        <section class="parent-content-grid">
+
+            <div class="parent-panel" id="assignments">
+
+                <div class="parent-panel-header">
+
+                    <div>
+                        <span class="parent-section-label">
+                            KEEP UP WITH LEARNING
+                        </span>
+
+                        <h3>Upcoming Assignments</h3>
+
+                        <p>
+                            Work your child needs to complete.
+                        </p>
+                    </div>
+
+                    <span class="parent-panel-symbol">✓</span>
+
+                </div>
+
+                <div id="parentAssignmentsList">
+                    <p class="parent-loading">
+                        Loading assignments...
+                    </p>
+                </div>
+
+            </div>
+
+
+            <div class="parent-panel" id="communication">
+
+                <div class="parent-panel-header">
+
+                    <div>
+                        <span class="parent-section-label">
+                            SCHOOL COMMUNICATION
+                        </span>
+
+                        <h3>Latest Announcements</h3>
+
+                        <p>
+                            Important updates from the school.
+                        </p>
+                    </div>
+
+                    <span class="parent-panel-symbol">▤</span>
+
+                </div>
+
+                <div id="parentAnnouncementsList">
+                    <p class="parent-loading">
+                        Loading announcements...
+                    </p>
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- ACHIEVEMENTS -->
+        <section class="parent-panel parent-achievements"
+                 id="achievements">
+
+            <div class="parent-panel-header">
+
+                <div>
+                    <span class="parent-section-label">
+                        CELEBRATING PROGRESS
+                    </span>
+
+                    <h3>Achievement Portfolio</h3>
+
+                    <p>
+                        A space for your child's milestones,
+                        certificates and achievements.
+                    </p>
+                </div>
+
+                <span class="parent-panel-symbol">★</span>
+
+            </div>
+
+            <div id="parentAchievementsContent">
+                <p class="parent-loading">
+                    Achievement portfolio will appear here.
+                </p>
+            </div>
+
+        </section>
+
+
+        <!-- FAMILY CENTRE -->
+        <section class="parent-panel parent-family-panel"
+                 id="family">
+
+            <div>
+                <span class="parent-section-label">
+                    YOUR SCHOOL CONNECTION
+                </span>
+
+                <h3>Family Centre</h3>
+
+                <p>
+                    Your central place for school information,
+                    family services and future parent support tools.
+                </p>
+            </div>
+
+            <div class="parent-family-links">
+
+                <div class="parent-family-link">
+                    <span>◷</span>
+                    <strong>School Calendar</strong>
+                    <small>Coming soon</small>
+                </div>
+
+                <div class="parent-family-link">
+                    <span>▤</span>
+                    <strong>Fee Statements</strong>
+                    <small>Coming soon</small>
+                </div>
+
+                <div class="parent-family-link">
+                    <span>✉</span>
+                    <strong>Teacher Communication</strong>
+                    <small>Coming soon</small>
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- PROFILE -->
+        <section id="profile" class="parent-profile-footer">
+            <p>
+                Three Rivers Academy · Parent Portal
+            </p>
+            <span>
+                Supporting every learner, together.
+            </span>
+        </section>
+
+    </main>
+
+</div>
+
+
+<!-- SUPABASE -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<!-- MAIN JAVASCRIPT -->
+<script src="js/main.js"></script>
+
+</body>
+</html>
