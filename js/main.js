@@ -13056,9 +13056,6 @@ async function deleteTeacherAnnouncement(announcementId) {
 
 }
 
-// ==========================================
-// TEACHER TIMETABLE
-// ==========================================
 
 async function loadTeacherTimetable() {
 
@@ -13068,602 +13065,385 @@ async function loadTeacherTimetable() {
         document.getElementById("subjectSelect");
 
     const timetableContainer =
-        document.getElementById(
-            "teacherTimetableContainer"
-        );
+        document.getElementById("teacherTimetableContainer");
 
     const timetableDescription =
-        document.getElementById(
-            "timetableDescription"
-        );
+        document.getElementById("timetableDescription");
 
     const teacherNameElement =
         document.getElementById("teacherName");
 
+    const todayElement =
+        document.getElementById("teacherToday");
 
     if (!subjectSelect || !timetableContainer) {
-
-        console.log(
-            "Teacher timetable elements not found."
-        );
-
+        console.log("Teacher timetable elements not found.");
         return;
-
     }
 
+    // Safely display database text inside HTML.
+    function escapeHTML(value) {
+        return String(value ?? "").replace(/[&<>"']/g, char => ({
+            "&": "&amp;",
+            "<": "&lt;",
+            ">": "&gt;",
+            '"': "&quot;",
+            "'": "&#39;"
+        })[char]);
+    }
+
+    // Format database time.
+    function formatTeacherTime(time) {
+        if (!time) return "Not specified";
+
+        const [hourPart, minutePart] = time.split(":");
+        let hours = parseInt(hourPart, 10);
+
+        const period = hours >= 12 ? "PM" : "AM";
+        hours = hours % 12 || 12;
+
+        return `${hours}:${minutePart} ${period}`;
+    }
+
+    // Give each subject a consistent colour.
+    function getSubjectColour(subjectId) {
+        const colours = [
+            ["#2563eb", "#eff6ff"],
+            ["#7c3aed", "#f5f3ff"],
+            ["#059669", "#ecfdf5"],
+            ["#ea580c", "#fff7ed"],
+            ["#db2777", "#fdf2f8"],
+            ["#0891b2", "#ecfeff"],
+            ["#ca8a04", "#fefce8"],
+            ["#4f46e5", "#eef2ff"]
+        ];
+
+        let hash = 0;
+
+        String(subjectId || "subject").split("").forEach(char => {
+            hash = (hash * 31 + char.charCodeAt(0)) >>> 0;
+        });
+
+        return colours[hash % colours.length];
+    }
 
     try {
 
-        // ==========================================
-        // GET CURRENT LOGGED-IN USER
-        // ==========================================
-
+        // GET LOGGED-IN USER
         const {
-            data: {
-                user
-            },
+            data: { user },
             error: userError
         } = await supabaseClient.auth.getUser();
 
-
-        if (userError) {
-            throw userError;
-        }
-
+        if (userError) throw userError;
 
         if (!user) {
-
-            console.error(
-                "No logged-in teacher found."
-            );
-
-            window.location.href =
-                "login.html";
-
+            window.location.href = "login.html";
             return;
-
         }
 
-
-        console.log(
-            "Logged-in teacher:",
-            user.id
-        );
-
-
-        // ==========================================
         // GET TEACHER PROFILE
-        // ==========================================
-
         const {
             data: profile,
             error: profileError
         } = await supabaseClient
             .from("profiles")
-            .select(`
-                full_name,
-                email,
-                role
-            `)
+            .select("full_name, email, role")
             .eq("id", user.id)
             .single();
 
+        if (profileError) throw profileError;
 
-        if (profileError) {
-            throw profileError;
-        }
-
-
-        console.log(
-            "Teacher profile:",
-            profile
-        );
-
-
-        if (
-            profile.role !== "teacher"
-        ) {
-
-            console.error(
-                "Logged-in account is not a teacher."
-            );
-
+        if (profile.role !== "teacher") {
+            console.error("This account is not a teacher.");
             return;
-
         }
-
-
-        // Show teacher name
 
         if (teacherNameElement) {
-
             teacherNameElement.textContent =
-                profile.full_name ||
-                "Teacher";
-
+                profile.full_name || "Teacher";
         }
 
+        // TODAY'S DATE
+        const today = new Date().toLocaleDateString(
+            "en-US",
+            { weekday: "long" }
+        );
 
-       // ==========================================
-// GET TEACHER'S TIMETABLE
-// ==========================================
-
-const {
-    data: timetable,
-    error: timetableError
-} = await supabaseClient
-    .from("timetable")
-    .select(`
-        id,
-        class_name,
-        subject_id,
-        teacher_id,
-        teacher_name,
-        room,
-        day_of_week,
-        start_time,
-        end_time,
-        subjects (
-            id,
-            name,
-            code
-        )
-    `)
-    .eq(
-        "teacher_id",
-        user.id
-    )
-    .order(
-        "day_of_week",
-        {
-            ascending: true
+        if (todayElement) {
+            todayElement.textContent =
+                `${today} · ${new Date().toLocaleDateString(
+                    "en-GB",
+                    { day: "numeric", month: "long", year: "numeric" }
+                )}`;
         }
-    )
-    .order(
-        "start_time",
-        {
-            ascending: true
-        }
-    );
 
+        // GET ONLY THIS TEACHER'S LESSONS
+        const {
+            data: timetable,
+            error: timetableError
+        } = await supabaseClient
+            .from("timetable")
+            .select(`
+                id,
+                class_name,
+                subject_id,
+                teacher_id,
+                teacher_name,
+                room,
+                day_of_week,
+                start_time,
+                end_time,
+                subjects (
+                    id,
+                    name,
+                    code
+                )
+            `)
+            .eq("teacher_id", user.id)
+            .order("start_time", { ascending: true });
 
-if (timetableError) {
-    throw timetableError;
-}
+        if (timetableError) throw timetableError;
 
+        console.log("Teacher timetable:", timetable);
 
-console.log(
-    "Teacher timetable:",
-    timetable
-);
-        // ==========================================
-        // NO TIMETABLE
-        // ==========================================
+        // HANDLE EMPTY TIMETABLE
+        if (!timetable || timetable.length === 0) {
 
-        if (
-            !timetable ||
-            timetable.length === 0
-        ) {
-
-            subjectSelect.innerHTML = `
-                <option value="">
-                    No subjects found
-                </option>
-            `;
-
+            subjectSelect.innerHTML =
+                `<option value="">No subjects found</option>`;
 
             timetableContainer.innerHTML = `
-                <div class="empty-state">
-                    <p>
-                        No timetable records were found for this teacher.
-                    </p>
+                <div class="teacher-timetable-empty">
+                    <h3>No lessons scheduled yet</h3>
+                    <p>Your timetable will appear here once the
+                    administrator adds your lessons.</p>
                 </div>
             `;
 
             return;
-
         }
 
-
-        // ==========================================
-        // CREATE UNIQUE SUBJECT LIST
-        // ==========================================
-
+        // GET UNIQUE SUBJECTS
         const subjects = [];
-
 
         timetable.forEach(entry => {
 
             if (
                 entry.subjects &&
-                !subjects.some(
-                    subject =>
-                        subject.id ===
-                        entry.subjects.id
+                !subjects.some(subject =>
+                    subject.id === entry.subjects.id
                 )
             ) {
-
-                subjects.push(
-                    entry.subjects
-                );
-
+                subjects.push(entry.subjects);
             }
 
         });
 
-// ==========================================
-// FILL SUBJECT DROPDOWN
-// ==========================================
+        // FILL SUBJECT DROPDOWN
+        subjectSelect.innerHTML =
+            `<option value="">All subjects</option>`;
 
-subjectSelect.innerHTML = `
-    <option value="">
-        All subjects
-    </option>
-`;
+        subjects
+            .sort((a, b) => a.name.localeCompare(b.name))
+            .forEach(subject => {
 
+                const option = document.createElement("option");
 
-subjects.forEach(subject => {
+                option.value = subject.id;
 
-    const option =
-        document.createElement("option");
+                option.textContent = subject.code
+                    ? `${subject.name} (${subject.code})`
+                    : subject.name;
 
-    option.value = subject.id;
+                subjectSelect.appendChild(option);
 
-    option.textContent =
-        `${subject.name} (${subject.code})`;
+            });
 
-    subjectSelect.appendChild(option);
+        // DISPLAY TIMETABLE
+        function showTeacherTimetable(entries) {
 
-});
+            if (!entries || entries.length === 0) {
 
-// ==========================================
-// SHOW TIMETABLE
-// ==========================================
+                timetableContainer.innerHTML = `
+                    <div class="teacher-timetable-empty">
+                        <h3>No lessons found</h3>
+                        <p>There are no lessons for this selection.</p>
+                    </div>
+                `;
 
-function showTeacherTimetable(entries) {
+                return;
+            }
 
-    if (!entries || entries.length === 0) {
+            const days = [
+                "Monday",
+                "Tuesday",
+                "Wednesday",
+                "Thursday",
+                "Friday",
+                "Saturday"
+            ];
+
+            let html = "";
+
+            days.forEach(day => {
+
+                const dayEntries = entries
+                    .filter(entry => entry.day_of_week === day)
+                    .sort((a, b) =>
+                        a.start_time.localeCompare(b.start_time)
+                    );
+
+                if (dayEntries.length === 0) return;
+
+                html += `
+                    <section class="teacher-timetable-day">
+
+                        <div class="teacher-timetable-day-header
+                            ${day === today ? "today" : ""}">
+
+                            <div>
+                                <h3>${day}</h3>
+                                ${day === today
+                                    ? `<span class="timetable-today-tag">
+                                        TODAY
+                                       </span>`
+                                    : ""}
+                            </div>
+
+                            <span>
+                                ${dayEntries.length}
+                                ${dayEntries.length === 1
+                                    ? "lesson"
+                                    : "lessons"}
+                            </span>
+
+                        </div>
+
+                        <div class="teacher-timetable-day-lessons">
+                `;
+
+                dayEntries.forEach(entry => {
+
+                    const subjectName =
+                        entry.subjects?.name || "Subject";
+
+                    const className =
+                        entry.class_name || "Class not specified";
+
+                    const room =
+                        entry.room || "Room not specified";
+
+                    const [accent, tint] =
+                        getSubjectColour(entry.subject_id);
+
+                    const startTime =
+                        formatTeacherTime(entry.start_time);
+
+                    const endTime =
+                        formatTeacherTime(entry.end_time);
+
+                    html += `
+                        <article class="teacher-timetable-entry
+                            ${day === today ? "today-lesson" : ""}"
+                            style="--lesson-accent:${accent};
+                                   --lesson-tint:${tint}">
+
+                            <div class="teacher-timetable-time">
+                                <strong>${escapeHTML(startTime)}</strong>
+                                <span>to</span>
+                                <strong>${escapeHTML(endTime)}</strong>
+                            </div>
+
+                            <div class="teacher-timetable-details">
+
+                                <span class="teacher-lesson-label">
+                                    ${escapeHTML(className)}
+                                </span>
+
+                                <h4>${escapeHTML(subjectName)}</h4>
+
+                                <p>
+                                    <span>📍</span>
+                                    ${escapeHTML(room)}
+                                </p>
+
+                            </div>
+
+                            <div class="teacher-lesson-accent"></div>
+
+                        </article>
+                    `;
+
+                });
+
+                html += `
+                        </div>
+                    </section>
+                `;
+
+            });
+
+            timetableContainer.innerHTML = html;
+        }
+
+        // SHOW ALL LESSONS INITIALLY
+        showTeacherTimetable(timetable);
+
+        if (timetableDescription) {
+            timetableDescription.textContent =
+                "View your weekly teaching schedule.";
+        }
+
+        // SUBJECT FILTER — ONE LISTENER ONLY
+        subjectSelect.addEventListener("change", function () {
+
+            const selectedSubject = this.value;
+
+            if (!selectedSubject) {
+
+                showTeacherTimetable(timetable);
+
+                if (timetableDescription) {
+                    timetableDescription.textContent =
+                        "View your weekly teaching schedule.";
+                }
+
+                return;
+            }
+
+            const filteredEntries = timetable.filter(entry =>
+                String(entry.subject_id) === String(selectedSubject)
+            );
+
+            showTeacherTimetable(filteredEntries);
+
+            const selectedSubjectData = subjects.find(subject =>
+                String(subject.id) === String(selectedSubject)
+            );
+
+            if (timetableDescription && selectedSubjectData) {
+                timetableDescription.textContent =
+                    `${selectedSubjectData.name} teaching schedule`;
+            }
+
+        });
+
+    } catch (error) {
+
+        console.error("Teacher timetable error:", error);
 
         timetableContainer.innerHTML = `
             <div class="teacher-timetable-empty">
-
-                <h3>No lessons found</h3>
-
-                <p>
-                    There are no timetable entries
-                    for this selection.
-                </p>
-
+                <h3>Unable to load timetable</h3>
+                <p>Please refresh the page and try again.</p>
             </div>
         `;
 
-        return;
-    }
-
-
-    const days = [
-        "Monday",
-        "Tuesday",
-        "Wednesday",
-        "Thursday",
-        "Friday"
-    ];
-
-
-    const today =
-        new Date().toLocaleDateString(
-            "en-US",
-            {
-                weekday: "long"
-            }
-        );
-
-
-    let html = "";
-
-
-    days.forEach(day => {
-
-        const dayEntries =
-            entries.filter(
-                entry =>
-                    entry.day_of_week === day
-            );
-
-
-        if (dayEntries.length === 0) {
-            return;
-        }
-
-
-        html += `
-
-            <div class="teacher-timetable-day">
-
-                <div class="
-                    teacher-timetable-day-header
-                    ${day === today ? "today" : ""}
-                ">
-
-                    <h3>
-                        ${day}
-                    </h3>
-
-                    <span>
-                        ${dayEntries.length}
-                        ${dayEntries.length === 1
-                            ? "lesson"
-                            : "lessons"}
-                    </span>
-
-                </div>
-        `;
-
-
-      dayEntries.forEach(entry => {
-
-    const subjectName =
-        entry.subjects?.name ||
-        "Subject";
-
-    const className =
-        entry.class_name ||
-        "Class not specified";
-
-    const room =
-        entry.room ||
-        "Room not specified";
-
-    const startTime =
-        formatTeacherTime(
-            entry.start_time
-        );
-
-    const endTime =
-        formatTeacherTime(
-            entry.end_time
-        );
-
-
-    html += `
-
-        <div class="
-            teacher-timetable-entry
-            ${day === today
-                ? "today-lesson"
-                : ""}
-        ">
-
-            <div class="teacher-timetable-time">
-
-                <strong>
-                    ${startTime}
-                </strong>
-
-                <span>
-                    ${endTime}
-                </span>
-
-            </div>
-
-
-            <div class="teacher-timetable-details">
-
-                <h4>
-                    ${subjectName}
-                </h4>
-
-                <p>
-                    <strong>Class:</strong>
-                    ${className}
-                </p>
-
-                <p>
-                    <strong>Room:</strong>
-                    ${room}
-                </p>
-
-            </div>
-
-        </div>
-
-    `;
-
-});
-
-
-html += `
-    </div>
-`;
-
-});
-
-
-timetableContainer.innerHTML =
-    html;
-
-}
-
-// ==========================================
-// FORMAT TEACHER TIME
-// ==========================================
-
-function formatTeacherTime(time) {
-
-    if (!time) {
-        return "";
-    }
-
-    const parts =
-        time.split(":");
-
-    let hours =
-        parseInt(parts[0], 10);
-
-    const minutes =
-        parts[1];
-
-    const period =
-        hours >= 12
-            ? "PM"
-            : "AM";
-
-    hours =
-        hours % 12 || 12;
-
-    return `${hours}:${minutes} ${period}`;
-
-}
-
-
-// ==========================================
-// SHOW INITIAL TIMETABLE
-// ==========================================
-
-showTeacherTimetable(
-    timetable
-);
-
-
-// ==========================================
-// SUBJECT CHANGE
-// ==========================================
-
-subjectSelect.addEventListener(
-    "change",
-    function () {
-
-        const selectedSubject =
-            this.value;
-
-
-        if (!selectedSubject) {
-
-            showTeacherTimetable(
-                timetable
-            );
-
-            if (timetableDescription) {
-
-                timetableDescription.textContent =
-                    "View your weekly teaching schedule.";
-
-            }
-
-            return;
-
-        }
-
-
-        const filteredEntries =
-            timetable.filter(
-                entry =>
-                    String(entry.subject_id) ===
-                    String(selectedSubject)
-            );
-
-
-        showTeacherTimetable(
-            filteredEntries
-        );
-
-
-        const selectedSubjectData =
-            subjects.find(
-                subject =>
-                    String(subject.id) ===
-                    String(selectedSubject)
-            );
-
-
-        if (
-            timetableDescription &&
-            selectedSubjectData
-        ) {
-
-            timetableDescription.textContent =
-                `${selectedSubjectData.name} teaching schedule`;
-
-        }
-
-    }
-);
-
-// ==========================================
-// SUBJECT CHANGE
-// ==========================================
-
-subjectSelect.addEventListener(
-    "change",
-    function () {
-
-        const selectedSubject =
-            this.value;
-
-
-        if (!selectedSubject) {
-
-            showTeacherTimetable(
-                timetable
-            );
-
-            if (timetableDescription) {
-
-                timetableDescription.textContent =
-                    "View your weekly teaching schedule.";
-
-            }
-
-            return;
-
-        }
-
-
-        const filteredEntries =
-            timetable.filter(
-                entry =>
-                    String(entry.subject_id) ===
-                    String(selectedSubject)
-            );
-
-
-        showTeacherTimetable(
-            filteredEntries
-        );
-
-
-        const selectedSubjectData =
-            subjects.find(
-                subject =>
-                    String(subject.id) ===
-                    String(selectedSubject)
-            );
-
-
-        if (
-            timetableDescription &&
-            selectedSubjectData
-        ) {
-
-            timetableDescription.textContent =
-                `${selectedSubjectData.name} teaching schedule`;
-
-        }
-
-    }
-);
-    }
-
-    catch (error) {
-
-        console.error(
-            "Teacher timetable error:",
-            error
-        );
-
     }
 
 }
+
 // ==========================================
 // TEACHER TIMETABLE PAGE
 // ==========================================
