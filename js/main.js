@@ -17100,9 +17100,10 @@ if (window.location.pathname.includes("admin-timetable.html")) {
 }
 
 
+
 /* ==========================================
-   THREE RIVERS — PARENT PORTAL
-   PHASE 1: PARENT AND CHILD CONNECTION
+   THREE RIVERS ACADEMY
+   PARENT PORTAL - COMPLETE DASHBOARD
 ========================================== */
 
 let parentLinkedChildren = [];
@@ -17110,66 +17111,87 @@ let selectedParentChild = null;
 
 async function initialiseParentDashboard() {
 
-    const childSelect =
-        document.getElementById("parentChildSelect");
+    const getElement = id => document.getElementById(id);
 
-    const studentName =
-        document.getElementById("parentStudentName");
+    const setText = (id, value) => {
+        const element = getElement(id);
+        if (element) element.textContent = value;
+    };
 
-    const studentClass =
-        document.getElementById("parentStudentClass");
+    const formatDate = date => {
+        if (!date) return "Date unavailable";
 
-    const admission =
-        document.getElementById("parentAdmission");
+        const value = String(date);
+        const parsed = new Date(
+            value.length === 10 ? value + "T00:00:00" : value
+        );
 
-    const relationship =
-        document.getElementById("parentRelationship");
+        return parsed.toLocaleDateString("en-GB", {
+            day: "numeric",
+            month: "short",
+            year: "numeric"
+        });
+    };
 
-    const parentName =
-        document.getElementById("parentName");
+    function showList(containerId, items, emptyMessage, renderItem) {
 
-    const welcomeName =
-        document.getElementById("parentWelcomeName");
+        const container = getElement(containerId);
+        if (!container) return;
 
-    const parentInitial =
-        document.getElementById("parentInitial");
+        container.innerHTML = "";
 
-    const studentInitial =
-        document.getElementById("parentStudentInitial");
+        if (!items || items.length === 0) {
+            const message = document.createElement("p");
+            message.className = "parent-loading";
+            message.textContent = emptyMessage;
+            container.appendChild(message);
+            return;
+        }
 
-    const dateElement =
-        document.getElementById("parentTodayDate");
+        items.forEach(item => {
+            const element = document.createElement("div");
+            element.className = "parent-data-item";
 
-    const logoutButton =
-        document.getElementById("parentLogout");
+            renderItem(element, item);
 
-    function showParentMessage(message) {
-        childSelect.innerHTML =
-            `<option value="">${message}</option>`;
+            container.appendChild(element);
+        });
+    }
 
-        studentName.textContent = message;
-        studentClass.textContent = "";
-        admission.textContent = "—";
-        relationship.textContent = "—";
+    function addText(parent, tag, text, className = "") {
+        const element = document.createElement(tag);
+        element.textContent = text || "";
+
+        if (className) {
+            element.className = className;
+        }
+
+        parent.appendChild(element);
+        return element;
+    }
+
+    function showError(containerId, message) {
+        const container = getElement(containerId);
+        if (!container) return;
+
+        container.textContent = message;
     }
 
     try {
 
-        // 1. GET LOGGED-IN PARENT
+        // ======================================
+        // 1. VERIFY PARENT LOGIN
+        // ======================================
 
         const {
             data: { user },
             error: authError
         } = await supabaseClient.auth.getUser();
 
-        if (authError) throw authError;
-
-        if (!user) {
+        if (authError || !user) {
             window.location.href = "login.html";
             return;
         }
-
-        // 2. GET PARENT PROFILE
 
         const {
             data: profile,
@@ -17180,32 +17202,37 @@ async function initialiseParentDashboard() {
             .eq("id", user.id)
             .single();
 
-        if (profileError) throw profileError;
-
-        if (profile.role !== "parent") {
+        if (profileError || !profile || profile.role !== "parent") {
+            console.error("Parent verification error:", profileError);
+            alert("This account is not authorised to access the Parent Portal.");
+            await supabaseClient.auth.signOut();
             window.location.href = "login.html";
             return;
         }
 
-        const name = profile.full_name || "Parent";
+        // ======================================
+        // 2. PARENT INFORMATION
+        // ======================================
 
-        parentName.textContent = name;
-        welcomeName.textContent = name;
+        const parentName = profile.full_name || "Parent";
 
-        parentInitial.textContent =
-            name.charAt(0).toUpperCase();
+        setText("parentName", parentName);
+        setText("parentWelcomeName", parentName);
+        setText("parentInitial", parentName.charAt(0).toUpperCase());
 
-        // 3. DISPLAY TODAY'S DATE
-
-        dateElement.textContent =
+        setText(
+            "parentTodayDate",
             new Date().toLocaleDateString("en-KE", {
                 weekday: "long",
                 day: "numeric",
                 month: "long",
                 year: "numeric"
-            });
+            })
+        );
 
-        // 4. GET PARENT'S LINKED CHILDREN
+        // ======================================
+        // 3. GET LINKED CHILDREN
+        // ======================================
 
         const {
             data: links,
@@ -17217,158 +17244,615 @@ async function initialiseParentDashboard() {
 
         if (linksError) throw linksError;
 
+        const childSelect = getElement("parentChildSelect");
+
         if (!links || links.length === 0) {
 
             parentLinkedChildren = [];
 
-            showParentMessage(
-                "No children linked to this account"
-            );
+            if (childSelect) {
+                childSelect.innerHTML =
+                    '<option value="">No children linked yet</option>';
+            }
 
-            document.getElementById(
-                "parentAcademicAverage"
-            ).textContent = "—";
+            setText("parentStudentName", "No linked students");
+            setText("parentAcademicAverage", "—");
+            setText("parentAttendance", "—");
+            setText("parentUpcomingAssignments", "—");
+            setText("parentConduct", "—");
 
-            document.getElementById(
-                "parentAttendance"
-            ).textContent = "—";
-
-            document.getElementById(
-                "parentUpcomingAssignments"
-            ).textContent = "—";
-
-            document.getElementById(
-                "parentConduct"
-            ).textContent = "—";
+            showError("parentAcademicContent", "No linked student available.");
+            showError("parentAttendanceContent", "No linked student available.");
+            showError("parentAssignmentsList", "No linked student available.");
+            showError("parentAnnouncementsList", "No linked student available.");
 
             return;
         }
 
-        // 5. GET THE ACTUAL STUDENT RECORDS
-
-        const studentIds = links.map(link =>
-            link.student_id
-        );
+        const studentIds = links.map(link => link.student_id);
 
         const {
             data: students,
             error: studentsError
         } = await supabaseClient
             .from("students")
-            .select(`
-                id,
-                full_name,
-                admission_number,
-                class_name
-            `)
-            .in("id", studentIds);
+            .select("id, full_name, admission_number, class_name")
+            .in("id", studentIds)
+            .order("full_name");
 
         if (studentsError) throw studentsError;
 
         if (!students || students.length === 0) {
-            showParentMessage(
-                "Linked student records could not be found"
-            );
-            return;
+            throw new Error("No linked student records were found.");
         }
-
-        // 6. COMBINE STUDENT AND RELATIONSHIP DETAILS
 
         parentLinkedChildren = students.map(student => {
 
-            const link = links.find(item =>
-                item.student_id === student.id
+            const link = links.find(
+                item => item.student_id === student.id
             );
 
             return {
                 ...student,
                 relationship: link?.relationship || "Parent"
             };
-
         });
 
-        // 7. FILL CHILD SELECTOR
+        // ======================================
+        // 4. POPULATE CHILD SELECTOR
+        // ======================================
 
-        childSelect.innerHTML = "";
+        if (childSelect) {
 
-        parentLinkedChildren.forEach(student => {
+            childSelect.innerHTML = "";
 
-            const option = document.createElement("option");
+            parentLinkedChildren.forEach(student => {
 
-            option.value = student.id;
-            option.textContent =
-                `${student.full_name} — ${student.class_name || "Class not set"}`;
+                const option = document.createElement("option");
 
-            childSelect.appendChild(option);
+                option.value = student.id;
+                option.textContent =
+                    `${student.full_name} (${student.admission_number})`;
 
-        });
+                childSelect.appendChild(option);
+            });
+        }
 
-        // 8. DISPLAY SELECTED CHILD
+        // ======================================
+        // 5. LOAD DATA FOR SELECTED CHILD
+        // ======================================
 
-        function displayParentChild(studentId) {
+        async function loadSelectedChild(studentId) {
 
-            const student = parentLinkedChildren.find(item =>
-                item.id === studentId
+            const student = parentLinkedChildren.find(
+                item => item.id === studentId
             );
 
             if (!student) return;
 
             selectedParentChild = student;
 
-            studentName.textContent =
-                student.full_name || "Student";
+            setText("parentStudentName", student.full_name);
+            setText(
+                "parentStudentInitial",
+                (student.full_name || "S").charAt(0).toUpperCase()
+            );
+            setText(
+                "parentStudentClass",
+                student.class_name || "Class not assigned"
+            );
+            setText(
+                "parentAdmission",
+                student.admission_number || "—"
+            );
+            setText(
+                "parentRelationship",
+                student.relationship
+            );
 
-            studentClass.textContent =
-                student.class_name || "Class not assigned";
+            setText("parentAcademicAverage", "Loading...");
+            setText("parentAttendance", "Loading...");
+            setText("parentUpcomingAssignments", "Loading...");
+            setText("parentConduct", "Loading...");
 
-            admission.textContent =
-                student.admission_number || "Not assigned";
+            // ==================================
+            // A. GRADES
+            // ==================================
 
-            relationship.textContent =
-                student.relationship;
+            const {
+                data: grades,
+                error: gradesError
+            } = await supabaseClient
+                .from("grades")
+                .select(`
+                    id,
+                    assessment,
+                    score,
+                    max_score,
+                    comments,
+                    created_at,
+                    subjects (
+                        name,
+                        code
+                    )
+                `)
+                .eq("student_id", student.id)
+                .order("created_at", { ascending: false });
 
-            studentInitial.textContent =
-                (student.full_name || "S")
-                    .charAt(0)
-                    .toUpperCase();
+            if (gradesError) {
+
+                console.error("Parent grades error:", gradesError);
+
+                setText("parentAcademicAverage", "Unavailable");
+                showError(
+                    "parentAcademicContent",
+                    "Unable to load academic records."
+                );
+
+            } else {
+
+                const gradeList = grades || [];
+
+                let totalScore = 0;
+                let totalMaximum = 0;
+
+                gradeList.forEach(grade => {
+
+                    const score = Number(grade.score);
+                    const maximum = Number(grade.max_score);
+
+                    if (
+                        Number.isFinite(score) &&
+                        Number.isFinite(maximum) &&
+                        maximum > 0
+                    ) {
+                        totalScore += score;
+                        totalMaximum += maximum;
+                    }
+                });
+
+                const average = totalMaximum > 0
+                    ? (totalScore / totalMaximum) * 100
+                    : null;
+
+                setText(
+                    "parentAcademicAverage",
+                    average === null
+                        ? "No grades"
+                        : Math.round(average) + "%"
+                );
+
+                showList(
+                    "parentAcademicContent",
+                    gradeList.slice(0, 8),
+                    "No academic records have been published yet.",
+                    (element, grade) => {
+
+                        const subject = Array.isArray(grade.subjects)
+                            ? grade.subjects[0]
+                            : grade.subjects;
+
+                        addText(
+                            element,
+                            "strong",
+                            subject?.name || "Subject"
+                        );
+
+                        addText(
+                            element,
+                            "span",
+                            grade.assessment || "Assessment"
+                        );
+
+                        const score = Number(grade.score) || 0;
+                        const maximum = Number(grade.max_score) || 0;
+
+                        addText(
+                            element,
+                            "strong",
+                            maximum > 0
+                                ? `${score} / ${maximum} (${Math.round(score / maximum * 100)}%)`
+                                : `${score}`
+                        );
+
+                        if (grade.comments) {
+                            addText(
+                                element,
+                                "small",
+                                grade.comments
+                            );
+                        }
+
+                        addText(
+                            element,
+                            "small",
+                            formatDate(grade.created_at)
+                        );
+                    }
+                );
+            }
+
+            // ==================================
+            // B. ATTENDANCE
+            // ==================================
+
+            const {
+                data: attendance,
+                error: attendanceError
+            } = await supabaseClient
+                .from("attendance")
+                .select("id, date, status")
+                .eq("student_id", student.id)
+                .order("date", { ascending: false });
+
+            if (attendanceError) {
+
+                console.error(
+                    "Parent attendance error:",
+                    attendanceError
+                );
+
+                setText("parentAttendance", "Unavailable");
+
+                showError(
+                    "parentAttendanceContent",
+                    "Unable to load attendance records."
+                );
+
+            } else {
+
+                const attendanceList = attendance || [];
+
+                const total = attendanceList.length;
+
+                const present = attendanceList.filter(record =>
+                    String(record.status).toLowerCase() === "present"
+                ).length;
+
+                const late = attendanceList.filter(record =>
+                    String(record.status).toLowerCase() === "late"
+                ).length;
+
+                const absent = attendanceList.filter(record =>
+                    String(record.status).toLowerCase() === "absent"
+                ).length;
+
+                const percentage = total > 0
+                    ? Math.round(((present + late) / total) * 100)
+                    : null;
+
+                setText(
+                    "parentAttendance",
+                    percentage === null
+                        ? "No records"
+                        : percentage + "%"
+                );
+
+                const summary = document.createElement("div");
+                summary.className = "parent-attendance-summary";
+
+                addText(summary, "strong", `Attendance: ${percentage === null ? "No records" : percentage + "%"}`);
+                addText(summary, "p", `${present} Present · ${late} Late · ${absent} Absent`);
+
+                const attendanceContainer =
+                    getElement("parentAttendanceContent");
+
+                if (attendanceContainer) {
+                    attendanceContainer.innerHTML = "";
+                    attendanceContainer.appendChild(summary);
+                }
+
+                showList(
+                    "parentAttendanceContent",
+                    attendanceList.slice(0, 6),
+                    "No attendance records available.",
+                    (element, record) => {
+
+                        addText(
+                            element,
+                            "strong",
+                            formatDate(record.date)
+                        );
+
+                        addText(
+                            element,
+                            "span",
+                            String(record.status || "Unknown").toUpperCase()
+                        );
+                    }
+                );
+
+                // Reinsert summary after rendering recent records.
+                if (attendanceContainer && total > 0) {
+                    attendanceContainer.prepend(summary);
+                }
+            }
+
+            // ==================================
+            // C. UPCOMING ASSIGNMENTS
+            // ==================================
+
+            const now = new Date();
+            const today = [
+                now.getFullYear(),
+                String(now.getMonth() + 1).padStart(2, "0"),
+                String(now.getDate()).padStart(2, "0")
+            ].join("-");
+
+            const {
+                data: assignments,
+                error: assignmentsError
+            } = await supabaseClient
+                .from("assignments")
+                .select(`
+                    id,
+                    title,
+                    description,
+                    due_date,
+                    subjects (
+                        name,
+                        code
+                    )
+                `)
+                .eq("class_name", student.class_name)
+                .gte("due_date", today)
+                .order("due_date", { ascending: true });
+
+            if (assignmentsError) {
+
+                console.error(
+                    "Parent assignments error:",
+                    assignmentsError
+                );
+
+                setText("parentUpcomingAssignments", "Unavailable");
+
+                showError(
+                    "parentAssignmentsList",
+                    "Unable to load assignments."
+                );
+
+            } else {
+
+                const assignmentList = assignments || [];
+
+                setText(
+                    "parentUpcomingAssignments",
+                    String(assignmentList.length)
+                );
+
+                showList(
+                    "parentAssignmentsList",
+                    assignmentList,
+                    "No upcoming assignments.",
+                    (element, assignment) => {
+
+                        const subject = Array.isArray(assignment.subjects)
+                            ? assignment.subjects[0]
+                            : assignment.subjects;
+
+                        addText(
+                            element,
+                            "strong",
+                            assignment.title || "Assignment"
+                        );
+
+                        addText(
+                            element,
+                            "span",
+                            subject?.name || "Subject"
+                        );
+
+                        if (assignment.description) {
+                            addText(
+                                element,
+                                "small",
+                                assignment.description
+                            );
+                        }
+
+                        addText(
+                            element,
+                            "small",
+                            "Due: " + formatDate(assignment.due_date)
+                        );
+                    }
+                );
+            }
+
+            // ==================================
+            // D. CONDUCT RECORDS
+            // ==================================
+
+            const {
+                data: conduct,
+                error: conductError
+            } = await supabaseClient
+                .from("conduct_records")
+                .select("id, type, title, description, points, created_at")
+                .eq("student_id", student.id)
+                .order("created_at", { ascending: false });
+
+            if (conductError) {
+
+                console.error(
+                    "Parent conduct error:",
+                    conductError
+                );
+
+                setText("parentConduct", "Unavailable");
+
+                showError(
+                    "parentAchievementsContent",
+                    "Unable to load conduct records."
+                );
+
+            } else {
+
+                const conductList = conduct || [];
+
+                setText(
+                    "parentConduct",
+                    String(conductList.length)
+                );
+
+                showList(
+                    "parentAchievementsContent",
+                    conductList.slice(0, 8),
+                    "No achievements or conduct records have been added yet.",
+                    (element, record) => {
+
+                        addText(
+                            element,
+                            "strong",
+                            record.title || record.type || "Conduct record"
+                        );
+
+                        addText(
+                            element,
+                            "span",
+                            record.type || "Record"
+                        );
+
+                        if (record.description) {
+                            addText(
+                                element,
+                                "p",
+                                record.description
+                            );
+                        }
+
+                        if (record.points !== null && record.points !== undefined) {
+                            addText(
+                                element,
+                                "strong",
+                                `${record.points > 0 ? "+" : ""}${record.points} points`
+                            );
+                        }
+
+                        addText(
+                            element,
+                            "small",
+                            formatDate(record.created_at)
+                        );
+                    }
+                );
+            }
+
+            // ==================================
+            // E. PARENT ANNOUNCEMENTS
+            // ==================================
+
+            const {
+                data: announcements,
+                error: announcementsError
+            } = await supabaseClient
+                .from("announcements")
+                .select("id, title, message, target_role, target_class, created_at")
+                .in("target_role", ["parent", "all"])
+                .in("target_class", ["all", student.class_name])
+                .order("created_at", { ascending: false })
+                .limit(10);
+
+            if (announcementsError) {
+
+                console.error(
+                    "Parent announcements error:",
+                    announcementsError
+                );
+
+                showError(
+                    "parentAnnouncementsList",
+                    "Unable to load announcements."
+                );
+
+                setText("parentNotificationCount", "0");
+
+            } else {
+
+                const announcementList = announcements || [];
+
+                setText(
+                    "parentNotificationCount",
+                    String(announcementList.length)
+                );
+
+                showList(
+                    "parentAnnouncementsList",
+                    announcementList,
+                    "No announcements for this child at the moment.",
+                    (element, announcement) => {
+
+                        addText(
+                            element,
+                            "strong",
+                            announcement.title || "School announcement"
+                        );
+
+                        addText(
+                            element,
+                            "p",
+                            announcement.message || ""
+                        );
+
+                        addText(
+                            element,
+                            "small",
+                            formatDate(announcement.created_at)
+                        );
+                    }
+                );
+            }
 
         }
 
-        // SELECT FIRST CHILD BY DEFAULT
+        // ======================================
+        // 6. SELECT FIRST CHILD
+        // ======================================
 
-        childSelect.value = parentLinkedChildren[0].id;
+        if (childSelect) {
 
-        displayParentChild(parentLinkedChildren[0].id);
+            childSelect.value = parentLinkedChildren[0].id;
 
-        // 9. CHILD SWITCHER
+            await loadSelectedChild(childSelect.value);
 
-        childSelect.addEventListener("change", function () {
+            // ==================================
+            // 7. SWITCH BETWEEN CHILDREN
+            // ==================================
 
-            displayParentChild(this.value);
+            childSelect.addEventListener("change", async () => {
+                await loadSelectedChild(childSelect.value);
+            });
 
-        });
+        }
 
-        // 10. LOGOUT
+        // ======================================
+        // 8. LOGOUT
+        // ======================================
 
-        logoutButton.addEventListener("click", async function(event) {
+        const logoutButton = getElement("parentLogout");
 
-            event.preventDefault();
+        if (logoutButton && !logoutButton.dataset.initialized) {
 
-            const {
-                error: logoutError
-            } = await supabaseClient.auth.signOut();
+            logoutButton.dataset.initialized = "true";
 
-            if (logoutError) {
-                alert("Unable to log out. Please try again.");
-                return;
-            }
+            logoutButton.addEventListener("click", async event => {
 
-            window.location.href = "login.html";
+                event.preventDefault();
 
-        });
+                const { error } = await supabaseClient.auth.signOut();
+
+                if (error) {
+                    alert("Unable to log out. Please try again.");
+                    return;
+                }
+
+                window.location.href = "login.html";
+            });
+        }
 
         console.log(
-            "Parent Portal connected successfully.",
+            "Parent Portal successfully loaded.",
             parentLinkedChildren
         );
 
@@ -17376,233 +17860,24 @@ async function initialiseParentDashboard() {
 
         console.error("Parent Portal error:", error);
 
-        showParentMessage(
-            "Unable to load your family information"
+        setText("parentStudentName", "Unable to load family information");
+
+        showError(
+            "parentAcademicContent",
+            error.message || "An error occurred while loading the Parent Portal."
         );
-
     }
-
 }
 
 
+// ==========================================
 // START PARENT PORTAL
-
-if (
-    window.location.pathname.includes("parent-dashboard.html")
-) {
-    initialiseParentDashboard();
-}
-
-
-// ==========================================
-// PARENT PORTAL - DASHBOARD FOUNDATION
 // ==========================================
 
-async function loadParentDashboard() {
-    console.log("Loading Parent Portal...");
-
-    const setText = (id, value) => {
-        const element = document.getElementById(id);
-        if (element) element.textContent = value;
-    };
-
-    const {
-        data: { user },
-        error: userError
-    } = await supabaseClient.auth.getUser();
-
-    if (userError || !user) {
-        window.location.href = "login.html";
-        return;
-    }
-
-    // Verify that this account is a parent.
-    const { data: profile, error: profileError } =
-        await supabaseClient
-            .from("profiles")
-            .select("id, full_name, email, role")
-            .eq("id", user.id)
-            .single();
-
-    if (profileError || !profile || profile.role !== "parent") {
-        console.error("Parent profile verification failed:", profileError);
-        alert("This account is not authorised to access the Parent Portal.");
-        await supabaseClient.auth.signOut();
-        window.location.href = "login.html";
-        return;
-    }
-
-    // Parent identity.
-    const parentName = profile.full_name || "Parent";
-
-    setText("parentName", parentName);
-    setText("parentWelcomeName", parentName);
-    setText(
-        "parentInitial",
-        parentName.charAt(0).toUpperCase()
-    );
-
-    setText(
-        "parentTodayDate",
-        new Date().toLocaleDateString("en-GB", {
-            weekday: "long",
-            day: "numeric",
-            month: "long",
-            year: "numeric"
-        })
-    );
-
-    setText("parentNotificationCount", "0");
-
-    // Load only this parent's child links.
-    const {
-        data: links,
-        error: linksError
-    } = await supabaseClient
-        .from("parent_students")
-        .select("student_id, relationship")
-        .eq("parent_id", user.id);
-
-    const childSelect =
-        document.getElementById("parentChildSelect");
-
-    if (linksError) {
-        console.error("Parent-child links error:", linksError);
-        setText("parentStudentName", "Unable to load children");
-        if (childSelect) {
-            childSelect.innerHTML =
-                '<option value="">Unable to load children</option>';
-        }
-        return;
-    }
-
-    if (!links || links.length === 0) {
-        if (childSelect) {
-            childSelect.innerHTML =
-                '<option value="">No children linked yet</option>';
-        }
-
-        setText("parentStudentName", "No linked students");
-        setText(
-            "parentAcademicAverage",
-            "—"
-        );
-        setText("parentAttendance", "—");
-        setText("parentUpcomingAssignments", "—");
-        setText("parentConduct", "—");
-
-        return;
-    }
-
-    const studentIds = links.map(link => link.student_id);
-
-    // Retrieve only students connected to this parent.
-    const {
-        data: students,
-        error: studentsError
-    } = await supabaseClient
-        .from("students")
-        .select("id, full_name, admission_number, class_name")
-        .in("id", studentIds)
-        .order("full_name");
-
-    if (studentsError) {
-        console.error("Linked students error:", studentsError);
-        setText("parentStudentName", "Unable to load student details");
-        return;
-    }
-
-    if (!students || students.length === 0) {
-        setText("parentStudentName", "No student records available");
-        return;
-    }
-
-    const relationshipByStudent = {};
-    links.forEach(link => {
-        relationshipByStudent[link.student_id] =
-            link.relationship || "Parent";
-    });
-
-    // Populate the child selector.
-    if (childSelect) {
-        childSelect.innerHTML = "";
-
-        students.forEach(student => {
-            const option = document.createElement("option");
-            option.value = student.id;
-            option.textContent =
-                `${student.full_name} (${student.admission_number})`;
-            childSelect.appendChild(option);
-        });
-    }
-
-    // Display the selected child.
-    function displaySelectedChild(studentId) {
-        const student = students.find(
-            item => item.id === studentId
-        );
-
-        if (!student) return;
-
-        setText("parentStudentName", student.full_name);
-        setText(
-            "parentStudentInitial",
-            student.full_name
-                ? student.full_name.charAt(0).toUpperCase()
-                : "S"
-        );
-        setText(
-            "parentStudentClass",
-            student.class_name || "Class not assigned"
-        );
-        setText(
-            "parentAdmission",
-            student.admission_number || "—"
-        );
-        setText(
-            "parentRelationship",
-            relationshipByStudent[student.id] || "Parent"
-        );
-
-        // Academic data will be connected in the next stage.
-        setText("parentAcademicAverage", "Loading...");
-        setText("parentAttendance", "Loading...");
-        setText("parentUpcomingAssignments", "Loading...");
-        setText("parentConduct", "Loading...");
-    }
-
-    if (childSelect) {
-        childSelect.addEventListener("change", () => {
-            displaySelectedChild(childSelect.value);
-        });
-
-        childSelect.value = students[0].id;
-    }
-
-    displaySelectedChild(students[0].id);
-
-    console.log(
-        `Parent Portal loaded. ${students.length} linked student(s) found.`
-    );
-}
-
-// Initialise only on the Parent Dashboard.
 if (
     window.location.pathname
         .toLowerCase()
-        .endsWith("/parent-dashboard.html")
+        .includes("parent-dashboard.html")
 ) {
-    loadParentDashboard();
-}
-
-// Parent logout.
-const parentLogoutButton =
-    document.getElementById("parentLogout");
-
-if (parentLogoutButton) {
-    parentLogoutButton.addEventListener("click", async event => {
-        event.preventDefault();
-        await supabaseClient.auth.signOut();
-        window.location.href = "login.html";
-    });
+    initialiseParentDashboard();
 }
