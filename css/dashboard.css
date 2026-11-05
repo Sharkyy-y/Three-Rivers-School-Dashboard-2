@@ -8914,3 +8914,184 @@ body:has(.attendance-overview) .admin-avatar {
         grid-template-columns: 1fr;
     }
 }
+
+
+/* =========================================
+   TEACHER TIMETABLE — COLOURFUL DESIGN
+========================================= */
+
+.teacher-timetable-day {
+    margin-bottom: 28px;
+}
+
+.teacher-timetable-day-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 15px;
+    padding: 14px 18px;
+    background: #f8fafc;
+    border-radius: 12px;
+    border-left: 4px solid #64748b;
+}
+
+.teacher-timetable-day-header.today {
+    background: #ecfdf5;
+    border-left-color: #059669;
+}
+
+.teacher-timetable-day-header h3 {
+    margin: 0;
+    font-size: 17px;
+    color: #1e293b;
+}
+
+.teacher-timetable-day-header > span {
+    color: #64748b;
+    font-size: 13px;
+    font-weight: 600;
+}
+
+.timetable-today-tag {
+    display: inline-block;
+    margin-top: 5px;
+    padding: 3px 8px;
+    background: #059669;
+    color: white;
+    font-size: 10px;
+    font-weight: 800;
+    border-radius: 20px;
+    letter-spacing: 0.5px;
+}
+
+.teacher-timetable-day-lessons {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 15px;
+}
+
+.teacher-timetable-entry {
+    position: relative;
+    display: flex;
+    align-items: stretch;
+    gap: 15px;
+    min-height: 115px;
+    padding: 17px;
+    overflow: hidden;
+    background: var(--lesson-tint, #eff6ff);
+    border: 1px solid #e2e8f0;
+    border-radius: 15px;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.teacher-timetable-entry:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 20px rgba(15, 23, 42, 0.09);
+}
+
+.teacher-timetable-entry.today-lesson {
+    border-color: var(--lesson-accent);
+    box-shadow: 0 0 0 1px var(--lesson-accent);
+}
+
+.teacher-timetable-time {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    min-width: 76px;
+    padding: 10px 8px;
+    background: white;
+    border-radius: 10px;
+    color: var(--lesson-accent);
+    text-align: center;
+}
+
+.teacher-timetable-time strong {
+    font-size: 13px;
+    font-weight: 800;
+    white-space: nowrap;
+}
+
+.teacher-timetable-time span {
+    margin: 3px 0;
+    color: #94a3b8;
+    font-size: 10px;
+}
+
+.teacher-timetable-details {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.teacher-lesson-label {
+    align-self: flex-start;
+    margin-bottom: 7px;
+    padding: 4px 9px;
+    background: white;
+    color: var(--lesson-accent);
+    border-radius: 20px;
+    font-size: 11px;
+    font-weight: 800;
+}
+
+.teacher-timetable-details h4 {
+    margin: 0 0 8px;
+    color: #172033;
+    font-size: 16px;
+    font-weight: 800;
+    overflow-wrap: anywhere;
+}
+
+.teacher-timetable-details p {
+    margin: 0;
+    color: #64748b;
+    font-size: 12px;
+}
+
+.teacher-lesson-accent {
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 5px;
+    height: 100%;
+    background: var(--lesson-accent);
+}
+
+.teacher-timetable-empty {
+    padding: 45px 20px;
+    background: #f8fafc;
+    border: 1px dashed #cbd5e1;
+    border-radius: 15px;
+    text-align: center;
+}
+
+.teacher-timetable-empty h3 {
+    margin: 0 0 8px;
+    color: #334155;
+}
+
+.teacher-timetable-empty p {
+    margin: 0;
+    color: #64748b;
+    font-size: 14px;
+}
+
+@media (max-width: 600px) {
+    .teacher-timetable-day-lessons {
+        grid-template-columns: 1fr;
+    }
+
+    .teacher-timetable-entry {
+        gap: 10px;
+        padding: 13px;
+    }
+
+    .teacher-timetable-time {
+        min-width: 68px;
+    }
+}
