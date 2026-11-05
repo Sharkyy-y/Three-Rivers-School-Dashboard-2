@@ -9679,3 +9679,462 @@ body:has(.attendance-overview) .admin-avatar {
         flex-direction: column;
     }
 }
+
+
+/* ==========================================
+   PARENT PORTAL - SECTION NAVIGATION
+========================================== */
+
+.parent-portal .parent-view {
+    display: none;
+    animation: parentFadeIn 0.25s ease;
+}
+
+.parent-portal .parent-view.active {
+    display: block;
+}
+
+@keyframes parentFadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(8px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.parent-portal .parent-sidebar .nav-item {
+    cursor: pointer;
+    transition: background 0.2s ease, transform 0.2s ease;
+}
+
+.parent-portal .parent-sidebar .nav-item:hover {
+    transform: translateX(3px);
+}
+
+.parent-portal .parent-sidebar .nav-item.active {
+    background: #198754;
+    color: #ffffff;
+}
+
+/* ==========================================
+   PARENT PORTAL - MAIN LAYOUT
+========================================== */
+
+.parent-portal .parent-main-content {
+    min-width: 0;
+    padding: 30px;
+}
+
+.parent-portal .parent-page-heading {
+    margin-bottom: 25px;
+}
+
+.parent-portal .parent-page-heading h2 {
+    color: #123b30;
+    font-size: 27px;
+    margin: 8px 0;
+}
+
+.parent-portal .parent-page-heading p {
+    color: #82918b;
+    font-size: 14px;
+}
+
+.parent-portal .parent-section-label {
+    color: #ad8434;
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: 1.6px;
+}
+
+/* ==========================================
+   PARENT PORTAL - PANELS
+========================================== */
+
+.parent-portal .parent-panel {
+    background: #ffffff;
+    border: 1px solid #e4ebe6;
+    border-radius: 18px;
+    padding: 27px;
+    margin-bottom: 24px;
+    box-shadow: 0 5px 20px rgba(18, 59, 48, 0.035);
+}
+
+.parent-portal .parent-panel-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 15px;
+    margin-bottom: 24px;
+}
+
+.parent-portal .parent-panel-header h3 {
+    color: #123b30;
+    font-size: 19px;
+    margin: 5px 0;
+}
+
+.parent-portal .parent-panel-header p {
+    color: #82918b;
+    font-size: 13px;
+    margin: 5px 0 0;
+}
+
+.parent-portal .parent-panel-symbol {
+    width: 46px;
+    height: 46px;
+    flex-shrink: 0;
+    display: grid;
+    place-items: center;
+    border-radius: 14px;
+    background: #f6f1e5;
+    color: #ad8434;
+    font-size: 22px;
+}
+
+/* ==========================================
+   PARENT PORTAL - DATA CARDS
+========================================== */
+
+.parent-portal .parent-data-item {
+    display: flex;
+    flex-direction: column;
+    gap: 9px;
+    background: #fbfcfb;
+    border: 1px solid #e8eee9;
+    border-left: 4px solid #198754;
+    border-radius: 13px;
+    padding: 18px 20px;
+    margin-bottom: 13px;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.parent-portal .parent-data-item:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 7px 18px rgba(18, 59, 48, 0.07);
+}
+
+.parent-portal .parent-data-item strong {
+    color: #173d32;
+    font-size: 15px;
+    line-height: 1.5;
+}
+
+.parent-portal .parent-data-item span {
+    display: inline-flex;
+    align-self: flex-start;
+    background: #edf5ef;
+    color: #26734e;
+    border-radius: 20px;
+    padding: 5px 11px;
+    font-size: 11px;
+    font-weight: 700;
+}
+
+.parent-portal .parent-data-item p {
+    color: #65766e;
+    font-size: 13px;
+    line-height: 1.7;
+    margin: 0;
+}
+
+.parent-portal .parent-data-item small {
+    color: #87948e;
+    font-size: 12px;
+    line-height: 1.5;
+}
+
+/* Academic result cards */
+.parent-portal #parentAcademicContent .parent-data-item {
+    border-left-color: #c19a4b;
+}
+
+.parent-portal #parentAcademicContent .parent-data-item strong:nth-of-type(2) {
+    color: #ad8434;
+    font-size: 19px;
+}
+
+/* Attendance */
+.parent-portal .parent-attendance-summary {
+    background: #edf6f0;
+    border: 1px solid #dcece0;
+    border-radius: 14px;
+    padding: 19px;
+    margin-bottom: 20px;
+}
+
+.parent-portal .parent-attendance-summary strong {
+    color: #176b45;
+    font-size: 23px;
+}
+
+.parent-portal .parent-attendance-summary p {
+    color: #65766e;
+    margin: 8px 0 0;
+    font-size: 13px;
+}
+
+/* Empty and loading messages */
+.parent-portal .parent-loading {
+    color: #89968f;
+    background: #f8faf8;
+    border-radius: 12px;
+    padding: 25px;
+    text-align: center;
+    font-size: 14px;
+}
+
+/* ==========================================
+   PARENT PORTAL - OVERVIEW
+========================================== */
+
+.parent-portal .parent-welcome {
+    background: linear-gradient(120deg, #123b30, #1c6549);
+    color: #ffffff;
+    border-radius: 20px;
+    padding: 30px;
+    margin-bottom: 25px;
+}
+
+.parent-portal .parent-welcome h2 {
+    color: #ffffff;
+    font-size: 25px;
+    margin: 10px 0;
+}
+
+.parent-portal .parent-welcome p {
+    color: rgba(255, 255, 255, 0.8);
+}
+
+.parent-portal .parent-eyebrow {
+    color: #e0c27c !important;
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: 1.5px;
+}
+
+.parent-portal .parent-stats-grid {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 17px;
+    margin: 25px 0;
+}
+
+.parent-portal .parent-stat-card {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    background: #ffffff;
+    border: 1px solid #e5ece7;
+    border-radius: 16px;
+    padding: 20px;
+}
+
+.parent-portal .parent-stat-card span,
+.parent-portal .parent-stat-card small {
+    display: block;
+    color: #82918b;
+    font-size: 12px;
+}
+
+.parent-portal .parent-stat-card strong {
+    display: block;
+    color: #123b30;
+    font-size: 23px;
+    margin: 7px 0;
+}
+
+.parent-portal .parent-stat-icon {
+    width: 43px;
+    height: 43px;
+    flex-shrink: 0;
+    display: grid;
+    place-items: center;
+    border-radius: 13px;
+    background: #f6f1e5;
+    color: #ad8434;
+    font-weight: 800;
+    font-size: 18px;
+}
+
+.parent-portal .parent-overview-note {
+    background: #ffffff;
+    border: 1px solid #e5ece7;
+    border-radius: 16px;
+    padding: 23px;
+    margin-top: 25px;
+}
+
+.parent-portal .parent-overview-note h3 {
+    color: #123b30;
+    margin-top: 0;
+}
+
+.parent-portal .parent-overview-note p {
+    color: #82918b;
+    line-height: 1.7;
+    font-size: 14px;
+}
+
+/* Child selector and information */
+.parent-portal .parent-child-section {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 20px;
+    margin: 25px 0 15px;
+}
+
+.parent-portal .parent-child-section select {
+    min-width: 230px;
+    padding: 13px 15px;
+    border: 1px solid #dce5df;
+    border-radius: 10px;
+    background: #ffffff;
+    color: #123b30;
+}
+
+.parent-portal .parent-child-card {
+    display: flex;
+    align-items: center;
+    gap: 18px;
+    background: #ffffff;
+    border: 1px solid #e5ece7;
+    border-radius: 16px;
+    padding: 20px;
+}
+
+.parent-portal .parent-child-avatar {
+    width: 55px;
+    height: 55px;
+    flex-shrink: 0;
+    display: grid;
+    place-items: center;
+    border-radius: 16px;
+    background: #e9f3ec;
+    color: #176b45;
+    font-size: 23px;
+    font-weight: 800;
+}
+
+.parent-portal .parent-child-details {
+    flex: 1;
+}
+
+.parent-portal .parent-child-details h2 {
+    color: #123b30;
+    margin: 5px 0;
+}
+
+.parent-portal .parent-child-details p,
+.parent-portal .parent-child-details span {
+    color: #82918b;
+    font-size: 12px;
+}
+
+.parent-portal .parent-relationship span,
+.parent-portal .parent-relationship strong {
+    display: block;
+    text-align: right;
+}
+
+.parent-portal .parent-relationship span {
+    color: #82918b;
+    font-size: 10px;
+}
+
+.parent-portal .parent-relationship strong {
+    color: #176b45;
+    margin-top: 6px;
+}
+
+/* Family Centre */
+.parent-portal .parent-family-links {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 18px;
+}
+
+.parent-portal .parent-family-link {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    background: #ffffff;
+    border: 1px solid #e5ece7;
+    border-radius: 16px;
+    padding: 25px;
+}
+
+.parent-portal .parent-family-link > span {
+    color: #ad8434;
+    font-size: 25px;
+}
+
+.parent-portal .parent-family-link strong {
+    color: #123b30;
+}
+
+.parent-portal .parent-family-link small {
+    color: #82918b;
+}
+
+/* Footer */
+.parent-portal .parent-profile-footer {
+    margin-top: 35px;
+    padding: 20px 0;
+    border-top: 1px solid #e5ece7;
+    color: #82918b;
+    font-size: 12px;
+}
+
+/* ==========================================
+   PARENT PORTAL - RESPONSIVE
+========================================== */
+
+@media (max-width: 1100px) {
+    .parent-portal .parent-stats-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+
+@media (max-width: 650px) {
+    .parent-portal .parent-main-content {
+        padding: 17px;
+    }
+
+    .parent-portal .parent-stats-grid,
+    .parent-portal .parent-family-links {
+        grid-template-columns: 1fr;
+    }
+
+    .parent-portal .parent-child-section {
+        align-items: stretch;
+        flex-direction: column;
+    }
+
+    .parent-portal .parent-child-section select {
+        width: 100%;
+    }
+
+    .parent-portal .parent-child-card {
+        align-items: flex-start;
+        flex-wrap: wrap;
+    }
+
+    .parent-portal .parent-relationship {
+        width: 100%;
+    }
+
+    .parent-portal .parent-relationship span,
+    .parent-portal .parent-relationship strong {
+        text-align: left;
+    }
+
+    .parent-portal .parent-panel {
+        padding: 18px;
+    }
+}
