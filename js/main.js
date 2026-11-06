@@ -17428,10 +17428,7 @@ academicGraphSection.appendChild(graphHeader);
 academicGraphSection.appendChild(graphContainer);
 
 // Place graph before the category results
-const academicContainer = getElement("parentAcademicContent");
-
 if (academicContainer) {
-    academicContainer.innerHTML = "";
     academicContainer.appendChild(academicGraphSection);
 }
 
