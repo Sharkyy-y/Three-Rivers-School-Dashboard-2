@@ -10138,3 +10138,92 @@ body:has(.attendance-overview) .admin-avatar {
         padding: 18px;
     }
 }
+
+/* ==========================================
+   PARENT ACTION CENTRE
+========================================== */
+
+.parent-action-centre {
+    margin-top: 28px;
+}
+
+.parent-action-card {
+    display: flex;
+    align-items: flex-start;
+    gap: 16px;
+    padding: 18px;
+    margin-bottom: 12px;
+    background: #ffffff;
+    border: 1px solid #e8ece9;
+    border-left: 4px solid #d6b66b;
+    border-radius: 12px;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.parent-action-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 18px rgba(18, 59, 48, 0.08);
+}
+
+.parent-action-card.priority-attention {
+    border-left-color: #d97706;
+    background: #fffaf2;
+}
+
+.parent-action-card.priority-positive {
+    border-left-color: #15803d;
+    background: #f5fbf6;
+}
+
+.parent-action-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    width: 42px;
+    height: 42px;
+    border-radius: 12px;
+    background: #f1f5f2;
+    font-size: 20px;
+}
+
+.parent-action-content {
+    flex: 1;
+    min-width: 0;
+}
+
+.parent-action-content strong {
+    display: block;
+    margin-bottom: 5px;
+    color: #123b30;
+    font-size: 15px;
+}
+
+.parent-action-content p {
+    margin: 0;
+    color: #64746c;
+    font-size: 13px;
+    line-height: 1.6;
+}
+
+.parent-action-empty {
+    padding: 22px;
+    text-align: center;
+    color: #64746c;
+    background: #f5f8f6;
+    border-radius: 12px;
+    font-size: 14px;
+}
+
+@media (max-width: 600px) {
+    .parent-action-card {
+        padding: 14px;
+        gap: 12px;
+    }
+
+    .parent-action-icon {
+        width: 36px;
+        height: 36px;
+        font-size: 17px;
+    }
+}
