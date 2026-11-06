@@ -18865,13 +18865,14 @@ const loadSchoolCalendar = async () => {
 
             // LOAD ALL FIVE SECTIONS INDEPENDENTLY.
 
-            await Promise.all([
+        await Promise.all([
     loadGrades(),
     loadAttendance(),
     loadAssignments(),
     loadConduct(),
     loadAnnouncements(),
-    loadSchoolCalendar()
+    loadSchoolCalendar(),
+    loadParentFeeStatements(student.id)
 ]);
 
           
