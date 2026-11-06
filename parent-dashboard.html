@@ -80,315 +80,618 @@
     </aside>
 
 
-    
-<!-- MAIN CONTENT -->
-<main class="main-content parent-main-content">
+    <!-- MAIN CONTENT -->
+    <main class="main-content parent-main-content">
 
-    <!-- TOP BAR -->
-    <header class="topbar">
-        <div>
-            <p class="school-name">THREE RIVERS ACADEMY</p>
-            <h1 id="parentPageTitle">Parent Overview</h1>
-        </div>
+        <!-- TOP BAR -->
+        <header class="topbar">
 
-        <div class="student-profile">
-            <div class="notification">
-                ♢
-                <span id="parentNotificationCount">0</span>
-            </div>
-
-            <div class="profile-avatar" id="parentInitial">P</div>
-
-            <div class="profile-details">
-                <strong id="parentName">Loading...</strong>
-                <small>Parent / Guardian</small>
-            </div>
-        </div>
-    </header>
-
-    <!-- OVERVIEW VIEW -->
-    <section class="parent-view active" id="parentViewOverview">
-
-        <section class="parent-welcome">
-            <div class="parent-welcome-content">
-                <p class="parent-eyebrow">YOUR FAMILY. YOUR SCHOOL. ONE PLACE.</p>
-                <h2>Welcome back, <span id="parentWelcomeName">Parent</span></h2>
-                <p>Stay connected with your child's learning, achievements and school life.</p>
-            </div>
-
-            <div class="parent-date">
-                <span>TODAY</span>
-                <strong id="parentTodayDate">Loading...</strong>
-            </div>
-        </section>
-
-        <section class="parent-child-section">
             <div>
-                <p class="parent-section-label">FAMILY OVERVIEW</p>
-                <h2>Your Children</h2>
-                <p>Select a child to view their school information.</p>
+                <p class="school-name">THREE RIVERS ACADEMY</p>
+                <h1 id="parentPageTitle">Parent Overview</h1>
             </div>
 
-            <select id="parentChildSelect">
-                <option value="">Loading children...</option>
-            </select>
-        </section>
+            <div class="student-profile">
 
-        <section class="parent-child-card">
-            <div class="parent-child-avatar" id="parentStudentInitial">S</div>
+                <div class="notification">
+                    ♢
+                    <span id="parentNotificationCount">0</span>
+                </div>
 
-            <div class="parent-child-details">
-                <span>SELECTED STUDENT</span>
-                <h2 id="parentStudentName">Loading...</h2>
+                <div class="profile-avatar" id="parentInitial">P</div>
+
+                <div class="profile-details">
+                    <strong id="parentName">Loading...</strong>
+                    <small>Parent / Guardian</small>
+                </div>
+
+            </div>
+
+        </header>
+
+
+        <!-- OVERVIEW VIEW -->
+        <section class="parent-view active" id="parentViewOverview">
+
+            <section class="parent-welcome">
+
+                <div class="parent-welcome-content">
+                    <p class="parent-eyebrow">
+                        YOUR FAMILY. YOUR SCHOOL. ONE PLACE.
+                    </p>
+
+                    <h2>
+                        Welcome back,
+                        <span id="parentWelcomeName">Parent</span>
+                    </h2>
+
+                    <p>
+                        Stay connected with your child's learning,
+                        achievements and school life.
+                    </p>
+                </div>
+
+                <div class="parent-date">
+                    <span>TODAY</span>
+                    <strong id="parentTodayDate">Loading...</strong>
+                </div>
+
+            </section>
+
+
+            <section class="parent-child-section">
+
+                <div>
+                    <p class="parent-section-label">FAMILY OVERVIEW</p>
+                    <h2>Your Children</h2>
+                    <p>Select a child to view their school information.</p>
+                </div>
+
+                <select id="parentChildSelect">
+                    <option value="">Loading children...</option>
+                </select>
+
+            </section>
+
+
+            <section class="parent-child-card">
+
+                <div class="parent-child-avatar" id="parentStudentInitial">
+                    S
+                </div>
+
+                <div class="parent-child-details">
+
+                    <span>SELECTED STUDENT</span>
+
+                    <h2 id="parentStudentName">Loading...</h2>
+
+                    <p>
+                        <span id="parentStudentClass">Class —</span>
+
+                        <span class="parent-dot">•</span>
+
+                        Admission No:
+
+                        <strong id="parentAdmission">—</strong>
+                    </p>
+
+                </div>
+
+                <div class="parent-relationship">
+                    <span>RELATIONSHIP</span>
+                    <strong id="parentRelationship">Parent</strong>
+                </div>
+
+            </section>
+
+
+            <section class="parent-stats-grid">
+
+                <div class="parent-stat-card">
+
+                    <div class="parent-stat-icon academic-icon">%</div>
+
+                    <div>
+                        <span>Academic Average</span>
+                        <strong id="parentAcademicAverage">—</strong>
+                        <small>Overall performance</small>
+                    </div>
+
+                </div>
+
+
+                <div class="parent-stat-card">
+
+                    <div class="parent-stat-icon attendance-icon">✓</div>
+
+                    <div>
+                        <span>Attendance</span>
+                        <strong id="parentAttendance">—</strong>
+                        <small>Attendance record</small>
+                    </div>
+
+                </div>
+
+
+                <div class="parent-stat-card">
+
+                    <div class="parent-stat-icon assignment-icon">!</div>
+
+                    <div>
+                        <span>Upcoming Assignments</span>
+                        <strong id="parentUpcomingAssignments">—</strong>
+                        <small>Work due soon</small>
+                    </div>
+
+                </div>
+
+
+                <div class="parent-stat-card">
+
+                    <div class="parent-stat-icon conduct-icon">★</div>
+
+                    <div>
+                        <span>Conduct Records</span>
+                        <strong id="parentConduct">—</strong>
+                        <small>Achievements and conduct</small>
+                    </div>
+
+                </div>
+
+            </section>
+
+
+            <div class="parent-overview-note">
+
+                <h3>Your child's school journey</h3>
+
                 <p>
-                    <span id="parentStudentClass">Class —</span>
-                    <span class="parent-dot">•</span>
-                    Admission No:
-                    <strong id="parentAdmission">—</strong>
+                    Use the sidebar to explore academic performance,
+                    attendance, assignments and school updates.
                 </p>
-            </div>
 
-            <div class="parent-relationship">
-                <span>RELATIONSHIP</span>
-                <strong id="parentRelationship">Parent</strong>
-            </div>
-        </section>
-
-        <section class="parent-stats-grid">
-
-            <div class="parent-stat-card">
-                <div class="parent-stat-icon academic-icon">%</div>
-                <div>
-                    <span>Academic Average</span>
-                    <strong id="parentAcademicAverage">—</strong>
-                    <small>Overall performance</small>
-                </div>
-            </div>
-
-            <div class="parent-stat-card">
-                <div class="parent-stat-icon attendance-icon">✓</div>
-                <div>
-                    <span>Attendance</span>
-                    <strong id="parentAttendance">—</strong>
-                    <small>Attendance record</small>
-                </div>
-            </div>
-
-            <div class="parent-stat-card">
-                <div class="parent-stat-icon assignment-icon">!</div>
-                <div>
-                    <span>Upcoming Assignments</span>
-                    <strong id="parentUpcomingAssignments">—</strong>
-                    <small>Work due soon</small>
-                </div>
-            </div>
-
-            <div class="parent-stat-card">
-                <div class="parent-stat-icon conduct-icon">★</div>
-                <div>
-                    <span>Conduct Records</span>
-                    <strong id="parentConduct">—</strong>
-                    <small>Achievements and conduct</small>
-                </div>
             </div>
 
         </section>
 
-        <div class="parent-overview-note">
-            <h3>Your child's school journey</h3>
-            <p>Use the sidebar to explore academic performance, attendance, assignments and school updates.</p>
-        </div>
 
-    </section>
+        <!-- PARENT ACTION CENTRE -->
+        <section class="parent-panel parent-action-centre">
 
-    <!-- PARENT ACTION CENTRE -->
-<section class="parent-panel parent-action-centre">
-
-    <div class="parent-panel-header">
-        <div>
-            <span class="parent-section-label">
-                IMPORTANT UPDATES
-            </span>
-
-            <h3>Parent Action Centre</h3>
-
-            <p>
-                Things that may need your attention.
-            </p>
-        </div>
-
-        <span class="parent-panel-symbol">✦</span>
-    </div>
-
-    <div id="parentActionCentre">
-        <p class="parent-loading">
-            Preparing your child's updates...
-        </p>
-    </div>
-
-</section>
-
-    <!-- ACADEMIC PROGRESS VIEW -->
-    <section class="parent-view" id="parentViewAcademics">
-        <div class="parent-page-heading">
-            <span class="parent-section-label">ACADEMIC PERFORMANCE</span>
-            <h2>Academic Progress</h2>
-            <p>Review your child's assessments, marks and teacher comments.</p>
-        </div>
-
-        <div class="parent-panel">
             <div class="parent-panel-header">
+
                 <div>
-                    <h3>Learning Progress</h3>
-                    <p>Recent academic results and assessments.</p>
+
+                    <span class="parent-section-label">
+                        IMPORTANT UPDATES
+                    </span>
+
+                    <h3>Parent Action Centre</h3>
+
+                    <p>
+                        Things that may need your attention.
+                    </p>
+
                 </div>
-                <span class="parent-panel-symbol">◈</span>
-            </div>
-            <div id="parentAcademicContent">
-                <p class="parent-loading">Loading academic information...</p>
-            </div>
-        </div>
-    </section>
 
-    <!-- ATTENDANCE VIEW -->
-    <section class="parent-view" id="parentViewAttendance">
-        <div class="parent-page-heading">
-            <span class="parent-section-label">SCHOOL PARTICIPATION</span>
-            <h2>Attendance</h2>
-            <p>Monitor attendance records and punctuality.</p>
-        </div>
+                <span class="parent-panel-symbol">✦</span>
 
-        <div class="parent-panel">
-            <div class="parent-panel-header">
-                <div>
-                    <h3>Attendance Overview</h3>
-                    <p>Your child's attendance history.</p>
+            </div>
+
+            <div id="parentActionCentre">
+
+                <p class="parent-loading">
+                    Preparing your child's updates...
+                </p>
+
+            </div>
+
+        </section>
+
+
+        <!-- ACADEMIC PROGRESS VIEW -->
+        <section class="parent-view" id="parentViewAcademics">
+
+            <div class="parent-page-heading">
+
+                <span class="parent-section-label">
+                    ACADEMIC PERFORMANCE
+                </span>
+
+                <h2>Academic Progress</h2>
+
+                <p>
+                    Review your child's assessments, marks and teacher comments.
+                </p>
+
+            </div>
+
+
+            <div class="parent-panel">
+
+                <div class="parent-panel-header">
+
+                    <div>
+                        <h3>Learning Progress</h3>
+                        <p>Recent academic results and assessments.</p>
+                    </div>
+
+                    <span class="parent-panel-symbol">◈</span>
+
                 </div>
-                <span class="parent-panel-symbol">◷</span>
-            </div>
-            <div id="parentAttendanceContent">
-                <p class="parent-loading">Loading attendance...</p>
-            </div>
-        </div>
-    </section>
 
-    <!-- ASSIGNMENTS VIEW -->
-    <section class="parent-view" id="parentViewAssignments">
-        <div class="parent-page-heading">
-            <span class="parent-section-label">KEEP UP WITH LEARNING</span>
-            <h2>Assignments</h2>
-            <p>See the work your child needs to complete and its due date.</p>
-        </div>
+                <div id="parentAcademicContent">
 
-        <div class="parent-panel">
-            <div class="parent-panel-header">
-                <div>
-                    <h3>Upcoming Assignments</h3>
-                    <p>Assignments set for your child's class.</p>
+                    <p class="parent-loading">
+                        Loading academic information...
+                    </p>
+
                 </div>
-                <span class="parent-panel-symbol">✓</span>
-            </div>
-            <div id="parentAssignmentsList">
-                <p class="parent-loading">Loading assignments...</p>
-            </div>
-        </div>
-    </section>
 
-    <!-- ANNOUNCEMENTS VIEW -->
-    <section class="parent-view" id="parentViewAnnouncements">
-        <div class="parent-page-heading">
-            <span class="parent-section-label">SCHOOL COMMUNICATION</span>
-            <h2>Announcements</h2>
-            <p>Important news and updates from Three Rivers Academy.</p>
-        </div>
+            </div>
 
-        <div class="parent-panel">
-            <div class="parent-panel-header">
-                <div>
-                    <h3>Latest Announcements</h3>
-                    <p>Updates relevant to your child's school life.</p>
+        </section>
+
+
+        <!-- ATTENDANCE VIEW -->
+        <section class="parent-view" id="parentViewAttendance">
+
+            <div class="parent-page-heading">
+
+                <span class="parent-section-label">
+                    SCHOOL PARTICIPATION
+                </span>
+
+                <h2>Attendance</h2>
+
+                <p>
+                    Monitor attendance records and punctuality.
+                </p>
+
+            </div>
+
+
+            <div class="parent-panel">
+
+                <div class="parent-panel-header">
+
+                    <div>
+                        <h3>Attendance Overview</h3>
+                        <p>Your child's attendance history.</p>
+                    </div>
+
+                    <span class="parent-panel-symbol">◷</span>
+
                 </div>
-                <span class="parent-panel-symbol">▤</span>
-            </div>
-            <div id="parentAnnouncementsList">
-                <p class="parent-loading">Loading announcements...</p>
-            </div>
-        </div>
-    </section>
 
-    <!-- ACHIEVEMENTS VIEW -->
-    <section class="parent-view" id="parentViewAchievements">
-        <div class="parent-page-heading">
-            <span class="parent-section-label">CELEBRATING PROGRESS</span>
-            <h2>Achievement Portfolio</h2>
-            <p>Celebrate positive contributions, milestones and conduct records.</p>
-        </div>
+                <div id="parentAttendanceContent">
 
-        <div class="parent-panel parent-achievements">
-            <div class="parent-panel-header">
-                <div>
-                    <h3>Achievements and Conduct</h3>
-                    <p>Your child's recorded progress and participation.</p>
+                    <p class="parent-loading">
+                        Loading attendance...
+                    </p>
+
                 </div>
-                <span class="parent-panel-symbol">★</span>
+
             </div>
-            <div id="parentAchievementsContent">
-                <p class="parent-loading">Loading achievements...</p>
+
+        </section>
+
+
+        <!-- ASSIGNMENTS VIEW -->
+        <section class="parent-view" id="parentViewAssignments">
+
+            <div class="parent-page-heading">
+
+                <span class="parent-section-label">
+                    KEEP UP WITH LEARNING
+                </span>
+
+                <h2>Assignments</h2>
+
+                <p>
+                    See the work your child needs to complete and its due date.
+                </p>
+
             </div>
-        </div>
-    </section>
 
-    <!-- FAMILY CENTRE VIEW -->
-    <section class="parent-view" id="parentViewFamily">
-        <div class="parent-page-heading">
-            <span class="parent-section-label">YOUR SCHOOL CONNECTION</span>
-            <h2>Family Centre</h2>
-            <p>School services and resources for your family.</p>
-        </div>
 
-       <div class="parent-family-section">
+            <div class="parent-panel">
 
-    <div class="parent-panel">
-        <div class="parent-panel-header">
-            <div>
-                <h3>School Calendar</h3>
-                <p>Important dates and upcoming school events.</p>
+                <div class="parent-panel-header">
+
+                    <div>
+                        <h3>Upcoming Assignments</h3>
+                        <p>Assignments set for your child's class.</p>
+                    </div>
+
+                    <span class="parent-panel-symbol">✓</span>
+
+                </div>
+
+                <div id="parentAssignmentsList">
+
+                    <p class="parent-loading">
+                        Loading assignments...
+                    </p>
+
+                </div>
+
             </div>
-            <span class="parent-panel-symbol">◷</span>
-        </div>
 
-        <div id="parentSchoolCalendar">
-            <p class="parent-loading">
-                Loading school calendar...
-            </p>
-        </div>
-    </div>
+        </section>
+
+
+        <!-- ANNOUNCEMENTS VIEW -->
+        <section class="parent-view" id="parentViewAnnouncements">
+
+            <div class="parent-page-heading">
+
+                <span class="parent-section-label">
+                    SCHOOL COMMUNICATION
+                </span>
+
+                <h2>Announcements</h2>
+
+                <p>
+                    Important news and updates from Three Rivers Academy.
+                </p>
+
+            </div>
+
+
+            <div class="parent-panel">
+
+                <div class="parent-panel-header">
+
+                    <div>
+                        <h3>Latest Announcements</h3>
+                        <p>Updates relevant to your child's school life.</p>
+                    </div>
+
+                    <span class="parent-panel-symbol">▤</span>
+
+                </div>
+
+                <div id="parentAnnouncementsList">
+
+                    <p class="parent-loading">
+                        Loading announcements...
+                    </p>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- ACHIEVEMENTS VIEW -->
+        <section class="parent-view" id="parentViewAchievements">
+
+            <div class="parent-page-heading">
+
+                <span class="parent-section-label">
+                    CELEBRATING PROGRESS
+                </span>
+
+                <h2>Achievement Portfolio</h2>
+
+                <p>
+                    Celebrate positive contributions, milestones and conduct records.
+                </p>
+
+            </div>
+
+
+            <div class="parent-panel parent-achievements">
+
+                <div class="parent-panel-header">
+
+                    <div>
+                        <h3>Achievements and Conduct</h3>
+                        <p>Your child's recorded progress and participation.</p>
+                    </div>
+
+                    <span class="parent-panel-symbol">★</span>
+
+                </div>
+
+                <div id="parentAchievementsContent">
+
+                    <p class="parent-loading">
+                        Loading achievements...
+                    </p>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- FAMILY CENTRE VIEW -->
+        <section class="parent-view" id="parentViewFamily">
+
+            <div class="parent-page-heading">
+
+                <span class="parent-section-label">
+                    YOUR SCHOOL CONNECTION
+                </span>
+
+                <h2>Family Centre</h2>
+
+                <p>
+                    School services and resources for your family.
+                </p>
+
+            </div>
+
+
+            <div class="parent-family-section">
+
+                <!-- SCHOOL CALENDAR -->
+                <div class="parent-panel">
+
+                    <div class="parent-panel-header">
+
+                        <div>
+                            <h3>School Calendar</h3>
+                            <p>Important dates and upcoming school events.</p>
+                        </div>
+
+                        <span class="parent-panel-symbol">◷</span>
+
+                    </div>
+
+                    <div id="parentSchoolCalendar">
+
+                        <p class="parent-loading">
+                            Loading school calendar...
+                        </p>
+
+                    </div>
+
+                </div>
+
+
+                <!-- FEE STATEMENTS -->
+                <div class="parent-panel parent-fee-statements">
+
+                    <div class="parent-panel-header">
+
+                        <div>
+
+                            <span class="parent-section-label">
+                                FINANCIAL OVERVIEW
+                            </span>
+
+                            <h3>Fee Statements</h3>
+
+                            <p>
+                                View your child's school fees, payments
+                                and outstanding balance.
+                            </p>
+
+                        </div>
+
+                        <span class="parent-panel-symbol">▤</span>
+
+                    </div>
+
+
+                    <!-- FEE SUMMARY -->
+                    <div class="parent-fee-summary">
+
+                        <div class="parent-fee-summary-card">
+
+                            <span>Total Charges</span>
+
+                            <strong id="parentFeeTotalCharges">
+                                KSh 0.00
+                            </strong>
+
+                        </div>
+
+
+                        <div class="parent-fee-summary-card">
+
+                            <span>Total Paid</span>
+
+                            <strong id="parentFeeTotalPaid">
+                                KSh 0.00
+                            </strong>
+
+                        </div>
+
+
+                        <div class="parent-fee-summary-card">
+
+                            <span>Outstanding Balance</span>
+
+                            <strong id="parentFeeOutstanding">
+                                KSh 0.00
+                            </strong>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- STATEMENT LIST -->
+                    <div
+                        class="parent-fee-statements-list"
+                        id="parentFeeStatementsList"
+                    >
+
+                        <p class="parent-loading">
+                            Fee statements will appear here.
+                        </p>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- PROFILE VIEW -->
+        <section class="parent-view" id="parentViewProfile">
+
+            <div class="parent-page-heading">
+
+                <span class="parent-section-label">
+                    ACCOUNT SETTINGS
+                </span>
+
+                <h2>My Profile</h2>
+
+                <p>
+                    Your parent or guardian account information.
+                </p>
+
+            </div>
+
+
+            <div class="parent-panel">
+
+                <h3>Parent Account</h3>
+
+                <p>
+                    <strong>Name:</strong>
+                    <span id="parentProfileName">Loading...</span>
+                </p>
+
+                <p>
+                    <strong>Email:</strong>
+                    <span id="parentProfileEmail">Loading...</span>
+                </p>
+
+                <p>
+                    <strong>Account type:</strong>
+                    Parent / Guardian
+                </p>
+
+            </div>
+
+        </section>
+
+
+        <!-- FOOTER -->
+        <footer class="parent-profile-footer">
+
+            <p>Three Rivers Academy · Parent Portal</p>
+
+            <span>Supporting every learner, together.</span>
+
+        </footer>
+
+    </main>
 
 </div>
-    </section>
 
-    <!-- PROFILE VIEW -->
-    <section class="parent-view" id="parentViewProfile">
-        <div class="parent-page-heading">
-            <span class="parent-section-label">ACCOUNT SETTINGS</span>
-            <h2>My Profile</h2>
-            <p>Your parent or guardian account information.</p>
-        </div>
-
-        <div class="parent-panel">
-            <h3>Parent Account</h3>
-            <p><strong>Name:</strong> <span id="parentProfileName">Loading...</span></p>
-            <p><strong>Email:</strong> <span id="parentProfileEmail">Loading...</span></p>
-            <p><strong>Account type:</strong> Parent / Guardian</p>
-        </div>
-    </section>
-
-    <footer class="parent-profile-footer">
-        <p>Three Rivers Academy · Parent Portal</p>
-        <span>Supporting every learner, together.</span>
-    </footer>
-
-</main>
 
 <!-- SUPABASE -->
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
