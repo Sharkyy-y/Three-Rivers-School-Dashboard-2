@@ -19905,3 +19905,175 @@ card.appendChild(paymentButton);
     }
 
 }
+
+
+// ==========================================
+// ADMIN FEE MANAGEMENT - PAYMENT MODAL
+// ==========================================
+
+let selectedPaymentStatementId = null;
+
+async function openFeePaymentModal(statementId) {
+
+    const modal = document.getElementById("feePaymentModal");
+    const select = document.getElementById("paymentStatementSelect");
+
+    if (!modal || !select) return;
+
+    selectedPaymentStatementId = statementId;
+
+    select.innerHTML = "";
+
+    const { data: statement, error } = await supabaseClient
+        .from("fee_statements")
+        .select("id, academic_year, term")
+        .eq("id", statementId)
+        .single();
+
+    if (error || !statement) {
+        console.error("PAYMENT STATEMENT ERROR:", error);
+        alert("Unable to load the selected fee statement.");
+        return;
+    }
+
+    const option = document.createElement("option");
+
+    option.value = statement.id;
+    option.textContent =
+        statement.academic_year + " — " + statement.term;
+
+    option.selected = true;
+
+    select.appendChild(option);
+
+    document.getElementById("feePaymentForm").reset();
+
+    // Restore the selected statement after resetting the form
+    select.value = statement.id;
+
+    document.getElementById("paymentDate").value =
+        new Date().toISOString().split("T")[0];
+
+    modal.style.display = "flex";
+}
+
+
+// ==========================================
+// CLOSE PAYMENT MODAL
+// ==========================================
+
+function closeFeePaymentModal() {
+
+    document.getElementById("feePaymentModal").style.display = "none";
+
+    selectedPaymentStatementId = null;
+}
+
+
+document.getElementById("closeFeePaymentModal")
+    ?.addEventListener("click", closeFeePaymentModal);
+
+document.getElementById("cancelFeePayment")
+    ?.addEventListener("click", closeFeePaymentModal);
+
+
+// ==========================================
+// ADMIN FEE MANAGEMENT - SAVE PAYMENT
+// ==========================================
+
+document.getElementById("feePaymentForm")
+    ?.addEventListener("submit", async function(event) {
+
+    event.preventDefault();
+
+    const statementId = selectedPaymentStatementId;
+
+    const amount = Number(
+        document.getElementById("paymentAmount").value
+    );
+
+    const paymentDate = document.getElementById(
+        "paymentDate"
+    ).value;
+
+    const paymentMethod = document.getElementById(
+        "paymentMethod"
+    ).value;
+
+    const referenceNumber = document.getElementById(
+        "paymentReference"
+    ).value.trim();
+
+    const notes = document.getElementById(
+        "paymentNotes"
+    ).value.trim();
+
+    const saveButton = document.getElementById("saveFeePayment");
+
+    if (!statementId) {
+        alert("Please select a fee statement.");
+        return;
+    }
+
+    if (!Number.isFinite(amount) || amount <= 0) {
+        alert("Please enter a valid payment amount.");
+        return;
+    }
+
+    if (!paymentDate || !paymentMethod) {
+        alert("Please complete the payment date and method.");
+        return;
+    }
+
+    saveButton.disabled = true;
+    saveButton.textContent = "Saving Payment...";
+
+    try {
+
+        const { data: userData, error: userError } =
+            await supabaseClient.auth.getUser();
+
+        if (userError) throw userError;
+
+        const { error } = await supabaseClient
+            .from("fee_payments")
+            .insert({
+                statement_id: statementId,
+                amount: amount,
+                payment_date: paymentDate,
+                payment_method: paymentMethod,
+                reference_number: referenceNumber || null,
+                notes: notes || null,
+                recorded_by: userData.user?.id
+            });
+
+        if (error) throw error;
+
+        alert("Payment successfully recorded!");
+
+        const studentId = window.selectedFeeStudent?.id;
+
+        closeFeePaymentModal();
+
+        if (studentId) {
+            await loadStudentFeeStatements(studentId);
+        }
+
+    } catch (error) {
+
+        console.error("SAVE FEE PAYMENT ERROR:", error);
+
+        alert(
+            "Unable to save payment: " +
+            (error.message || "Unknown error")
+        );
+
+    } finally {
+
+        saveButton.disabled = false;
+        saveButton.textContent = "Save Payment";
+
+    }
+
+});
+
