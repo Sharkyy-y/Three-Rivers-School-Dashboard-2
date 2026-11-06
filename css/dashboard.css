@@ -10307,3 +10307,160 @@ body:has(.attendance-overview) .admin-avatar {
         padding: 20px;
     }
 }
+
+
+/* ==========================================
+   PARENT ACADEMIC RESULTS CENTRE
+========================================== */
+
+.parent-grade-results-heading {
+    margin-bottom: 22px;
+}
+
+.parent-grade-results-heading h3 {
+    margin: 0 0 7px;
+    color: #123b30;
+    font-size: 21px;
+    font-weight: 750;
+}
+
+.parent-grade-results-heading p {
+    margin: 0;
+    color: #75847b;
+    font-size: 13px;
+}
+
+/* Four examination categories */
+.parent-grade-category-buttons {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 14px;
+    margin-bottom: 25px;
+}
+
+.parent-grade-category-button {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 18px;
+    min-height: 105px;
+    padding: 17px;
+    background: #ffffff;
+    border: 1px solid #e4ebe5;
+    border-radius: 14px;
+    color: #52665b;
+    font-family: inherit;
+    font-size: 13px;
+    font-weight: 700;
+    text-align: left;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.parent-grade-category-button:hover {
+    border-color: #b9cdbf;
+    background: #f7faf8;
+    transform: translateY(-2px);
+}
+
+.parent-grade-category-button.active {
+    background: #123b30;
+    border-color: #123b30;
+    color: #ffffff;
+    box-shadow: 0 6px 16px rgba(18, 59, 48, 0.16);
+}
+
+.parent-grade-count {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 28px;
+    height: 28px;
+    padding: 0 8px;
+    border-radius: 9px;
+    background: #edf3ef;
+    color: #315b48;
+    font-size: 12px;
+    font-weight: 800;
+}
+
+.parent-grade-category-button.active .parent-grade-count {
+    background: #d6b66b;
+    color: #123b30;
+}
+
+/* Results display */
+.parent-grade-category-results {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 16px;
+}
+
+/* Individual subject result */
+.parent-grade-result-card {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+    min-width: 0;
+    padding: 21px;
+    background: #ffffff;
+    border: 1px solid #e6ece7;
+    border-radius: 15px;
+    box-shadow: 0 4px 13px rgba(18, 59, 48, 0.04);
+    transition: all 0.2s ease;
+}
+
+.parent-grade-result-card:hover {
+    border-color: #d6b66b;
+    box-shadow: 0 8px 20px rgba(18, 59, 48, 0.08);
+    transform: translateY(-2px);
+}
+
+.parent-grade-result-card > strong:first-child {
+    color: #123b30;
+    font-size: 16px;
+    font-weight: 750;
+}
+
+.parent-grade-result-card > span {
+    padding: 5px 10px;
+    border-radius: 20px;
+    background: #f1f5f2;
+    color: #668074;
+    font-size: 11px;
+    font-weight: 700;
+}
+
+.parent-grade-result-card > strong:nth-of-type(2) {
+    margin-top: 5px;
+    color: #245c43;
+    font-size: 23px;
+    font-weight: 800;
+}
+
+.parent-grade-result-card > small {
+    color: #7b8980;
+    font-size: 12px;
+    line-height: 1.6;
+    overflow-wrap: anywhere;
+}
+
+/* Responsive */
+@media (max-width: 800px) {
+    .parent-grade-category-buttons {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+
+@media (max-width: 550px) {
+    .parent-grade-category-results {
+        grid-template-columns: 1fr;
+    }
+
+    .parent-grade-category-button {
+        min-height: 90px;
+        padding: 14px;
+    }
+}
