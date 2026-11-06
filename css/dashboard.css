@@ -10464,3 +10464,202 @@ body:has(.attendance-overview) .admin-avatar {
         padding: 14px;
     }
 }
+
+
+/* ==========================================
+   PARENT ATTENDANCE CENTRE
+========================================== */
+
+.parent-attendance-summary-grid {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 16px;
+    margin-bottom: 30px;
+}
+
+.parent-attendance-stat-card {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+    padding: 22px;
+    background: #ffffff;
+    border: 1px solid #e6ece7;
+    border-radius: 16px;
+    box-shadow: 0 4px 14px rgba(18, 59, 48, 0.04);
+    transition: all 0.2s ease;
+}
+
+.parent-attendance-stat-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 9px 22px rgba(18, 59, 48, 0.08);
+}
+
+.attendance-stat-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 43px;
+    height: 43px;
+    background: #edf4ef;
+    border-radius: 13px;
+    font-size: 21px;
+}
+
+.parent-attendance-stat-card small {
+    color: #75847b;
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.parent-attendance-stat-card strong {
+    color: #123b30;
+    font-size: 27px;
+    font-weight: 800;
+}
+
+/* HISTORY HEADER */
+
+.parent-attendance-history-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 15px;
+    margin-bottom: 18px;
+}
+
+.parent-attendance-history-header h4 {
+    margin: 0;
+    color: #123b30;
+    font-size: 18px;
+    font-weight: 750;
+}
+
+.parent-attendance-month-filter {
+    min-width: 160px;
+    padding: 11px 14px;
+    border: 1px solid #dfe8e1;
+    border-radius: 10px;
+    background: #ffffff;
+    color: #315b48;
+    font-family: inherit;
+    font-size: 13px;
+    outline: none;
+    cursor: pointer;
+}
+
+.parent-attendance-month-filter:focus {
+    border-color: #123b30;
+}
+
+/* ATTENDANCE HISTORY */
+
+.parent-attendance-history-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.parent-attendance-record-card {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 15px;
+    padding: 18px 20px;
+    background: #ffffff;
+    border: 1px solid #e8eee9;
+    border-left: 4px solid #a5b5aa;
+    border-radius: 13px;
+    transition: all 0.2s ease;
+}
+
+.parent-attendance-record-card:hover {
+    transform: translateX(3px);
+    box-shadow: 0 5px 16px rgba(18, 59, 48, 0.06);
+}
+
+.attendance-record-date {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.attendance-record-date strong {
+    color: #123b30;
+    font-size: 14px;
+}
+
+.attendance-record-date small {
+    color: #87948c;
+    font-size: 12px;
+}
+
+/* STATUS BADGES */
+
+.attendance-status-badge {
+    padding: 7px 13px;
+    border-radius: 20px;
+    font-size: 11px;
+    font-weight: 750;
+    text-transform: capitalize;
+    white-space: nowrap;
+}
+
+.parent-attendance-record-card.status-present {
+    border-left-color: #15803d;
+}
+
+.status-present .attendance-status-badge {
+    background: #eaf6ed;
+    color: #15803d;
+}
+
+.parent-attendance-record-card.status-late {
+    border-left-color: #d97706;
+}
+
+.status-late .attendance-status-badge {
+    background: #fff4df;
+    color: #b66a08;
+}
+
+.parent-attendance-record-card.status-absent {
+    border-left-color: #dc5656;
+}
+
+.status-absent .attendance-status-badge {
+    background: #fff0f0;
+    color: #c43d3d;
+}
+
+/* RESPONSIVE DESIGN */
+
+@media (max-width: 800px) {
+    .parent-attendance-summary-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+
+@media (max-width: 500px) {
+    .parent-attendance-stat-card {
+        padding: 16px;
+    }
+
+    .parent-attendance-stat-card strong {
+        font-size: 23px;
+    }
+
+    .parent-attendance-record-card {
+        padding: 15px;
+    }
+
+    .parent-attendance-history-header {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+
+    .parent-attendance-month-filter {
+        width: 100%;
+    }
+}
