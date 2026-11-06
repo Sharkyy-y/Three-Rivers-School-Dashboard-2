@@ -21896,3 +21896,259 @@ if (
 ) {
     startTeacherMessageNotifications();
 }
+
+
+// ==========================================
+// TEACHER NOTIFICATION CENTRE
+// ==========================================
+
+async function initialiseTeacherNotificationCentre() {
+
+    const bell = document.getElementById(
+        "teacherNotificationBell"
+    );
+
+    const badge = document.getElementById(
+        "teacherUnreadBadge"
+    );
+
+    const panel = document.getElementById(
+        "teacherNotificationPanel"
+    );
+
+    const notificationList = document.getElementById(
+        "teacherNotificationList"
+    );
+
+    const closeButton = document.getElementById(
+        "teacherCloseNotifications"
+    );
+
+    if (!bell || !badge || !panel || !notificationList) {
+        return;
+    }
+
+    const {
+        data: { user },
+        error
+    } = await supabaseClient.auth.getUser();
+
+    if (error || !user) return;
+
+    let notificationChannel = null;
+
+    // LOAD UNREAD NOTIFICATIONS
+
+    async function loadNotifications() {
+
+        const {
+            data,
+            error
+        } = await supabaseClient
+            .from("parent_teacher_messages")
+            .select(`
+                id,
+                student_id,
+                message,
+                request_type,
+                created_at,
+                teacher_read_at
+            `)
+            .eq("teacher_id", user.id)
+            .is("teacher_read_at", null)
+            .order("created_at", {
+                ascending: false
+            });
+
+        if (error) {
+
+            console.error(
+                "Notification loading error:",
+                error
+            );
+
+            notificationList.textContent =
+                "Unable to load notifications.";
+
+            return;
+        }
+
+        const notifications = data || [];
+
+        badge.textContent = notifications.length;
+
+        badge.hidden = notifications.length === 0;
+
+        notificationList.innerHTML = "";
+
+        if (notifications.length === 0) {
+
+            const empty = document.createElement("p");
+
+            empty.textContent = "You're all caught up!";
+
+            notificationList.appendChild(empty);
+
+            return;
+        }
+
+        // LOAD STUDENT NAMES
+
+        const studentIds = [
+            ...new Set(
+                notifications.map(item => item.student_id)
+            )
+        ];
+
+        let studentMap = {};
+
+        const {
+            data: students,
+            error: studentError
+        } = await supabaseClient
+            .from("students")
+            .select("id, full_name")
+            .in("id", studentIds);
+
+        if (!studentError) {
+
+            (students || []).forEach(student => {
+                studentMap[student.id] = student.full_name;
+            });
+        }
+
+        // RENDER NOTIFICATIONS
+
+        notifications.forEach(item => {
+
+            const notification = document.createElement("button");
+
+            notification.type = "button";
+
+            notification.className =
+                "teacher-notification-item";
+
+            const title = document.createElement("strong");
+
+            title.textContent =
+                item.request_type === "meeting"
+                    ? "New meeting request"
+                    : "New parent message";
+
+            const description = document.createElement("p");
+
+            description.textContent =
+                (studentMap[item.student_id] || "A student") +
+                " — " +
+                (item.message || "").slice(0, 100);
+
+            const date = document.createElement("small");
+
+            date.textContent = item.created_at
+                ? new Date(item.created_at).toLocaleString("en-KE")
+                : "";
+
+            notification.appendChild(title);
+            notification.appendChild(description);
+            notification.appendChild(date);
+
+            notification.addEventListener("click", async () => {
+
+                notification.disabled = true;
+
+                const {
+                    error: updateError
+                } = await supabaseClient
+                    .from("parent_teacher_messages")
+                    .update({
+                        teacher_read_at: new Date().toISOString()
+                    })
+                    .eq("id", item.id)
+                    .eq("teacher_id", user.id);
+
+                if (updateError) {
+
+                    console.error(
+                        "Mark notification as read error:",
+                        updateError
+                    );
+
+                    notification.disabled = false;
+
+                    return;
+                }
+
+                window.location.href = "teacher-messages.html";
+            });
+
+            notificationList.appendChild(notification);
+        });
+    }
+
+    // OPEN AND CLOSE PANEL
+
+    if (!bell.dataset.initialized) {
+
+        bell.dataset.initialized = "true";
+
+        bell.addEventListener("click", async () => {
+
+            panel.hidden = !panel.hidden;
+
+            if (!panel.hidden) {
+                await loadNotifications();
+            }
+        });
+    }
+
+    if (closeButton && !closeButton.dataset.initialized) {
+
+        closeButton.dataset.initialized = "true";
+
+        closeButton.addEventListener("click", () => {
+            panel.hidden = true;
+        });
+    }
+
+    // INITIAL LOAD
+
+    await loadNotifications();
+
+    // REALTIME UPDATES
+
+    notificationChannel = supabaseClient
+        .channel("teacher-notification-centre-" + user.id)
+        .on(
+            "postgres_changes",
+            {
+                event: "*",
+                schema: "public",
+                table: "parent_teacher_messages",
+                filter: "teacher_id=eq." + user.id
+            },
+            async () => {
+                await loadNotifications();
+                await loadTeacherParentMessageCount();
+            }
+        )
+        .subscribe(status => {
+
+            console.log(
+                "Teacher notification centre:",
+                status
+            );
+        });
+}
+
+
+// ==========================================
+// START NOTIFICATION CENTRE
+// ==========================================
+
+if (
+    window.location.pathname
+        .toLowerCase()
+        .includes("teacher-dashboard.html")
+) {
+    initialiseTeacherNotificationCentre();
+}
