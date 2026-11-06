@@ -106,6 +106,46 @@
                     assignments and school communication.
                 </p>
 
+                <!-- TEACHER NOTIFICATION CENTRE -->
+<div class="teacher-notification-wrapper">
+
+    <button
+        type="button"
+        id="teacherNotificationBell"
+        class="teacher-notification-bell"
+        aria-label="Open notifications">
+
+        🔔
+
+        <span id="teacherUnreadBadge">
+            0
+        </span>
+
+    </button>
+
+    <div
+        id="teacherNotificationPanel"
+        class="teacher-notification-panel"
+        hidden>
+
+        <div class="teacher-notification-header">
+            <h3>Notifications</h3>
+
+            <button
+                type="button"
+                id="teacherCloseNotifications">
+                ✕
+            </button>
+        </div>
+
+        <div id="teacherNotificationList">
+            <p>Loading notifications...</p>
+        </div>
+
+    </div>
+
+</div>
+
             </section>
 
 
