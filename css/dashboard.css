@@ -11054,3 +11054,205 @@ body:has(.attendance-overview) .admin-avatar {
         height: 60px;
     }
 }
+
+
+/* ==========================================
+   PARENT MONTHLY SCHOOL CALENDAR
+========================================== */
+
+.parent-monthly-calendar {
+    margin: 25px 0 35px;
+    padding: 22px;
+    background: #ffffff;
+    border: 1px solid #e6ece7;
+    border-radius: 18px;
+}
+
+.parent-monthly-calendar-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 15px;
+    margin-bottom: 25px;
+}
+
+.parent-monthly-calendar-header h3 {
+    margin: 0;
+    color: #123b30;
+    font-size: 19px;
+    font-weight: 750;
+}
+
+.parent-calendar-nav-button {
+    width: 38px;
+    height: 38px;
+    border: 1px solid #e1e9e2;
+    border-radius: 10px;
+    background: #f5f8f5;
+    color: #123b30;
+    font-size: 25px;
+    cursor: pointer;
+    transition: 0.2s ease;
+}
+
+.parent-calendar-nav-button:hover {
+    background: #123b30;
+    color: #ffffff;
+}
+
+.parent-calendar-weekdays,
+.parent-calendar-days-grid {
+    display: grid;
+    grid-template-columns: repeat(7, minmax(0, 1fr));
+    gap: 8px;
+}
+
+.parent-calendar-weekdays {
+    margin-bottom: 12px;
+}
+
+.parent-calendar-weekdays span {
+    color: #829087;
+    font-size: 12px;
+    font-weight: 700;
+    text-align: center;
+}
+
+.parent-calendar-day,
+.parent-calendar-empty-day {
+    position: relative;
+    min-width: 0;
+    min-height: 52px;
+    border-radius: 11px;
+}
+
+.parent-calendar-day {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid transparent;
+    background: #f7f9f7;
+    color: #344b3e;
+    font-size: 14px;
+    font-weight: 650;
+    cursor: pointer;
+    transition: 0.2s ease;
+}
+
+.parent-calendar-day:hover {
+    border-color: #9bb9a4;
+    background: #edf4ee;
+}
+
+.parent-calendar-day.today {
+    border-color: #d6b66b;
+    color: #123b30;
+    font-weight: 800;
+}
+
+.parent-calendar-day.selected {
+    background: #123b30;
+    color: #ffffff;
+}
+
+.parent-calendar-day.has-events {
+    font-weight: 800;
+}
+
+.parent-calendar-event-dot {
+    position: absolute;
+    bottom: 6px;
+    width: 5px;
+    height: 5px;
+    border-radius: 50%;
+    background: #d6b66b;
+}
+
+.parent-calendar-day.selected .parent-calendar-event-dot {
+    background: #ffffff;
+}
+
+.parent-calendar-selected-events {
+    margin-top: 25px;
+    padding: 20px;
+    background: #f7faf7;
+    border-radius: 14px;
+}
+
+.parent-calendar-selected-events h4 {
+    margin: 0 0 15px;
+    color: #123b30;
+    font-size: 15px;
+}
+
+.parent-calendar-selected-events > p {
+    margin: 0;
+    color: #78877e;
+    font-size: 13px;
+}
+
+.parent-calendar-selected-event {
+    display: flex;
+    flex-direction: column;
+    gap: 7px;
+    padding: 14px;
+    margin-top: 10px;
+    background: #ffffff;
+    border: 1px solid #e6ece7;
+    border-radius: 11px;
+}
+
+.parent-calendar-selected-event strong {
+    color: #123b30;
+    font-size: 14px;
+}
+
+.parent-calendar-selected-event p {
+    margin: 0;
+    color: #59685f;
+    font-size: 13px;
+    line-height: 1.5;
+}
+
+.parent-calendar-selected-event small {
+    color: #78877e;
+    font-size: 12px;
+}
+
+.parent-calendar-upcoming {
+    margin-top: 30px;
+}
+
+.parent-calendar-upcoming > h3 {
+    margin-bottom: 18px;
+    color: #123b30;
+    font-size: 18px;
+}
+
+@media (max-width: 600px) {
+    .parent-monthly-calendar {
+        padding: 15px 10px;
+    }
+
+    .parent-calendar-weekdays,
+    .parent-calendar-days-grid {
+        gap: 4px;
+    }
+
+    .parent-calendar-day,
+    .parent-calendar-empty-day {
+        min-height: 42px;
+    }
+
+    .parent-calendar-weekdays span {
+        font-size: 10px;
+    }
+
+    .parent-calendar-day {
+        font-size: 12px;
+    }
+
+    .parent-calendar-selected-events {
+        padding: 14px;
+    }
+}
