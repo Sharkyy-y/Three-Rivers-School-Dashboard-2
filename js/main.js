@@ -19119,3 +19119,249 @@ if (
 ) {
     initialiseParentDashboard();
 }
+
+
+// ==========================================
+// ADMIN FEE MANAGEMENT - LOAD STUDENTS
+// ==========================================
+
+let feeManagementStudents = [];
+
+async function loadFeeManagementStudents() {
+
+    const container = document.getElementById(
+        "feeStudentsContainer"
+    );
+
+    const countElement = document.getElementById(
+        "feeStudentCount"
+    );
+
+    if (!container) return;
+
+    container.innerHTML = "<p>Loading students...</p>";
+
+    const { data: students, error } = await supabaseClient
+        .from("students")
+        .select(`
+            id,
+            full_name,
+            admission_number,
+            class_name,
+            email,
+            profile_photo_url
+        `)
+        .order("full_name", { ascending: true });
+
+    if (error) {
+
+        console.error("FEE STUDENTS ERROR:", error);
+
+        container.innerHTML =
+            "<p>Unable to load students. Please refresh the page.</p>";
+
+        return;
+    }
+
+    feeManagementStudents = students || [];
+
+    if (countElement) {
+        countElement.textContent = feeManagementStudents.length;
+    }
+
+    renderFeeManagementStudents(feeManagementStudents);
+}
+
+
+// ==========================================
+// RENDER STUDENT DIRECTORY
+// ==========================================
+
+function renderFeeManagementStudents(students) {
+
+    const container = document.getElementById(
+        "feeStudentsContainer"
+    );
+
+    if (!container) return;
+
+    container.innerHTML = "";
+
+    if (students.length === 0) {
+
+        container.innerHTML =
+            "<p>No students found.</p>";
+
+        return;
+    }
+
+    students.forEach(student => {
+
+        const card = document.createElement("div");
+        card.className = "student-admin-card";
+
+        const info = document.createElement("div");
+        info.className = "student-admin-info";
+
+        if (student.profile_photo_url) {
+
+            const photo = document.createElement("img");
+
+            photo.src = student.profile_photo_url;
+            photo.alt = student.full_name || "Student";
+            photo.className = "student-admin-photo";
+
+            info.appendChild(photo);
+
+        } else {
+
+            const avatar = document.createElement("div");
+
+            avatar.className = "student-admin-avatar";
+
+            avatar.textContent = student.full_name
+                ? student.full_name.charAt(0).toUpperCase()
+                : "S";
+
+            info.appendChild(avatar);
+        }
+
+        const details = document.createElement("div");
+        details.className = "student-admin-details";
+
+        const name = document.createElement("h3");
+        name.textContent = student.full_name || "Unnamed Student";
+
+        const meta = document.createElement("div");
+        meta.className = "student-meta";
+
+        const admission = document.createElement("span");
+        admission.textContent =
+            "Admission: " + (student.admission_number || "—");
+
+        const studentClass = document.createElement("span");
+        studentClass.textContent =
+            "Class: " + (student.class_name || "—");
+
+        meta.appendChild(admission);
+        meta.appendChild(studentClass);
+
+        const email = document.createElement("p");
+        email.textContent = student.email || "No email available";
+
+        details.appendChild(name);
+        details.appendChild(meta);
+        details.appendChild(email);
+
+        info.appendChild(details);
+
+        const actions = document.createElement("div");
+        actions.className = "student-admin-actions";
+
+        const selectButton = document.createElement("button");
+
+        selectButton.type = "button";
+        selectButton.className = "edit-student-button";
+        selectButton.textContent = "Select Student";
+
+        selectButton.addEventListener("click", () => {
+            selectFeeManagementStudent(student);
+        });
+
+        actions.appendChild(selectButton);
+
+        card.appendChild(info);
+        card.appendChild(actions);
+
+        container.appendChild(card);
+    });
+}
+
+
+// ==========================================
+// SELECT STUDENT FOR FEE MANAGEMENT
+// ==========================================
+
+function selectFeeManagementStudent(student) {
+
+    const workspace = document.getElementById(
+        "feeStudentWorkspace"
+    );
+
+    const nameElement = document.getElementById(
+        "feeSelectedStudentName"
+    );
+
+    const detailsElement = document.getElementById(
+        "feeSelectedStudentDetails"
+    );
+
+    if (!workspace) return;
+
+    window.selectedFeeStudent = student;
+
+    nameElement.textContent = student.full_name || "Student";
+
+    detailsElement.textContent =
+        "Admission: " + (student.admission_number || "—") +
+        " | Class: " + (student.class_name || "—");
+
+    workspace.style.display = "block";
+
+    workspace.scrollIntoView({
+        behavior: "smooth",
+        block: "start"
+    });
+
+    const statementsContainer = document.getElementById(
+        "feeStatementsContainer"
+    );
+
+    if (statementsContainer) {
+        statementsContainer.innerHTML =
+            "<p>Student selected. Fee statement management will appear here.</p>";
+    }
+
+    console.log("SELECTED FEE STUDENT:", student);
+}
+
+
+// ==========================================
+// SEARCH FEE MANAGEMENT STUDENTS
+// ==========================================
+
+const feeStudentSearch = document.getElementById(
+    "feeStudentSearch"
+);
+
+if (feeStudentSearch) {
+
+    feeStudentSearch.addEventListener("input", function () {
+
+        const search = this.value.trim().toLowerCase();
+
+        const filteredStudents = feeManagementStudents.filter(student => {
+
+            return (
+                (student.full_name || "").toLowerCase().includes(search) ||
+                (student.admission_number || "").toLowerCase().includes(search) ||
+                (student.class_name || "").toLowerCase().includes(search)
+            );
+
+        });
+
+        renderFeeManagementStudents(filteredStudents);
+
+    });
+}
+
+
+// ==========================================
+// FEE MANAGEMENT PAGE STARTUP
+// ==========================================
+
+if (
+    window.location.pathname.includes("admin-fees.html")
+) {
+    loadFeeManagementStudents();
+}
