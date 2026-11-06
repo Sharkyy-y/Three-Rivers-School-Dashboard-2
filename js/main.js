@@ -19551,30 +19551,58 @@ document.getElementById("addFeeItemButton")
     ?.addEventListener("click", addFeeItemRow);
 
 
-// ==========================================
-// CALCULATE TOTAL CHARGES
-// ==========================================
 
 function updateFeeChargesTotal() {
 
     const amountInputs = document.querySelectorAll(
-        ".fee-item-amount"
+        "#feeItemsContainer .fee-item-amount"
     );
 
-    let total = 0;
+    let newCharges = 0;
 
     amountInputs.forEach(input => {
-
-        total += Number(input.value) || 0;
-
+        newCharges += Number(input.value) || 0;
     });
 
-    document.getElementById("feeNewChargesTotal").textContent =
-        "KSh " + total.toLocaleString("en-KE", {
+    const previousBalance =
+        Number(document.getElementById("feePreviousBalance")?.value) || 0;
+
+    const totalPayable = previousBalance + newCharges;
+
+    const formatCurrency = amount =>
+        "KSh " + amount.toLocaleString("en-KE", {
             minimumFractionDigits: 2,
             maximumFractionDigits: 2
         });
+
+    const previousElement = document.getElementById(
+        "feePreviewPreviousBalance"
+    );
+
+    const chargesElement = document.getElementById(
+        "feePreviewNewCharges"
+    );
+
+    const totalElement = document.getElementById(
+        "feePreviewTotalPayable"
+    );
+
+    if (previousElement) {
+        previousElement.textContent = formatCurrency(previousBalance);
+    }
+
+    if (chargesElement) {
+        chargesElement.textContent = formatCurrency(newCharges);
+    }
+
+    if (totalElement) {
+        totalElement.textContent = formatCurrency(totalPayable);
+    }
 }
+
+// Update summary when previous balance changes
+document.getElementById("feePreviousBalance")
+    ?.addEventListener("input", updateFeeChargesTotal);
 
 
 // ==========================================
