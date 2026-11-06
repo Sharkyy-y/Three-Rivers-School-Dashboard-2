@@ -11435,3 +11435,153 @@ body:has(.attendance-overview) .admin-avatar {
     }
 
 }
+
+
+/* ==========================================
+   TEACHER NOTIFICATION CENTRE
+   ========================================== */
+
+.teacher-notification-wrapper {
+    position: relative;
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    margin: 15px 0 22px;
+    z-index: 1000;
+}
+
+.teacher-notification-bell {
+    position: relative;
+    width: 46px;
+    height: 46px;
+    border: 1px solid #e5e7eb;
+    border-radius: 50%;
+    background: #ffffff;
+    color: #172033;
+    font-size: 21px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: 0.2s ease;
+}
+
+.teacher-notification-bell:hover {
+    background: #f1f5f9;
+    transform: translateY(-2px);
+    box-shadow: 0 5px 14px rgba(0, 0, 0, 0.08);
+}
+
+#teacherUnreadBadge {
+    position: absolute;
+    top: -5px;
+    right: -5px;
+    min-width: 19px;
+    height: 19px;
+    padding: 0 5px;
+    border-radius: 20px;
+    background: #dc2626;
+    color: #ffffff;
+    font-size: 10px;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 2px solid #ffffff;
+}
+
+#teacherUnreadBadge[hidden] {
+    display: none !important;
+}
+
+.teacher-notification-panel {
+    position: absolute;
+    top: 58px;
+    right: 0;
+    width: 360px;
+    max-width: calc(100vw - 40px);
+    max-height: 420px;
+    overflow-y: auto;
+    background: #ffffff;
+    border: 1px solid #e5e7eb;
+    border-radius: 14px;
+    box-shadow: 0 12px 35px rgba(0, 0, 0, 0.14);
+    padding: 16px;
+}
+
+.teacher-notification-panel[hidden] {
+    display: none !important;
+}
+
+.teacher-notification-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding-bottom: 13px;
+    margin-bottom: 8px;
+    border-bottom: 1px solid #edf0f4;
+}
+
+.teacher-notification-header h3 {
+    font-size: 16px;
+    color: #172033;
+}
+
+.teacher-notification-header button {
+    border: none;
+    background: #f1f5f9;
+    color: #475569;
+    width: 30px;
+    height: 30px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 15px;
+}
+
+.teacher-notification-header button:hover {
+    background: #e2e8f0;
+}
+
+.teacher-notification-item {
+    display: block;
+    width: 100%;
+    text-align: left;
+    padding: 13px;
+    margin-top: 8px;
+    border: 1px solid #edf0f4;
+    border-radius: 10px;
+    background: #f8fafc;
+    cursor: pointer;
+    transition: 0.2s ease;
+}
+
+.teacher-notification-item:hover {
+    background: #eff6ff;
+    border-color: #bfdbfe;
+}
+
+.teacher-notification-item strong {
+    display: block;
+    color: #172033;
+    font-size: 13px;
+    margin-bottom: 5px;
+}
+
+.teacher-notification-item p {
+    color: #64748b;
+    font-size: 12px;
+    line-height: 1.5;
+    margin-bottom: 7px;
+}
+
+.teacher-notification-item small {
+    color: #94a3b8;
+    font-size: 10px;
+}
+
+@media (max-width: 500px) {
+    .teacher-notification-panel {
+        right: -5px;
+        width: 320px;
+    }
+}
