@@ -1,0 +1,120 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Teacher Messages | Three Rivers Academy</title>
+
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/dashboard.css">
+</head>
+<body>
+
+<div class="dashboard-layout">
+
+    <aside class="sidebar">
+        <div class="sidebar-logo">
+            <h2>Student Portal</h2>
+            <p>Teacher Portal</p>
+        </div>
+
+        <nav class="sidebar-nav">
+            <a href="teacher-dashboard.html">🏠 Dashboard</a>
+            <a href="teacher-students.html">👥 My Students</a>
+            <a href="teacher-grades.html">📊 Grades</a>
+            <a href="teacher-conduct.html">⚠️ Conduct</a>
+            <a href="teacher-assignments.html">📝 Assignments</a>
+            <a href="teacher-attendance.html">📋 Attendance</a>
+            <a href="teacher-announcements.html">📢 Announcements</a>
+            <a href="teacher-timetable.html">🗓️ Timetable</a>
+            <a href="teacher-duty.html">👨‍🏫 Teachers on Duty</a>
+            <a href="teacher-messages.html" class="active">💬 Parent Messages</a>
+            <a href="teacher-profile.html">👤 My Profile</a>
+        </nav>
+
+        <div class="sidebar-logout">
+            <button id="teacherLogoutButton" class="logout-button">
+                🚪 Logout
+            </button>
+        </div>
+    </aside>
+
+    <main class="admin-dashboard-page">
+
+        <section class="admin-dashboard-header">
+            <h1>Parent Communication</h1>
+            <p>
+                View messages and meeting requests from parents,
+                respond to enquiries and manage communication.
+            </p>
+        </section>
+
+        <section class="admin-stats-grid">
+
+            <div class="admin-stat-card">
+                <div class="admin-stat-icon">M</div>
+                <div>
+                    <h2 id="teacherMessageTotal">0</h2>
+                    <p>Total Messages</p>
+                </div>
+            </div>
+
+            <div class="admin-stat-card">
+                <div class="admin-stat-icon">P</div>
+                <div>
+                    <h2 id="teacherMessagePending">0</h2>
+                    <p>Pending</p>
+                </div>
+            </div>
+
+            <div class="admin-stat-card">
+                <div class="admin-stat-icon">R</div>
+                <div>
+                    <h2 id="teacherMessageResponded">0</h2>
+                    <p>Responded</p>
+                </div>
+            </div>
+
+        </section>
+
+        <section class="admin-dashboard-section">
+
+            <div class="admin-section-header">
+                <div>
+                    <h2>Parent Messages</h2>
+                    <p>Messages and meeting requests assigned to you.</p>
+                </div>
+            </div>
+
+            <div class="teacher-message-toolbar">
+                <select id="teacherMessageFilter">
+                    <option value="all">All Messages</option>
+                    <option value="pending">Pending</option>
+                    <option value="responded">Responded</option>
+                    <option value="approved">Approved</option>
+                    <option value="declined">Declined</option>
+                    <option value="completed">Completed</option>
+                </select>
+
+                <button type="button" id="teacherRefreshMessages">
+                    ↻ Refresh
+                </button>
+            </div>
+
+            <div id="teacherMessagesStatus"></div>
+
+            <div id="teacherMessagesList">
+                <p>Loading parent messages...</p>
+            </div>
+
+        </section>
+
+    </main>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="js/main.js"></script>
+
+</body>
+</html>
