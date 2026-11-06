@@ -19053,6 +19053,84 @@ if (actionCentre) {
         // Always open Overview when the parent dashboard loads.
         showParentView("#overview");
 
+        // ==========================================
+// FAMILY CENTRE CATEGORY NAVIGATION
+// ==========================================
+
+const familyCategoryMenu = document.getElementById(
+    "parentFamilyCategories"
+);
+
+const familyCategoryPanels = {
+    fees: document.getElementById("parentFamilyFeesPanel"),
+    calendar: document.getElementById("parentFamilyCalendarPanel"),
+    teacher: document.getElementById("parentFamilyTeacherPanel")
+};
+
+const familySection = document.querySelector(
+    "#parentViewFamily .parent-family-section"
+);
+
+if (familyCategoryMenu && familySection) {
+
+    const backButton = document.createElement("button");
+
+    backButton.type = "button";
+    backButton.className = "parent-family-back-button";
+    backButton.textContent = "← Back to Family Centre";
+
+    backButton.addEventListener("click", () => {
+
+        Object.values(familyCategoryPanels).forEach(panel => {
+            if (panel) panel.hidden = true;
+        });
+
+        familyCategoryMenu.hidden = false;
+
+        backButton.remove();
+
+        familyCategoryMenu.scrollIntoView({
+            behavior: "smooth",
+            block: "start"
+        });
+
+    });
+
+    familyCategoryMenu
+        .querySelectorAll("[data-family-category]")
+        .forEach(card => {
+
+            card.addEventListener("click", () => {
+
+                const category = card.dataset.familyCategory;
+
+                const selectedPanel = familyCategoryPanels[category];
+
+                if (!selectedPanel) return;
+
+                Object.values(familyCategoryPanels).forEach(panel => {
+                    if (panel) panel.hidden = true;
+                });
+
+                familyCategoryMenu.hidden = true;
+
+                backButton.remove();
+
+                selectedPanel.prepend(backButton);
+
+                selectedPanel.hidden = false;
+
+                selectedPanel.scrollIntoView({
+                    behavior: "smooth",
+                    block: "start"
+                });
+
+            });
+
+        });
+
+}
+
         // ======================================
         // 6. SELECT FIRST CHILD
         // ======================================
