@@ -20078,3 +20078,402 @@ document.getElementById("feePaymentForm")
 
 });
 
+
+// ==========================================
+// PARENT PORTAL - FEE STATEMENTS
+// ==========================================
+
+async function loadParentFeeStatements(studentId) {
+
+    const container = document.getElementById(
+        "parentFeeStatementsList"
+    );
+
+    if (!container) return;
+
+    const totalChargesElement = document.getElementById(
+        "parentFeeTotalCharges"
+    );
+
+    const totalPaidElement = document.getElementById(
+        "parentFeeTotalPaid"
+    );
+
+    const outstandingElement = document.getElementById(
+        "parentFeeOutstanding"
+    );
+
+    const formatMoney = amount =>
+        "KSh " + Number(amount || 0).toLocaleString("en-KE", {
+            minimumFractionDigits: 2,
+            maximumFractionDigits: 2
+        });
+
+    const addFeeText = (parent, tag, value, className = "") => {
+
+        const element = document.createElement(tag);
+
+        element.textContent = value;
+
+        if (className) {
+            element.className = className;
+        }
+
+        parent.appendChild(element);
+
+        return element;
+    };
+
+    container.innerHTML = "<p>Loading fee statements...</p>";
+
+    if (totalChargesElement) totalChargesElement.textContent = formatMoney(0);
+    if (totalPaidElement) totalPaidElement.textContent = formatMoney(0);
+    if (outstandingElement) outstandingElement.textContent = formatMoney(0);
+
+    try {
+
+        // GET THIS CHILD'S FEE STATEMENTS
+
+        const { data: statements, error: statementError } =
+            await supabaseClient
+                .from("fee_statements")
+                .select("*")
+                .eq("student_id", studentId)
+                .order("created_at", { ascending: false });
+
+        if (statementError) throw statementError;
+
+        const statementList = statements || [];
+
+        if (statementList.length === 0) {
+
+            container.innerHTML = "";
+
+            addFeeText(
+                container,
+                "p",
+                "No fee statements have been issued for this student yet.",
+                "parent-loading"
+            );
+
+            return;
+        }
+
+        const statementIds = statementList.map(
+            statement => statement.id
+        );
+
+        // GET ALL STATEMENT CHARGES
+
+        const { data: items, error: itemsError } =
+            await supabaseClient
+                .from("fee_statement_items")
+                .select("*")
+                .in("statement_id", statementIds);
+
+        if (itemsError) throw itemsError;
+
+        // GET ALL PAYMENTS
+
+        const { data: payments, error: paymentsError } =
+            await supabaseClient
+                .from("fee_payments")
+                .select("*")
+                .in("statement_id", statementIds)
+                .order("payment_date", { ascending: false });
+
+        if (paymentsError) throw paymentsError;
+
+        const feeItems = items || [];
+        const feePayments = payments || [];
+
+        let grandTotalCharges = 0;
+        let grandTotalPaid = 0;
+
+        container.innerHTML = "";
+
+        // DISPLAY EACH STATEMENT
+
+        statementList.forEach(statement => {
+
+            const statementItems = feeItems.filter(
+                item => item.statement_id === statement.id
+            );
+
+            const statementPayments = feePayments.filter(
+                payment => payment.statement_id === statement.id
+            );
+
+            const previousBalance = Number(
+                statement.previous_balance || 0
+            );
+
+            const newCharges = statementItems.reduce(
+                (sum, item) => sum + Number(item.amount || 0),
+                0
+            );
+
+            const total = previousBalance + newCharges;
+
+            const paid = statementPayments.reduce(
+                (sum, payment) => sum + Number(payment.amount || 0),
+                0
+            );
+
+            const outstanding = total - paid;
+
+            grandTotalCharges += total;
+            grandTotalPaid += paid;
+
+            // STATEMENT CARD
+
+            const card = document.createElement("div");
+
+            card.className = "parent-fee-statement-card";
+
+            // HEADER
+
+            const header = document.createElement("div");
+
+            header.className = "parent-fee-statement-header";
+
+            addFeeText(
+                header,
+                "h3",
+                `${statement.academic_year} — ${statement.term}`
+            );
+
+            addFeeText(
+                header,
+                "span",
+                outstanding <= 0 ? "Paid" : "Outstanding",
+                outstanding <= 0
+                    ? "parent-fee-paid-status"
+                    : "parent-fee-outstanding-status"
+            );
+
+            card.appendChild(header);
+
+            // DUE DATE
+
+            addFeeText(
+                card,
+                "p",
+                "Due date: " +
+                (statement.due_date
+                    ? new Date(statement.due_date + "T00:00:00")
+                        .toLocaleDateString("en-KE", {
+                            day: "numeric",
+                            month: "short",
+                            year: "numeric"
+                        })
+                    : "Not specified")
+            );
+
+            // CHARGES
+
+            const chargesSection = document.createElement("div");
+
+            chargesSection.className = "parent-fee-charge-section";
+
+            addFeeText(
+                chargesSection,
+                "h4",
+                "Fee Breakdown"
+            );
+
+            if (previousBalance > 0) {
+
+                const previousRow = document.createElement("div");
+
+                previousRow.className = "parent-fee-row";
+
+                addFeeText(
+                    previousRow,
+                    "span",
+                    "Previous Balance"
+                );
+
+                addFeeText(
+                    previousRow,
+                    "strong",
+                    formatMoney(previousBalance)
+                );
+
+                chargesSection.appendChild(previousRow);
+            }
+
+            statementItems.forEach(item => {
+
+                const row = document.createElement("div");
+
+                row.className = "parent-fee-row";
+
+                addFeeText(
+                    row,
+                    "span",
+                    item.description
+                );
+
+                addFeeText(
+                    row,
+                    "strong",
+                    formatMoney(item.amount)
+                );
+
+                chargesSection.appendChild(row);
+
+            });
+
+            card.appendChild(chargesSection);
+
+            // FINANCIAL SUMMARY
+
+            const summary = document.createElement("div");
+
+            summary.className = "parent-fee-statement-summary";
+
+            const summaryRows = [
+                ["Total Charges", formatMoney(total)],
+                ["Total Paid", formatMoney(paid)],
+                ["Outstanding Balance", formatMoney(outstanding)]
+            ];
+
+            summaryRows.forEach(([label, value]) => {
+
+                const row = document.createElement("div");
+
+                row.className = "parent-fee-row";
+
+                addFeeText(row, "span", label);
+
+                addFeeText(row, "strong", value);
+
+                summary.appendChild(row);
+
+            });
+
+            card.appendChild(summary);
+
+            // PAYMENT HISTORY
+
+            const paymentSection = document.createElement("div");
+
+            paymentSection.className = "parent-fee-payment-history";
+
+            addFeeText(
+                paymentSection,
+                "h4",
+                "Payment History"
+            );
+
+            if (statementPayments.length === 0) {
+
+                addFeeText(
+                    paymentSection,
+                    "p",
+                    "No payments have been recorded yet.",
+                    "parent-loading"
+                );
+
+            } else {
+
+                statementPayments.forEach(payment => {
+
+                    const paymentCard = document.createElement("div");
+
+                    paymentCard.className = "parent-fee-payment-item";
+
+                    addFeeText(
+                        paymentCard,
+                        "strong",
+                        formatMoney(payment.amount)
+                    );
+
+                    addFeeText(
+                        paymentCard,
+                        "span",
+                        payment.payment_method || "Payment"
+                    );
+
+                    addFeeText(
+                        paymentCard,
+                        "small",
+                        payment.payment_date
+                            ? new Date(payment.payment_date + "T00:00:00")
+                                .toLocaleDateString("en-KE", {
+                                    day: "numeric",
+                                    month: "short",
+                                    year: "numeric"
+                                })
+                            : "Date unavailable"
+                    );
+
+                    if (payment.reference_number) {
+
+                        addFeeText(
+                            paymentCard,
+                            "small",
+                            "Reference: " + payment.reference_number
+                        );
+
+                    }
+
+                    paymentSection.appendChild(paymentCard);
+
+                });
+
+            }
+
+            card.appendChild(paymentSection);
+
+            // ADDITIONAL NOTES
+
+            if (statement.notes) {
+
+                addFeeText(
+                    card,
+                    "p",
+                    "School notes: " + statement.notes,
+                    "parent-fee-notes"
+                );
+
+            }
+
+            container.appendChild(card);
+
+        });
+
+        // UPDATE OVERALL SUMMARY
+
+        if (totalChargesElement) {
+            totalChargesElement.textContent =
+                formatMoney(grandTotalCharges);
+        }
+
+        if (totalPaidElement) {
+            totalPaidElement.textContent =
+                formatMoney(grandTotalPaid);
+        }
+
+        if (outstandingElement) {
+            outstandingElement.textContent =
+                formatMoney(grandTotalCharges - grandTotalPaid);
+        }
+
+    } catch (error) {
+
+        console.error("PARENT FEE STATEMENTS ERROR:", error);
+
+        container.innerHTML = "";
+
+        addFeeText(
+            container,
+            "p",
+            "Unable to load fee statements. Please try again later.",
+            "parent-loading"
+        );
+
+    }
+
+}
