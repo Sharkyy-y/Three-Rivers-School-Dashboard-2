@@ -18865,14 +18865,18 @@ const loadSchoolCalendar = async () => {
 
             // LOAD ALL FIVE SECTIONS INDEPENDENTLY.
 
-        await Promise.all([
+      await Promise.all([
     loadGrades(),
     loadAttendance(),
     loadAssignments(),
     loadConduct(),
     loadAnnouncements(),
     loadSchoolCalendar(),
-    loadParentFeeStatements(student.id)
+    loadParentFeeStatements(student.id),
+
+    // PARENT TEACHER COMMUNICATION
+    loadParentTeacherDirectory(student.id),
+    loadParentTeacherMessages(student.id)
 ]);
 
           
@@ -20475,5 +20479,753 @@ async function loadParentFeeStatements(studentId) {
         );
 
     }
+
+}
+
+// ==========================================
+// PARENT PORTAL - TEACHER COMMUNICATION
+// ==========================================
+
+let parentTeacherDirectory = [];
+let parentTeacherSubjects = [];
+
+
+// ==========================================
+// LOAD TEACHERS FOR SELECTED CHILD
+// ==========================================
+
+async function loadParentTeacherDirectory(studentId) {
+
+    const teacherSelect = document.getElementById(
+        "parentContactTeacher"
+    );
+
+    const subjectSelect = document.getElementById(
+        "parentContactSubject"
+    );
+
+    if (!teacherSelect || !subjectSelect) return;
+
+    teacherSelect.innerHTML =
+        '<option value="">Loading teachers...</option>';
+
+    subjectSelect.innerHTML =
+        '<option value="">Select a teacher first</option>';
+
+    try {
+
+        // GET SUBJECTS BELONGING TO THIS STUDENT
+
+        const { data: studentSubjects, error: studentSubjectsError } =
+            await supabaseClient
+                .from("student_subjects")
+                .select(`
+                    subject_id,
+                    subjects (
+                        id,
+                        name,
+                        code
+                    )
+                `)
+                .eq("student_id", studentId);
+
+        if (studentSubjectsError) throw studentSubjectsError;
+
+        const subjects = studentSubjects || [];
+
+        const subjectIds = [
+            ...new Set(
+                subjects.map(item => item.subject_id).filter(Boolean)
+            )
+        ];
+
+        if (subjectIds.length === 0) {
+
+            teacherSelect.innerHTML =
+                '<option value="">No teachers available</option>';
+
+            subjectSelect.innerHTML =
+                '<option value="">No subjects available</option>';
+
+            parentTeacherDirectory = [];
+            parentTeacherSubjects = [];
+
+            return;
+        }
+
+
+        // GET TEACHERS ASSIGNED TO THESE SUBJECTS
+
+        const { data: teacherAssignments, error: assignmentsError } =
+            await supabaseClient
+                .from("teacher_subjects")
+                .select("teacher_id, subject_id")
+                .in("subject_id", subjectIds);
+
+        if (assignmentsError) throw assignmentsError;
+
+        const assignments = teacherAssignments || [];
+
+        const teacherIds = [
+            ...new Set(
+                assignments.map(item => item.teacher_id).filter(Boolean)
+            )
+        ];
+
+        if (teacherIds.length === 0) {
+
+            teacherSelect.innerHTML =
+                '<option value="">No teachers assigned yet</option>';
+
+            subjectSelect.innerHTML =
+                '<option value="">No subjects available</option>';
+
+            parentTeacherDirectory = [];
+            parentTeacherSubjects = [];
+
+            return;
+        }
+
+
+        // GET TEACHER DETAILS
+
+        const { data: teachers, error: teachersError } =
+            await supabaseClient
+                .from("teachers")
+                .select("id, full_name, email")
+                .in("id", teacherIds)
+                .order("full_name", { ascending: true });
+
+        if (teachersError) throw teachersError;
+
+
+        // STORE THE DIRECTORY
+
+        parentTeacherDirectory = teachers || [];
+
+        parentTeacherSubjects = assignments.map(assignment => {
+
+            const subjectRecord = subjects.find(
+                item => item.subject_id === assignment.subject_id
+            );
+
+            const subject = Array.isArray(subjectRecord?.subjects)
+                ? subjectRecord.subjects[0]
+                : subjectRecord?.subjects;
+
+            return {
+                teacher_id: assignment.teacher_id,
+                subject_id: assignment.subject_id,
+                subject_name: subject?.name || "Subject",
+                subject_code: subject?.code || ""
+            };
+
+        });
+
+
+        // POPULATE TEACHER SELECT
+
+        teacherSelect.innerHTML =
+            '<option value="">Choose a teacher</option>';
+
+        parentTeacherDirectory.forEach(teacher => {
+
+            const option = document.createElement("option");
+
+            option.value = teacher.id;
+            option.textContent = teacher.full_name || "Teacher";
+
+            teacherSelect.appendChild(option);
+
+        });
+
+
+        // RESET SUBJECT SELECT
+
+        subjectSelect.innerHTML =
+            '<option value="">Choose a teacher first</option>';
+
+
+        // FILTER SUBJECTS WHEN TEACHER CHANGES
+
+        if (!teacherSelect.dataset.communicationInitialized) {
+
+            teacherSelect.dataset.communicationInitialized = "true";
+
+            teacherSelect.addEventListener("change", () => {
+
+                const teacherId = teacherSelect.value;
+
+                subjectSelect.innerHTML =
+                    '<option value="">Choose a subject</option>';
+
+                if (!teacherId) return;
+
+                const teacherSubjects = parentTeacherSubjects.filter(
+                    item => item.teacher_id === teacherId
+                );
+
+                teacherSubjects.forEach(item => {
+
+                    const option = document.createElement("option");
+
+                    option.value = item.subject_id;
+
+                    option.textContent = item.subject_code
+                        ? `${item.subject_name} (${item.subject_code})`
+                        : item.subject_name;
+
+                    subjectSelect.appendChild(option);
+
+                });
+
+                if (teacherSubjects.length === 0) {
+
+                    subjectSelect.innerHTML =
+                        '<option value="">No subjects found</option>';
+
+                }
+
+            });
+
+        }
+
+    } catch (error) {
+
+        console.error(
+            "PARENT TEACHER DIRECTORY ERROR:",
+            error
+        );
+
+        teacherSelect.innerHTML =
+            '<option value="">Unable to load teachers</option>';
+
+        subjectSelect.innerHTML =
+            '<option value="">Unavailable</option>';
+
+    }
+
+}
+
+
+// ==========================================
+// LOAD PARENT COMMUNICATION HISTORY
+// ==========================================
+
+async function loadParentTeacherMessages(studentId) {
+
+    const container = document.getElementById(
+        "parentTeacherMessagesList"
+    );
+
+    if (!container) return;
+
+    container.innerHTML =
+        "<p>Loading communication history...</p>";
+
+    try {
+
+        const { data, error } = await supabaseClient
+            .from("parent_teacher_messages")
+            .select(`
+                id,
+                request_type,
+                message,
+                preferred_meeting_date,
+                preferred_meeting_time,
+                status,
+                teacher_response,
+                response_at,
+                created_at,
+                teachers (
+                    full_name
+                ),
+                subjects (
+                    name
+                )
+            `)
+            .eq("student_id", studentId)
+            .order("created_at", { ascending: false });
+
+        if (error) throw error;
+
+        const messages = data || [];
+
+        container.innerHTML = "";
+
+        if (messages.length === 0) {
+
+            const empty = document.createElement("p");
+
+            empty.className = "parent-loading";
+
+            empty.textContent =
+                "You have not sent any messages or meeting requests for this child yet.";
+
+            container.appendChild(empty);
+
+            return;
+        }
+
+
+        // DISPLAY EACH COMMUNICATION
+
+        messages.forEach(record => {
+
+            const card = document.createElement("div");
+
+            card.className = "parent-teacher-message-card";
+
+
+            // HEADER
+
+            const header = document.createElement("div");
+
+            header.className = "parent-teacher-message-header";
+
+            const heading = document.createElement("h4");
+
+            heading.textContent =
+                record.request_type === "meeting"
+                    ? "Meeting Request"
+                    : "Message to Teacher";
+
+            const status = document.createElement("span");
+
+            const statusValue = String(
+                record.status || "pending"
+            ).toLowerCase();
+
+            status.className =
+                `parent-communication-status status-${statusValue}`;
+
+            status.textContent =
+                statusValue.charAt(0).toUpperCase() +
+                statusValue.slice(1);
+
+            header.appendChild(heading);
+            header.appendChild(status);
+
+            card.appendChild(header);
+
+
+            // TEACHER AND SUBJECT
+
+            const teacher = document.createElement("p");
+
+            teacher.textContent =
+                "Teacher: " +
+                (record.teachers?.full_name || "Teacher");
+
+            card.appendChild(teacher);
+
+            if (record.subjects?.name) {
+
+                const subject = document.createElement("p");
+
+                subject.textContent =
+                    "Subject: " + record.subjects.name;
+
+                card.appendChild(subject);
+
+            }
+
+
+            // MESSAGE
+
+            const message = document.createElement("div");
+
+            message.className = "parent-teacher-message-content";
+
+            const messageHeading = document.createElement("strong");
+
+            messageHeading.textContent = "Your message";
+
+            const messageText = document.createElement("p");
+
+            messageText.textContent = record.message;
+
+            message.appendChild(messageHeading);
+            message.appendChild(messageText);
+
+            card.appendChild(message);
+
+
+            // MEETING DETAILS
+
+            if (
+                record.request_type === "meeting" &&
+                record.preferred_meeting_date
+            ) {
+
+                const meetingDetails = document.createElement("p");
+
+                const meetingDate = new Date(
+                    record.preferred_meeting_date + "T00:00:00"
+                ).toLocaleDateString("en-KE", {
+                    day: "numeric",
+                    month: "long",
+                    year: "numeric"
+                });
+
+                meetingDetails.textContent =
+                    "Preferred meeting: " +
+                    meetingDate +
+                    (
+                        record.preferred_meeting_time
+                            ? " at " + record.preferred_meeting_time.slice(0, 5)
+                            : ""
+                    );
+
+                card.appendChild(meetingDetails);
+
+            }
+
+
+            // TEACHER RESPONSE
+
+            const responseSection = document.createElement("div");
+
+            responseSection.className =
+                "parent-teacher-response-section";
+
+            const responseHeading = document.createElement("strong");
+
+            responseHeading.textContent = "Teacher's Response";
+
+            responseSection.appendChild(responseHeading);
+
+            const responseText = document.createElement("p");
+
+            responseText.textContent =
+                record.teacher_response ||
+                "Your teacher has not responded yet.";
+
+            responseSection.appendChild(responseText);
+
+            if (record.response_at) {
+
+                const responseDate = document.createElement("small");
+
+                responseDate.textContent =
+                    "Responded: " +
+                    new Date(record.response_at).toLocaleString("en-KE");
+
+                responseSection.appendChild(responseDate);
+
+            }
+
+            card.appendChild(responseSection);
+
+
+            // SUBMISSION DATE
+
+            const submitted = document.createElement("small");
+
+            submitted.className = "parent-teacher-submitted-date";
+
+            submitted.textContent =
+                "Submitted: " +
+                new Date(record.created_at).toLocaleString("en-KE");
+
+            card.appendChild(submitted);
+
+            container.appendChild(card);
+
+        });
+
+    } catch (error) {
+
+        console.error(
+            "PARENT COMMUNICATION HISTORY ERROR:",
+            error
+        );
+
+        container.innerHTML =
+            "<p>Unable to load communication history.</p>";
+
+    }
+
+}
+
+
+// ==========================================
+// PARENT COMMUNICATION FORM
+// ==========================================
+
+const parentTeacherMessageForm = document.getElementById(
+    "parentTeacherMessageForm"
+);
+
+const parentContactType = document.getElementById(
+    "parentContactType"
+);
+
+const parentMeetingDateGroup = document.getElementById(
+    "parentMeetingDateGroup"
+);
+
+const parentMeetingTimeGroup = document.getElementById(
+    "parentMeetingTimeGroup"
+);
+
+const parentMeetingDate = document.getElementById(
+    "parentMeetingDate"
+);
+
+const parentMeetingTime = document.getElementById(
+    "parentMeetingTime"
+);
+
+const parentTeacherMessageStatus = document.getElementById(
+    "parentTeacherMessageStatus"
+);
+
+
+// ==========================================
+// SHOW OR HIDE MEETING FIELDS
+// ==========================================
+
+function updateParentMeetingFields() {
+
+    if (!parentContactType) return;
+
+    const isMeeting = parentContactType.value === "meeting";
+
+    if (parentMeetingDateGroup) {
+        parentMeetingDateGroup.style.display =
+            isMeeting ? "block" : "none";
+    }
+
+    if (parentMeetingTimeGroup) {
+        parentMeetingTimeGroup.style.display =
+            isMeeting ? "block" : "none";
+    }
+
+    if (parentMeetingDate) {
+        parentMeetingDate.required = isMeeting;
+    }
+
+    if (parentMeetingTime) {
+        parentMeetingTime.required = isMeeting;
+    }
+
+}
+
+
+if (
+    parentContactType &&
+    !parentContactType.dataset.communicationInitialized
+) {
+
+    parentContactType.dataset.communicationInitialized = "true";
+
+    parentContactType.addEventListener(
+        "change",
+        updateParentMeetingFields
+    );
+
+    updateParentMeetingFields();
+
+}
+
+
+// ==========================================
+// SEND MESSAGE OR MEETING REQUEST
+// ==========================================
+
+if (
+    parentTeacherMessageForm &&
+    !parentTeacherMessageForm.dataset.communicationInitialized
+) {
+
+    parentTeacherMessageForm.dataset.communicationInitialized = "true";
+
+    parentTeacherMessageForm.addEventListener(
+        "submit",
+        async event => {
+
+            event.preventDefault();
+
+            const teacherId = document.getElementById(
+                "parentContactTeacher"
+            )?.value;
+
+            const subjectId = document.getElementById(
+                "parentContactSubject"
+            )?.value;
+
+            const requestType = parentContactType?.value;
+
+            const message = document.getElementById(
+                "parentTeacherMessage"
+            )?.value.trim();
+
+            const meetingDate = parentMeetingDate?.value || null;
+
+            const meetingTime = parentMeetingTime?.value || null;
+
+            const submitButton = document.getElementById(
+                "parentTeacherSendButton"
+            );
+
+
+            // VALIDATION
+
+            if (!selectedParentChild) {
+
+                alert("Please select a child first.");
+
+                return;
+            }
+
+            if (!teacherId) {
+
+                alert("Please select a teacher.");
+
+                return;
+            }
+
+            if (!subjectId) {
+
+                alert("Please select a subject.");
+
+                return;
+            }
+
+            if (!message) {
+
+                alert("Please enter your message.");
+
+                return;
+            }
+
+            if (
+                requestType === "meeting" &&
+                (!meetingDate || !meetingTime)
+            ) {
+
+                alert(
+                    "Please select your preferred meeting date and time."
+                );
+
+                return;
+            }
+
+
+            submitButton.disabled = true;
+
+            submitButton.textContent = "Sending...";
+
+            if (parentTeacherMessageStatus) {
+
+                parentTeacherMessageStatus.textContent =
+                    "Sending your communication...";
+
+            }
+
+
+            try {
+
+                // GET SIGNED-IN PARENT
+
+                const { data: userData, error: userError } =
+                    await supabaseClient.auth.getUser();
+
+                if (userError) throw userError;
+
+                const parentId = userData.user?.id;
+
+                if (!parentId) {
+
+                    throw new Error(
+                        "Your parent session has expired. Please log in again."
+                    );
+
+                }
+
+
+                // SAVE COMMUNICATION
+
+                const { error } = await supabaseClient
+                    .from("parent_teacher_messages")
+                    .insert({
+
+                        parent_id: parentId,
+
+                        student_id: selectedParentChild.id,
+
+                        teacher_id: teacherId,
+
+                        subject_id: subjectId,
+
+                        request_type: requestType,
+
+                        message: message,
+
+                        preferred_meeting_date:
+                            requestType === "meeting"
+                                ? meetingDate
+                                : null,
+
+                        preferred_meeting_time:
+                            requestType === "meeting"
+                                ? meetingTime
+                                : null
+
+                    });
+
+                if (error) throw error;
+
+
+                // RESET FORM
+
+                parentTeacherMessageForm.reset();
+
+                updateParentMeetingFields();
+
+
+                // SUCCESS MESSAGE
+
+                if (parentTeacherMessageStatus) {
+
+                    parentTeacherMessageStatus.textContent =
+                        "Your communication was sent successfully.";
+
+                }
+
+
+                // REFRESH HISTORY
+
+                await loadParentTeacherMessages(
+                    selectedParentChild.id
+                );
+
+
+            } catch (error) {
+
+                console.error(
+                    "PARENT COMMUNICATION SEND ERROR:",
+                    error
+                );
+
+                if (parentTeacherMessageStatus) {
+
+                    parentTeacherMessageStatus.textContent =
+                        "Unable to send your communication: " +
+                        (error.message || "Please try again.");
+
+                }
+
+            } finally {
+
+                submitButton.disabled = false;
+
+                submitButton.textContent = "Send Communication";
+
+            }
+
+        }
+    );
 
 }
