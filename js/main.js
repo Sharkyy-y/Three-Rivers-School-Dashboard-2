@@ -19067,10 +19067,7 @@ const familyCategoryPanels = {
     teacher: document.getElementById("parentFamilyTeacherPanel")
 };
 
-const familySection = document.querySelector(
-    "#parentViewFamily .parent-family-section"
-);
-
+const familySection = document.getElementById("parentViewFamily");
 if (familyCategoryMenu && familySection) {
 
     const backButton = document.createElement("button");
