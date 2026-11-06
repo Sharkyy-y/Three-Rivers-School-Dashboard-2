@@ -19365,3 +19365,334 @@ if (
 ) {
     loadFeeManagementStudents();
 }
+
+
+// ==========================================
+// ADMIN FEE MANAGEMENT - STATEMENT FORM
+// ==========================================
+
+const feeModal = document.getElementById("feeStatementModal");
+const feeForm = document.getElementById("feeStatementForm");
+const feeItemsContainer = document.getElementById("feeItemsContainer");
+
+
+// ==========================================
+// OPEN AND CLOSE MODAL
+// ==========================================
+
+const openFeeStatementModal = () => {
+
+    if (!window.selectedFeeStudent) {
+        alert("Please select a student first.");
+        return;
+    }
+
+    feeForm.reset();
+
+    feeItemsContainer.innerHTML = "";
+
+    addFeeItemRow();
+
+    document.getElementById("feeAcademicYear").value =
+        new Date().getFullYear();
+
+    document.getElementById("feePreviousBalance").value = 0;
+
+    updateFeeChargesTotal();
+
+    feeModal.style.display = "flex";
+};
+
+
+const closeFeeStatementModal = () => {
+    feeModal.style.display = "none";
+};
+
+
+document.getElementById("createFeeStatementButton")
+    ?.addEventListener("click", openFeeStatementModal);
+
+document.getElementById("closeFeeModal")
+    ?.addEventListener("click", closeFeeStatementModal);
+
+document.getElementById("cancelFeeStatement")
+    ?.addEventListener("click", closeFeeStatementModal);
+
+
+// ==========================================
+// ADD FEE CHARGE ROW
+// ==========================================
+
+function addFeeItemRow() {
+
+    const row = document.createElement("div");
+    row.className = "fee-item-row";
+
+    const description = document.createElement("input");
+
+    description.type = "text";
+    description.className = "fee-item-description";
+    description.placeholder = "Charge description";
+    description.required = true;
+
+    const amount = document.createElement("input");
+
+    amount.type = "number";
+    amount.className = "fee-item-amount";
+    amount.placeholder = "Amount (KSh)";
+    amount.min = "0.01";
+    amount.step = "0.01";
+    amount.required = true;
+
+    const removeButton = document.createElement("button");
+
+    removeButton.type = "button";
+    removeButton.className = "remove-fee-item";
+    removeButton.textContent = "×";
+
+    amount.addEventListener("input", updateFeeChargesTotal);
+
+    removeButton.addEventListener("click", () => {
+
+        row.remove();
+
+        updateFeeChargesTotal();
+
+    });
+
+    row.appendChild(description);
+    row.appendChild(amount);
+    row.appendChild(removeButton);
+
+    feeItemsContainer.appendChild(row);
+}
+
+
+// ==========================================
+// ADD CHARGE BUTTON
+// ==========================================
+
+document.getElementById("addFeeItemButton")
+    ?.addEventListener("click", addFeeItemRow);
+
+
+// ==========================================
+// CALCULATE TOTAL CHARGES
+// ==========================================
+
+function updateFeeChargesTotal() {
+
+    const amountInputs = document.querySelectorAll(
+        ".fee-item-amount"
+    );
+
+    let total = 0;
+
+    amountInputs.forEach(input => {
+
+        total += Number(input.value) || 0;
+
+    });
+
+    document.getElementById("feeNewChargesTotal").textContent =
+        "KSh " + total.toLocaleString("en-KE", {
+            minimumFractionDigits: 2,
+            maximumFractionDigits: 2
+        });
+}
+
+
+// ==========================================
+// SAVE FEE STATEMENT
+// ==========================================
+
+feeForm?.addEventListener("submit", async function (event) {
+
+    event.preventDefault();
+
+    const student = window.selectedFeeStudent;
+
+    if (!student) {
+        alert("Please select a student.");
+        return;
+    }
+
+    const saveButton = document.getElementById("saveFeeStatement");
+
+    const academicYear = document.getElementById(
+        "feeAcademicYear"
+    ).value.trim();
+
+    const term = document.getElementById(
+        "feeTerm"
+    ).value;
+
+    const previousBalance = Number(
+        document.getElementById("feePreviousBalance").value
+    );
+
+    const dueDate = document.getElementById(
+        "feeDueDate"
+    ).value || null;
+
+    const notes = document.getElementById(
+        "feeStatementNotes"
+    ).value.trim();
+
+    const itemRows = document.querySelectorAll(".fee-item-row");
+
+    const feeItems = [];
+
+    itemRows.forEach(row => {
+
+        const description = row.querySelector(
+            ".fee-item-description"
+        ).value.trim();
+
+        const amount = Number(
+            row.querySelector(".fee-item-amount").value
+        );
+
+        if (description && amount > 0) {
+
+            feeItems.push({
+                description,
+                amount
+            });
+
+        }
+
+    });
+
+
+    // VALIDATION
+
+    if (!academicYear || !term) {
+        alert("Please enter the academic year and term.");
+        return;
+    }
+
+    if (!Number.isFinite(previousBalance) || previousBalance < 0) {
+        alert("Please enter a valid previous balance.");
+        return;
+    }
+
+    if (feeItems.length === 0) {
+        alert("Please add at least one valid fee charge.");
+        return;
+    }
+
+    if (feeItems.length !== itemRows.length) {
+        alert("Please complete every fee charge row or remove the empty rows.");
+        return;
+    }
+
+
+    const totalCharges = feeItems.reduce(
+        (sum, item) => sum + item.amount,
+        0
+    );
+
+    saveButton.disabled = true;
+    saveButton.textContent = "Saving Statement...";
+
+
+    try {
+
+        // CREATE STATEMENT
+
+        const { data: statement, error: statementError } =
+            await supabaseClient
+                .from("fee_statements")
+                .insert({
+                    student_id: student.id,
+                    academic_year: academicYear,
+                    term: term,
+                    previous_balance: previousBalance,
+                    due_date: dueDate,
+                    notes: notes || null,
+                    created_by: (await supabaseClient.auth.getUser()).data.user?.id
+                })
+                .select()
+                .single();
+
+
+        if (statementError) {
+            throw statementError;
+        }
+
+
+        // SAVE INDIVIDUAL CHARGES
+
+        const feeItemsToInsert = feeItems.map(item => ({
+            statement_id: statement.id,
+            description: item.description,
+            amount: item.amount
+        }));
+
+
+        const { error: itemsError } = await supabaseClient
+            .from("fee_statement_items")
+            .insert(feeItemsToInsert);
+
+
+        if (itemsError) {
+
+            // Remove incomplete statement if charge insertion fails
+
+            await supabaseClient
+                .from("fee_statements")
+                .delete()
+                .eq("id", statement.id);
+
+            throw itemsError;
+        }
+
+
+        alert(
+            "Fee statement successfully created for " +
+            student.full_name +
+            "!\n\nTotal new charges: KSh " +
+            totalCharges.toLocaleString("en-KE")
+        );
+
+        closeFeeStatementModal();
+
+        feeForm.reset();
+
+        feeItemsContainer.innerHTML = "";
+
+        addFeeItemRow();
+
+        // Refresh the selected student's statements
+        if (typeof loadStudentFeeStatements === "function") {
+            await loadStudentFeeStatements(student.id);
+        }
+
+    } catch (error) {
+
+        console.error("FEE STATEMENT SAVE ERROR:", error);
+
+        if (error.code === "23505") {
+
+            alert(
+                "A fee statement already exists for this student, academic year and term."
+            );
+
+        } else {
+
+            alert(
+                "Unable to save the fee statement: " +
+                (error.message || "Unknown error")
+            );
+
+        }
+
+    } finally {
+
+        saveButton.disabled = false;
+        saveButton.textContent = "Save Fee Statement";
+
+    }
+
+});
