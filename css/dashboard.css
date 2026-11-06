@@ -10835,3 +10835,131 @@ body:has(.attendance-overview) .admin-avatar {
         font-size: 10px;
     }
 }
+
+/* ==========================================
+   PARENT ACADEMIC PERFORMANCE GRAPH
+========================================== */
+
+.parent-academic-graph-section {
+    margin: 25px 0;
+    padding: 24px;
+    background: #ffffff;
+    border: 1px solid #e6ece7;
+    border-radius: 18px;
+}
+
+.parent-academic-graph-header h3 {
+    margin: 0 0 7px;
+    color: #123b30;
+    font-size: 19px;
+    font-weight: 750;
+}
+
+.parent-academic-graph-header p {
+    margin: 0;
+    color: #7b8980;
+    font-size: 13px;
+}
+
+.parent-academic-chart {
+    margin-top: 25px;
+}
+
+.parent-academic-chart-bars {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-around;
+    gap: 12px;
+    min-height: 220px;
+    padding: 15px 5px 0;
+    border-bottom: 1px solid #e6ece7;
+}
+
+.parent-academic-chart-column {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 8px;
+    min-width: 0;
+}
+
+.parent-academic-chart-column strong {
+    color: #123b30;
+    font-size: 12px;
+}
+
+.parent-academic-chart-bar-area {
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+    width: 100%;
+    height: 150px;
+}
+
+.parent-academic-chart-bar {
+    width: min(38px, 75%);
+    min-height: 3px;
+    border-radius: 8px 8px 3px 3px;
+    transition: height 0.3s ease;
+    background: #16834a;
+}
+
+.parent-academic-chart-bar.excellent {
+    background: #16834a;
+}
+
+.parent-academic-chart-bar.average {
+    background: #d6a23c;
+}
+
+.parent-academic-chart-bar.needs-improvement {
+    background: #d95353;
+}
+
+.parent-academic-chart-column span {
+    max-width: 85px;
+    overflow: hidden;
+    color: #52645a;
+    font-size: 11px;
+    font-weight: 650;
+    text-align: center;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.parent-academic-chart-column small {
+    color: #87938b;
+    font-size: 10px;
+    text-align: center;
+}
+
+.parent-academic-chart-note {
+    margin: 15px 0 0;
+    color: #849087;
+    font-size: 11px;
+}
+
+@media (max-width: 600px) {
+    .parent-academic-graph-section {
+        padding: 17px 12px;
+    }
+
+    .parent-academic-chart-bars {
+        gap: 5px;
+    }
+
+    .parent-academic-chart-bar {
+        width: min(27px, 85%);
+    }
+
+    .parent-academic-chart-column span {
+        max-width: 55px;
+        font-size: 9px;
+    }
+
+    .parent-academic-chart-column small {
+        font-size: 9px;
+    }
+}
