@@ -19864,6 +19864,20 @@ async function loadStudentFeeStatements(studentId) {
                 card.appendChild(notes);
             }
 
+            // RECORD PAYMENT BUTTON
+
+const paymentButton = document.createElement("button");
+
+paymentButton.type = "button";
+paymentButton.className = "record-fee-payment-button";
+paymentButton.textContent = "Record Payment";
+
+paymentButton.addEventListener("click", () => {
+    openFeePaymentModal(statement.id);
+});
+
+card.appendChild(paymentButton);
+
             container.appendChild(card);
 
         });
