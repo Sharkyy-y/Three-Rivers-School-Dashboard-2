@@ -17595,6 +17595,16 @@ if (academicContainer) {
     buttonsContainer.querySelector("button")?.click();
 }
 
+                     catch (error) {
+                    console.error("Parent grades error:", error);
+                    setText("parentAcademicAverage", "Unavailable");
+                    showError(
+                        "parentAcademicContent",
+                        "Unable to load academic records."
+                    );
+                }
+            };
+
             const loadAttendance = async () => {
                 try {
                     const { data, error } = await supabaseClient
