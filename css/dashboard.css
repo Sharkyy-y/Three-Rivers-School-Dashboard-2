@@ -11256,3 +11256,182 @@ body:has(.attendance-overview) .admin-avatar {
         padding: 14px;
     }
 }
+
+
+/* ==========================================
+   PARENT PORTAL - FEE STATEMENTS
+========================================== */
+
+.parent-fee-statements {
+    margin-top: 25px;
+}
+
+.parent-fee-summary {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 15px;
+    margin: 24px 0;
+}
+
+.parent-fee-summary-card {
+    background: #f5f8f6;
+    border: 1px solid #e2ebe5;
+    border-radius: 14px;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.parent-fee-summary-card span {
+    color: #64746a;
+    font-size: 13px;
+}
+
+.parent-fee-summary-card strong {
+    color: #176b45;
+    font-size: 21px;
+    overflow-wrap: anywhere;
+}
+
+.parent-fee-statement-card {
+    background: #ffffff;
+    border: 1px solid #e5ebe7;
+    border-radius: 16px;
+    padding: 22px;
+    margin-bottom: 18px;
+}
+
+.parent-fee-statement-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+    margin-bottom: 15px;
+}
+
+.parent-fee-statement-header h3 {
+    margin: 0;
+    color: #183c2b;
+}
+
+.parent-fee-paid-status,
+.parent-fee-outstanding-status {
+    padding: 7px 12px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 700;
+}
+
+.parent-fee-paid-status {
+    background: #e4f5eb;
+    color: #187342;
+}
+
+.parent-fee-outstanding-status {
+    background: #fff2df;
+    color: #a66512;
+}
+
+.parent-fee-charge-section,
+.parent-fee-payment-history {
+    margin-top: 22px;
+}
+
+.parent-fee-charge-section h4,
+.parent-fee-payment-history h4 {
+    color: #234a36;
+    margin-bottom: 12px;
+}
+
+.parent-fee-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 15px;
+    padding: 11px 0;
+    border-bottom: 1px solid #edf1ee;
+    font-size: 14px;
+}
+
+.parent-fee-row span {
+    color: #66736b;
+}
+
+.parent-fee-row strong {
+    color: #243c2e;
+    text-align: right;
+}
+
+.parent-fee-statement-summary {
+    margin-top: 20px;
+    padding: 15px;
+    background: #f5f8f6;
+    border-radius: 12px;
+}
+
+.parent-fee-statement-summary .parent-fee-row:last-child {
+    border-bottom: none;
+}
+
+.parent-fee-statement-summary .parent-fee-row:last-child strong {
+    color: #176b45;
+    font-size: 16px;
+}
+
+.parent-fee-payment-item {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: center;
+    gap: 10px;
+    padding: 12px;
+    margin-bottom: 8px;
+    background: #f8faf9;
+    border-radius: 10px;
+}
+
+.parent-fee-payment-item strong {
+    color: #176b45;
+}
+
+.parent-fee-payment-item span,
+.parent-fee-payment-item small {
+    color: #64746a;
+    font-size: 12px;
+}
+
+.parent-fee-notes {
+    margin-top: 18px;
+    padding: 13px;
+    background: #f5f8f6;
+    border-radius: 10px;
+    color: #596a60;
+    font-size: 13px;
+    line-height: 1.6;
+}
+
+@media (max-width: 700px) {
+
+    .parent-fee-summary {
+        grid-template-columns: 1fr;
+    }
+
+    .parent-fee-summary-card {
+        padding: 16px;
+    }
+
+    .parent-fee-summary-card strong {
+        font-size: 19px;
+    }
+
+    .parent-fee-statement-card {
+        padding: 16px;
+    }
+
+    .parent-fee-row {
+        font-size: 13px;
+    }
+
+}
