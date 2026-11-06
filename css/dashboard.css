@@ -10140,95 +10140,153 @@ body:has(.attendance-overview) .admin-avatar {
 }
 
 
+
 /* ==========================================
    PREMIUM PARENT ACTION CENTRE
 ========================================== */
 
 .parent-action-centre {
-    margin-top: 28px;
+    margin-top: 30px;
 }
 
-/* Responsive card grid */
 #parentActionCentre {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-    gap: 16px;
-    margin-top: 20px;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 20px;
+    margin-top: 24px;
 }
 
-/* Individual action cards */
+/* Main card */
 .parent-action-card {
+    position: relative;
     display: flex;
-    align-items: flex-start;
-    gap: 15px;
-    padding: 22px;
-    min-width: 0;
+    flex-direction: column;
+    justify-content: space-between;
+    min-height: 190px;
+    padding: 24px;
     background: #ffffff;
-    border: 1px solid #e8eee9;
-    border-radius: 16px;
-    box-shadow: 0 4px 14px rgba(18, 59, 48, 0.04);
-    transition: all 0.25s ease;
+    border: 1px solid #e7ede8;
+    border-radius: 18px;
+    box-shadow: 0 5px 18px rgba(18, 59, 48, 0.05);
+    overflow: hidden;
+    transition: transform 0.25s ease, box-shadow 0.25s ease;
 }
 
 .parent-action-card:hover {
     transform: translateY(-4px);
-    box-shadow: 0 10px 25px rgba(18, 59, 48, 0.09);
-    border-color: #d6b66b;
+    box-shadow: 0 12px 28px rgba(18, 59, 48, 0.10);
 }
 
-/* Card priorities */
-.parent-action-card.priority-attention {
-    background: #fffaf2;
-    border-color: #f2dfbd;
-    border-left: 4px solid #d97706;
+/* Decorative background detail */
+.parent-action-card::after {
+    content: "";
+    position: absolute;
+    right: -35px;
+    bottom: -55px;
+    width: 145px;
+    height: 145px;
+    border-radius: 50%;
+    background: rgba(214, 182, 107, 0.08);
+    pointer-events: none;
 }
 
-.parent-action-card.priority-positive {
-    background: #f5fbf6;
-    border-color: #dcefe0;
-    border-left: 4px solid #15803d;
+/* Card header */
+.parent-action-card-header {
+    display: flex;
+    align-items: center;
+    gap: 13px;
+    margin-bottom: 25px;
 }
 
-/* Icon container */
+/* Icon */
 .parent-action-icon {
     display: flex;
     align-items: center;
     justify-content: center;
+    width: 52px;
+    height: 52px;
     flex-shrink: 0;
-    width: 48px;
-    height: 48px;
-    border-radius: 14px;
+    border-radius: 15px;
     background: #edf4ef;
-    font-size: 22px;
+    font-size: 25px;
 }
 
-/* Card content */
+/* Category label */
+.parent-action-category {
+    color: #8a9a90;
+    font-size: 10px;
+    font-weight: 800;
+    letter-spacing: 1.3px;
+}
+
+/* Details */
 .parent-action-content {
-    flex: 1;
-    min-width: 0;
+    position: relative;
+    z-index: 1;
 }
 
-.parent-action-content strong {
-    display: block;
-    margin-bottom: 9px;
+.parent-action-content h4 {
+    margin: 0 0 10px;
     color: #123b30;
-    font-size: 15px;
-    font-weight: 700;
+    font-size: 17px;
+    font-weight: 750;
     line-height: 1.4;
 }
 
 .parent-action-content p {
     margin: 0;
     color: #64746c;
-    font-size: 13px;
-    line-height: 1.7;
-    overflow-wrap: anywhere;
+    font-size: 14px;
+    line-height: 1.8;
+}
+
+/* Academic cards */
+.parent-action-card.action-academic {
+    border-top: 4px solid #326b56;
+}
+
+.parent-action-card.action-academic .parent-action-icon {
+    background: #eaf3ed;
+}
+
+/* Achievement cards */
+.parent-action-card.action-achievement {
+    border-top: 4px solid #d6b66b;
+}
+
+.parent-action-card.action-achievement .parent-action-icon {
+    background: #fbf5e8;
+}
+
+/* Attendance cards */
+.parent-action-card.action-attendance {
+    border-top: 4px solid #d97706;
+}
+
+/* Assignment cards */
+.parent-action-card.action-assignment {
+    border-top: 4px solid #5577a5;
+}
+
+/* Announcement cards */
+.parent-action-card.action-announcement {
+    border-top: 4px solid #8b6bb0;
+}
+
+/* Attention priority */
+.parent-action-card.priority-attention {
+    background: #fffaf2;
+}
+
+/* Positive priority */
+.parent-action-card.priority-positive {
+    background: #f8fcf8;
 }
 
 /* Empty state */
 .parent-action-empty {
     grid-column: 1 / -1;
-    padding: 30px 20px;
+    padding: 35px 20px;
     text-align: center;
     color: #64746c;
     background: #f5f8f6;
@@ -10237,21 +10295,15 @@ body:has(.attendance-overview) .admin-avatar {
     font-size: 14px;
 }
 
-/* Mobile layout */
-@media (max-width: 600px) {
+/* Responsive layout */
+@media (max-width: 700px) {
     #parentActionCentre {
         grid-template-columns: 1fr;
-        gap: 12px;
+        gap: 14px;
     }
 
     .parent-action-card {
-        padding: 17px;
-        gap: 12px;
-    }
-
-    .parent-action-icon {
-        width: 42px;
-        height: 42px;
-        font-size: 19px;
+        min-height: 165px;
+        padding: 20px;
     }
 }
