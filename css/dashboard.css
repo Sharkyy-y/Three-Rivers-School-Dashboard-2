@@ -12264,3 +12264,31 @@ body:has(.attendance-overview) .admin-avatar {
         font-size: 19px;
     }
 }
+
+/* FAMILY CENTRE BACK BUTTON */
+
+.parent-family-back-button {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px 20px;
+    margin-bottom: 22px;
+    border: none;
+    border-radius: 10px;
+    background: #e8eef7;
+    color: #23436b;
+    font-size: 14px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: 0.2s ease;
+}
+
+.parent-family-back-button:hover {
+    background: #d6e3f5;
+    transform: translateX(-3px);
+}
+
+.parent-family-category[hidden],
+.parent-family-categories[hidden] {
+    display: none !important;
+}
