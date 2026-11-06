@@ -17688,6 +17688,225 @@ if (container) {
 
     container.appendChild(summaryGrid);
 
+        // ==================================
+    // WEEKLY / MONTHLY ATTENDANCE GRAPH
+    // ==================================
+
+    const graphSection = document.createElement("div");
+    graphSection.className = "parent-attendance-graph-section";
+
+    const graphHeader = document.createElement("div");
+    graphHeader.className = "parent-attendance-graph-header";
+
+    const graphTitle = document.createElement("h4");
+    graphTitle.textContent = "Attendance Trends";
+
+    const graphControls = document.createElement("div");
+    graphControls.className = "parent-attendance-graph-controls";
+
+    const weeklyButton = document.createElement("button");
+    weeklyButton.type = "button";
+    weeklyButton.textContent = "Weekly";
+    weeklyButton.className = "active";
+
+    const monthlyButton = document.createElement("button");
+    monthlyButton.type = "button";
+    monthlyButton.textContent = "Monthly";
+
+    graphControls.appendChild(weeklyButton);
+    graphControls.appendChild(monthlyButton);
+
+    graphHeader.appendChild(graphTitle);
+    graphHeader.appendChild(graphControls);
+
+    const graphLegend = document.createElement("div");
+    graphLegend.className = "parent-attendance-graph-legend";
+
+    [
+        { label: "Present", color: "#16834a" },
+        { label: "Late", color: "#e49a28" },
+        { label: "Absent", color: "#d95353" }
+    ].forEach(item => {
+        const legendItem = document.createElement("span");
+        legendItem.className = "attendance-legend-item";
+
+        const dot = document.createElement("i");
+        dot.style.backgroundColor = item.color;
+
+        const label = document.createElement("span");
+        label.textContent = item.label;
+
+        legendItem.appendChild(dot);
+        legendItem.appendChild(label);
+        graphLegend.appendChild(legendItem);
+    });
+
+    const chartContainer = document.createElement("div");
+    chartContainer.className = "parent-attendance-chart";
+
+    graphSection.appendChild(graphHeader);
+    graphSection.appendChild(graphLegend);
+    graphSection.appendChild(chartContainer);
+
+    container.appendChild(graphSection);
+
+    const renderAttendanceGraph = view => {
+
+        chartContainer.innerHTML = "";
+
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+
+        const buckets = [];
+
+        if (view === "weekly") {
+
+            // Last 7 days
+            for (let i = 6; i >= 0; i--) {
+                const date = new Date(today);
+                date.setDate(today.getDate() - i);
+
+                buckets.push({
+                    key: [
+                        date.getFullYear(),
+                        String(date.getMonth() + 1).padStart(2, "0"),
+                        String(date.getDate()).padStart(2, "0")
+                    ].join("-"),
+                    label: date.toLocaleDateString("en-KE", {
+                        weekday: "short"
+                    })
+                });
+            }
+
+        } else {
+
+            // Last 6 calendar months
+            for (let i = 5; i >= 0; i--) {
+                const date = new Date(
+                    today.getFullYear(),
+                    today.getMonth() - i,
+                    1
+                );
+
+                buckets.push({
+                    key: `${date.getFullYear()}-${String(
+                        date.getMonth() + 1
+                    ).padStart(2, "0")}`,
+                    label: date.toLocaleDateString("en-KE", {
+                        month: "short"
+                    })
+                });
+            }
+        }
+
+        const chartData = buckets.map(bucket => {
+
+            const matchingRecords = records.filter(record => {
+                if (!record.date) return false;
+
+                return view === "weekly"
+                    ? record.date === bucket.key
+                    : record.date.startsWith(bucket.key);
+            });
+
+            return {
+                ...bucket,
+                present: matchingRecords.filter(
+                    record => String(record.status).toLowerCase() === "present"
+                ).length,
+                late: matchingRecords.filter(
+                    record => String(record.status).toLowerCase() === "late"
+                ).length,
+                absent: matchingRecords.filter(
+                    record => String(record.status).toLowerCase() === "absent"
+                ).length
+            };
+        });
+
+        const maximumTotal = Math.max(
+            1,
+            ...chartData.map(item =>
+                item.present + item.late + item.absent
+            )
+        );
+
+        const chartHeight = 150;
+
+        chartData.forEach(item => {
+
+            const column = document.createElement("div");
+            column.className = "parent-attendance-chart-column";
+
+            const total = item.present + item.late + item.absent;
+
+            const totalLabel = document.createElement("small");
+            totalLabel.className = "attendance-chart-total";
+            totalLabel.textContent = total;
+
+            const barArea = document.createElement("div");
+            barArea.className = "attendance-chart-bar-area";
+
+            const bar = document.createElement("div");
+            bar.className = "attendance-chart-bar";
+
+            [
+                { label: "Present", value: item.present, color: "#16834a" },
+                { label: "Late", value: item.late, color: "#e49a28" },
+                { label: "Absent", value: item.absent, color: "#d95353" }
+            ].forEach(segmentData => {
+
+                if (segmentData.value === 0) return;
+
+                const segment = document.createElement("div");
+                segment.className = "attendance-chart-segment";
+
+                segment.style.height =
+                    `${(segmentData.value / maximumTotal) * chartHeight}px`;
+
+                segment.style.backgroundColor = segmentData.color;
+
+                segment.title =
+                    `${segmentData.label}: ${segmentData.value}`;
+
+                bar.appendChild(segment);
+            });
+
+            if (total === 0) {
+                const emptyBar = document.createElement("div");
+                emptyBar.className = "attendance-chart-empty";
+                emptyBar.style.height = "5px";
+                bar.appendChild(emptyBar);
+            }
+
+            barArea.appendChild(bar);
+
+            const label = document.createElement("span");
+            label.className = "attendance-chart-label";
+            label.textContent = item.label;
+
+            column.appendChild(totalLabel);
+            column.appendChild(barArea);
+            column.appendChild(label);
+
+            chartContainer.appendChild(column);
+        });
+    };
+
+    weeklyButton.addEventListener("click", () => {
+        weeklyButton.classList.add("active");
+        monthlyButton.classList.remove("active");
+        renderAttendanceGraph("weekly");
+    });
+
+    monthlyButton.addEventListener("click", () => {
+        monthlyButton.classList.add("active");
+        weeklyButton.classList.remove("active");
+        renderAttendanceGraph("monthly");
+    });
+
+    // Show weekly graph first
+    renderAttendanceGraph("weekly");
+
     // HISTORY HEADING
     const historyHeader = document.createElement("div");
     historyHeader.className = "parent-attendance-history-header";
