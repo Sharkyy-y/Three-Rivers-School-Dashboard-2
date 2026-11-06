@@ -17738,6 +17738,27 @@ assignments.forEach(assignment => {
 
                     const records = data || [];
 
+                    // Add positive achievements to Parent Action Centre
+records
+    .filter(record =>
+        String(record.type).toLowerCase() === "positive"
+    )
+    .slice(0, 3)
+    .forEach(record => {
+
+        addParentAction(
+            "achievement",
+            "Positive achievement",
+            `${record.title || "Achievement"}${
+                record.points !== null && record.points !== undefined
+                    ? ` — +${record.points} points`
+                    : ""
+            }`,
+            "positive"
+        );
+
+    });
+
                     setText("parentConduct", String(records.length));
 
                     showList(
