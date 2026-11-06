@@ -17591,6 +17591,128 @@ if (academicContainer) {
     academicContainer.appendChild(buttonsContainer);
     academicContainer.appendChild(resultsContainer);
 
+    // ==========================================
+// ACADEMIC PERFORMANCE TREND GRAPH
+// ==========================================
+
+const academicGraphSection = document.createElement("div");
+academicGraphSection.className = "parent-academic-graph-section";
+
+const graphHeader = document.createElement("div");
+graphHeader.className = "parent-academic-graph-header";
+
+const graphTitle = document.createElement("h3");
+graphTitle.textContent = "Academic Performance Trend";
+
+const graphDescription = document.createElement("p");
+graphDescription.textContent =
+    "Track your child's results across recent assessments.";
+
+graphHeader.appendChild(graphTitle);
+graphHeader.appendChild(graphDescription);
+
+const graphContainer = document.createElement("div");
+graphContainer.className = "parent-academic-chart";
+
+academicGraphSection.appendChild(graphHeader);
+academicGraphSection.appendChild(graphContainer);
+
+const renderAcademicGraph = () => {
+
+    graphContainer.innerHTML = "";
+
+    const datedGrades = gradeList
+        .filter(grade =>
+            grade.created_at &&
+            Number(grade.max_score) > 0
+        )
+        .map(grade => ({
+            ...grade,
+            percentage: Math.round(
+                (Number(grade.score) / Number(grade.max_score)) * 100
+            )
+        }))
+        .sort((a, b) =>
+            new Date(a.created_at) - new Date(b.created_at)
+        )
+        .slice(-8);
+
+    if (datedGrades.length === 0) {
+        addText(
+            graphContainer,
+            "p",
+            "Not enough dated assessment results to display a trend.",
+            "parent-loading"
+        );
+        return;
+    }
+
+    const chart = document.createElement("div");
+    chart.className = "parent-academic-chart-bars";
+
+    const maximum = 100;
+
+    datedGrades.forEach(grade => {
+
+        const column = document.createElement("div");
+        column.className = "parent-academic-chart-column";
+
+        const percentage = document.createElement("strong");
+        percentage.textContent = grade.percentage + "%";
+
+        const barArea = document.createElement("div");
+        barArea.className = "parent-academic-chart-bar-area";
+
+        const bar = document.createElement("div");
+        bar.className = "parent-academic-chart-bar";
+
+        bar.style.height =
+            `${Math.max(grade.percentage, 2) / maximum * 150}px`;
+
+        bar.title = `${grade.percentage}%`;
+
+        if (grade.percentage >= 80) {
+            bar.classList.add("excellent");
+        } else if (grade.percentage >= 50) {
+            bar.classList.add("average");
+        } else {
+            bar.classList.add("needs-improvement");
+        }
+
+        barArea.appendChild(bar);
+
+        const subject = Array.isArray(grade.subjects)
+            ? grade.subjects[0]
+            : grade.subjects;
+
+        const label = document.createElement("span");
+        label.textContent = subject?.name || "Subject";
+        label.title = subject?.name || "Subject";
+
+        const date = document.createElement("small");
+        date.textContent = formatDate(grade.created_at);
+
+        column.appendChild(percentage);
+        column.appendChild(barArea);
+        column.appendChild(label);
+        column.appendChild(date);
+
+        chart.appendChild(column);
+    });
+
+    graphContainer.appendChild(chart);
+
+    const note = document.createElement("p");
+    note.className = "parent-academic-chart-note";
+    note.textContent =
+        "Showing the latest " + datedGrades.length +
+        " assessments, in chronological order.";
+
+    graphContainer.appendChild(note);
+};
+
+renderAcademicGraph();
+
   // Open Opener Exams by default
 buttonsContainer.querySelector("button")?.click();
 
