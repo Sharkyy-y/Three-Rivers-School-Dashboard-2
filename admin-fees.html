@@ -1,0 +1,270 @@
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Fee Management</title>
+
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/dashboard.css">
+</head>
+
+<body>
+
+<div class="dashboard-layout">
+
+    <!-- SIDEBAR -->
+    <aside class="sidebar">
+
+        <div class="sidebar-logo">
+            <h2>Student Portal</h2>
+            <p>Administration</p>
+        </div>
+
+        <nav class="sidebar-nav">
+
+            <a href="admin-dashboard.html">
+                🏠 Dashboard
+            </a>
+
+            <a href="admin-students.html">
+                👥 Students
+            </a>
+
+            <a href="admin-credentials.html">
+                👨‍🏫 Login Credentials
+            </a>
+
+            <a href="admin-teachers.html">
+                👨‍🏫 Teachers
+            </a>
+
+            <a href="admin-timetable.html">
+                🗓️ Timetable
+            </a>
+
+            <a href="admin-grades.html">
+                📊 Grades
+            </a>
+
+            <a href="admin-fees.html" class="active">
+                💰 Fee Management
+            </a>
+
+            <a href="admin-attendance.html">
+                ✅ Attendance
+            </a>
+
+            <a href="admin-conduct.html">
+                ⚠️ Conduct
+            </a>
+
+            <a href="admin-announcements.html">
+                📢 Announcements
+            </a>
+
+        </nav>
+
+        <div class="sidebar-logout">
+            <button id="logoutButton" class="logout-button">
+                🚪 Logout
+            </button>
+        </div>
+
+    </aside>
+
+
+    <!-- MAIN CONTENT -->
+    <main class="admin-dashboard-page">
+
+        <!-- HEADER -->
+        <section class="admin-dashboard-header">
+
+            <h1>Fee Management</h1>
+
+            <p>
+                Manage student fee statements, school charges
+                and payment records.
+            </p>
+
+        </section>
+
+
+        <!-- STUDENT DIRECTORY -->
+        <section class="student-directory-card">
+
+            <div class="directory-header">
+
+                <div class="directory-title">
+
+                    <div class="directory-icon">
+                        F
+                    </div>
+
+                    <div>
+                        <h2>Student Fee Records</h2>
+
+                        <p>
+                            Search and select a student to manage
+                            their fee statement.
+                        </p>
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- SEARCH -->
+            <div class="student-search-box">
+
+                <span class="search-icon">⌕</span>
+
+                <input
+                    type="text"
+                    id="feeStudentSearch"
+                    placeholder="Search by student name, admission number or class..."
+                    autocomplete="off"
+                >
+
+            </div>
+
+
+            <!-- STUDENT COUNT -->
+            <div class="student-directory-summary">
+
+                <div>
+                    <strong id="feeStudentCount">
+                        Loading students...
+                    </strong>
+
+                    <span>registered students</span>
+                </div>
+
+            </div>
+
+
+            <!-- STUDENT RESULTS -->
+            <div id="feeStudentsContainer">
+
+                <div class="students-loading">
+
+                    <div class="loading-circle"></div>
+
+                    <span>Loading students...</span>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- SELECTED STUDENT WORKSPACE -->
+        <section id="feeStudentWorkspace" style="display: none;">
+
+            <div class="student-directory-card">
+
+                <div class="directory-header">
+
+                    <div class="directory-title">
+
+                        <div class="directory-icon">
+                            F
+                        </div>
+
+                        <div>
+                            <h2 id="feeSelectedStudentName">
+                                Selected Student
+                            </h2>
+
+                            <p id="feeSelectedStudentDetails">
+                                Student fee information
+                            </p>
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <!-- FEE SUMMARY -->
+                <div class="admin-stats-grid">
+
+                    <div class="admin-stat-card">
+                        <div class="admin-stat-icon">C</div>
+                        <div>
+                            <h2 id="feeTotalCharges">KSh 0</h2>
+                            <p>Total Charges</p>
+                        </div>
+                    </div>
+
+                    <div class="admin-stat-card">
+                        <div class="admin-stat-icon">P</div>
+                        <div>
+                            <h2 id="feeTotalPaid">KSh 0</h2>
+                            <p>Total Paid</p>
+                        </div>
+                    </div>
+
+                    <div class="admin-stat-card">
+                        <div class="admin-stat-icon">B</div>
+                        <div>
+                            <h2 id="feeOutstandingBalance">KSh 0</h2>
+                            <p>Outstanding Balance</p>
+                        </div>
+                    </div>
+
+                </div>
+
+
+                <!-- STATEMENTS -->
+                <div class="admin-dashboard-section">
+
+                    <div class="admin-section-header">
+
+                        <div>
+                            <h2>Fee Statements</h2>
+
+                            <p>
+                                Statements recorded for this student.
+                            </p>
+                        </div>
+
+                        <button
+                            type="button"
+                            id="createFeeStatementButton"
+                            class="add-student-button"
+                        >
+                            + Create Statement
+                        </button>
+
+                    </div>
+
+                    <div id="feeStatementsContainer">
+                        <p class="students-loading">
+                            Select a student to view fee statements.
+                        </p>
+                    </div>
+
+                </div>
+
+            </div>
+
+        </section>
+
+    </main>
+
+</div>
+
+
+<!-- SUPABASE -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<script src="js/main.js"></script>
+
+</body>
+</html>
