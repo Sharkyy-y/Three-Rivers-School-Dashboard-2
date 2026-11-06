@@ -17591,10 +17591,12 @@ if (academicContainer) {
     academicContainer.appendChild(buttonsContainer);
     academicContainer.appendChild(resultsContainer);
 
-    // Open Opener Exams by default
-    buttonsContainer.querySelector("button")?.click();
-    
-} catch (error) {
+  // Open Opener Exams by default
+buttonsContainer.querySelector("button")?.click();
+
+} // Closes if (academicContainer)
+
+} catch (error) { // Closes try and handles errors
     console.error("Parent grades error:", error);
     setText("parentAcademicAverage", "Unavailable");
     showError(
