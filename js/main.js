@@ -18615,12 +18615,13 @@ const loadSchoolCalendar = async () => {
             // LOAD ALL FIVE SECTIONS INDEPENDENTLY.
 
             await Promise.all([
-                loadGrades(),
-                loadAttendance(),
-                loadAssignments(),
-                loadConduct(),
-                loadAnnouncements()
-            ]);
+    loadGrades(),
+    loadAttendance(),
+    loadAssignments(),
+    loadConduct(),
+    loadAnnouncements(),
+    loadSchoolCalendar()
+]);
 
           
 // DISPLAY PARENT ACTION CENTRE
