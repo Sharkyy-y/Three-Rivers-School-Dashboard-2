@@ -18490,7 +18490,8 @@ announcements.slice(0, 3).forEach(announcement => {
                 }
             };
 
-            // ==========================================
+         
+// ==========================================
 // PARENT SCHOOL CALENDAR
 // ==========================================
 
@@ -18500,8 +18501,6 @@ const loadSchoolCalendar = async () => {
     if (!calendarContainer) return;
 
     try {
-        const today = new Date().toISOString().split("T")[0];
-
         const { data, error } = await supabaseClient
             .from("school_events")
             .select(`
@@ -18514,9 +18513,8 @@ const loadSchoolCalendar = async () => {
                 location,
                 category
             `)
-            .gte("event_date", today)
             .order("event_date", { ascending: true })
-            .limit(20);
+            .limit(200);
 
         if (error) throw error;
 
@@ -18524,79 +18522,332 @@ const loadSchoolCalendar = async () => {
 
         calendarContainer.innerHTML = "";
 
-        if (events.length === 0) {
-            addText(
-                calendarContainer,
-                "p",
-                "There are no upcoming school events at the moment.",
-                "parent-loading"
-            );
-            return;
-        }
+        // Local date helpers
+        const makeDateKey = (date) => {
+            const year = date.getFullYear();
+            const month = String(date.getMonth() + 1).padStart(2, "0");
+            const day = String(date.getDate()).padStart(2, "0");
+
+            return `${year}-${month}-${day}`;
+        };
+
+        const today = new Date();
+        const todayKey = makeDateKey(today);
+
+        let displayedMonth = new Date(
+            today.getFullYear(),
+            today.getMonth(),
+            1
+        );
+
+        let selectedDate = todayKey;
+
+        const eventsByDate = {};
 
         events.forEach(event => {
-            const card = document.createElement("div");
-            card.className = "parent-calendar-event-card";
-
-            const date = new Date(event.event_date + "T00:00:00");
-
-            const dateBox = document.createElement("div");
-            dateBox.className = "parent-calendar-event-date";
-
-            addText(dateBox, "strong", date.getDate());
-            addText(
-                dateBox,
-                "span",
-                date.toLocaleDateString("en-GB", { month: "short" })
-            );
-
-            const details = document.createElement("div");
-            details.className = "parent-calendar-event-details";
-
-            addText(
-                details,
-                "strong",
-                event.title || "School event"
-            );
-
-            if (event.description) {
-                addText(details, "p", event.description);
+            if (!eventsByDate[event.event_date]) {
+                eventsByDate[event.event_date] = [];
             }
 
-            addText(
-                details,
-                "small",
-                date.toLocaleDateString("en-GB", {
+            eventsByDate[event.event_date].push(event);
+        });
+
+        // Main calendar layout
+        const calendarView = document.createElement("div");
+        calendarView.className = "parent-monthly-calendar";
+
+        const calendarHeader = document.createElement("div");
+        calendarHeader.className = "parent-monthly-calendar-header";
+
+        const previousButton = document.createElement("button");
+        previousButton.type = "button";
+        previousButton.textContent = "‹";
+        previousButton.className = "parent-calendar-nav-button";
+
+        const monthTitle = document.createElement("h3");
+
+        const nextButton = document.createElement("button");
+        nextButton.type = "button";
+        nextButton.textContent = "›";
+        nextButton.className = "parent-calendar-nav-button";
+
+        calendarHeader.appendChild(previousButton);
+        calendarHeader.appendChild(monthTitle);
+        calendarHeader.appendChild(nextButton);
+
+        const weekdayRow = document.createElement("div");
+        weekdayRow.className = "parent-calendar-weekdays";
+
+        ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"]
+            .forEach(day => {
+                const weekday = document.createElement("span");
+                weekday.textContent = day;
+                weekdayRow.appendChild(weekday);
+            });
+
+        const daysGrid = document.createElement("div");
+        daysGrid.className = "parent-calendar-days-grid";
+
+        const selectedEventsSection = document.createElement("div");
+        selectedEventsSection.className =
+            "parent-calendar-selected-events";
+
+        calendarView.appendChild(calendarHeader);
+        calendarView.appendChild(weekdayRow);
+        calendarView.appendChild(daysGrid);
+        calendarView.appendChild(selectedEventsSection);
+
+        // Selected date events
+        const renderSelectedEvents = () => {
+            selectedEventsSection.innerHTML = "";
+
+            const heading = document.createElement("h4");
+            const selectedDateObject = new Date(
+                selectedDate + "T00:00:00"
+            );
+
+            heading.textContent = selectedDateObject.toLocaleDateString(
+                "en-GB",
+                {
                     weekday: "long",
                     day: "numeric",
                     month: "long",
                     year: "numeric"
-                })
+                }
             );
 
+            selectedEventsSection.appendChild(heading);
+
+            const selectedEvents = eventsByDate[selectedDate] || [];
+
+            if (selectedEvents.length === 0) {
+                const emptyMessage = document.createElement("p");
+                emptyMessage.textContent =
+                    "No school events scheduled for this date.";
+
+                selectedEventsSection.appendChild(emptyMessage);
+                return;
+            }
+
+            selectedEvents.forEach(event => {
+                const card = document.createElement("div");
+                card.className = "parent-calendar-selected-event";
+
+                const title = document.createElement("strong");
+                title.textContent = event.title || "School event";
+
+                card.appendChild(title);
+
+                if (event.description) {
+                    const description = document.createElement("p");
+                    description.textContent = event.description;
+                    card.appendChild(description);
+                }
+
+                if (event.start_time) {
+                    const time = document.createElement("small");
+
+                    time.textContent =
+                        "Time: " + event.start_time.slice(0, 5) +
+                        (event.end_time
+                            ? " – " + event.end_time.slice(0, 5)
+                            : "");
+
+                    card.appendChild(time);
+                }
+
+                if (event.location) {
+                    const location = document.createElement("small");
+                    location.textContent = "Location: " + event.location;
+                    card.appendChild(location);
+                }
+
+                selectedEventsSection.appendChild(card);
+            });
+        };
+
+        // Monthly grid
+        const renderMonth = () => {
+            daysGrid.innerHTML = "";
+
+            monthTitle.textContent = displayedMonth.toLocaleDateString(
+                "en-GB",
+                {
+                    month: "long",
+                    year: "numeric"
+                }
+            );
+
+            const year = displayedMonth.getFullYear();
+            const month = displayedMonth.getMonth();
+
+            const firstDay = new Date(year, month, 1);
+            const daysInMonth = new Date(year, month + 1, 0).getDate();
+
+            const startingOffset = (firstDay.getDay() + 6) % 7;
+
+            // Empty spaces before the first day
+            for (let i = 0; i < startingOffset; i++) {
+                const emptyDay = document.createElement("div");
+                emptyDay.className = "parent-calendar-empty-day";
+                daysGrid.appendChild(emptyDay);
+            }
+
+            for (let day = 1; day <= daysInMonth; day++) {
+                const date = new Date(year, month, day);
+                const dateKey = makeDateKey(date);
+
+                const dayEvents = eventsByDate[dateKey] || [];
+
+                const dayButton = document.createElement("button");
+                dayButton.type = "button";
+                dayButton.className = "parent-calendar-day";
+                dayButton.textContent = day;
+
+                if (dateKey === todayKey) {
+                    dayButton.classList.add("today");
+                }
+
+                if (dateKey === selectedDate) {
+                    dayButton.classList.add("selected");
+                }
+
+                if (dayEvents.length > 0) {
+                    dayButton.classList.add("has-events");
+
+                    const eventDot = document.createElement("span");
+                    eventDot.className = "parent-calendar-event-dot";
+                    dayButton.appendChild(eventDot);
+                }
+
+                dayButton.addEventListener("click", () => {
+                    selectedDate = dateKey;
+                    renderMonth();
+                    renderSelectedEvents();
+                });
+
+                daysGrid.appendChild(dayButton);
+            }
+
+            renderSelectedEvents();
+        };
+
+        previousButton.addEventListener("click", () => {
+            displayedMonth = new Date(
+                displayedMonth.getFullYear(),
+                displayedMonth.getMonth() - 1,
+                1
+            );
+
+            selectedDate = makeDateKey(displayedMonth);
+            renderMonth();
+        });
+
+        nextButton.addEventListener("click", () => {
+            displayedMonth = new Date(
+                displayedMonth.getFullYear(),
+                displayedMonth.getMonth() + 1,
+                1
+            );
+
+            selectedDate = makeDateKey(displayedMonth);
+            renderMonth();
+        });
+
+        calendarContainer.appendChild(calendarView);
+
+        renderMonth();
+
+        // Upcoming events section
+        const upcomingSection = document.createElement("div");
+        upcomingSection.className = "parent-calendar-upcoming";
+
+        const upcomingHeading = document.createElement("h3");
+        upcomingHeading.textContent = "Upcoming School Events";
+
+        upcomingSection.appendChild(upcomingHeading);
+
+        const upcomingEvents = events.filter(
+            event => event.event_date >= todayKey
+        ).slice(0, 20);
+
+        if (upcomingEvents.length === 0) {
+            const emptyMessage = document.createElement("p");
+            emptyMessage.textContent =
+                "There are no upcoming school events.";
+
+            upcomingSection.appendChild(emptyMessage);
+        }
+
+        upcomingEvents.forEach(event => {
+            const card = document.createElement("div");
+            card.className = "parent-calendar-event-card";
+
+            const dateBox = document.createElement("div");
+            dateBox.className = "parent-calendar-event-date";
+
+            const date = new Date(event.event_date + "T00:00:00");
+
+            const dateNumber = document.createElement("strong");
+            dateNumber.textContent = date.getDate();
+
+            const dateMonth = document.createElement("span");
+            dateMonth.textContent = date.toLocaleDateString(
+                "en-GB",
+                { month: "short" }
+            );
+
+            dateBox.appendChild(dateNumber);
+            dateBox.appendChild(dateMonth);
+
+            const details = document.createElement("div");
+            details.className = "parent-calendar-event-details";
+
+            const title = document.createElement("strong");
+            title.textContent = event.title || "School event";
+            details.appendChild(title);
+
+            if (event.description) {
+                const description = document.createElement("p");
+                description.textContent = event.description;
+                details.appendChild(description);
+            }
+
+            const dateText = document.createElement("small");
+            dateText.textContent = date.toLocaleDateString(
+                "en-GB",
+                {
+                    weekday: "long",
+                    day: "numeric",
+                    month: "long",
+                    year: "numeric"
+                }
+            );
+            details.appendChild(dateText);
+
             if (event.start_time) {
-                addText(
-                    details,
-                    "small",
+                const time = document.createElement("small");
+                time.textContent =
                     "Time: " + event.start_time.slice(0, 5) +
                     (event.end_time
                         ? " – " + event.end_time.slice(0, 5)
-                        : "")
-                );
+                        : "");
+
+                details.appendChild(time);
             }
 
             if (event.location) {
-                addText(details, "small", "Location: " + event.location);
-            }
-
-            if (event.category) {
-                addText(details, "span", event.category);
+                const location = document.createElement("small");
+                location.textContent = "Location: " + event.location;
+                details.appendChild(location);
             }
 
             card.appendChild(dateBox);
             card.appendChild(details);
-            calendarContainer.appendChild(card);
+            upcomingSection.appendChild(card);
         });
+
+        calendarContainer.appendChild(upcomingSection);
 
     } catch (error) {
         console.error("Parent school calendar error:", error);
