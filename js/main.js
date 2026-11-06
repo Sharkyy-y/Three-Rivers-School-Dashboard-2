@@ -17537,6 +17537,18 @@ if (gradeList.length > 0) {
                         )
                         : null;
 
+                    // Add attendance alert to Parent Action Centre
+if (percentage !== null && percentage < 90) {
+
+    addParentAction(
+        "attendance",
+        "Attendance needs attention",
+        `Attendance is currently ${percentage}%. There are ${absent} absences and ${late} late arrivals.`,
+        "attention"
+    );
+
+}
+
                     setText(
                         "parentAttendance",
                         percentage === null
