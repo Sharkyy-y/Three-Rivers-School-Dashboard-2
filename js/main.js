@@ -17738,25 +17738,54 @@ assignments.forEach(assignment => {
 
                     const records = data || [];
 
-                    // Add positive achievements to Parent Action Centre
-records
-    .filter(record =>
-        String(record.type).toLowerCase() === "positive"
-    )
-    .slice(0, 3)
-    .forEach(record => {
+                    
+// GROUP REPEATED POSITIVE ACHIEVEMENTS
+const positiveRecords = records.filter(record =>
+    String(record.type).toLowerCase() === "positive"
+);
 
+const achievementGroups = new Map();
+
+positiveRecords.forEach(record => {
+    const title = record.title || "Achievement";
+    const key = title.trim().toLowerCase();
+
+    if (!achievementGroups.has(key)) {
+        achievementGroups.set(key, {
+            title,
+            totalPoints: 0,
+            count: 0,
+            hasPoints: false
+        });
+    }
+
+    const group = achievementGroups.get(key);
+
+    group.count++;
+
+    if (record.points !== null && record.points !== undefined) {
+        group.totalPoints += Number(record.points) || 0;
+        group.hasPoints = true;
+    }
+});
+
+Array.from(achievementGroups.values())
+    .slice(0, 3)
+    .forEach(group => {
         addParentAction(
             "achievement",
-            "Positive achievement",
-            `${record.title || "Achievement"}${
-                record.points !== null && record.points !== undefined
-                    ? ` — +${record.points} points`
-                    : ""
-            }`,
+            group.title,
+            group.hasPoints
+                ? `+${group.totalPoints} points${
+                    group.count > 1
+                        ? ` across ${group.count} records`
+                        : ""
+                }`
+                : `${group.count} achievement record${
+                    group.count > 1 ? "s" : ""
+                }`,
             "positive"
         );
-
     });
 
                     setText("parentConduct", String(records.length));
