@@ -418,18 +418,39 @@
                         ></textarea>
 
                     </div>
+                  
+<!-- FEE STATEMENT FINANCIAL SUMMARY -->
+<div class="fee-preview-card">
 
+    <div class="fee-preview-heading">
+        <div>
+            <h3>Statement Summary</h3>
+            <p>Review the amounts before saving.</p>
+        </div>
+        <span>💰</span>
+    </div>
 
-                    <!-- TOTAL -->
-                    <div class="fee-form-total">
+    <div class="fee-preview-row">
+        <span>Previous Balance</span>
+        <strong id="feePreviewPreviousBalance">KSh 0.00</strong>
+    </div>
 
-                        <span>Total New Charges</span>
+    <div class="fee-preview-row">
+        <span>New Charges</span>
+        <strong id="feePreviewNewCharges">KSh 0.00</strong>
+    </div>
 
-                        <strong id="feeNewChargesTotal">
-                            KSh 0.00
-                        </strong>
+    <div class="fee-preview-divider"></div>
 
-                    </div>
+    <div class="fee-preview-total">
+        <div>
+            <span>Total Amount Payable</span>
+            <small>Previous balance + new charges</small>
+        </div>
+        <strong id="feePreviewTotalPayable">KSh 0.00</strong>
+    </div>
+
+</div>
 
 
                     <!-- FORM ACTIONS -->
