@@ -19459,6 +19459,9 @@ const openFeeStatementModal = () => {
         return;
     }
 
+    document.getElementById("feeModalStudentName").textContent =
+    window.selectedFeeStudent.full_name || "Selected Student";
+
     feeForm.reset();
 
     feeItemsContainer.innerHTML = "";
