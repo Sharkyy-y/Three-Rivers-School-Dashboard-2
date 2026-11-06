@@ -18490,6 +18490,128 @@ announcements.slice(0, 3).forEach(announcement => {
                 }
             };
 
+            // ==========================================
+// PARENT SCHOOL CALENDAR
+// ==========================================
+
+const loadSchoolCalendar = async () => {
+    const calendarContainer = getElement("parentSchoolCalendar");
+
+    if (!calendarContainer) return;
+
+    try {
+        const today = new Date().toISOString().split("T")[0];
+
+        const { data, error } = await supabaseClient
+            .from("school_events")
+            .select(`
+                id,
+                title,
+                description,
+                event_date,
+                start_time,
+                end_time,
+                location,
+                category
+            `)
+            .gte("event_date", today)
+            .order("event_date", { ascending: true })
+            .limit(20);
+
+        if (error) throw error;
+
+        const events = data || [];
+
+        calendarContainer.innerHTML = "";
+
+        if (events.length === 0) {
+            addText(
+                calendarContainer,
+                "p",
+                "There are no upcoming school events at the moment.",
+                "parent-loading"
+            );
+            return;
+        }
+
+        events.forEach(event => {
+            const card = document.createElement("div");
+            card.className = "parent-calendar-event-card";
+
+            const date = new Date(event.event_date + "T00:00:00");
+
+            const dateBox = document.createElement("div");
+            dateBox.className = "parent-calendar-event-date";
+
+            addText(dateBox, "strong", date.getDate());
+            addText(
+                dateBox,
+                "span",
+                date.toLocaleDateString("en-GB", { month: "short" })
+            );
+
+            const details = document.createElement("div");
+            details.className = "parent-calendar-event-details";
+
+            addText(
+                details,
+                "strong",
+                event.title || "School event"
+            );
+
+            if (event.description) {
+                addText(details, "p", event.description);
+            }
+
+            addText(
+                details,
+                "small",
+                date.toLocaleDateString("en-GB", {
+                    weekday: "long",
+                    day: "numeric",
+                    month: "long",
+                    year: "numeric"
+                })
+            );
+
+            if (event.start_time) {
+                addText(
+                    details,
+                    "small",
+                    "Time: " + event.start_time.slice(0, 5) +
+                    (event.end_time
+                        ? " – " + event.end_time.slice(0, 5)
+                        : "")
+                );
+            }
+
+            if (event.location) {
+                addText(details, "small", "Location: " + event.location);
+            }
+
+            if (event.category) {
+                addText(details, "span", event.category);
+            }
+
+            card.appendChild(dateBox);
+            card.appendChild(details);
+            calendarContainer.appendChild(card);
+        });
+
+    } catch (error) {
+        console.error("Parent school calendar error:", error);
+
+        calendarContainer.innerHTML = "";
+
+        addText(
+            calendarContainer,
+            "p",
+            "Unable to load school calendar events.",
+            "parent-loading"
+        );
+    }
+};
+
             // LOAD ALL FIVE SECTIONS INDEPENDENTLY.
 
             await Promise.all([
