@@ -17713,6 +17713,11 @@ const renderAcademicGraph = () => {
 
 renderAcademicGraph();
 
+    academicContainer.insertBefore(
+    academicGraphSection,
+    buttonsContainer
+);
+
   // Open Opener Exams by default
 buttonsContainer.querySelector("button")?.click();
 
