@@ -17452,60 +17452,148 @@ if (gradeList.length > 0) {
                             : Math.round(average) + "%"
                     );
 
-                    showList(
-                        "parentAcademicContent",
-                        gradeList.slice(0, 8),
-                        "No academic records have been published yet.",
-                        (element, grade) => {
+                  
+const academicContainer = getElement("parentAcademicContent");
 
-                            const subject = Array.isArray(grade.subjects)
-                                ? grade.subjects[0]
-                                : grade.subjects;
+if (academicContainer) {
 
-                            addText(
-                                element,
-                                "strong",
-                                subject?.name || "Subject"
-                            );
+    const categories = [
+        { id: "opener", label: "Opener Exams", pattern: /opener/i },
+        { id: "midterm", label: "Midterm Exams", pattern: /mid.?term/i },
+        { id: "endterm", label: "End Term Exams", pattern: /end.?term/i },
+        { id: "internal", label: "Internal Tests", pattern: /internal/i }
+    ];
 
-                            addText(
-                                element,
-                                "span",
-                                grade.assessment || "Assessment"
-                            );
+    const getCategory = grade => {
+        const assessment = String(grade.assessment || "")
+            .replace(/[_-]/g, " ");
 
-                            const score = Number(grade.score) || 0;
-                            const maximum = Number(grade.max_score) || 0;
+        return categories.find(category =>
+            category.pattern.test(assessment)
+        );
+    };
 
-                            addText(
-                                element,
-                                "strong",
-                                maximum > 0
-                                    ? `${score} / ${maximum} (${Math.round(score / maximum * 100)}%)`
-                                    : String(score)
-                            );
+    const groupedResults = {};
 
-                            if (grade.comments) {
-                                addText(element, "small", grade.comments);
-                            }
+    categories.forEach(category => {
+        groupedResults[category.id] = gradeList.filter(
+            grade => getCategory(grade)?.id === category.id
+        );
+    });
 
-                            addText(
-                                element,
-                                "small",
-                                formatDate(grade.created_at)
-                            );
-                        }
-                    );
+    academicContainer.innerHTML = "";
 
-                } catch (error) {
-                    console.error("Parent grades error:", error);
-                    setText("parentAcademicAverage", "Unavailable");
-                    showError(
-                        "parentAcademicContent",
-                        "Unable to load academic records."
-                    );
+    const heading = document.createElement("div");
+    heading.className = "parent-grade-results-heading";
+
+    const title = document.createElement("h3");
+    title.textContent = "Academic Results";
+
+    const description = document.createElement("p");
+    description.textContent = "Choose an examination category to view results.";
+
+    heading.appendChild(title);
+    heading.appendChild(description);
+    academicContainer.appendChild(heading);
+
+    const buttonsContainer = document.createElement("div");
+    buttonsContainer.className = "parent-grade-category-buttons";
+
+    const resultsContainer = document.createElement("div");
+    resultsContainer.className = "parent-grade-category-results";
+
+    categories.forEach(category => {
+
+        const results = groupedResults[category.id];
+
+        const button = document.createElement("button");
+        button.type = "button";
+        button.className = "parent-grade-category-button";
+
+        const label = document.createElement("span");
+        label.textContent = category.label;
+
+        const count = document.createElement("span");
+        count.className = "parent-grade-count";
+        count.textContent = results.length;
+
+        button.appendChild(label);
+        button.appendChild(count);
+
+        button.addEventListener("click", () => {
+
+            buttonsContainer.querySelectorAll("button").forEach(item => {
+                item.classList.remove("active");
+            });
+
+            button.classList.add("active");
+            resultsContainer.innerHTML = "";
+
+            if (results.length === 0) {
+                const empty = document.createElement("p");
+                empty.className = "parent-loading";
+                empty.textContent =
+                    `No ${category.label.toLowerCase()} results available yet.`;
+
+                resultsContainer.appendChild(empty);
+                return;
+            }
+
+            results.forEach(grade => {
+
+                const resultCard = document.createElement("div");
+                resultCard.className = "parent-grade-result-card";
+
+                const subject = Array.isArray(grade.subjects)
+                    ? grade.subjects[0]
+                    : grade.subjects;
+
+                const score = Number(grade.score) || 0;
+                const maximum = Number(grade.max_score) || 0;
+
+                addText(
+                    resultCard,
+                    "strong",
+                    subject?.name || "Subject"
+                );
+
+                addText(
+                    resultCard,
+                    "span",
+                    grade.assessment || category.label
+                );
+
+                addText(
+                    resultCard,
+                    "strong",
+                    maximum > 0
+                        ? `${score} / ${maximum} (${Math.round(score / maximum * 100)}%)`
+                        : String(score)
+                );
+
+                if (grade.comments) {
+                    addText(resultCard, "small", grade.comments);
                 }
-            };
+
+                addText(
+                    resultCard,
+                    "small",
+                    formatDate(grade.created_at)
+                );
+
+                resultsContainer.appendChild(resultCard);
+            });
+        });
+
+        buttonsContainer.appendChild(button);
+    });
+
+    academicContainer.appendChild(buttonsContainer);
+    academicContainer.appendChild(resultsContainer);
+
+    // Open Opener Exams by default
+    buttonsContainer.querySelector("button")?.click();
+}
 
             const loadAttendance = async () => {
                 try {
