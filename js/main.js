@@ -19282,6 +19282,7 @@ function renderFeeManagementStudents(students) {
 // SELECT STUDENT FOR FEE MANAGEMENT
 // ==========================================
 
+
 function selectFeeManagementStudent(student) {
 
     const workspace = document.getElementById(
@@ -19313,16 +19314,7 @@ function selectFeeManagementStudent(student) {
         block: "start"
     });
 
-    const statementsContainer = document.getElementById(
-        "feeStatementsContainer"
-    );
-
-    if (statementsContainer) {
-        statementsContainer.innerHTML =
-            "<p>Student selected. Fee statement management will appear here.</p>";
-    }
-
-    console.log("SELECTED FEE STUDENT:", student);
+    loadStudentFeeStatements(student.id);
 }
 
 
