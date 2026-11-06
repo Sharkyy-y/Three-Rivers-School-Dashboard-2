@@ -17636,6 +17636,43 @@ if (percentage !== null && percentage < 90) {
 
                     const assignments = data || [];
 
+                    // Add upcoming assignment alerts to Parent Action Centre
+assignments.forEach(assignment => {
+
+    const dueDate = new Date(
+        assignment.due_date + "T00:00:00"
+    );
+
+    const todayDate = new Date();
+    todayDate.setHours(0, 0, 0, 0);
+
+    const daysUntilDue = Math.ceil(
+        (dueDate - todayDate) / (1000 * 60 * 60 * 24)
+    );
+
+    if (daysUntilDue <= 3) {
+
+        const subject = Array.isArray(assignment.subjects)
+            ? assignment.subjects[0]
+            : assignment.subjects;
+
+        addParentAction(
+            "assignment",
+            "Upcoming assignment",
+            `${assignment.title || "Assignment"} — ${subject?.name || "Subject"} is due ${
+                daysUntilDue === 0
+                    ? "today"
+                    : daysUntilDue === 1
+                        ? "tomorrow"
+                        : `in ${daysUntilDue} days`
+            }.`,
+            daysUntilDue <= 1 ? "attention" : "normal"
+        );
+
+    }
+
+});
+
                     setText(
                         "parentUpcomingAssignments",
                         String(assignments.length)
