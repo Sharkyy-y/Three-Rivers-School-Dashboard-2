@@ -21763,3 +21763,136 @@ if (
 ) {
     initialiseTeacherMessages();
 }
+
+
+// ==========================================
+// TEACHER DASHBOARD PARENT MESSAGE NOTIFICATIONS
+// ==========================================
+
+async function loadTeacherParentMessageCount() {
+
+    const countElement = document.getElementById(
+        "teacherParentMessageCount"
+    );
+
+    if (!countElement) return;
+
+    try {
+
+        const {
+            data: { user },
+            error: userError
+        } = await supabaseClient.auth.getUser();
+
+        if (userError || !user) return;
+
+        const {
+            count,
+            error
+        } = await supabaseClient
+            .from("parent_teacher_messages")
+            .select("id", {
+                count: "exact",
+                head: true
+            })
+            .eq("teacher_id", user.id)
+            .eq("status", "pending");
+
+        if (error) throw error;
+
+        countElement.textContent = count ?? 0;
+
+    } catch (error) {
+
+        console.error(
+            "Parent message notification error:",
+            error
+        );
+
+        countElement.textContent = "—";
+    }
+}
+
+
+// ==========================================
+// START TEACHER DASHBOARD NOTIFICATIONS
+// ==========================================
+
+if (
+    window.location.pathname
+        .toLowerCase()
+        .includes("teacher-dashboard.html")
+) {
+    loadTeacherParentMessageCount();
+}
+
+
+// ==========================================
+// REAL-TIME PARENT MESSAGE NOTIFICATIONS
+// ==========================================
+
+let teacherMessageNotificationChannel = null;
+
+async function startTeacherMessageNotifications() {
+
+    const countElement = document.getElementById(
+        "teacherParentMessageCount"
+    );
+
+    if (!countElement) return;
+
+    const {
+        data: { user },
+        error
+    } = await supabaseClient.auth.getUser();
+
+    if (error || !user) return;
+
+    // REMOVE AN EXISTING CHANNEL
+
+    if (teacherMessageNotificationChannel) {
+
+        await supabaseClient.removeChannel(
+            teacherMessageNotificationChannel
+        );
+    }
+
+    // LISTEN FOR NEW OR UPDATED MESSAGES
+
+    teacherMessageNotificationChannel =
+        supabaseClient
+            .channel("teacher-parent-messages-" + user.id)
+            .on(
+                "postgres_changes",
+                {
+                    event: "*",
+                    schema: "public",
+                    table: "parent_teacher_messages",
+                    filter: "teacher_id=eq." + user.id
+                },
+                () => {
+
+                    loadTeacherParentMessageCount();
+
+                }
+            )
+            .subscribe((status) => {
+
+                console.log(
+                    "Teacher message notifications:",
+                    status
+                );
+
+            });
+}
+
+
+// START ONLY ON TEACHER DASHBOARD
+
+if (
+    window.location.pathname
+        .toLowerCase()
+        .includes("teacher-dashboard.html")
+) {
+    startTeacherMessageNotifications();
+}
