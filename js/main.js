@@ -17911,6 +17911,66 @@ announcements.slice(0, 3).forEach(announcement => {
                 loadAnnouncements()
             ]);
 
+            // ==================================
+// DISPLAY PARENT ACTION CENTRE
+// ==================================
+
+const actionCentre = getElement("parentActionCentre");
+
+if (actionCentre) {
+
+    actionCentre.innerHTML = "";
+
+    if (parentActionItems.length === 0) {
+
+        const emptyMessage = document.createElement("p");
+        emptyMessage.className = "parent-action-empty";
+        emptyMessage.textContent =
+            "You're all caught up! There are no important updates right now.";
+
+        actionCentre.appendChild(emptyMessage);
+
+    } else {
+
+        parentActionItems.forEach(item => {
+
+            const card = document.createElement("div");
+            card.className =
+                `parent-action-card priority-${item.priority}`;
+
+            const icon = document.createElement("span");
+            icon.className = "parent-action-icon";
+
+            const icons = {
+                academic: "📚",
+                attendance: "📅",
+                assignment: "📝",
+                achievement: "🏆",
+                announcement: "📢"
+            };
+
+            icon.textContent = icons[item.type] || "✦";
+
+            const content = document.createElement("div");
+            content.className = "parent-action-content";
+
+            const heading = document.createElement("strong");
+            heading.textContent = item.title;
+
+            const message = document.createElement("p");
+            message.textContent = item.message;
+
+            content.appendChild(heading);
+            content.appendChild(message);
+
+            card.appendChild(icon);
+            card.appendChild(content);
+
+            actionCentre.appendChild(card);
+        });
+    }
+}
+
             console.log(
                 "Parent child information loaded:",
                 student.full_name
