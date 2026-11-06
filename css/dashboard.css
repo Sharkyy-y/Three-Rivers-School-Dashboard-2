@@ -10963,3 +10963,94 @@ body:has(.attendance-overview) .admin-avatar {
         font-size: 9px;
     }
 }
+
+/* ==========================================
+   PARENT SCHOOL CALENDAR
+========================================== */
+
+.parent-calendar-event-card {
+    display: flex;
+    align-items: flex-start;
+    gap: 16px;
+    padding: 18px;
+    margin-bottom: 14px;
+    background: #f8faf8;
+    border: 1px solid #e6ece7;
+    border-radius: 14px;
+    transition: 0.2s ease;
+}
+
+.parent-calendar-event-card:hover {
+    border-color: #b7cdbd;
+    transform: translateY(-2px);
+}
+
+.parent-calendar-event-date {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    width: 62px;
+    height: 66px;
+    background: #123b30;
+    color: white;
+    border-radius: 12px;
+}
+
+.parent-calendar-event-date strong {
+    font-size: 23px;
+    line-height: 1.2;
+}
+
+.parent-calendar-event-date span {
+    font-size: 12px;
+    color: #d6b66b;
+    text-transform: uppercase;
+}
+
+.parent-calendar-event-details {
+    display: flex;
+    flex-direction: column;
+    gap: 7px;
+    min-width: 0;
+}
+
+.parent-calendar-event-details strong {
+    color: #123b30;
+    font-size: 15px;
+}
+
+.parent-calendar-event-details p {
+    margin: 0;
+    color: #59685f;
+    font-size: 13px;
+    line-height: 1.6;
+}
+
+.parent-calendar-event-details small {
+    color: #78877e;
+    font-size: 12px;
+}
+
+.parent-calendar-event-details span {
+    align-self: flex-start;
+    padding: 5px 10px;
+    background: #eaf2ec;
+    color: #246044;
+    border-radius: 20px;
+    font-size: 11px;
+    font-weight: 700;
+}
+
+@media (max-width: 600px) {
+    .parent-calendar-event-card {
+        gap: 11px;
+        padding: 13px;
+    }
+
+    .parent-calendar-event-date {
+        width: 52px;
+        height: 60px;
+    }
+}
