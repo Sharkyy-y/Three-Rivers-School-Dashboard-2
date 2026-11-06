@@ -17401,6 +17401,34 @@ const addParentAction = (
 
                     const gradeList = data || [];
 
+                    // Add latest academic result to Parent Action Centre
+if (gradeList.length > 0) {
+
+    const latestGrade = gradeList[0];
+
+    const score = Number(latestGrade.score) || 0;
+    const maximum = Number(latestGrade.max_score) || 0;
+
+    const percentage = maximum > 0
+        ? Math.round((score / maximum) * 100)
+        : null;
+
+    const subject = Array.isArray(latestGrade.subjects)
+        ? latestGrade.subjects[0]
+        : latestGrade.subjects;
+
+    addParentAction(
+        "academic",
+        "Latest academic result",
+        `${subject?.name || "Subject"}: ${
+            percentage === null ? score : percentage + "%"
+        } — ${latestGrade.assessment || "Assessment"}`,
+        percentage !== null && percentage < 50
+            ? "attention"
+            : "normal"
+    );
+}
+
                     const totalScore = gradeList.reduce(
                         (sum, grade) =>
                             sum + (Number(grade.score) || 0),
