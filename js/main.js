@@ -19207,6 +19207,7 @@ if (
 
 let feeManagementStudents = [];
 
+
 async function loadFeeManagementStudents() {
 
     const container = document.getElementById(
@@ -19221,37 +19222,140 @@ async function loadFeeManagementStudents() {
 
     container.innerHTML = "<p>Loading students...</p>";
 
-    const { data: students, error } = await supabaseClient
-        .from("students")
-        .select(`
-            id,
-            full_name,
-            admission_number,
-            class_name,
-            email,
-            profile_photo_url
-        `)
-        .order("full_name", { ascending: true });
+    try {
 
-    if (error) {
+        // LOAD STUDENTS
+        const { data: students, error } = await supabaseClient
+            .from("students")
+            .select(`
+                id,
+                full_name,
+                admission_number,
+                class_name,
+                email,
+                profile_photo_url
+            `)
+            .order("full_name", { ascending: true });
+
+        if (error) throw error;
+
+        feeManagementStudents = students || [];
+
+        // LOAD ALL FEE STATEMENTS
+        const { data: statements, error: statementError } =
+            await supabaseClient
+                .from("fee_statements")
+                .select("id, student_id, previous_balance");
+
+        if (statementError) throw statementError;
+
+        const statementList = statements || [];
+
+        const statementIds = statementList.map(
+            statement => statement.id
+        );
+
+        let items = [];
+        let payments = [];
+
+        // LOAD CHARGES AND PAYMENTS
+        if (statementIds.length > 0) {
+
+            const { data: itemData, error: itemError } =
+                await supabaseClient
+                    .from("fee_statement_items")
+                    .select("statement_id, amount")
+                    .in("statement_id", statementIds);
+
+            if (itemError) throw itemError;
+
+            items = itemData || [];
+
+            const { data: paymentData, error: paymentError } =
+                await supabaseClient
+                    .from("fee_payments")
+                    .select("statement_id, amount")
+                    .in("statement_id", statementIds);
+
+            if (paymentError) throw paymentError;
+
+            payments = paymentData || [];
+        }
+
+        // CALCULATE EACH STUDENT'S PAYMENT STATUS
+        feeManagementStudents.forEach(student => {
+
+            const studentStatements = statementList.filter(
+                statement => statement.student_id === student.id
+            );
+
+            let totalCharges = 0;
+            let totalPaid = 0;
+
+            studentStatements.forEach(statement => {
+
+                totalCharges += Number(
+                    statement.previous_balance || 0
+                );
+
+                const statementItems = items.filter(
+                    item => item.statement_id === statement.id
+                );
+
+                statementItems.forEach(item => {
+                    totalCharges += Number(item.amount || 0);
+                });
+
+                const statementPayments = payments.filter(
+                    payment => payment.statement_id === statement.id
+                );
+
+                statementPayments.forEach(payment => {
+                    totalPaid += Number(payment.amount || 0);
+                });
+
+            });
+
+            const outstanding = totalCharges - totalPaid;
+
+            let paymentStatus = "none";
+
+            if (studentStatements.length > 0) {
+
+                if (outstanding <= 0) {
+                    paymentStatus = "paid";
+
+                } else if (totalPaid > 0) {
+                    paymentStatus = "partial";
+
+                } else {
+                    paymentStatus = "unpaid";
+                }
+
+            }
+
+            student.paymentStatus = paymentStatus;
+            student.totalFeeCharges = totalCharges;
+            student.totalFeePaid = totalPaid;
+            student.totalFeeOutstanding = Math.max(0, outstanding);
+
+        });
+
+        if (countElement) {
+            countElement.textContent = feeManagementStudents.length;
+        }
+
+        renderFeeManagementStudents(feeManagementStudents);
+
+    } catch (error) {
 
         console.error("FEE STUDENTS ERROR:", error);
 
         container.innerHTML =
-            "<p>Unable to load students. Please refresh the page.</p>";
+            "<p>Unable to load student fee records. Please refresh the page.</p>";
 
-        return;
     }
-
-    feeManagementStudents = students || [];
-
-    if (countElement) {
-        countElement.textContent = feeManagementStudents.length;
-    }
-
-    renderFeeManagementStudents(feeManagementStudents);
 }
-
 
 // ==========================================
 // RENDER STUDENT DIRECTORY
