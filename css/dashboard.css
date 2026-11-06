@@ -11585,3 +11585,502 @@ body:has(.attendance-overview) .admin-avatar {
         width: 320px;
     }
 }
+
+
+/* ==========================================
+   PARENT–TEACHER COMMUNICATION REDESIGN
+   ========================================== */
+
+/* PARENT COMMUNICATION PANEL */
+
+.parent-teacher-communication {
+    border: 1px solid #dbeafe;
+    background: linear-gradient(145deg, #ffffff, #f8fbff);
+}
+
+.parent-teacher-communication > .parent-panel-header {
+    padding: 20px;
+    border-radius: 15px;
+    background: linear-gradient(120deg, #e0f2fe, #eef2ff);
+    margin-bottom: 24px;
+}
+
+.parent-teacher-communication .parent-panel-symbol {
+    background: #ffffff;
+    color: #2563eb;
+    border-radius: 14px;
+    padding: 14px;
+    font-size: 24px;
+}
+
+/* PARENT MESSAGE FORM */
+
+.parent-teacher-form {
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 18px;
+    padding: 25px;
+    margin-bottom: 28px;
+    box-shadow: 0 6px 20px rgba(30, 64, 175, 0.06);
+}
+
+.parent-teacher-form h4,
+.parent-teacher-history h4 {
+    color: #172554;
+    font-size: 19px;
+    margin-bottom: 20px;
+}
+
+.parent-teacher-form-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 19px;
+}
+
+.parent-teacher-form-grid > div,
+.parent-teacher-message-field {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.parent-teacher-form label {
+    color: #334155;
+    font-size: 13px;
+    font-weight: 700;
+}
+
+.parent-teacher-form input,
+.parent-teacher-form select,
+.parent-teacher-form textarea {
+    width: 100%;
+    padding: 13px 14px;
+    border: 1px solid #cbd5e1;
+    border-radius: 11px;
+    background: #f8fafc;
+    color: #172033;
+    font: inherit;
+    font-size: 14px;
+    transition: 0.2s ease;
+}
+
+.parent-teacher-form input:focus,
+.parent-teacher-form select:focus,
+.parent-teacher-form textarea:focus {
+    outline: none;
+    border-color: #2563eb;
+    background: #ffffff;
+    box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.10);
+}
+
+.parent-teacher-message-field {
+    margin-top: 20px;
+}
+
+.parent-teacher-form textarea {
+    min-height: 130px;
+    resize: vertical;
+    line-height: 1.7;
+}
+
+#parentTeacherSendButton {
+    margin-top: 20px;
+    padding: 14px 24px;
+    border: none;
+    border-radius: 11px;
+    background: linear-gradient(120deg, #2563eb, #4f46e5);
+    color: #ffffff;
+    font-size: 14px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: 0.2s ease;
+}
+
+#parentTeacherSendButton:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 18px rgba(37, 99, 235, 0.22);
+}
+
+#parentTeacherSendButton:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    transform: none;
+}
+
+#parentTeacherMessageStatus {
+    margin-top: 13px;
+    font-size: 13px;
+    font-weight: 600;
+    line-height: 1.5;
+}
+
+/* PARENT COMMUNICATION HISTORY */
+
+.parent-teacher-history {
+    margin-top: 25px;
+}
+
+#parentTeacherMessagesList {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 18px;
+}
+
+.parent-teacher-message-card {
+    position: relative;
+    overflow: hidden;
+    padding: 21px;
+    border: 1px solid #dbeafe;
+    border-radius: 16px;
+    background: linear-gradient(145deg, #ffffff, #f8fbff);
+    box-shadow: 0 5px 16px rgba(30, 64, 175, 0.06);
+    transition: 0.25s ease;
+}
+
+.parent-teacher-message-card::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 4px;
+    background: linear-gradient(90deg, #2563eb, #8b5cf6);
+}
+
+.parent-teacher-message-card:hover {
+    transform: translateY(-4px);
+    border-color: #93c5fd;
+    box-shadow: 0 12px 25px rgba(30, 64, 175, 0.11);
+}
+
+.parent-teacher-message-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin: 5px 0 17px;
+}
+
+.parent-teacher-message-header h4 {
+    margin: 0;
+    color: #172554;
+    font-size: 16px;
+}
+
+.parent-teacher-message-card > p {
+    color: #475569;
+    font-size: 13px;
+    line-height: 1.6;
+    margin: 8px 0;
+}
+
+.parent-communication-status {
+    display: inline-flex;
+    padding: 6px 11px;
+    border-radius: 30px;
+    font-size: 11px;
+    font-weight: 800;
+    background: #f1f5f9;
+    color: #475569;
+}
+
+.status-pending {
+    background: #fef3c7;
+    color: #92400e;
+}
+
+.status-responded,
+.status-approved {
+    background: #dcfce7;
+    color: #166534;
+}
+
+.status-declined {
+    background: #fee2e2;
+    color: #b91c1c;
+}
+
+.status-completed {
+    background: #dbeafe;
+    color: #1e40af;
+}
+
+.parent-teacher-message-content {
+    margin-top: 16px;
+    padding: 16px;
+    border-radius: 12px;
+    background: #eff6ff;
+    border-left: 4px solid #3b82f6;
+}
+
+.parent-teacher-message-content strong,
+.parent-teacher-response-section strong {
+    display: block;
+    margin-bottom: 8px;
+    color: #1e3a8a;
+    font-size: 13px;
+}
+
+.parent-teacher-message-content p,
+.parent-teacher-response-section p {
+    color: #475569;
+    font-size: 13px;
+    line-height: 1.7;
+    overflow-wrap: anywhere;
+}
+
+.parent-teacher-response-section {
+    margin-top: 14px;
+    padding: 16px;
+    border-radius: 12px;
+    background: #ecfdf5;
+    border-left: 4px solid #10b981;
+}
+
+.parent-teacher-response-section strong {
+    color: #065f46;
+}
+
+.parent-teacher-response-section small {
+    display: block;
+    margin-top: 10px;
+    color: #64748b;
+    font-size: 11px;
+}
+
+.parent-teacher-submitted-date {
+    display: block;
+    margin-top: 15px;
+    color: #94a3b8;
+    font-size: 11px;
+}
+
+/* ==========================================
+   TEACHER PARENT MESSAGES PAGE
+   ========================================== */
+
+.teacher-message-toolbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin: 20px 0;
+}
+
+.teacher-message-toolbar select {
+    min-width: 190px;
+    padding: 12px 14px;
+    border: 1px solid #cbd5e1;
+    border-radius: 10px;
+    background: #ffffff;
+    color: #334155;
+    font-size: 13px;
+}
+
+.teacher-message-toolbar button {
+    padding: 12px 18px;
+    border: none;
+    border-radius: 10px;
+    background: #dcfce7;
+    color: #166534;
+    font-weight: 700;
+    cursor: pointer;
+    transition: 0.2s ease;
+}
+
+.teacher-message-toolbar button:hover {
+    background: #bbf7d0;
+    transform: translateY(-2px);
+}
+
+#teacherMessagesList {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(310px, 1fr));
+    gap: 20px;
+    margin-top: 20px;
+}
+
+.teacher-message-card {
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 11px;
+    padding: 23px;
+    border: 1px solid #e2e8f0;
+    border-radius: 17px;
+    background: linear-gradient(145deg, #ffffff, #f8fafc);
+    box-shadow: 0 6px 18px rgba(15, 23, 42, 0.05);
+    transition: 0.25s ease;
+}
+
+.teacher-message-card::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 5px;
+    background: linear-gradient(90deg, #16a34a, #0d9488);
+}
+
+.teacher-message-card:hover {
+    transform: translateY(-4px);
+    border-color: #86efac;
+    box-shadow: 0 14px 28px rgba(15, 23, 42, 0.10);
+}
+
+.teacher-message-card h3 {
+    margin: 5px 0 8px;
+    color: #14532d;
+    font-size: 19px;
+}
+
+.teacher-message-card > p {
+    margin: 0;
+    color: #475569;
+    font-size: 13px;
+    line-height: 1.6;
+    overflow-wrap: anywhere;
+}
+
+.teacher-message-card .teacher-message-text {
+    padding: 16px;
+    margin: 7px 0;
+    border-radius: 12px;
+    background: #eff6ff;
+    border-left: 4px solid #3b82f6;
+    color: #334155;
+    font-size: 14px;
+    line-height: 1.75;
+    white-space: pre-wrap;
+}
+
+.teacher-message-card > small {
+    color: #94a3b8;
+    font-size: 11px;
+}
+
+.teacher-message-card .teacher-message-status {
+    display: inline-flex;
+    align-self: flex-start;
+    padding: 7px 12px;
+    border-radius: 30px;
+    background: #fef3c7;
+    color: #92400e;
+    font-size: 11px;
+    font-weight: 800;
+}
+
+/* TEACHER REPLY AREA */
+
+.teacher-message-card label {
+    margin-top: 8px;
+    color: #334155;
+    font-size: 13px;
+    font-weight: 700;
+}
+
+.teacher-message-response {
+    width: 100%;
+    min-height: 115px;
+    padding: 13px;
+    border: 1px solid #cbd5e1;
+    border-radius: 11px;
+    background: #ffffff;
+    color: #172033;
+    font: inherit;
+    font-size: 13px;
+    line-height: 1.6;
+    resize: vertical;
+    transition: 0.2s ease;
+}
+
+.teacher-message-response:focus {
+    outline: none;
+    border-color: #16a34a;
+    box-shadow: 0 0 0 4px rgba(22, 163, 74, 0.10);
+}
+
+.teacher-message-status-select {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #cbd5e1;
+    border-radius: 10px;
+    background: #ffffff;
+    color: #334155;
+    font-size: 13px;
+}
+
+.teacher-message-save-button {
+    padding: 13px 18px;
+    border: none;
+    border-radius: 10px;
+    background: linear-gradient(120deg, #15803d, #16a34a);
+    color: #ffffff;
+    font-size: 13px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: 0.2s ease;
+}
+
+.teacher-message-save-button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 7px 16px rgba(22, 163, 74, 0.2);
+}
+
+.teacher-message-save-button:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    transform: none;
+}
+
+.teacher-message-card > small:empty {
+    display: none;
+}
+
+/* TEACHER MESSAGE STAT CARDS */
+
+.admin-stats-grid .admin-stat-card {
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.admin-stats-grid .admin-stat-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 12px 25px rgba(15, 23, 42, 0.10);
+}
+
+/* RESPONSIVE */
+
+@media (max-width: 650px) {
+    .parent-teacher-form {
+        padding: 18px;
+    }
+
+    .parent-teacher-form-grid {
+        grid-template-columns: 1fr;
+    }
+
+    #parentTeacherMessagesList,
+    #teacherMessagesList {
+        grid-template-columns: 1fr;
+    }
+
+    .teacher-message-toolbar {
+        align-items: stretch;
+        flex-direction: column;
+    }
+
+    .teacher-message-toolbar select,
+    .teacher-message-toolbar button {
+        width: 100%;
+    }
+
+    .parent-teacher-message-header {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+}
