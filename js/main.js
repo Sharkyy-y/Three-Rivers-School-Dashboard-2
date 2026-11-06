@@ -17713,6 +17713,13 @@ const renderAcademicGraph = () => {
 
 renderAcademicGraph();
 
+    console.log("GRAPH CHECK:", {
+    academicContainer: academicContainer,
+    graphSection: academicGraphSection,
+    buttonsContainer: buttonsContainer,
+    grades: gradeList.length
+});
+
     academicContainer.insertBefore(
     academicGraphSection,
     buttonsContainer
