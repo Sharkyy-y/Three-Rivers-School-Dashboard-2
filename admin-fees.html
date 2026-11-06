@@ -451,6 +451,111 @@
 
         </div>
 
+        
+<!-- ==========================================
+     RECORD FEE PAYMENT MODAL
+========================================== -->
+
+<div id="feePaymentModal" class="fee-modal" style="display:none;">
+
+    <div class="fee-modal-content">
+
+        <div class="fee-modal-header">
+            <div>
+                <h2>Record Payment</h2>
+                <p>Record a payment for this student's fee statement.</p>
+            </div>
+
+            <button type="button" id="closeFeePaymentModal">
+                ×
+            </button>
+        </div>
+
+        <form id="feePaymentForm">
+
+            <div class="form-group">
+                <label>Fee Statement</label>
+                <select id="paymentStatementSelect" required>
+                    <option value="">Select fee statement</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label>Amount Paid (KSh)</label>
+                <input
+                    type="number"
+                    id="paymentAmount"
+                    min="0.01"
+                    step="0.01"
+                    placeholder="Enter amount paid"
+                    required
+                >
+            </div>
+
+            <div class="form-group">
+                <label>Payment Date</label>
+                <input
+                    type="date"
+                    id="paymentDate"
+                    required
+                >
+            </div>
+
+            <div class="form-group">
+                <label>Payment Method</label>
+                <select id="paymentMethod" required>
+                    <option value="">Select payment method</option>
+                    <option value="M-Pesa">M-Pesa</option>
+                    <option value="Bank Transfer">Bank Transfer</option>
+                    <option value="Cash">Cash</option>
+                    <option value="Cheque">Cheque</option>
+                    <option value="Other">Other</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label>Reference Number</label>
+                <input
+                    type="text"
+                    id="paymentReference"
+                    placeholder="e.g. M-Pesa transaction code"
+                >
+            </div>
+
+            <div class="form-group">
+                <label>Notes (Optional)</label>
+                <textarea
+                    id="paymentNotes"
+                    rows="3"
+                    placeholder="Additional payment information..."
+                ></textarea>
+            </div>
+
+            <div class="fee-modal-actions">
+                <button
+                    type="button"
+                    id="cancelFeePayment"
+                    class="secondary-button"
+                >
+                    Cancel
+                </button>
+
+                <button
+                    type="submit"
+                    id="saveFeePayment"
+                    class="primary-button"
+                >
+                    Save Payment
+                </button>
+            </div>
+
+        </form>
+
+    </div>
+
+</div>
+
+
     </main>
 
 </div>
