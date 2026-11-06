@@ -19503,34 +19503,58 @@ function selectFeeManagementStudent(student) {
 
 
 // ==========================================
-// SEARCH FEE MANAGEMENT STUDENTS
+// SEARCH AND FILTER FEE MANAGEMENT STUDENTS
 // ==========================================
 
 const feeStudentSearch = document.getElementById(
     "feeStudentSearch"
 );
 
-if (feeStudentSearch) {
+const feePaymentStatusFilter = document.getElementById(
+    "feePaymentStatusFilter"
+);
 
-    feeStudentSearch.addEventListener("input", function () {
+function filterFeeManagementStudents() {
 
-        const search = this.value.trim().toLowerCase();
+    const search = feeStudentSearch
+        ? feeStudentSearch.value.trim().toLowerCase()
+        : "";
 
-        const filteredStudents = feeManagementStudents.filter(student => {
+    const selectedStatus = feePaymentStatusFilter
+        ? feePaymentStatusFilter.value
+        : "all";
 
-            return (
-                (student.full_name || "").toLowerCase().includes(search) ||
-                (student.admission_number || "").toLowerCase().includes(search) ||
-                (student.class_name || "").toLowerCase().includes(search)
-            );
+    const filteredStudents = feeManagementStudents.filter(student => {
 
-        });
+        const matchesSearch =
+            (student.full_name || "").toLowerCase().includes(search) ||
+            (student.admission_number || "").toLowerCase().includes(search) ||
+            (student.class_name || "").toLowerCase().includes(search);
 
-        renderFeeManagementStudents(filteredStudents);
+        const matchesStatus =
+            selectedStatus === "all" ||
+            student.paymentStatus === selectedStatus;
+
+        return matchesSearch && matchesStatus;
 
     });
+
+    renderFeeManagementStudents(filteredStudents);
 }
 
+if (feeStudentSearch) {
+    feeStudentSearch.addEventListener(
+        "input",
+        filterFeeManagementStudents
+    );
+}
+
+if (feePaymentStatusFilter) {
+    feePaymentStatusFilter.addEventListener(
+        "change",
+        filterFeeManagementStudents
+    );
+}
 
 // ==========================================
 // FEE MANAGEMENT PAGE STARTUP
