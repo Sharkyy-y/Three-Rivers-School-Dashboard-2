@@ -21229,3 +21229,537 @@ if (
     );
 
 }
+
+
+// ==========================================
+// TEACHER PARENT COMMUNICATION INBOX
+// ==========================================
+
+async function initialiseTeacherMessages() {
+
+    const messagesContainer =
+        document.getElementById("teacherMessagesList");
+
+    const statusElement =
+        document.getElementById("teacherMessagesStatus");
+
+    const filterElement =
+        document.getElementById("teacherMessageFilter");
+
+    const refreshButton =
+        document.getElementById("teacherRefreshMessages");
+
+    const totalElement =
+        document.getElementById("teacherMessageTotal");
+
+    const pendingElement =
+        document.getElementById("teacherMessagePending");
+
+    const respondedElement =
+        document.getElementById("teacherMessageResponded");
+
+    if (!messagesContainer) return;
+
+    // GET LOGGED-IN TEACHER
+
+    const {
+        data: { user },
+        error: userError
+    } = await supabaseClient.auth.getUser();
+
+    if (userError || !user) {
+        window.location.href = "login.html";
+        return;
+    }
+
+    const {
+        data: profile,
+        error: profileError
+    } = await supabaseClient
+        .from("profiles")
+        .select("role")
+        .eq("id", user.id)
+        .single();
+
+    if (profileError || !profile || profile.role !== "teacher") {
+        window.location.href = "login.html";
+        return;
+    }
+
+    // LOGOUT
+
+    const logoutButton =
+        document.getElementById("teacherLogoutButton");
+
+    if (logoutButton && !logoutButton.dataset.initialized) {
+
+        logoutButton.dataset.initialized = "true";
+
+        logoutButton.addEventListener("click", async () => {
+            await supabaseClient.auth.signOut();
+            window.location.href = "login.html";
+        });
+    }
+
+    let teacherMessages = [];
+
+    // LOAD MESSAGES
+
+    async function loadTeacherMessages() {
+
+        messagesContainer.innerHTML =
+            "<p>Loading parent messages...</p>";
+
+        if (statusElement) {
+            statusElement.textContent = "";
+        }
+
+        const {
+            data,
+            error
+        } = await supabaseClient
+            .from("parent_teacher_messages")
+            .select("*")
+            .eq("teacher_id", user.id)
+            .order("created_at", {
+                ascending: false
+            });
+
+        if (error) {
+
+            console.error(
+                "Teacher messages loading error:",
+                error
+            );
+
+            messagesContainer.textContent =
+                "Unable to load parent messages. Please check your permissions.";
+
+            return;
+        }
+
+        teacherMessages = data || [];
+
+        // LOAD STUDENT NAMES
+
+        const studentIds = [
+            ...new Set(
+                teacherMessages.map(message => message.student_id)
+            )
+        ];
+
+        let studentMap = {};
+
+        if (studentIds.length > 0) {
+
+            const {
+                data: students,
+                error: studentsError
+            } = await supabaseClient
+                .from("students")
+                .select("id, full_name, admission_number, class_name")
+                .in("id", studentIds);
+
+            if (studentsError) {
+                console.error(
+                    "Student details error:",
+                    studentsError
+                );
+            } else {
+
+                (students || []).forEach(student => {
+                    studentMap[student.id] = student;
+                });
+            }
+        }
+
+        // LOAD SUBJECT NAMES
+
+        const subjectIds = [
+            ...new Set(
+                teacherMessages
+                    .map(message => message.subject_id)
+                    .filter(Boolean)
+            )
+        ];
+
+        let subjectMap = {};
+
+        if (subjectIds.length > 0) {
+
+            const {
+                data: subjects,
+                error: subjectsError
+            } = await supabaseClient
+                .from("subjects")
+                .select("id, name, code")
+                .in("id", subjectIds);
+
+            if (subjectsError) {
+                console.error(
+                    "Subject details error:",
+                    subjectsError
+                );
+            } else {
+
+                (subjects || []).forEach(subject => {
+                    subjectMap[subject.id] = subject;
+                });
+            }
+        }
+
+        // UPDATE STATISTICS
+
+        if (totalElement) {
+            totalElement.textContent =
+                teacherMessages.length;
+        }
+
+        if (pendingElement) {
+            pendingElement.textContent =
+                teacherMessages.filter(
+                    message => message.status === "pending"
+                ).length;
+        }
+
+        if (respondedElement) {
+            respondedElement.textContent =
+                teacherMessages.filter(
+                    message => message.status !== "pending"
+                ).length;
+        }
+
+        // DISPLAY FILTERED MESSAGES
+
+        renderTeacherMessages(studentMap, subjectMap);
+    }
+
+    // RENDER MESSAGES
+
+    function renderTeacherMessages(studentMap, subjectMap) {
+
+        messagesContainer.innerHTML = "";
+
+        const selectedFilter =
+            filterElement ? filterElement.value : "all";
+
+        const filteredMessages =
+            teacherMessages.filter(message => {
+
+                return selectedFilter === "all" ||
+                    message.status === selectedFilter;
+            });
+
+        if (filteredMessages.length === 0) {
+
+            const emptyMessage =
+                document.createElement("p");
+
+            emptyMessage.textContent =
+                teacherMessages.length === 0
+                    ? "You have no parent messages yet."
+                    : "No messages match this filter.";
+
+            messagesContainer.appendChild(emptyMessage);
+            return;
+        }
+
+        filteredMessages.forEach(message => {
+
+            const card =
+                document.createElement("div");
+
+            card.className = "teacher-message-card";
+
+            const student =
+                studentMap[message.student_id];
+
+            const subject =
+                subjectMap[message.subject_id];
+
+            const studentName =
+                student?.full_name || "Student";
+
+            const subjectName =
+                subject?.name || "General Enquiry";
+
+            const date =
+                message.created_at
+                    ? new Date(message.created_at)
+                        .toLocaleString("en-KE")
+                    : "Date unavailable";
+
+            const heading =
+                document.createElement("h3");
+
+            heading.textContent =
+                message.request_type === "meeting"
+                    ? "Meeting Request"
+                    : "Parent Message";
+
+            const details =
+                document.createElement("p");
+
+            details.textContent =
+                "Student: " + studentName +
+                (student?.admission_number
+                    ? " (" + student.admission_number + ")"
+                    : "") +
+                (student?.class_name
+                    ? " • " + student.class_name
+                    : "");
+
+            const subjectDetails =
+                document.createElement("p");
+
+            subjectDetails.textContent =
+                "Subject: " + subjectName;
+
+            const messageText =
+                document.createElement("p");
+
+            messageText.textContent =
+                message.message || "";
+
+            messageText.className =
+                "teacher-message-text";
+
+            const typeDetails =
+                document.createElement("p");
+
+            typeDetails.textContent =
+                "Type: " +
+                (message.request_type === "meeting"
+                    ? "Meeting Request"
+                    : "Message");
+
+            const dateDetails =
+                document.createElement("small");
+
+            dateDetails.textContent =
+                "Received: " + date;
+
+            const statusDetails =
+                document.createElement("p");
+
+            statusDetails.textContent =
+                "Current Status: " +
+                (message.status || "pending").toUpperCase();
+
+            statusDetails.className =
+                "teacher-message-status";
+
+            card.appendChild(heading);
+            card.appendChild(details);
+            card.appendChild(subjectDetails);
+            card.appendChild(typeDetails);
+            card.appendChild(messageText);
+
+            // MEETING DETAILS
+
+            if (message.request_type === "meeting") {
+
+                const meetingDetails =
+                    document.createElement("p");
+
+                meetingDetails.textContent =
+                    "Preferred meeting: " +
+                    (message.preferred_meeting_date || "Not specified") +
+                    " at " +
+                    (message.preferred_meeting_time || "Not specified");
+
+                card.appendChild(meetingDetails);
+            }
+
+            card.appendChild(dateDetails);
+            card.appendChild(statusDetails);
+
+            // EXISTING RESPONSE
+
+            const responseLabel =
+                document.createElement("label");
+
+            responseLabel.textContent =
+                "Your Response";
+
+            const responseInput =
+                document.createElement("textarea");
+
+            responseInput.className =
+                "teacher-message-response";
+
+            responseInput.placeholder =
+                "Write your response to the parent...";
+
+            responseInput.value =
+                message.teacher_response || "";
+
+            responseInput.rows = 4;
+
+            // STATUS SELECT
+
+            const statusLabel =
+                document.createElement("label");
+
+            statusLabel.textContent =
+                "Update Status";
+
+            const statusSelect =
+                document.createElement("select");
+
+            statusSelect.className =
+                "teacher-message-status-select";
+
+            const statuses = [
+                ["pending", "Pending"],
+                ["responded", "Responded"],
+                ["approved", "Approved"],
+                ["declined", "Declined"],
+                ["completed", "Completed"]
+            ];
+
+            statuses.forEach(([value, label]) => {
+
+                const option =
+                    document.createElement("option");
+
+                option.value = value;
+                option.textContent = label;
+
+                statusSelect.appendChild(option);
+            });
+
+            statusSelect.value =
+                message.status || "pending";
+
+            // SAVE RESPONSE
+
+            const saveButton =
+                document.createElement("button");
+
+            saveButton.type = "button";
+            saveButton.textContent = "Save Response";
+            saveButton.className =
+                "teacher-message-save-button";
+
+            const saveStatus =
+                document.createElement("small");
+
+            saveButton.addEventListener("click", async () => {
+
+                const response =
+                    responseInput.value.trim();
+
+                const newStatus =
+                    statusSelect.value;
+
+                if (!response) {
+
+                    saveStatus.textContent =
+                        "Please enter a response first.";
+
+                    return;
+                }
+
+                saveButton.disabled = true;
+                saveButton.textContent = "Saving...";
+
+                const {
+                    error: updateError
+                } = await supabaseClient
+                    .from("parent_teacher_messages")
+                    .update({
+                        teacher_response: response,
+                        status: newStatus,
+                        response_at: new Date().toISOString(),
+                        updated_at: new Date().toISOString()
+                    })
+                    .eq("id", message.id)
+                    .eq("teacher_id", user.id);
+
+                if (updateError) {
+
+                    console.error(
+                        "Saving teacher response error:",
+                        updateError
+                    );
+
+                    saveStatus.textContent =
+                        "Unable to save response: " +
+                        updateError.message;
+
+                    saveButton.disabled = false;
+                    saveButton.textContent = "Save Response";
+
+                    return;
+                }
+
+                saveStatus.textContent =
+                    "Response saved successfully.";
+
+                await loadTeacherMessages();
+            });
+
+            card.appendChild(responseLabel);
+            card.appendChild(responseInput);
+            card.appendChild(statusLabel);
+            card.appendChild(statusSelect);
+            card.appendChild(saveButton);
+            card.appendChild(saveStatus);
+
+            // EXISTING TEACHER RESPONSE DISPLAY
+
+            if (message.teacher_response) {
+
+                const previousResponse =
+                    document.createElement("p");
+
+                previousResponse.textContent =
+                    "Previously saved response: " +
+                    message.teacher_response;
+
+                card.appendChild(previousResponse);
+            }
+
+            messagesContainer.appendChild(card);
+        });
+    }
+
+    // FILTER
+
+    if (filterElement && !filterElement.dataset.initialized) {
+
+        filterElement.dataset.initialized = "true";
+
+        filterElement.addEventListener("change", () => {
+
+            loadTeacherMessages();
+        });
+    }
+
+    // REFRESH
+
+    if (refreshButton && !refreshButton.dataset.initialized) {
+
+        refreshButton.dataset.initialized = "true";
+
+        refreshButton.addEventListener("click", () => {
+            loadTeacherMessages();
+        });
+    }
+
+    await loadTeacherMessages();
+}
+
+
+// ==========================================
+// INITIALISE TEACHER MESSAGES PAGE
+// ==========================================
+
+if (
+    window.location.pathname
+        .toLowerCase()
+        .includes("teacher-messages.html")
+) {
+    initialiseTeacherMessages();
+}
