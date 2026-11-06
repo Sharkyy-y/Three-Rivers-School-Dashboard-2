@@ -12292,3 +12292,8 @@ body:has(.attendance-overview) .admin-avatar {
 .parent-family-categories[hidden] {
     display: none !important;
 }
+
+/* FAMILY CENTRE - ENSURE HIDDEN PANELS STAY HIDDEN */
+.parent-portal [hidden] {
+    display: none !important;
+}
