@@ -17322,6 +17322,26 @@ async function initialiseParentDashboard() {
 
             selectedParentChild = student;
 
+// ==================================
+// PARENT ACTION CENTRE DATA
+// ==================================
+
+const parentActionItems = [];
+
+const addParentAction = (
+    type,
+    title,
+    message,
+    priority = "normal"
+) => {
+    parentActionItems.push({
+        type,
+        title,
+        message,
+        priority
+    });
+};
+
             setText("parentStudentName", student.full_name);
             setText(
                 "parentStudentInitial",
