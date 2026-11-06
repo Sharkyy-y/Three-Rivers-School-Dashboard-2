@@ -17836,6 +17836,30 @@ records
 
                     const announcements = data || [];
 
+                    // Add recent school announcements to Parent Action Centre
+announcements.slice(0, 3).forEach(announcement => {
+
+    const announcementText = (
+        (announcement.title || "") + " " +
+        (announcement.message || "")
+    ).toLowerCase();
+
+    const needsAttention =
+        /urgent|important|action required|meeting|deadline/.test(
+            announcementText
+        );
+
+    addParentAction(
+        "announcement",
+        needsAttention
+            ? "Important school announcement"
+            : "School update",
+        announcement.title || "New school announcement",
+        needsAttention ? "attention" : "normal"
+    );
+
+});
+
                     setText(
                         "parentNotificationCount",
                         String(announcements.length)
