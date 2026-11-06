@@ -17427,11 +17427,6 @@ graphContainer.className = "parent-academic-chart";
 academicGraphSection.appendChild(graphHeader);
 academicGraphSection.appendChild(graphContainer);
 
-// Place graph before the category results
-if (academicContainer) {
-    academicContainer.appendChild(academicGraphSection);
-}
-
 const renderAcademicGraph = () => {
 
     graphContainer.innerHTML = "";
