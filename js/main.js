@@ -17911,50 +17911,59 @@ announcements.slice(0, 3).forEach(announcement => {
                 loadAnnouncements()
             ]);
 
-            // ==================================
+          
 // DISPLAY PARENT ACTION CENTRE
-// ==================================
-
 const actionCentre = getElement("parentActionCentre");
 
 if (actionCentre) {
-
     actionCentre.innerHTML = "";
 
     if (parentActionItems.length === 0) {
-
         const emptyMessage = document.createElement("p");
         emptyMessage.className = "parent-action-empty";
         emptyMessage.textContent =
             "You're all caught up! There are no important updates right now.";
 
         actionCentre.appendChild(emptyMessage);
-
     } else {
+        const icons = {
+            academic: "📚",
+            attendance: "📅",
+            assignment: "📝",
+            achievement: "🏆",
+            announcement: "📢"
+        };
+
+        const labels = {
+            academic: "ACADEMIC PERFORMANCE",
+            attendance: "ATTENDANCE",
+            assignment: "UPCOMING WORK",
+            achievement: "ACHIEVEMENT",
+            announcement: "SCHOOL UPDATE"
+        };
 
         parentActionItems.forEach(item => {
-
             const card = document.createElement("div");
-            card.className =
-                `parent-action-card priority-${item.priority}`;
+            card.className = `parent-action-card action-${item.type} priority-${item.priority}`;
+
+            const cardHeader = document.createElement("div");
+            cardHeader.className = "parent-action-card-header";
 
             const icon = document.createElement("span");
             icon.className = "parent-action-icon";
-
-            const icons = {
-                academic: "📚",
-                attendance: "📅",
-                assignment: "📝",
-                achievement: "🏆",
-                announcement: "📢"
-            };
-
             icon.textContent = icons[item.type] || "✦";
+
+            const category = document.createElement("span");
+            category.className = "parent-action-category";
+            category.textContent = labels[item.type] || "SCHOOL UPDATE";
+
+            cardHeader.appendChild(icon);
+            cardHeader.appendChild(category);
 
             const content = document.createElement("div");
             content.className = "parent-action-content";
 
-            const heading = document.createElement("strong");
+            const heading = document.createElement("h4");
             heading.textContent = item.title;
 
             const message = document.createElement("p");
@@ -17963,7 +17972,7 @@ if (actionCentre) {
             content.appendChild(heading);
             content.appendChild(message);
 
-            card.appendChild(icon);
+            card.appendChild(cardHeader);
             card.appendChild(content);
 
             actionCentre.appendChild(card);
