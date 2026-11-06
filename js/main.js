@@ -19688,3 +19688,206 @@ feeForm?.addEventListener("submit", async function (event) {
     }
 
 });
+
+
+// ==========================================
+// ADMIN FEE MANAGEMENT - LOAD STATEMENTS
+// ==========================================
+
+async function loadStudentFeeStatements(studentId) {
+
+    const container = document.getElementById(
+        "feeStatementsContainer"
+    );
+
+    if (!container) return;
+
+    container.innerHTML = "<p>Loading fee statements...</p>";
+
+    try {
+
+        const { data: statements, error } = await supabaseClient
+            .from("fee_statements")
+            .select("*")
+            .eq("student_id", studentId)
+            .order("created_at", { ascending: false });
+
+        if (error) throw error;
+
+        const statementList = statements || [];
+
+        const statementIds = statementList.map(
+            statement => statement.id
+        );
+
+        let items = [];
+        let payments = [];
+
+        if (statementIds.length > 0) {
+
+            const { data: itemData, error: itemError } =
+                await supabaseClient
+                    .from("fee_statement_items")
+                    .select("*")
+                    .in("statement_id", statementIds);
+
+            if (itemError) throw itemError;
+
+            items = itemData || [];
+
+            const { data: paymentData, error: paymentError } =
+                await supabaseClient
+                    .from("fee_payments")
+                    .select("*")
+                    .in("statement_id", statementIds);
+
+            if (paymentError) throw paymentError;
+
+            payments = paymentData || [];
+        }
+
+        let totalCharges = 0;
+        let totalPaid = 0;
+
+        container.innerHTML = "";
+
+        if (statementList.length === 0) {
+
+            container.innerHTML =
+                "<p>No fee statements have been created for this student yet.</p>";
+
+        }
+
+        statementList.forEach(statement => {
+
+            const statementItems = items.filter(
+                item => item.statement_id === statement.id
+            );
+
+            const statementPayments = payments.filter(
+                payment => payment.statement_id === statement.id
+            );
+
+            const itemTotal = statementItems.reduce(
+                (sum, item) => sum + Number(item.amount || 0),
+                0
+            );
+
+            const previousBalance = Number(
+                statement.previous_balance || 0
+            );
+
+            const paidTotal = statementPayments.reduce(
+                (sum, payment) => sum + Number(payment.amount || 0),
+                0
+            );
+
+            const statementTotal = previousBalance + itemTotal;
+
+            const outstanding = statementTotal - paidTotal;
+
+            totalCharges += statementTotal;
+            totalPaid += paidTotal;
+
+            const card = document.createElement("div");
+            card.className = "fee-statement-card";
+
+            const heading = document.createElement("h3");
+
+            heading.textContent =
+                statement.academic_year + " — " + statement.term;
+
+            card.appendChild(heading);
+
+            const dueDate = document.createElement("p");
+
+            dueDate.textContent =
+                "Due date: " + (statement.due_date || "Not specified");
+
+            card.appendChild(dueDate);
+
+            const itemsHeading = document.createElement("h4");
+            itemsHeading.textContent = "Fee Charges";
+
+            card.appendChild(itemsHeading);
+
+            statementItems.forEach(item => {
+
+                const row = document.createElement("p");
+
+                row.textContent =
+                    item.description + ": KSh " +
+                    Number(item.amount).toLocaleString("en-KE");
+
+                card.appendChild(row);
+
+            });
+
+            const previous = document.createElement("p");
+
+            previous.textContent =
+                "Previous balance: KSh " +
+                previousBalance.toLocaleString("en-KE");
+
+            card.appendChild(previous);
+
+            const total = document.createElement("p");
+
+            total.textContent =
+                "Total charges: KSh " +
+                statementTotal.toLocaleString("en-KE");
+
+            card.appendChild(total);
+
+            const paid = document.createElement("p");
+
+            paid.textContent =
+                "Total paid: KSh " +
+                paidTotal.toLocaleString("en-KE");
+
+            card.appendChild(paid);
+
+            const balance = document.createElement("p");
+
+            balance.textContent =
+                "Outstanding balance: KSh " +
+                outstanding.toLocaleString("en-KE");
+
+            card.appendChild(balance);
+
+            if (statement.notes) {
+
+                const notes = document.createElement("p");
+
+                notes.textContent = "Notes: " + statement.notes;
+
+                card.appendChild(notes);
+            }
+
+            container.appendChild(card);
+
+        });
+
+
+        // UPDATE SUMMARY CARDS
+
+        document.getElementById("feeTotalCharges").textContent =
+            "KSh " + totalCharges.toLocaleString("en-KE");
+
+        document.getElementById("feeTotalPaid").textContent =
+            "KSh " + totalPaid.toLocaleString("en-KE");
+
+        document.getElementById("feeOutstandingBalance").textContent =
+            "KSh " + (totalCharges - totalPaid).toLocaleString("en-KE");
+
+
+    } catch (error) {
+
+        console.error("LOAD FEE STATEMENTS ERROR:", error);
+
+        container.innerHTML =
+            "<p>Unable to load fee statements. Please try again.</p>";
+
+    }
+
+}
