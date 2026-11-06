@@ -17648,52 +17648,160 @@ if (percentage !== null && percentage < 90) {
 
 }
 
-                    setText(
-                        "parentAttendance",
-                        percentage === null
-                            ? "No records"
-                            : percentage + "%"
-                    );
+                   
+setText(
+    "parentAttendance",
+    percentage === null ? "No records" : percentage + "%"
+);
 
-                    showList(
-                        "parentAttendanceContent",
-                        records.slice(0, 6),
-                        "No attendance records available.",
-                        (element, record) => {
-                            addText(
-                                element,
-                                "strong",
-                                formatDate(record.date)
-                            );
+// BUILD ATTENDANCE CENTRE
+const container = getElement("parentAttendanceContent");
 
-                            addText(
-                                element,
-                                "span",
-                                String(record.status || "Unknown").toUpperCase()
-                            );
-                        }
-                    );
+if (container) {
+    container.innerHTML = "";
 
-                    const container = getElement("parentAttendanceContent");
+    // SUMMARY CARDS
+    const summaryGrid = document.createElement("div");
+    summaryGrid.className = "parent-attendance-summary-grid";
 
-                    if (container) {
-                        const summary = document.createElement("div");
-                        summary.className = "parent-attendance-summary";
+    const summaryItems = [
+        {
+            label: "Attendance Rate",
+            value: percentage === null ? "—" : percentage + "%",
+            icon: "📊"
+        },
+        { label: "Present", value: present, icon: "✅" },
+        { label: "Late", value: late, icon: "🕒" },
+        { label: "Absent", value: absent, icon: "❌" }
+    ];
 
-                        addText(
-                            summary,
-                            "strong",
-                            `Attendance: ${percentage === null ? "No records" : percentage + "%"}`
-                        );
+    summaryItems.forEach(item => {
+        const card = document.createElement("div");
+        card.className = "parent-attendance-stat-card";
 
-                        addText(
-                            summary,
-                            "p",
-                            `${present} Present · ${late} Late · ${absent} Absent`
-                        );
+        addText(card, "span", item.icon, "attendance-stat-icon");
+        addText(card, "small", item.label);
+        addText(card, "strong", String(item.value));
 
-                        container.prepend(summary);
-                    }
+        summaryGrid.appendChild(card);
+    });
+
+    container.appendChild(summaryGrid);
+
+    // HISTORY HEADING
+    const historyHeader = document.createElement("div");
+    historyHeader.className = "parent-attendance-history-header";
+
+    addText(historyHeader, "h4", "Attendance History");
+
+    const monthFilter = document.createElement("select");
+    monthFilter.className = "parent-attendance-month-filter";
+
+    // GROUP RECORDS BY MONTH
+    const months = new Map();
+
+    records.forEach(record => {
+        if (!record.date) return;
+
+        const date = new Date(record.date + "T00:00:00");
+
+        if (Number.isNaN(date.getTime())) return;
+
+        const key = record.date.slice(0, 7);
+
+        if (!months.has(key)) {
+            months.set(
+                key,
+                date.toLocaleDateString("en-KE", {
+                    month: "long",
+                    year: "numeric"
+                })
+            );
+        }
+    });
+
+    const allOption = document.createElement("option");
+    allOption.value = "all";
+    allOption.textContent = "All months";
+    monthFilter.appendChild(allOption);
+
+    months.forEach((label, key) => {
+        const option = document.createElement("option");
+        option.value = key;
+        option.textContent = label;
+        monthFilter.appendChild(option);
+    });
+
+    historyHeader.appendChild(monthFilter);
+    container.appendChild(historyHeader);
+
+    // HISTORY RECORDS
+    const historyList = document.createElement("div");
+    historyList.className = "parent-attendance-history-list";
+
+    const renderHistory = () => {
+        historyList.innerHTML = "";
+
+        const selectedMonth = monthFilter.value;
+
+        const filteredRecords = records.filter(record => {
+            if (selectedMonth === "all") return true;
+            return record.date?.startsWith(selectedMonth);
+        });
+
+        if (filteredRecords.length === 0) {
+            addText(
+                historyList,
+                "p",
+                "No attendance records for this month.",
+                "parent-loading"
+            );
+            return;
+        }
+
+        filteredRecords.forEach(record => {
+            const status = String(record.status || "unknown")
+                .toLowerCase();
+
+            const item = document.createElement("div");
+            item.className =
+                `parent-attendance-record-card status-${status}`;
+
+            const dateInfo = document.createElement("div");
+            dateInfo.className = "attendance-record-date";
+
+            addText(
+                dateInfo,
+                "strong",
+                formatDate(record.date)
+            );
+
+            addText(
+                dateInfo,
+                "small",
+                new Date(record.date + "T00:00:00")
+                    .toLocaleDateString("en-KE", {
+                        weekday: "long"
+                    })
+            );
+
+            const statusBadge = document.createElement("span");
+            statusBadge.className = "attendance-status-badge";
+            statusBadge.textContent =
+                status.charAt(0).toUpperCase() + status.slice(1);
+
+            item.appendChild(dateInfo);
+            item.appendChild(statusBadge);
+
+            historyList.appendChild(item);
+        });
+    };
+
+    monthFilter.addEventListener("change", renderHistory);
+
+    container.appendChild(historyList);
+    renderHistory();
+}
 
                 } catch (error) {
                     console.error("Parent attendance error:", error);
