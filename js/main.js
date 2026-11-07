@@ -19339,7 +19339,44 @@ async function loadFeeManagementStudents() {
             student.totalFeePaid = totalPaid;
             student.totalFeeOutstanding = Math.max(0, outstanding);
 
-        });
+               });
+
+        // ======================================
+        // UPDATE FEE PAYMENT OVERVIEW
+        // ======================================
+
+        const paidCount = feeManagementStudents.filter(
+            student => student.paymentStatus === "paid"
+        ).length;
+
+        const partialCount = feeManagementStudents.filter(
+            student => student.paymentStatus === "partial"
+        ).length;
+
+        const unpaidCount = feeManagementStudents.filter(
+            student => student.paymentStatus === "unpaid"
+        ).length;
+
+        const totalCollected = feeManagementStudents.reduce(
+            (total, student) =>
+                total + Number(student.totalFeePaid || 0),
+            0
+        );
+
+        document.getElementById("feeOverviewPaid").textContent =
+            paidCount;
+
+        document.getElementById("feeOverviewPartial").textContent =
+            partialCount;
+
+        document.getElementById("feeOverviewUnpaid").textContent =
+            unpaidCount;
+
+        document.getElementById("feeOverviewCollected").textContent =
+            "KSh " + totalCollected.toLocaleString("en-KE", {
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2
+            });
 
         if (countElement) {
             countElement.textContent = feeManagementStudents.length;
