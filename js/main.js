@@ -19984,6 +19984,278 @@ feeForm?.addEventListener("submit", async function (event) {
 
 });
 
+// ==========================================
+// GENERATE PRINTABLE FEE STATEMENT
+// ==========================================
+
+function openFeeStatementPrintView(
+    student,
+    statement,
+    items,
+    payments,
+    totals
+) {
+
+    const printWindow = window.open("", "_blank");
+
+    if (!printWindow) {
+        alert("Please allow pop-ups to print the fee statement.");
+        return;
+    }
+
+    const escapeHTML = value =>
+        String(value ?? "").replace(/[&<>"']/g, char => ({
+            "&": "&amp;",
+            "<": "&lt;",
+            ">": "&gt;",
+            '"': "&quot;",
+            "'": "&#39;"
+        })[char]);
+
+    const money = amount =>
+        "KSh " + Number(amount || 0).toLocaleString("en-KE", {
+            minimumFractionDigits: 2,
+            maximumFractionDigits: 2
+        });
+
+    const formatDate = date =>
+        date
+            ? new Date(date + (String(date).length === 10 ? "T00:00:00" : ""))
+                .toLocaleDateString("en-KE")
+            : "Not specified";
+
+    const chargeRows = items.map(item => `
+        <tr>
+            <td>${escapeHTML(item.description)}</td>
+            <td>${money(item.amount)}</td>
+        </tr>
+    `).join("");
+
+    const paymentRows = payments.map(payment => `
+        <tr>
+            <td>${formatDate(payment.payment_date)}</td>
+            <td>${escapeHTML(payment.payment_method || "—")}</td>
+            <td>${escapeHTML(payment.reference_number || "—")}</td>
+            <td>${money(payment.amount)}</td>
+        </tr>
+    `).join("");
+
+    const html = `
+    <!DOCTYPE html>
+    <html>
+    <head>
+        <title>Fee Statement - ${escapeHTML(student.full_name)}</title>
+
+        <style>
+            body {
+                font-family: Arial, sans-serif;
+                color: #183b2e;
+                padding: 35px;
+                max-width: 850px;
+                margin: auto;
+            }
+
+            .header {
+                background: #104b36;
+                color: white;
+                padding: 25px;
+                border-radius: 12px;
+                margin-bottom: 25px;
+            }
+
+            .header h1 {
+                margin: 0 0 8px;
+            }
+
+            .header p {
+                margin: 0;
+                color: #d8eadf;
+            }
+
+            .section {
+                margin: 25px 0;
+            }
+
+            .details {
+                display: grid;
+                grid-template-columns: 1fr 1fr;
+                gap: 12px;
+                background: #f1f6f2;
+                padding: 18px;
+                border-radius: 10px;
+            }
+
+            table {
+                width: 100%;
+                border-collapse: collapse;
+                margin-top: 12px;
+            }
+
+            th, td {
+                padding: 12px;
+                border-bottom: 1px solid #dce7df;
+                text-align: left;
+            }
+
+            th {
+                background: #eaf2ec;
+                color: #104b36;
+            }
+
+            .summary {
+                background: #f1f6f2;
+                padding: 20px;
+                border-radius: 10px;
+            }
+
+            .summary p {
+                display: flex;
+                justify-content: space-between;
+                gap: 15px;
+            }
+
+            .balance {
+                color: #a16207;
+                font-size: 20px;
+                font-weight: bold;
+                border-top: 2px solid #cbded0;
+                padding-top: 15px;
+            }
+
+            .notes {
+                background: #fff8e8;
+                padding: 15px;
+                border-radius: 8px;
+            }
+
+            .print-button {
+                background: #104b36;
+                color: white;
+                border: none;
+                padding: 13px 24px;
+                border-radius: 8px;
+                cursor: pointer;
+                font-weight: bold;
+                margin-bottom: 25px;
+            }
+
+            @media print {
+                body {
+                    padding: 0;
+                }
+
+                .print-button {
+                    display: none;
+                }
+
+                .header {
+                    print-color-adjust: exact;
+                    -webkit-print-color-adjust: exact;
+                }
+
+                th, .details, .summary {
+                    print-color-adjust: exact;
+                    -webkit-print-color-adjust: exact;
+                }
+            }
+        </style>
+    </head>
+
+    <body>
+
+        <button class="print-button" onclick="window.print()">
+            Print / Save as PDF
+        </button>
+
+        <div class="header">
+            <h1>THREE RIVERS ACADEMY</h1>
+            <p>Official Student Fee Statement</p>
+        </div>
+
+        <div class="section">
+            <h2>Student Information</h2>
+
+            <div class="details">
+                <div><strong>Name:</strong> ${escapeHTML(student.full_name)}</div>
+                <div><strong>Admission No:</strong> ${escapeHTML(student.admission_number)}</div>
+                <div><strong>Class:</strong> ${escapeHTML(student.class_name)}</div>
+                <div><strong>Academic Year:</strong> ${escapeHTML(statement.academic_year)}</div>
+                <div><strong>Term:</strong> ${escapeHTML(statement.term)}</div>
+                <div><strong>Due Date:</strong> ${formatDate(statement.due_date)}</div>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2>Fee Charges</h2>
+
+            <table>
+                <thead>
+                    <tr>
+                        <th>Description</th>
+                        <th>Amount</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    ${chargeRows || "<tr><td colspan='2'>No charges recorded</td></tr>"}
+                </tbody>
+            </table>
+        </div>
+
+        <div class="section">
+            <h2>Payment Records</h2>
+
+            <table>
+                <thead>
+                    <tr>
+                        <th>Date</th>
+                        <th>Method</th>
+                        <th>Reference</th>
+                        <th>Amount</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    ${paymentRows || "<tr><td colspan='4'>No payments recorded</td></tr>"}
+                </tbody>
+            </table>
+        </div>
+
+        <div class="section summary">
+            <h2>Financial Summary</h2>
+
+            <p><span>Previous Balance</span><strong>${money(totals.previousBalance)}</strong></p>
+            <p><span>New Charges</span><strong>${money(totals.itemTotal)}</strong></p>
+            <p><span>Total Payable</span><strong>${money(totals.statementTotal)}</strong></p>
+            <p><span>Total Paid</span><strong>${money(totals.paidTotal)}</strong></p>
+
+            <p class="balance">
+                <span>Outstanding Balance</span>
+                <strong>${money(totals.outstanding)}</strong>
+            </p>
+        </div>
+
+        ${statement.notes ? `
+            <div class="section notes">
+                <strong>Additional Notes:</strong>
+                <p>${escapeHTML(statement.notes)}</p>
+            </div>
+        ` : ""}
+
+        <p style="margin-top:35px; color:#64748b; font-size:12px;">
+            Generated on ${new Date().toLocaleDateString("en-KE")}
+            | Three Rivers Academy
+        </p>
+
+    </body>
+    </html>
+    `;
+
+    printWindow.document.open();
+    printWindow.document.write(html);
+    printWindow.document.close();
+}
+
 
 // ==========================================
 // ADMIN FEE MANAGEMENT - LOAD STATEMENTS
