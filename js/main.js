@@ -20518,7 +20518,17 @@ if (outstanding > 0) {
                 return;
             }
 
-           const reminders = parentLinks.map(link => ({
+           // GET PREVIOUS REMINDERS FOR THIS STUDENT
+const { data: previousReminders, error: previousError } =
+    await supabaseClient
+        .from("parent_fee_reminders")
+        .select("id")
+        .eq("student_id", student.id);
+
+if (previousError) throw previousError;
+
+// PREPARE NEW REMINDERS
+const reminders = parentLinks.map(link => ({
     parent_id: link.parent_id,
     student_id: student.id,
     statement_id: statement.id,
@@ -20529,6 +20539,27 @@ if (outstanding > 0) {
     amount: outstanding,
     status: "active"
 }));
+
+// SEND NEW REMINDERS
+const { error: insertError } = await supabaseClient
+    .from("parent_fee_reminders")
+    .insert(reminders);
+
+if (insertError) throw insertError;
+
+// DELETE PREVIOUS REMINDERS
+const previousReminderIds = (previousReminders || [])
+    .map(reminder => reminder.id);
+
+if (previousReminderIds.length > 0) {
+
+    const { error: deleteError } = await supabaseClient
+        .from("parent_fee_reminders")
+        .delete()
+        .in("id", previousReminderIds);
+
+    if (deleteError) throw deleteError;
+}
 
             const { error: insertError } = await supabaseClient
                 .from("parent_fee_reminders")
