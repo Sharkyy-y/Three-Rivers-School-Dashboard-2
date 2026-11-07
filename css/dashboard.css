@@ -12851,3 +12851,157 @@ body:has(.attendance-overview) .admin-avatar {
         padding: 18px;
     }
 }
+
+/* ==========================================
+   THREE RIVERS - PREMIUM FEE MANAGEMENT
+========================================== */
+
+/* FIX SIDEBAR OVERLAP */
+@media (min-width: 751px) {
+
+    body:has(#feeStudentsContainer) .dashboard-layout > .admin-dashboard-page {
+        position: relative;
+        margin-left: 294px !important;
+        width: calc(100% - 294px) !important;
+        max-width: calc(100% - 294px) !important;
+        flex: 0 0 calc(100% - 294px) !important;
+        min-width: 0;
+        box-sizing: border-box;
+    }
+
+}
+
+/* PREMIUM PAGE BACKGROUND */
+body:has(#feeStudentsContainer) .admin-dashboard-page {
+    background:
+        radial-gradient(circle at 90% 5%, rgba(194, 154, 78, 0.09), transparent 28%),
+        linear-gradient(145deg, #f2f5f1, #e9efe9);
+    padding: 32px;
+    min-height: 100vh;
+}
+
+/* PREMIUM PAGE HEADER */
+body:has(#feeStudentsContainer) .admin-dashboard-header {
+    background:
+        radial-gradient(circle at 90% 10%, rgba(255,255,255,0.12), transparent 30%),
+        linear-gradient(125deg, #092f25, #105b42 65%, #187653);
+    border: 1px solid rgba(255,255,255,0.12);
+    border-radius: 22px;
+    padding: 35px;
+    box-shadow: 0 15px 35px rgba(9, 47, 37, 0.18);
+    position: relative;
+    overflow: hidden;
+}
+
+body:has(#feeStudentsContainer) .admin-dashboard-header::after {
+    content: "";
+    position: absolute;
+    width: 180px;
+    height: 180px;
+    right: -45px;
+    bottom: -95px;
+    border: 1px solid rgba(226, 190, 119, 0.35);
+    border-radius: 50%;
+    box-shadow: 0 0 0 20px rgba(226,190,119,0.04),
+                0 0 0 40px rgba(226,190,119,0.03);
+}
+
+body:has(#feeStudentsContainer) .admin-dashboard-header h1 {
+    color: #fff;
+    letter-spacing: -0.7px;
+}
+
+body:has(#feeStudentsContainer) .admin-dashboard-header p {
+    color: #d4e6dc;
+}
+
+/* PREMIUM PAYMENT OVERVIEW */
+body:has(#feeStudentsContainer) .fee-overview-heading h2 {
+    color: #123d30;
+    font-size: 23px;
+    letter-spacing: -0.5px;
+}
+
+body:has(#feeStudentsContainer) .fee-overview-heading p {
+    color: #718078;
+}
+
+body:has(#feeStudentsContainer) .fee-overview-card {
+    border-radius: 19px;
+    padding: 24px 20px;
+    box-shadow: 0 5px 16px rgba(20, 48, 36, 0.045);
+}
+
+body:has(#feeStudentsContainer) .fee-overview-card h2 {
+    letter-spacing: -0.8px;
+}
+
+/* PREMIUM STUDENT DIRECTORY */
+body:has(#feeStudentsContainer) .student-directory-card {
+    background: linear-gradient(145deg, #ffffff, #f9fbf8);
+    border: 1px solid #dce7df;
+    border-radius: 22px;
+    padding: 30px;
+    box-shadow: 0 12px 35px rgba(20, 48, 36, 0.07);
+}
+
+body:has(#feeStudentsContainer) .directory-title h2 {
+    color: #123d30;
+}
+
+body:has(#feeStudentsContainer) .directory-title p {
+    color: #78877e;
+}
+
+body:has(#feeStudentsContainer) .directory-icon {
+    background: linear-gradient(135deg, #0c4935, #1d805b);
+    color: #fff;
+    box-shadow: 0 5px 12px rgba(12, 73, 53, 0.18);
+}
+
+/* SEARCH AND FILTER */
+body:has(#feeStudentsContainer) .student-search-box input,
+body:has(#feeStudentsContainer) .fee-status-filter select {
+    background: #f6f9f6;
+    border: 1px solid #dce7df;
+    border-radius: 12px;
+    color: #193b2e;
+    transition: 0.2s ease;
+}
+
+body:has(#feeStudentsContainer) .student-search-box input:focus,
+body:has(#feeStudentsContainer) .fee-status-filter select:focus {
+    outline: none;
+    border-color: #198754;
+    box-shadow: 0 0 0 4px rgba(25, 135, 84, 0.10);
+}
+
+/* STUDENT COUNT */
+body:has(#feeStudentsContainer) .student-directory-summary {
+    border-color: #e3ebe4;
+}
+
+body:has(#feeStudentsContainer) .student-directory-summary strong {
+    color: #14513b;
+}
+
+/* RESPONSIVE SIDEBAR */
+@media (max-width: 750px) {
+
+    body:has(#feeStudentsContainer) .dashboard-layout > .admin-dashboard-page {
+        margin-left: 65px !important;
+        width: calc(100% - 65px) !important;
+        max-width: calc(100% - 65px) !important;
+        flex: 0 0 calc(100% - 65px) !important;
+        padding: 18px;
+    }
+
+    body:has(#feeStudentsContainer) .admin-dashboard-header {
+        padding: 24px;
+    }
+
+    body:has(#feeStudentsContainer) .student-directory-card {
+        padding: 20px;
+    }
+
+}
