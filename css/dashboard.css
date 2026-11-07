@@ -13090,3 +13090,55 @@ body:has(#feeStudentsContainer) #feeStatementModal .modal-content {
     transform: translateY(-2px);
     box-shadow: 0 7px 16px rgba(184, 134, 37, 0.3);
 }
+
+/* PARENT FEE REMINDERS */
+.parent-fee-reminders-section {
+    margin: 20px 0;
+    padding: 20px;
+    border-radius: 18px;
+    background: linear-gradient(135deg, #ecfdf5, #f0fdfa);
+    border: 1px solid #a7f3d0;
+}
+
+.parent-fee-reminders-section h3 {
+    color: #065f46;
+    margin-bottom: 16px;
+    font-size: 19px;
+}
+
+.parent-fee-reminder-card {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    padding: 18px;
+    margin-bottom: 12px;
+    border-radius: 14px;
+    background: #ffffff;
+    border-left: 5px solid #d4a843;
+    box-shadow: 0 5px 15px rgba(15, 23, 42, 0.06);
+}
+
+.parent-fee-reminder-card.unread {
+    border-left-color: #dc8b27;
+    background: #fffbeb;
+}
+
+.parent-fee-reminder-card h4 {
+    color: #064e3b;
+    margin: 0;
+}
+
+.parent-fee-reminder-card p {
+    color: #475569;
+    line-height: 1.6;
+    margin: 0;
+}
+
+.parent-fee-reminder-card strong {
+    color: #b45309;
+    font-size: 16px;
+}
+
+.parent-fee-reminder-card small {
+    color: #64748b;
+}
