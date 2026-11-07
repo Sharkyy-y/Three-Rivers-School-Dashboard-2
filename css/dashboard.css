@@ -12706,3 +12706,148 @@ body:has(.attendance-overview) .admin-avatar {
     color: #475569;
     border: 1px solid #e2e8f0;
 }
+
+/* ==========================================
+   ADMIN FEE PAYMENT OVERVIEW
+========================================== */
+
+.fee-overview-section {
+    margin: 25px 0;
+}
+
+.fee-overview-heading {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 18px;
+}
+
+.fee-overview-heading h2 {
+    margin: 0 0 5px;
+    font-size: 21px;
+    color: var(--text-primary, #1e293b);
+}
+
+.fee-overview-heading p {
+    margin: 0;
+    color: var(--text-secondary, #64748b);
+    font-size: 13px;
+}
+
+.fee-overview-icon {
+    font-size: 27px;
+}
+
+.fee-overview-grid {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 16px;
+}
+
+.fee-overview-card {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 22px 18px;
+    border-radius: 16px;
+    border: 1px solid transparent;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.fee-overview-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 10px 24px rgba(15, 23, 42, 0.09);
+}
+
+.fee-overview-card-icon {
+    width: 45px;
+    height: 45px;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 13px;
+    font-size: 19px;
+    font-weight: 800;
+}
+
+.fee-overview-card span {
+    display: block;
+    font-size: 12px;
+    font-weight: 650;
+    margin-bottom: 6px;
+}
+
+.fee-overview-card h2 {
+    margin: 0;
+    font-size: 25px;
+    font-weight: 800;
+}
+
+.fee-overview-card small {
+    display: block;
+    margin-top: 4px;
+    font-size: 11px;
+    opacity: 0.75;
+}
+
+/* GREEN */
+.fee-overview-paid {
+    background: #f0fdf4;
+    border-color: #bbf7d0;
+    color: #166534;
+}
+
+.fee-overview-paid .fee-overview-card-icon {
+    background: #dcfce7;
+}
+
+/* AMBER */
+.fee-overview-partial {
+    background: #fffbeb;
+    border-color: #fde68a;
+    color: #92400e;
+}
+
+.fee-overview-partial .fee-overview-card-icon {
+    background: #fef3c7;
+}
+
+/* RED */
+.fee-overview-unpaid {
+    background: #fef2f2;
+    border-color: #fecaca;
+    color: #991b1b;
+}
+
+.fee-overview-unpaid .fee-overview-card-icon {
+    background: #fee2e2;
+}
+
+/* BLUE */
+.fee-overview-collected {
+    background: #eff6ff;
+    border-color: #bfdbfe;
+    color: #1e40af;
+}
+
+.fee-overview-collected .fee-overview-card-icon {
+    background: #dbeafe;
+}
+
+/* RESPONSIVE */
+@media (max-width: 1000px) {
+    .fee-overview-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+
+@media (max-width: 550px) {
+    .fee-overview-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .fee-overview-card {
+        padding: 18px;
+    }
+}
