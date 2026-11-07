@@ -20541,7 +20541,7 @@ const reminders = parentLinks.map(link => ({
 }));
 
 // SEND NEW REMINDERS
-const { error: insertError } = await supabaseClient
+const { error: newReminderError } = await supabaseClient
     .from("parent_fee_reminders")
     .insert(reminders);
 
