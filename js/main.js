@@ -20518,7 +20518,7 @@ if (outstanding > 0) {
                 return;
             }
 
-           // GET PREVIOUS REMINDERS FOR THIS STUDENT
+          // GET PREVIOUS REMINDERS FOR THIS STUDENT
 const { data: previousReminders, error: previousError } =
     await supabaseClient
         .from("parent_fee_reminders")
@@ -20544,7 +20544,7 @@ const reminders = parentLinks.map(link => ({
 const { error: newReminderError } = await supabaseClient
     .from("parent_fee_reminders")
     .insert(reminders);
-            
+
 if (newReminderError) throw newReminderError;
 
 // DELETE PREVIOUS REMINDERS
@@ -20553,19 +20553,19 @@ const previousReminderIds = (previousReminders || [])
 
 if (previousReminderIds.length > 0) {
 
-    const { error: deleteError } = await supabaseClient
-        .from("parent_fee_reminders")
-        .delete()
-        .in("id", previousReminderIds);
+    const { data: deletedReminders, error: deleteError } =
+        await supabaseClient
+            .from("parent_fee_reminders")
+            .delete()
+            .in("id", previousReminderIds)
+            .select("id");
 
     if (deleteError) throw deleteError;
+
+    if ((deletedReminders || []).length !== previousReminderIds.length) {
+        throw new Error("Not all previous fee reminders could be deleted.");
+    }
 }
-
-            const { error: insertError } = await supabaseClient
-                .from("parent_fee_reminders")
-                .insert(reminders);
-
-            if (insertError) throw insertError;
 
             alert("Fee reminder successfully sent to the linked parent account(s)!");
 
