@@ -20753,6 +20753,49 @@ if (reminderError) {
     console.error("Fee reminder loading error:", reminderError);
 }
 
+        // DISPLAY PARENT FEE REMINDERS
+if (feeReminders && feeReminders.length > 0) {
+
+    const reminderSection = document.createElement("div");
+    reminderSection.className = "parent-fee-reminders-section";
+
+    const reminderHeading = document.createElement("h3");
+    reminderHeading.textContent = "Fee Payment Reminders";
+    reminderSection.appendChild(reminderHeading);
+
+    feeReminders.forEach(reminder => {
+
+        const reminderCard = document.createElement("div");
+        reminderCard.className = "parent-fee-reminder-card";
+
+        const title = document.createElement("h4");
+        title.textContent = reminder.title;
+
+        const message = document.createElement("p");
+        message.textContent = reminder.message;
+
+        const amount = document.createElement("strong");
+        amount.textContent =
+            "Outstanding Amount: KSh " +
+            Number(reminder.amount).toLocaleString("en-KE");
+
+        const date = document.createElement("small");
+        date.textContent =
+            "Received: " +
+            new Date(reminder.created_at).toLocaleDateString("en-KE");
+
+        reminderCard.append(title, message, amount, date);
+
+        if (!reminder.read_at) {
+            reminderCard.classList.add("unread");
+        }
+
+        reminderSection.appendChild(reminderCard);
+    });
+
+    container.appendChild(reminderSection);
+}
+
         if (statementList.length === 0) {
 
             container.innerHTML = "";
