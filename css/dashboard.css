@@ -13142,3 +13142,28 @@ body:has(#feeStudentsContainer) #feeStatementModal .modal-content {
 .parent-fee-reminder-card small {
     color: #64748b;
 }
+
+/* ADMIN SEND FEE REMINDER BUTTON */
+.send-fee-reminder-button {
+    background: linear-gradient(135deg, #047857, #059669);
+    color: #ffffff;
+    border: none;
+    padding: 11px 18px;
+    border-radius: 10px;
+    font-weight: 700;
+    cursor: pointer;
+    margin: 8px 5px;
+    transition: all 0.25s ease;
+    box-shadow: 0 4px 12px rgba(4, 120, 87, 0.18);
+}
+
+.send-fee-reminder-button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 7px 16px rgba(4, 120, 87, 0.28);
+}
+
+.send-fee-reminder-button:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    transform: none;
+}
