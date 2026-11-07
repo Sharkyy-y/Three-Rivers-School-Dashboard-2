@@ -13005,3 +13005,69 @@ body:has(#feeStudentsContainer) .student-directory-summary strong {
     }
 
 }
+
+/* ==========================================
+   PREMIUM FEE MANAGEMENT - STUDENT CARDS
+========================================== */
+
+body:has(#feeStudentsContainer) #feeStudentsContainer {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: 18px;
+}
+
+/* STUDENT CARDS */
+body:has(#feeStudentsContainer) #feeStudentsContainer > * {
+    background: linear-gradient(145deg, #ffffff, #f0f6f1);
+    border: 1px solid #d7e5da;
+    border-radius: 18px;
+    box-shadow: 0 7px 20px rgba(13, 54, 37, 0.06);
+    transition: all 0.25s ease;
+}
+
+body:has(#feeStudentsContainer) #feeStudentsContainer > *:hover {
+    transform: translateY(-4px);
+    border-color: #82b99a;
+    box-shadow: 0 14px 28px rgba(13, 54, 37, 0.11);
+}
+
+/* CONTENT PANELS */
+body:has(#feeStudentsContainer) .fee-preview-card {
+    background: linear-gradient(145deg, #f0f7f1, #e5f0e7);
+    border: 1px solid #cbded0;
+    border-radius: 18px;
+    color: #123d30;
+    box-shadow: 0 8px 20px rgba(13, 54, 37, 0.05);
+}
+
+/* STUDENT SEARCH AREA */
+body:has(#feeStudentsContainer) .student-search-box,
+body:has(#feeStudentsContainer) .fee-status-filter {
+    margin-bottom: 16px;
+}
+
+/* SECTION HEADINGS */
+body:has(#feeStudentsContainer) h2,
+body:has(#feeStudentsContainer) h3 {
+    letter-spacing: -0.4px;
+}
+
+/* PREMIUM DIVIDERS */
+body:has(#feeStudentsContainer) .fee-preview-divider {
+    border-color: #cbded0;
+}
+
+/* PREMIUM INPUTS */
+body:has(#feeStudentsContainer) input,
+body:has(#feeStudentsContainer) select,
+body:has(#feeStudentsContainer) textarea {
+    border-radius: 11px;
+}
+
+/* PREMIUM MODAL */
+body:has(#feeStudentsContainer) #feeStatementModal .modal-content {
+    background: linear-gradient(145deg, #ffffff, #f2f7f2);
+    border: 1px solid #d5e5d9;
+    border-radius: 22px;
+    box-shadow: 0 25px 70px rgba(9, 47, 37, 0.22);
+}
