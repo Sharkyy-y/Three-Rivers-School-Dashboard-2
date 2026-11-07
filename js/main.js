@@ -20445,6 +20445,36 @@ paymentButton.addEventListener("click", () => {
 
 card.appendChild(paymentButton);
 
+            // DOWNLOAD PDF BUTTON
+const downloadButton = document.createElement("button");
+
+downloadButton.type = "button";
+downloadButton.className = "download-fee-statement-button";
+downloadButton.textContent = "Download PDF";
+
+downloadButton.addEventListener("click", () => {
+    if (!window.selectedFeeStudent) {
+        alert("Please select a student first.");
+        return;
+    }
+
+    openFeeStatementPrintView(
+        window.selectedFeeStudent,
+        statement,
+        statementItems,
+        statementPayments,
+        {
+            previousBalance,
+            itemTotal,
+            statementTotal,
+            paidTotal,
+            outstanding
+        }
+    );
+});
+
+card.appendChild(downloadButton);
+
             container.appendChild(card);
 
         });
