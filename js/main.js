@@ -20741,6 +20741,18 @@ async function loadParentFeeStatements(studentId) {
 
         const statementList = statements || [];
 
+        // LOAD PRIVATE PARENT FEE REMINDERS
+const { data: feeReminders, error: reminderError } =
+    await supabaseClient
+        .from("parent_fee_reminders")
+        .select("*")
+        .eq("student_id", studentId)
+        .order("created_at", { ascending: false });
+
+if (reminderError) {
+    console.error("Fee reminder loading error:", reminderError);
+}
+
         if (statementList.length === 0) {
 
             container.innerHTML = "";
