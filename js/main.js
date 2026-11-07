@@ -19433,11 +19433,30 @@ function renderFeeManagementStudents(students) {
         const email = document.createElement("p");
         email.textContent = student.email || "No email available";
 
-        details.appendChild(name);
-        details.appendChild(meta);
-        details.appendChild(email);
+       details.appendChild(name);
+details.appendChild(meta);
+details.appendChild(email);
 
-        info.appendChild(details);
+// PAYMENT STATUS BADGE
+const statusBadge = document.createElement("span");
+
+const statusLabels = {
+    paid: "✓ Fully Paid",
+    partial: "◐ Partially Paid",
+    unpaid: "! Unpaid",
+    none: "No Statement"
+};
+
+statusBadge.className =
+    "fee-payment-status-badge fee-status-" +
+    (student.paymentStatus || "none");
+
+statusBadge.textContent =
+    statusLabels[student.paymentStatus] || "No Statement";
+
+details.appendChild(statusBadge);
+
+info.appendChild(details);
 
         const actions = document.createElement("div");
         actions.className = "student-admin-actions";
