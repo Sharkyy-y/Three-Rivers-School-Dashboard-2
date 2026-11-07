@@ -20544,8 +20544,8 @@ const reminders = parentLinks.map(link => ({
 const { error: newReminderError } = await supabaseClient
     .from("parent_fee_reminders")
     .insert(reminders);
-
-if (insertError) throw insertError;
+            
+if (newReminderError) throw newReminderError;
 
 // DELETE PREVIOUS REMINDERS
 const previousReminderIds = (previousReminders || [])
