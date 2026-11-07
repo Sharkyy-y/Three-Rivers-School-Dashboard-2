@@ -20754,18 +20754,14 @@ if (reminderError) {
 }
 
         if (statementList.length === 0) {
-
-            container.innerHTML = "";
-
-            addFeeText(
-                container,
-                "p",
-                "No fee statements have been issued for this student yet.",
-                "parent-loading"
-            );
-
-            return;
-        }
+    container.innerHTML = "";
+    addFeeText(
+        container,
+        "p",
+        "No fee statements have been issued for this student yet.",
+        "parent-loading"
+    );
+}
 
         const statementIds = statementList.map(
             statement => statement.id
