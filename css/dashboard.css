@@ -13071,3 +13071,22 @@ body:has(#feeStudentsContainer) #feeStatementModal .modal-content {
     border-radius: 22px;
     box-shadow: 0 25px 70px rgba(9, 47, 37, 0.22);
 }
+
+/* FEE STATEMENT PDF DOWNLOAD BUTTON */
+.download-fee-statement-button {
+    background: linear-gradient(135deg, #d4a843, #b88625);
+    color: #ffffff;
+    border: none;
+    padding: 11px 18px;
+    border-radius: 10px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.25s ease;
+    margin: 8px 5px;
+    box-shadow: 0 4px 12px rgba(184, 134, 37, 0.2);
+}
+
+.download-fee-statement-button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 7px 16px rgba(184, 134, 37, 0.3);
+}
