@@ -20725,6 +20725,44 @@ document.getElementById("feePaymentForm")
 
         if (error) throw error;
 
+        // ==========================================
+// UPDATE PARENT FEE REMINDERS
+// ==========================================
+
+const { data: updatedPayments, error: updatedPaymentsError } =
+    await supabaseClient
+        .from("fee_payments")
+        .select("amount")
+        .eq("statement_id", statementId);
+
+if (updatedPaymentsError) throw updatedPaymentsError;
+
+const totalPaidNow = (updatedPayments || []).reduce(
+    (sum, payment) => sum + Number(payment.amount || 0),
+    0
+);
+
+const newOutstanding = Math.max(
+    0,
+    Number(previousBalance || 0) +
+    Number(itemTotal || 0) -
+    totalPaidNow
+);
+
+const { error: reminderUpdateError } =
+    await supabaseClient
+        .from("parent_fee_reminders")
+        .update({
+            amount: newOutstanding,
+            status: newOutstanding <= 0 ? "resolved" : "active",
+            message: newOutstanding <= 0
+                ? "The fee balance for this statement has been fully paid."
+                : `The updated outstanding fee balance is KSh ${newOutstanding.toLocaleString("en-KE")}.`
+        })
+        .eq("statement_id", statementId);
+
+if (reminderUpdateError) throw reminderUpdateError;
+
         alert("Payment successfully recorded!");
 
         const studentId = window.selectedFeeStudent?.id;
