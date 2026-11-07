@@ -20475,6 +20475,83 @@ downloadButton.addEventListener("click", () => {
 
 card.appendChild(downloadButton);
 
+            // SEND FEE REMINDER BUTTON
+if (outstanding > 0) {
+
+    const reminderButton = document.createElement("button");
+
+    reminderButton.type = "button";
+    reminderButton.className = "send-fee-reminder-button";
+    reminderButton.textContent = "Send Fee Reminder";
+
+    reminderButton.addEventListener("click", async () => {
+
+        const student = window.selectedFeeStudent;
+
+        if (!student) {
+            alert("Please select a student first.");
+            return;
+        }
+
+        const confirmed = confirm(
+            `Send a fee reminder for ${student.full_name}?\n\n` +
+            `Outstanding balance: KSh ${outstanding.toLocaleString("en-KE")}`
+        );
+
+        if (!confirmed) return;
+
+        reminderButton.disabled = true;
+        reminderButton.textContent = "Sending...";
+
+        try {
+
+            const { data: parentLinks, error: parentError } =
+                await supabaseClient
+                    .from("parent_students")
+                    .select("parent_id")
+                    .eq("student_id", student.id);
+
+            if (parentError) throw parentError;
+
+            if (!parentLinks || parentLinks.length === 0) {
+                alert("No parent account is linked to this student.");
+                return;
+            }
+
+            const reminders = parentLinks.map(link => ({
+                parent_id: link.parent_id,
+                student_id: student.id,
+                title: "Fee Payment Reminder",
+                message:
+                    `A fee balance remains outstanding for ${student.full_name} ` +
+                    `(${statement.academic_year} — ${statement.term}).`,
+                amount: outstanding
+            }));
+
+            const { error: insertError } = await supabaseClient
+                .from("parent_fee_reminders")
+                .insert(reminders);
+
+            if (insertError) throw insertError;
+
+            alert("Fee reminder successfully sent to the linked parent account(s)!");
+
+        } catch (error) {
+
+            console.error("FEE REMINDER ERROR:", error);
+            alert("Unable to send reminder: " + error.message);
+
+        } finally {
+
+            reminderButton.disabled = false;
+            reminderButton.textContent = "Send Fee Reminder";
+
+        }
+    });
+
+    card.appendChild(reminderButton);
+}
+
             container.appendChild(card);
 
         });
