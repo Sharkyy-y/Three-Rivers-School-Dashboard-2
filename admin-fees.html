@@ -301,6 +301,97 @@
 
         </section>
 
+        
+<!-- ======================================
+     FINANCIAL AUDIT TRAIL
+======================================= -->
+
+<section class="fee-audit-section">
+
+    <div class="fee-audit-header">
+        <div>
+            <span class="fee-audit-eyebrow">FINANCIAL CONTROL</span>
+            <h2>Financial Audit Trail</h2>
+            <p>Track changes and activities across fee records.</p>
+        </div>
+
+        <button type="button" id="refreshFeeAuditLogs"
+            class="fee-audit-refresh">
+            ↻ Refresh Logs
+        </button>
+    </div>
+
+    <!-- FILTERS -->
+    <div class="fee-audit-filters">
+
+        <div>
+            <label for="feeAuditSearch">Search Student</label>
+            <input type="text" id="feeAuditSearch"
+                placeholder="Student name or admission number...">
+        </div>
+
+        <div>
+            <label for="feeAuditAction">Action</label>
+            <select id="feeAuditAction">
+                <option value="all">All Actions</option>
+                <option value="INSERT">Created</option>
+                <option value="UPDATE">Updated</option>
+                <option value="DELETE">Deleted</option>
+            </select>
+        </div>
+
+        <div>
+            <label for="feeAuditEntity">Record Type</label>
+            <select id="feeAuditEntity">
+                <option value="all">All Records</option>
+                <option value="fee_statements">Fee Statements</option>
+                <option value="fee_statement_items">Fee Charges</option>
+                <option value="fee_payments">Payments</option>
+            </select>
+        </div>
+
+        <div>
+            <label for="feeAuditDate">From Date</label>
+            <input type="date" id="feeAuditDate">
+        </div>
+
+    </div>
+
+    <!-- AUDIT TABLE -->
+    <div class="fee-audit-table-wrapper">
+
+        <table class="fee-audit-table">
+
+            <thead>
+                <tr>
+                    <th>Date & Time</th>
+                    <th>Student</th>
+                    <th>Record</th>
+                    <th>Action</th>
+                    <th>Performed By</th>
+                    <th>Details</th>
+                </tr>
+            </thead>
+
+            <tbody id="feeAuditLogsBody">
+                <tr>
+                    <td colspan="6">
+                        Audit records will appear here.
+                    </td>
+                </tr>
+            </tbody>
+
+        </table>
+
+    </div>
+
+    <div id="feeAuditLogsCount" class="fee-audit-count">
+        0 audit records
+    </div>
+
+</section>
+
+
 
         <!-- ======================================
              CREATE FEE STATEMENT MODAL
