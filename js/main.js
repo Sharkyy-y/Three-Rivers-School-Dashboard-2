@@ -20518,15 +20518,17 @@ if (outstanding > 0) {
                 return;
             }
 
-            const reminders = parentLinks.map(link => ({
-                parent_id: link.parent_id,
-                student_id: student.id,
-                title: "Fee Payment Reminder",
-                message:
-                    `A fee balance remains outstanding for ${student.full_name} ` +
-                    `(${statement.academic_year} — ${statement.term}).`,
-                amount: outstanding
-            }));
+           const reminders = parentLinks.map(link => ({
+    parent_id: link.parent_id,
+    student_id: student.id,
+    statement_id: statement.id,
+    title: "Fee Payment Reminder",
+    message:
+        `A fee balance remains outstanding for ${student.full_name} ` +
+        `(${statement.academic_year} — ${statement.term}).`,
+    amount: outstanding,
+    status: "active"
+}));
 
             const { error: insertError } = await supabaseClient
                 .from("parent_fee_reminders")
