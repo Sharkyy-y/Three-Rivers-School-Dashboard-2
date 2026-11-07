@@ -20725,10 +20725,35 @@ document.getElementById("feePaymentForm")
 
         if (error) throw error;
 
-        // ==========================================
+       // ==========================================
 // UPDATE PARENT FEE REMINDERS
 // ==========================================
 
+// LOAD THE FEE STATEMENT
+const { data: feeStatement, error: statementError } =
+    await supabaseClient
+        .from("fee_statements")
+        .select("previous_balance")
+        .eq("id", statementId)
+        .single();
+
+if (statementError) throw statementError;
+
+// LOAD STATEMENT CHARGES
+const { data: statementItems, error: itemsError } =
+    await supabaseClient
+        .from("fee_statement_items")
+        .select("amount")
+        .eq("statement_id", statementId);
+
+if (itemsError) throw itemsError;
+
+const itemTotalNow = (statementItems || []).reduce(
+    (sum, item) => sum + Number(item.amount || 0),
+    0
+);
+
+// LOAD ALL PAYMENTS FOR THIS STATEMENT
 const { data: updatedPayments, error: updatedPaymentsError } =
     await supabaseClient
         .from("fee_payments")
@@ -20742,13 +20767,15 @@ const totalPaidNow = (updatedPayments || []).reduce(
     0
 );
 
+// CALCULATE NEW OUTSTANDING BALANCE
 const newOutstanding = Math.max(
     0,
-    Number(previousBalance || 0) +
-    Number(itemTotal || 0) -
+    Number(feeStatement.previous_balance || 0) +
+    itemTotalNow -
     totalPaidNow
 );
 
+// UPDATE LINKED PARENT REMINDERS
 const { error: reminderUpdateError } =
     await supabaseClient
         .from("parent_fee_reminders")
