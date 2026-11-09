@@ -13167,3 +13167,233 @@ body:has(#feeStudentsContainer) #feeStatementModal .modal-content {
     cursor: not-allowed;
     transform: none;
 }
+
+
+/* ==========================================
+   PREMIUM FINANCIAL AUDIT TRAIL
+========================================== */
+
+.fee-audit-section {
+    margin-top: 30px;
+    padding: 28px;
+    background: linear-gradient(145deg, #ffffff, #f5faf7);
+    border: 1px solid #dcebe2;
+    border-radius: 20px;
+    box-shadow: 0 12px 35px rgba(20, 83, 45, 0.07);
+}
+
+.fee-audit-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 20px;
+    margin-bottom: 25px;
+}
+
+.fee-audit-eyebrow {
+    color: #13845b;
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: 1.8px;
+}
+
+.fee-audit-header h2 {
+    color: #142d24;
+    font-size: 25px;
+    margin: 7px 0;
+}
+
+.fee-audit-header p {
+    color: #75847c;
+    font-size: 13px;
+}
+
+.fee-audit-refresh {
+    padding: 11px 17px;
+    border: none;
+    border-radius: 10px;
+    background: #126b4b;
+    color: white;
+    font-weight: 700;
+    cursor: pointer;
+    transition: 0.2s ease;
+}
+
+.fee-audit-refresh:hover {
+    background: #0d5139;
+    transform: translateY(-2px);
+    box-shadow: 0 5px 14px rgba(18, 107, 75, 0.2);
+}
+
+/* FILTERS */
+
+.fee-audit-filters {
+    display: grid;
+    grid-template-columns: 2fr 1fr 1.3fr 1fr;
+    gap: 15px;
+    padding: 20px;
+    margin-bottom: 22px;
+    background: #f0f7f3;
+    border: 1px solid #e0eee5;
+    border-radius: 14px;
+}
+
+.fee-audit-filters label {
+    display: block;
+    margin-bottom: 8px;
+    color: #52645a;
+    font-size: 12px;
+    font-weight: 700;
+}
+
+.fee-audit-filters input,
+.fee-audit-filters select {
+    width: 100%;
+    min-width: 0;
+    height: 42px;
+    padding: 0 11px;
+    border: 1px solid #d7e3db;
+    border-radius: 9px;
+    background: white;
+    color: #263b30;
+    font-size: 12px;
+    outline: none;
+}
+
+.fee-audit-filters input:focus,
+.fee-audit-filters select:focus {
+    border-color: #159568;
+    box-shadow: 0 0 0 3px rgba(21, 149, 104, 0.1);
+}
+
+/* TABLE */
+
+.fee-audit-table-wrapper {
+    width: 100%;
+    overflow-x: auto;
+    border: 1px solid #e5eee8;
+    border-radius: 13px;
+    background: white;
+}
+
+.fee-audit-table {
+    width: 100%;
+    min-width: 850px;
+    border-collapse: collapse;
+    text-align: left;
+}
+
+.fee-audit-table thead {
+    background: #173d30;
+    color: white;
+}
+
+.fee-audit-table th {
+    padding: 16px 14px;
+    font-size: 12px;
+    font-weight: 700;
+    white-space: nowrap;
+}
+
+.fee-audit-table td {
+    padding: 15px 14px;
+    border-bottom: 1px solid #edf2ee;
+    color: #405247;
+    font-size: 12px;
+    vertical-align: middle;
+}
+
+.fee-audit-table tbody tr:hover {
+    background: #f7fbf8;
+}
+
+.fee-audit-table tbody tr:last-child td {
+    border-bottom: none;
+}
+
+/* DETAILS BUTTON */
+
+.fee-audit-details-button {
+    padding: 8px 12px;
+    border: 1px solid #cce5d7;
+    border-radius: 8px;
+    background: #eaf6ef;
+    color: #13764e;
+    font-size: 11px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: 0.2s ease;
+}
+
+.fee-audit-details-button:hover {
+    background: #d5ecdf;
+}
+
+/* EXPANDED DETAILS */
+
+.fee-audit-details-content {
+    padding: 20px;
+    background: #f5faf6;
+    border-radius: 10px;
+    text-align: left;
+}
+
+.fee-audit-details-content strong {
+    display: block;
+    margin-bottom: 12px;
+    color: #174b36;
+    font-size: 13px;
+}
+
+.fee-audit-details-content pre {
+    max-width: 100%;
+    overflow-x: auto;
+    padding: 17px;
+    border-radius: 9px;
+    background: #172b23;
+    color: #d6f5df;
+    font-size: 11px;
+    line-height: 1.7;
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
+}
+
+/* RECORD COUNT */
+
+.fee-audit-count {
+    margin-top: 16px;
+    padding: 12px 15px;
+    display: inline-block;
+    background: #e9f5ed;
+    color: #176b49;
+    border-radius: 9px;
+    font-size: 12px;
+    font-weight: 700;
+}
+
+/* RESPONSIVE */
+
+@media (max-width: 900px) {
+    .fee-audit-filters {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 600px) {
+    .fee-audit-section {
+        padding: 17px;
+    }
+
+    .fee-audit-header {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+
+    .fee-audit-filters {
+        grid-template-columns: 1fr;
+    }
+
+    .fee-audit-header h2 {
+        font-size: 21px;
+    }
+}
