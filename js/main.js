@@ -20487,11 +20487,40 @@ async function loadClassFeeReport() {
                 maximumFractionDigits: 2
             });
 
-        const classNames = Object.keys(classReports).sort(
-            (a, b) => a.localeCompare(b, undefined, {
-                numeric: true
-            })
-        );
+       // ALL SCHOOL CLASSES
+const schoolClasses = [
+    "Year 7",
+    "Year 8",
+    "Year 9",
+    "Year 10A",
+    "Year 10B",
+    "Year 11A",
+    "Year 11B",
+    "Year 12",
+    "Year 13A",
+    "Year 13B"
+];
+
+// ENSURE EVERY CLASS APPEARS
+schoolClasses.forEach(className => {
+
+    if (!classReports[className]) {
+
+        classReports[className] = {
+            students: 0,
+            paid: 0,
+            partial: 0,
+            unpaid: 0,
+            charged: 0,
+            collected: 0,
+            outstanding: 0
+        };
+
+    }
+
+});
+
+const classNames = schoolClasses;
 
         tableBody.innerHTML = "";
 
