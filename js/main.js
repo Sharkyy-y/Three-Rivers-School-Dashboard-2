@@ -20589,6 +20589,7 @@ if (
 ) {
     loadFeeManagementStudents();
     loadFeeAuditLogs();
+    loadClassFeeReport();
 }
 
 // ==========================================
