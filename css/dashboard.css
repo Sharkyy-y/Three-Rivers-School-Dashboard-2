@@ -15116,3 +15116,241 @@ body:has(#feeStudentsContainer) #feeStatementModal .modal-content {
         flex: 1;
     }
 }
+
+/* ==========================================
+   THREE RIVERS - COLOURFUL PAYMENT MODAL
+========================================== */
+
+#feePaymentModal {
+    background: rgba(12, 35, 27, 0.72);
+    backdrop-filter: blur(8px);
+    padding: 20px;
+}
+
+#feePaymentModal .fee-modal-content {
+    width: 100%;
+    max-width: 720px;
+    max-height: 92vh;
+    overflow-y: auto;
+    padding: 0;
+    border: 1px solid #d9eadf;
+    border-radius: 23px;
+    background: #ffffff;
+    box-shadow: 0 25px 75px rgba(0, 0, 0, 0.25);
+    animation: paymentModalEnter 0.3s ease;
+}
+
+@keyframes paymentModalEnter {
+    from {
+        opacity: 0;
+        transform: translateY(18px) scale(0.98);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+/* HEADER */
+#feePaymentModal .fee-modal-header,
+#feePaymentModal .fee-payment-header {
+    position: relative;
+    padding: 27px 30px;
+    background: linear-gradient(125deg, #123e30, #087c55, #12a477);
+    color: white;
+}
+
+#feePaymentModal .fee-modal-header h2,
+#feePaymentModal .fee-payment-header h2 {
+    color: white;
+    font-size: 24px;
+    margin-bottom: 7px;
+}
+
+#feePaymentModal .fee-modal-header p,
+#feePaymentModal .fee-payment-header p {
+    color: #d8f5e7;
+    font-size: 13px;
+}
+
+#feePaymentModal .fee-modal-header button,
+#feePaymentModal .fee-modal-close {
+    background: rgba(255,255,255,0.15);
+    color: white;
+    border: 1px solid rgba(255,255,255,0.25);
+    border-radius: 10px;
+    width: 38px;
+    height: 38px;
+    font-size: 23px;
+    cursor: pointer;
+}
+
+/* FORM AREA */
+#feePaymentModal #feePaymentForm {
+    padding: 28px;
+    background: linear-gradient(145deg, #ffffff, #f7fbf8);
+}
+
+#feePaymentModal .form-group,
+#feePaymentModal .fee-payment-field {
+    margin-bottom: 20px;
+}
+
+#feePaymentModal label {
+    display: block;
+    margin-bottom: 9px;
+    color: #244c3b;
+    font-size: 13px;
+    font-weight: 800;
+}
+
+#feePaymentModal input,
+#feePaymentModal select,
+#feePaymentModal textarea {
+    width: 100%;
+    padding: 13px 15px;
+    border: 1px solid #d8e7dd;
+    border-radius: 11px;
+    background: #ffffff;
+    color: #234536;
+    font: inherit;
+    font-size: 14px;
+    transition: 0.2s ease;
+}
+
+#feePaymentModal input:focus,
+#feePaymentModal select:focus,
+#feePaymentModal textarea:focus {
+    outline: none;
+    border-color: #0b9b68;
+    box-shadow: 0 0 0 4px rgba(11,155,104,0.11);
+}
+
+/* ALTERNATING COLOUR PANELS */
+#feePaymentModal .fee-payment-amount-panel {
+    padding: 21px;
+    margin: 22px 0;
+    border: 1px solid #ccebd9;
+    border-radius: 16px;
+    background: linear-gradient(135deg, #e9f9ef, #f2fff7);
+}
+
+#feePaymentModal .fee-payment-amount-input {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 8px 13px;
+    border: 1px solid #b9dfc8;
+    border-radius: 13px;
+    background: white;
+}
+
+#feePaymentModal .fee-payment-amount-input span {
+    color: #087c55;
+    font-weight: 900;
+}
+
+#feePaymentModal .fee-payment-amount-input input {
+    border: none;
+    box-shadow: none;
+    font-size: 23px;
+    font-weight: 800;
+}
+
+/* SECTION HEADINGS */
+#feePaymentModal .fee-payment-section-heading {
+    display: flex;
+    align-items: center;
+    gap: 13px;
+    margin: 22px 0 17px;
+}
+
+#feePaymentModal .fee-payment-section-heading > span {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    flex-shrink: 0;
+    border-radius: 11px;
+    background: #e0f5e8;
+    color: #087c55;
+    font-weight: 900;
+}
+
+#feePaymentModal .fee-payment-section-heading h3 {
+    color: #214b38;
+    font-size: 15px;
+}
+
+#feePaymentModal .fee-payment-section-heading p {
+    margin-top: 4px;
+    color: #839188;
+    font-size: 11px;
+}
+
+/* TRANSACTION DETAILS */
+#feePaymentModal .fee-payment-details-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 17px;
+}
+
+/* FOOTER */
+#feePaymentModal .fee-modal-actions,
+#feePaymentModal .fee-payment-footer {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-top: 25px;
+    padding-top: 21px;
+    border-top: 1px solid #e6eee8;
+}
+
+#feePaymentModal #cancelFeePayment {
+    padding: 13px 21px;
+    border: 1px solid #dce6df;
+    border-radius: 11px;
+    background: #f3f6f4;
+    color: #526359;
+    font-weight: 800;
+    cursor: pointer;
+}
+
+#feePaymentModal #saveFeePayment {
+    padding: 14px 23px;
+    border: none;
+    border-radius: 11px;
+    background: linear-gradient(135deg, #087c55, #12a477);
+    color: white;
+    font-weight: 900;
+    cursor: pointer;
+    box-shadow: 0 7px 17px rgba(8,124,85,0.2);
+    transition: 0.2s ease;
+}
+
+#feePaymentModal #saveFeePayment:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 22px rgba(8,124,85,0.27);
+}
+
+@media (max-width: 600px) {
+    #feePaymentModal {
+        padding: 9px;
+    }
+
+    #feePaymentModal #feePaymentForm {
+        padding: 19px;
+    }
+
+    #feePaymentModal .fee-payment-details-grid {
+        grid-template-columns: 1fr;
+        gap: 0;
+    }
+
+    #feePaymentModal .fee-modal-actions button {
+        flex: 1;
+    }
+}
