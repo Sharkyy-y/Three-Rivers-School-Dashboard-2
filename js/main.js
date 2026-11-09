@@ -21027,6 +21027,7 @@ if (
     loadFeeManagementStudents();
     loadFeeAuditLogs();
     loadClassFeeReport();
+    loadTermReportAcademicYears();
 }
 
 // ==========================================
