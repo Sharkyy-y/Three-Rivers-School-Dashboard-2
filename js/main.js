@@ -20608,6 +20608,414 @@ const classNames = schoolClasses;
 document.getElementById("refreshClassFeeReport")
     ?.addEventListener("click", loadClassFeeReport);
 
+// ==========================================
+// TERMLY FINANCIAL SUMMARIES
+// ==========================================
+
+const schoolReportClasses = [
+    "Year 7",
+    "Year 8",
+    "Year 9",
+    "Year 10A",
+    "Year 10B",
+    "Year 11A",
+    "Year 11B",
+    "Year 12",
+    "Year 13A",
+    "Year 13B"
+];
+
+const termReportYearSelect = document.getElementById(
+    "termReportAcademicYear"
+);
+
+// LOAD AVAILABLE ACADEMIC YEARS
+async function loadTermReportAcademicYears() {
+
+    if (!termReportYearSelect) return;
+
+    try {
+
+        const { data, error } = await supabaseClient
+            .from("fee_statements")
+            .select("academic_year");
+
+        if (error) throw error;
+
+        const years = [...new Set(
+            (data || [])
+                .map(item => String(item.academic_year))
+                .filter(Boolean)
+        )].sort((a, b) => b.localeCompare(a, undefined, {
+            numeric: true
+        }));
+
+        termReportYearSelect.innerHTML =
+            '<option value="">Select academic year</option>';
+
+        years.forEach(year => {
+
+            const option = document.createElement("option");
+            option.value = year;
+            option.textContent = year;
+
+            termReportYearSelect.appendChild(option);
+
+        });
+
+    } catch (error) {
+
+        console.error("ACADEMIC YEARS ERROR:", error);
+
+        termReportYearSelect.innerHTML =
+            '<option value="">Unable to load years</option>';
+
+    }
+
+}
+
+
+// GENERATE TERMLY REPORT
+async function generateTermFinancialReport() {
+
+    const year = document.getElementById(
+        "termReportAcademicYear"
+    ).value;
+
+    const term = document.getElementById(
+        "termReportTerm"
+    ).value;
+
+    const status = document.getElementById(
+        "termFinancialReportStatus"
+    );
+
+    const output = document.getElementById(
+        "termFinancialReportOutput"
+    );
+
+    const generateButton = document.getElementById(
+        "generateTermFinancialReport"
+    );
+
+    if (!year || !term) {
+
+        alert("Please select both the academic year and term.");
+        return;
+
+    }
+
+    generateButton.disabled = true;
+    generateButton.textContent = "Generating Report...";
+
+    status.textContent = "Calculating financial performance...";
+    output.style.display = "none";
+
+    try {
+
+        // LOAD SELECTED TERM STATEMENTS
+        const { data: statements, error: statementError } =
+            await supabaseClient
+                .from("fee_statements")
+                .select("id, student_id, previous_balance")
+                .eq("academic_year", year)
+                .eq("term", term);
+
+        if (statementError) throw statementError;
+
+        const statementList = statements || [];
+
+        const statementIds = statementList.map(
+            statement => statement.id
+        );
+
+        const studentIds = [
+            ...new Set(statementList.map(
+                statement => statement.student_id
+            ))
+        ];
+
+        let students = [];
+        let items = [];
+        let payments = [];
+
+        if (statementIds.length > 0) {
+
+            // LOAD STUDENTS
+            const { data: studentData, error: studentError } =
+                await supabaseClient
+                    .from("students")
+                    .select("id, class_name")
+                    .in("id", studentIds);
+
+            if (studentError) throw studentError;
+
+            students = studentData || [];
+
+            // LOAD FEE CHARGES
+            const { data: itemData, error: itemError } =
+                await supabaseClient
+                    .from("fee_statement_items")
+                    .select("statement_id, amount")
+                    .in("statement_id", statementIds);
+
+            if (itemError) throw itemError;
+
+            items = itemData || [];
+
+            // LOAD PAYMENTS
+            const { data: paymentData, error: paymentError } =
+                await supabaseClient
+                    .from("fee_payments")
+                    .select("statement_id, amount")
+                    .in("statement_id", statementIds);
+
+            if (paymentError) throw paymentError;
+
+            payments = paymentData || [];
+
+        }
+
+        // INITIALISE ALL SCHOOL CLASSES
+        const classReports = {};
+
+        schoolReportClasses.forEach(className => {
+
+            classReports[className] = {
+                students: new Set(),
+                paid: 0,
+                partial: 0,
+                unpaid: 0,
+                charged: 0,
+                collected: 0,
+                outstanding: 0
+            };
+
+        });
+
+        let totalCharged = 0;
+        let totalCollected = 0;
+        let totalOutstanding = 0;
+
+        let totalPaidStudents = 0;
+        let totalPartialStudents = 0;
+        let totalUnpaidStudents = 0;
+
+        // CALCULATE EACH STUDENT'S FINANCES
+        const studentTotals = {};
+
+        statementList.forEach(statement => {
+
+            const student = students.find(
+                item => item.id === statement.student_id
+            );
+
+            if (!student) return;
+
+            const className = student.class_name;
+
+            if (!classReports[className]) return;
+
+            const statementCharges = items
+                .filter(item => item.statement_id === statement.id)
+                .reduce(
+                    (sum, item) => sum + Number(item.amount || 0),
+                    0
+                );
+
+            const statementPayments = payments
+                .filter(payment => payment.statement_id === statement.id)
+                .reduce(
+                    (sum, payment) => sum + Number(payment.amount || 0),
+                    0
+                );
+
+            const statementTotal =
+                Number(statement.previous_balance || 0) +
+                statementCharges;
+
+            if (!studentTotals[student.id]) {
+
+                studentTotals[student.id] = {
+                    className,
+                    charged: 0,
+                    collected: 0
+                };
+
+            }
+
+            studentTotals[student.id].charged += statementTotal;
+            studentTotals[student.id].collected += statementPayments;
+
+        });
+
+        // CLASS AND SCHOOL TOTALS
+        Object.entries(studentTotals).forEach(
+            ([studentId, studentData]) => {
+
+                const report = classReports[studentData.className];
+
+                const outstanding = Math.max(
+                    0,
+                    studentData.charged - studentData.collected
+                );
+
+                report.students.add(studentId);
+
+                report.charged += studentData.charged;
+                report.collected += studentData.collected;
+                report.outstanding += outstanding;
+
+                totalCharged += studentData.charged;
+                totalCollected += studentData.collected;
+                totalOutstanding += outstanding;
+
+                if (outstanding <= 0) {
+
+                    report.paid++;
+                    totalPaidStudents++;
+
+                } else if (studentData.collected > 0) {
+
+                    report.partial++;
+                    totalPartialStudents++;
+
+                } else {
+
+                    report.unpaid++;
+                    totalUnpaidStudents++;
+
+                }
+
+            }
+        );
+
+        // FORMAT CURRENCY
+        const money = amount =>
+            "KSh " + Number(amount).toLocaleString("en-KE", {
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2
+            });
+
+        // UPDATE REPORT HEADING
+        document.getElementById(
+            "termReportHeading"
+        ).textContent = `${year} — ${term} Financial Summary`;
+
+        document.getElementById(
+            "termReportGeneratedDate"
+        ).textContent =
+            "Generated on " +
+            new Date().toLocaleDateString("en-KE");
+
+        // UPDATE SUMMARY CARDS
+        document.getElementById(
+            "termReportTotalCharged"
+        ).textContent = money(totalCharged);
+
+        document.getElementById(
+            "termReportTotalCollected"
+        ).textContent = money(totalCollected);
+
+        document.getElementById(
+            "termReportOutstanding"
+        ).textContent = money(totalOutstanding);
+
+        document.getElementById(
+            "termReportStudents"
+        ).textContent = Object.keys(studentTotals).length;
+
+        // UPDATE PAYMENT PERFORMANCE
+        document.getElementById(
+            "termReportPaid"
+        ).textContent = totalPaidStudents;
+
+        document.getElementById(
+            "termReportPartial"
+        ).textContent = totalPartialStudents;
+
+        document.getElementById(
+            "termReportUnpaid"
+        ).textContent = totalUnpaidStudents;
+
+        // UPDATE CLASS BREAKDOWN
+        const tableBody = document.getElementById(
+            "termReportClassBody"
+        );
+
+        tableBody.innerHTML = "";
+
+        schoolReportClasses.forEach(className => {
+
+            const report = classReports[className];
+
+            const row = document.createElement("tr");
+
+            const values = [
+                className,
+                report.students.size,
+                report.paid,
+                report.partial,
+                report.unpaid,
+                money(report.charged),
+                money(report.collected),
+                money(report.outstanding)
+            ];
+
+            values.forEach((value, index) => {
+
+                const cell = document.createElement("td");
+
+                if (index === 0) {
+
+                    const strong = document.createElement("strong");
+                    strong.textContent = value;
+                    cell.appendChild(strong);
+
+                } else {
+
+                    cell.textContent = value;
+
+                }
+
+                row.appendChild(cell);
+
+            });
+
+            tableBody.appendChild(row);
+
+        });
+
+        output.style.display = "block";
+
+        document.getElementById(
+            "printTermFinancialReport"
+        ).style.display = "inline-flex";
+
+        status.textContent =
+            "Financial report generated successfully.";
+
+    } catch (error) {
+
+        console.error("TERM FINANCIAL REPORT ERROR:", error);
+
+        status.textContent =
+            "Unable to generate report: " + error.message;
+
+    } finally {
+
+        generateButton.disabled = false;
+        generateButton.textContent =
+            "📊 Generate Financial Report";
+
+    }
+
+}
+
+
+// GENERATE REPORT BUTTON
+document.getElementById("generateTermFinancialReport")
+    ?.addEventListener("click", generateTermFinancialReport);
 
 // ==========================================
 // FEE MANAGEMENT PAGE STARTUP
