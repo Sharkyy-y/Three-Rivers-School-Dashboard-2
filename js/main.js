@@ -9123,62 +9123,53 @@ async function loadTeacherDashboard() {
 
 
         // ------------------------------------------
-        // STUDENT COUNT
-        // ------------------------------------------
+// STUDENT COUNT — SUBJECT ENROLMENTS
+// ------------------------------------------
 
-        const classNames =
-            [
-                ...new Set(
-                    teacherTimetable
-                        .map(item => item.class_name)
-                        .filter(Boolean)
-                )
-            ];
+const subjectIdsForStudents = [
+    ...new Set(
+        (subjects || [])
+            .map(item => item.subject_id)
+            .filter(Boolean)
+    )
+];
 
+if (subjectIdsForStudents.length === 0) {
 
-        if (classNames.length === 0) {
+    teacherStudentCount.textContent = "0";
 
-            teacherStudentCount.textContent = "0";
+} else {
 
-        } else {
+    const {
+        data: studentEnrollments,
+        error: studentCountError
+    } = await supabaseClient
+        .from("student_subjects")
+        .select("student_id")
+        .in("subject_id", subjectIdsForStudents);
 
-            const {
-                count,
-                error: studentsError
-            } = await supabaseClient
-                .from("students")
-                .select(
-                    "id",
-                    {
-                        count: "exact",
-                        head: true
-                    }
-                )
-                .in(
-                    "class_name",
-                    classNames
-                );
+    if (studentCountError) {
 
+        console.error(
+            "Teacher student count error:",
+            studentCountError
+        );
 
-            if (studentsError) {
+        teacherStudentCount.textContent = "—";
 
-                console.error(
-                    "Teacher student count error:",
-                    studentsError
-                );
+    } else {
 
-                teacherStudentCount.textContent =
-                    "0";
+        const uniqueStudentIds = new Set(
+            (studentEnrollments || [])
+                .map(item => item.student_id)
+                .filter(Boolean)
+        );
 
-            } else {
+        teacherStudentCount.textContent =
+            uniqueStudentIds.size;
 
-                teacherStudentCount.textContent =
-                    count || 0;
-
-            }
-
-        }
-
+    }
+}
 
         // ------------------------------------------
         // ASSIGNMENTS
