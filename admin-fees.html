@@ -391,7 +391,57 @@
 
 </section>
 
+<!-- ======================================
+     FINANCIAL REPORTS & EXPORTS
+======================================= -->
 
+<section class="fee-export-section">
+
+    <div class="fee-export-header">
+        <div>
+            <span>FINANCIAL REPORTING</span>
+            <h2>Payment Reports & Exports</h2>
+            <p>View and download recorded school fee payments.</p>
+        </div>
+    </div>
+
+    <div class="fee-export-card">
+
+        <div class="fee-export-icon">📊</div>
+
+        <div class="fee-export-info">
+            <h3>Payment Records Export</h3>
+            <p>
+                Download payment records with student details,
+                payment dates, amounts and payment references.
+            </p>
+        </div>
+
+        <div class="fee-export-controls">
+
+            <div>
+                <label for="feeExportStartDate">From Date</label>
+                <input type="date" id="feeExportStartDate">
+            </div>
+
+            <div>
+                <label for="feeExportEndDate">To Date</label>
+                <input type="date" id="feeExportEndDate">
+            </div>
+
+        </div>
+
+        <button type="button" id="exportFeePaymentsButton">
+            ↓ Export Payment Records (CSV)
+        </button>
+
+        <p id="feeExportStatus">
+            Select a date range or leave dates empty to export all records.
+        </p>
+
+    </div>
+
+</section>
 
         <!-- ======================================
              CREATE FEE STATEMENT MODAL
