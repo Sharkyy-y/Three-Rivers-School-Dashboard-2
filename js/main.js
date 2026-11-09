@@ -16298,6 +16298,7 @@ document.getElementById("saveSubjectAssignments")
 // ==========================================
 
 
+
 let currentSubjectTeacher = null;
 let currentSubjectAssignmentType = "teacher";
 
@@ -16312,6 +16313,11 @@ async function openSubjectAssignment(type, teacher) {
         return;
     }
 
+    if (!teacher || !teacher.id) {
+        alert("The selected account could not be identified.");
+        return;
+    }
+
     createSubjectAssignmentModal();
 
     currentSubjectTeacher = teacher;
@@ -16322,19 +16328,21 @@ async function openSubjectAssignment(type, teacher) {
     const list = document.getElementById("subjectAssignmentList");
     const message = document.getElementById("subjectAssignmentMessage");
 
+    const tableName =
+        type === "student" ? "student_subjects" : "teacher_subjects";
+
+    const idColumn =
+        type === "student" ? "student_id" : "teacher_id";
+
     modal.classList.add("active");
 
-    subtitle.textContent = teacher.name;
+    subtitle.textContent =
+        teacher.name || teacher.full_name || "Selected account";
+
     message.textContent = "";
     list.textContent = "Loading subjects...";
 
     try {
-
-        const tableName =
-            type === "student" ? "student_subjects" : "teacher_subjects";
-
-        const idColumn =
-            type === "student" ? "student_id" : "teacher_id";
 
         const { data: subjects, error: subjectsError } =
             await supabaseClient
@@ -16387,7 +16395,6 @@ async function openSubjectAssignment(type, teacher) {
     } catch (error) {
 
         console.error("SUBJECT LOADING ERROR:", error);
-
         message.textContent = error.message;
         list.textContent = "Could not load subjects.";
 
@@ -16396,7 +16403,7 @@ async function openSubjectAssignment(type, teacher) {
 
 
 // ==========================================
-// SAVE SUBJECT ASSIGNMENTS
+// SAVE TEACHER / STUDENT SUBJECT ASSIGNMENTS
 // ==========================================
 
 async function saveTeacherSubjectAssignments() {
@@ -16411,12 +16418,6 @@ async function saveTeacherSubjectAssignments() {
         "subjectAssignmentMessage"
     );
 
-    const selectedSubjects = Array.from(
-        document.querySelectorAll(
-            "#subjectAssignmentList input[type='checkbox']:checked"
-        )
-    ).map(input => input.value);
-
     const type = currentSubjectAssignmentType;
 
     const tableName =
@@ -16426,6 +16427,12 @@ async function saveTeacherSubjectAssignments() {
         type === "student" ? "student_id" : "teacher_id";
 
     const recordId = currentSubjectTeacher.id;
+
+    const selectedSubjects = Array.from(
+        document.querySelectorAll(
+            "#subjectAssignmentList input[type='checkbox']:checked"
+        )
+    ).map(input => input.value);
 
     saveButton.disabled = true;
     message.textContent = "Saving assignments...";
@@ -16452,7 +16459,7 @@ async function saveTeacherSubjectAssignments() {
             id => !selectedSubjects.includes(id)
         );
 
-        // Insert new assignments
+        // Add newly selected subjects
         if (toAdd.length > 0) {
 
             const rows = toAdd.map(subjectId => ({
@@ -16468,7 +16475,7 @@ async function saveTeacherSubjectAssignments() {
             if (insertError) throw insertError;
         }
 
-        // Remove unchecked assignments
+        // Remove unchecked subjects
         if (toRemove.length > 0) {
 
             const { error: deleteError } =
@@ -16494,108 +16501,6 @@ async function saveTeacherSubjectAssignments() {
     } catch (error) {
 
         console.error("SAVE SUBJECT ASSIGNMENTS ERROR:", error);
-
-        message.textContent =
-            error.message || "Unable to save subjects.";
-
-    } finally {
-
-        saveButton.disabled = false;
-
-    }
-}
-
-// ==========================================
-// SAVE TEACHER SUBJECT ASSIGNMENTS
-// ==========================================
-
-async function saveTeacherSubjectAssignments() {
-
-    if (!currentSubjectTeacher) return;
-
-    const saveButton = document.getElementById(
-        "saveSubjectAssignments"
-    );
-
-    const message = document.getElementById(
-        "subjectAssignmentMessage"
-    );
-
-    const selectedSubjects = Array.from(
-        document.querySelectorAll(
-            "#subjectAssignmentList input[type='checkbox']:checked"
-        )
-    ).map(input => input.value);
-
-    saveButton.disabled = true;
-    message.textContent = "Saving assignments...";
-
-    try {
-
-        const teacherId = currentSubjectTeacher.id;
-
-        // Get existing assignments
-        const { data: existing, error: fetchError } =
-            await supabaseClient
-                .from(type === "student" ? "student_subjects" : "teacher_subjects")
-.select("subject_id")
-.eq(type === "student" ? "student_id" : "teacher_id", teacher.id);
-
-        if (fetchError) throw fetchError;
-
-        const existingIds = (existing || []).map(
-            item => item.subject_id
-        );
-
-        // Identify new and removed subjects
-        const toAdd = selectedSubjects.filter(
-            id => !existingIds.includes(id)
-        );
-
-        const toRemove = existingIds.filter(
-            id => !selectedSubjects.includes(id)
-        );
-
-        // Insert new assignments
-        if (toAdd.length > 0) {
-
-            const rows = toAdd.map(subjectId => ({
-                teacher_id: teacherId,
-                subject_id: subjectId
-            }));
-
-            const { error: insertError } =
-                await supabaseClient
-                    .from("teacher_subjects")
-                    .insert(rows);
-
-            if (insertError) throw insertError;
-        }
-
-        // Remove unchecked assignments
-        if (toRemove.length > 0) {
-
-            const { error: deleteError } =
-                await supabaseClient
-                    .from("teacher_subjects")
-                    .delete()
-                    .eq("teacher_id", teacherId)
-                    .in("subject_id", toRemove);
-
-            if (deleteError) throw deleteError;
-        }
-
-        message.textContent =
-            "Teacher subjects saved successfully!";
-
-        setTimeout(() => {
-            document.getElementById("subjectAssignmentModal")
-                ?.classList.remove("active");
-        }, 1200);
-
-    } catch (error) {
-
-        console.error("SAVE TEACHER SUBJECTS ERROR:", error);
 
         message.textContent =
             error.message || "Unable to save subjects.";
