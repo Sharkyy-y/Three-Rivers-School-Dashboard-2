@@ -19363,6 +19363,58 @@ async function loadFeeManagementStudents() {
             0
         );
 
+        // ======================================
+// UPDATE LIVE FINANCIAL SNAPSHOT
+// ======================================
+
+const totalOutstanding = feeManagementStudents.reduce(
+    (total, student) =>
+        total + Number(student.totalFeeOutstanding || 0),
+    0
+);
+
+const pendingBalanceCount = partialCount + unpaidCount;
+
+const formatSnapshotMoney = amount =>
+    "KSh " + Number(amount || 0).toLocaleString("en-KE", {
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2
+    });
+
+const snapshotCollected = document.getElementById(
+    "feeSnapshotCollected"
+);
+
+const snapshotOutstanding = document.getElementById(
+    "feeSnapshotOutstanding"
+);
+
+const snapshotPaid = document.getElementById(
+    "feeSnapshotPaid"
+);
+
+const snapshotPending = document.getElementById(
+    "feeSnapshotPending"
+);
+
+if (snapshotCollected) {
+    snapshotCollected.textContent =
+        formatSnapshotMoney(totalCollected);
+}
+
+if (snapshotOutstanding) {
+    snapshotOutstanding.textContent =
+        formatSnapshotMoney(totalOutstanding);
+}
+
+if (snapshotPaid) {
+    snapshotPaid.textContent = paidCount;
+}
+
+if (snapshotPending) {
+    snapshotPending.textContent = pendingBalanceCount;
+}
+
         document.getElementById("feeOverviewPaid").textContent =
             paidCount;
 
