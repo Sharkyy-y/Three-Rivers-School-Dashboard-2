@@ -14568,3 +14568,83 @@ body:has(#feeStudentsContainer) #feeStatementModal .modal-content {
         font-size: 21px;
     }
 }
+
+/* ==========================================
+   FINANCE COMMAND CENTRE WELCOME BANNER
+   ========================================== */
+
+.fee-category-heading {
+    position: relative;
+    overflow: hidden;
+    padding: 36px 40px;
+    margin-bottom: 30px;
+    border-radius: 23px;
+
+    background: linear-gradient(120deg, #123b30, #176047, #21815d);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+
+    box-shadow: 0 14px 30px rgba(18, 59, 48, 0.18);
+}
+
+.fee-category-heading::after {
+    content: "KSh";
+    position: absolute;
+    right: 45px;
+    top: 50%;
+    transform: translateY(-50%);
+
+    font-size: 90px;
+    font-weight: 900;
+    color: rgba(255, 255, 255, 0.07);
+    letter-spacing: -5px;
+    pointer-events: none;
+}
+
+.fee-category-heading span {
+    display: inline-block;
+    margin-bottom: 14px;
+    padding: 8px 13px;
+
+    border-radius: 30px;
+    background: rgba(226, 190, 111, 0.16);
+    color: #f0d28d;
+
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: 1.8px;
+}
+
+.fee-category-heading h2 {
+    position: relative;
+    z-index: 1;
+    color: #ffffff;
+    font-size: 32px;
+    font-weight: 800;
+    margin-bottom: 12px;
+}
+
+.fee-category-heading p {
+    position: relative;
+    z-index: 1;
+    max-width: 650px;
+
+    color: #d4e9dd;
+    font-size: 15px;
+    line-height: 1.8;
+    margin: 0;
+}
+
+@media (max-width: 650px) {
+    .fee-category-heading {
+        padding: 27px 23px;
+    }
+
+    .fee-category-heading h2 {
+        font-size: 25px;
+    }
+
+    .fee-category-heading::after {
+        right: 15px;
+        font-size: 55px;
+    }
+}
