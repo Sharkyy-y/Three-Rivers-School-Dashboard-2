@@ -15354,3 +15354,85 @@ body:has(#feeStudentsContainer) #feeStatementModal .modal-content {
         flex: 1;
     }
 }
+
+/* ==========================================
+   PARENT PORTAL - PREMIUM FEE DOWNLOAD CARD
+========================================== */
+
+.parent-fee-download-button {
+    width: 100%;
+    max-width: 430px;
+    min-height: 88px;
+    margin: 24px auto 8px;
+    padding: 19px 25px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 15px;
+
+    border: 1px solid rgba(255,255,255,0.3);
+    border-radius: 17px;
+
+    background: linear-gradient(
+        120deg,
+        #075b42,
+        #07966d,
+        #16b98a
+    );
+
+    color: #ffffff;
+    font-size: 16px;
+    font-weight: 800;
+    letter-spacing: 0.2px;
+
+    cursor: pointer;
+
+    box-shadow:
+        0 9px 22px rgba(5, 120, 82, 0.18),
+        inset 0 1px 0 rgba(255,255,255,0.2);
+
+    transition: all 0.25s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.parent-fee-download-button::before {
+    content: "📄";
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    width: 45px;
+    height: 45px;
+    flex-shrink: 0;
+
+    border-radius: 13px;
+    background: rgba(255,255,255,0.19);
+    font-size: 23px;
+}
+
+.parent-fee-download-button:hover {
+    transform: translateY(-4px);
+    background: linear-gradient(
+        120deg,
+        #064b38,
+        #07845f,
+        #10a879
+    );
+
+    box-shadow: 0 14px 28px rgba(5,120,82,0.25);
+}
+
+.parent-fee-download-button:active {
+    transform: scale(0.98);
+}
+
+@media (max-width: 600px) {
+    .parent-fee-download-button {
+        max-width: 100%;
+        min-height: 76px;
+        padding: 15px;
+        font-size: 14px;
+    }
+}
