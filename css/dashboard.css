@@ -13488,3 +13488,222 @@ body:has(#feeStudentsContainer) #feeStatementModal .modal-content {
         grid-template-columns: 1fr;
     }
 }
+
+/* ==========================================
+   CLASS FEE REPORTS - PREMIUM DESIGN
+========================================== */
+
+.fee-class-report-section {
+    margin-top: 35px;
+    margin-bottom: 35px;
+}
+
+.fee-class-report-header {
+    margin-bottom: 20px;
+}
+
+.fee-class-report-header span {
+    display: inline-block;
+    color: #0d9368;
+    font-size: 10px;
+    font-weight: 800;
+    letter-spacing: 1.8px;
+    margin-bottom: 8px;
+}
+
+.fee-class-report-header h2 {
+    color: #173b32;
+    font-size: 25px;
+    margin-bottom: 7px;
+}
+
+.fee-class-report-header p {
+    color: #7b8b85;
+    font-size: 13px;
+}
+
+.fee-class-report-card {
+    background: linear-gradient(145deg, #ffffff, #fbfdfb);
+    border: 1px solid #e4eee8;
+    border-radius: 18px;
+    padding: 25px;
+    box-shadow: 0 12px 35px rgba(22, 75, 55, 0.06);
+}
+
+.fee-class-report-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 15px;
+    margin-bottom: 23px;
+}
+
+.fee-class-report-top h3 {
+    color: #183d32;
+    font-size: 17px;
+    margin-bottom: 5px;
+}
+
+.fee-class-report-top p {
+    color: #87958f;
+    font-size: 12px;
+}
+
+.fee-class-report-top button {
+    background: #e8f6ef;
+    color: #087b53;
+    border: 1px solid #c9ead9;
+    border-radius: 9px;
+    padding: 10px 15px;
+    font-size: 12px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: 0.2s ease;
+}
+
+.fee-class-report-top button:hover {
+    background: #087b53;
+    color: white;
+    transform: translateY(-2px);
+}
+
+.fee-class-report-summary {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 15px;
+    margin-bottom: 27px;
+}
+
+.fee-class-report-summary > div {
+    position: relative;
+    overflow: hidden;
+    padding: 19px;
+    border-radius: 14px;
+    border: 1px solid transparent;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.fee-class-report-summary > div:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 10px 22px rgba(20, 50, 40, 0.09);
+}
+
+.fee-class-report-summary > div:nth-child(1) {
+    background: #edf5ff;
+    border-color: #dceaff;
+}
+
+.fee-class-report-summary > div:nth-child(2) {
+    background: #f2edff;
+    border-color: #e5dcff;
+}
+
+.fee-class-report-summary > div:nth-child(3) {
+    background: #e9f8ef;
+    border-color: #d5efdf;
+}
+
+.fee-class-report-summary > div:nth-child(4) {
+    background: #fff3e7;
+    border-color: #ffe5ca;
+}
+
+.fee-class-report-summary span {
+    display: block;
+    color: #73817e;
+    font-size: 11px;
+    font-weight: 600;
+    margin-bottom: 9px;
+}
+
+.fee-class-report-summary strong {
+    display: block;
+    color: #183d32;
+    font-size: 21px;
+    font-weight: 800;
+    overflow-wrap: anywhere;
+}
+
+.fee-class-report-table-wrapper {
+    width: 100%;
+    overflow-x: auto;
+    border: 1px solid #e7eee9;
+    border-radius: 12px;
+}
+
+.fee-class-report-table {
+    width: 100%;
+    min-width: 850px;
+    border-collapse: collapse;
+    background: white;
+}
+
+.fee-class-report-table thead {
+    background: #173f34;
+    color: white;
+}
+
+.fee-class-report-table th {
+    padding: 15px 13px;
+    text-align: left;
+    font-size: 11px;
+    font-weight: 700;
+    white-space: nowrap;
+}
+
+.fee-class-report-table td {
+    padding: 16px 13px;
+    border-bottom: 1px solid #edf2ee;
+    color: #52635b;
+    font-size: 12px;
+    white-space: nowrap;
+}
+
+.fee-class-report-table tbody tr {
+    transition: background 0.2s ease;
+}
+
+.fee-class-report-table tbody tr:hover {
+    background: #f2faf5;
+}
+
+.fee-class-report-table tbody tr:last-child td {
+    border-bottom: none;
+}
+
+.fee-class-report-table td strong {
+    color: #087b53;
+    font-size: 13px;
+}
+
+#classFeeReportStatus {
+    margin-top: 17px;
+    color: #87958f;
+    font-size: 11px;
+}
+
+/* RESPONSIVE */
+@media (max-width: 1000px) {
+    .fee-class-report-summary {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 600px) {
+    .fee-class-report-card {
+        padding: 16px;
+    }
+
+    .fee-class-report-top {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+
+    .fee-class-report-summary {
+        grid-template-columns: 1fr;
+    }
+
+    .fee-class-report-header h2 {
+        font-size: 21px;
+    }
+}
