@@ -19926,8 +19926,8 @@ if (
     window.location.pathname.includes("admin-fees.html")
 ) {
     loadFeeManagementStudents();
+    loadFeeAuditLogs();
 }
-
 
 // ==========================================
 // ADMIN FEE MANAGEMENT - STATEMENT FORM
