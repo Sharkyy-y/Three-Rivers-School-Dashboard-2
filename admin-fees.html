@@ -1191,115 +1191,162 @@
         </div>
 
 
-        <!-- ==========================================
-             RECORD FEE PAYMENT MODAL
-        ========================================== -->
+       
+<!-- ==========================================
+     PREMIUM RECORD PAYMENT MODAL
+========================================== -->
 
-        <div id="feePaymentModal" class="fee-modal" style="display:none;">
+<div id="feePaymentModal" class="fee-modal" style="display:none;">
 
-            <div class="fee-modal-content">
+    <div class="fee-modal-content fee-payment-modal-content">
 
-                <div class="fee-modal-header">
-                    <div>
-                        <h2>Record Payment</h2>
-                        <p>Record a payment for this student's fee statement.</p>
-                    </div>
+        <!-- HEADER -->
+        <div class="fee-payment-header">
 
-                    <button type="button" id="closeFeePaymentModal">
-                        ×
-                    </button>
-                </div>
+            <div class="fee-payment-header-icon">💳</div>
 
-                <form id="feePaymentForm">
-
-                    <div class="form-group">
-                        <label>Fee Statement</label>
-                        <select id="paymentStatementSelect" required>
-                            <option value="">Select fee statement</option>
-                        </select>
-                    </div>
-
-                    <div class="form-group">
-                        <label>Amount Paid (KSh)</label>
-                        <input
-                            type="number"
-                            id="paymentAmount"
-                            min="0.01"
-                            step="0.01"
-                            placeholder="Enter amount paid"
-                            required
-                        >
-                    </div>
-
-                    <div class="form-group">
-                        <label>Payment Date</label>
-                        <input
-                            type="date"
-                            id="paymentDate"
-                            required
-                        >
-                    </div>
-
-                    <div class="form-group">
-                        <label>Payment Method</label>
-                        <select id="paymentMethod" required>
-                            <option value="">Select payment method</option>
-                            <option value="M-Pesa">M-Pesa</option>
-                            <option value="Bank Transfer">Bank Transfer</option>
-                            <option value="Cash">Cash</option>
-                            <option value="Cheque">Cheque</option>
-                            <option value="Other">Other</option>
-                        </select>
-                    </div>
-
-                    <div class="form-group">
-                        <label>Reference Number</label>
-                        <input
-                            type="text"
-                            id="paymentReference"
-                            placeholder="e.g. M-Pesa transaction code"
-                        >
-                    </div>
-
-                    <div class="form-group">
-                        <label>Notes (Optional)</label>
-                        <textarea
-                            id="paymentNotes"
-                            rows="3"
-                            placeholder="Additional payment information..."
-                        ></textarea>
-                    </div>
-
-                    <div class="fee-modal-actions">
-
-                        <button
-                            type="button"
-                            id="cancelFeePayment"
-                            class="secondary-button"
-                        >
-                            Cancel
-                        </button>
-
-                        <button
-                            type="submit"
-                            id="saveFeePayment"
-                            class="primary-button"
-                        >
-                            Save Payment
-                        </button>
-
-                    </div>
-
-                </form>
-
+            <div>
+                <span class="fee-payment-eyebrow">THREE RIVERS • FINANCE</span>
+                <h2>Record a Payment</h2>
+                <p>Capture and verify a student's fee payment.</p>
             </div>
+
+            <button type="button" id="closeFeePaymentModal"
+                class="fee-modal-close">
+                &times;
+            </button>
 
         </div>
 
-    </main>
+        <form id="feePaymentForm">
+
+            <!-- STATEMENT SELECTION -->
+            <div class="fee-payment-section-heading">
+                <span>01</span>
+                <div>
+                    <h3>Payment Statement</h3>
+                    <p>Select the academic statement receiving this payment.</p>
+                </div>
+            </div>
+
+            <div class="form-group fee-payment-field">
+                <label for="paymentStatementSelect">Fee Statement</label>
+                <select id="paymentStatementSelect" required>
+                    <option value="">Select fee statement</option>
+                </select>
+            </div>
+
+            <!-- PAYMENT AMOUNT -->
+            <div class="fee-payment-amount-panel">
+
+                <div class="fee-payment-section-heading">
+                    <span>02</span>
+                    <div>
+                        <h3>Payment Amount</h3>
+                        <p>Enter the amount received.</p>
+                    </div>
+                </div>
+
+                <label for="paymentAmount">Amount Paid (KSh)</label>
+
+                <div class="fee-payment-amount-input">
+                    <span>KSh</span>
+                    <input
+                        type="number"
+                        id="paymentAmount"
+                        min="0.01"
+                        step="0.01"
+                        placeholder="0.00"
+                        required
+                    >
+                </div>
+
+            </div>
+
+            <!-- PAYMENT DETAILS -->
+            <div class="fee-payment-section-heading">
+                <span>03</span>
+                <div>
+                    <h3>Transaction Details</h3>
+                    <p>Provide the payment date and transaction information.</p>
+                </div>
+            </div>
+
+            <div class="fee-payment-details-grid">
+
+                <div class="form-group">
+                    <label for="paymentDate">Payment Date</label>
+                    <input type="date" id="paymentDate" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="paymentMethod">Payment Method</label>
+                    <select id="paymentMethod" required>
+                        <option value="">Select method</option>
+                        <option value="M-Pesa">M-Pesa</option>
+                        <option value="Bank Transfer">Bank Transfer</option>
+                        <option value="Cash">Cash</option>
+                        <option value="Cheque">Cheque</option>
+                        <option value="Other">Other</option>
+                    </select>
+                </div>
+
+            </div>
+
+            <div class="form-group fee-payment-field">
+                <label for="paymentReference">Transaction Reference</label>
+                <input
+                    type="text"
+                    id="paymentReference"
+                    placeholder="e.g. M-Pesa transaction reference"
+                >
+                <small>Optional, but useful for future verification.</small>
+            </div>
+
+            <div class="form-group fee-payment-field">
+                <label for="paymentNotes">Additional Notes</label>
+                <textarea
+                    id="paymentNotes"
+                    rows="3"
+                    placeholder="Enter any additional payment information..."
+                ></textarea>
+            </div>
+
+            <!-- ACTIONS -->
+            <div class="fee-payment-footer">
+
+                <div>
+                    <strong>Ready to record?</strong>
+                    <p>Review the payment details before saving.</p>
+                </div>
+
+                <div class="fee-modal-actions">
+
+                    <button
+                        type="button"
+                        id="cancelFeePayment"
+                        class="secondary-button"
+                    >
+                        Cancel
+                    </button>
+
+                    <button
+                        type="submit"
+                        id="saveFeePayment"
+                        class="primary-button"
+                    >
+                        ✓ Save Payment
+                    </button>
+
+                </div>
+
+            </div>
+
+        </form>
+
+    </div>
 
 </div>
-
 
 <!-- SUPABASE -->
 
