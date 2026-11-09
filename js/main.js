@@ -22906,6 +22906,44 @@ if (feeReminders && feeReminders.length > 0) {
 
             card.appendChild(paymentSection);
 
+            // ==========================================
+// PARENT DOWNLOAD FEE STATEMENT
+// ==========================================
+
+const downloadButton = document.createElement("button");
+
+downloadButton.type = "button";
+downloadButton.className = "parent-fee-download-button";
+downloadButton.textContent = "⬇ Download Fee Statement (PDF)";
+
+downloadButton.addEventListener("click", () => {
+
+    if (
+        !selectedParentChild ||
+        selectedParentChild.id !== studentId
+    ) {
+        alert("Unable to verify the selected student.");
+        return;
+    }
+
+    openFeeStatementPrintView(
+        selectedParentChild,
+        statement,
+        statementItems,
+        statementPayments,
+        {
+            previousBalance,
+            itemTotal: newCharges,
+            statementTotal: total,
+            paidTotal: paid,
+            outstanding
+        }
+    );
+
+});
+
+card.appendChild(downloadButton);
+
             // ADDITIONAL NOTES
 
             if (statement.notes) {
