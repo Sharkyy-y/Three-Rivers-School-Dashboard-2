@@ -20331,6 +20331,254 @@ async function exportFeePaymentsCSV() {
 document.getElementById("exportFeePaymentsButton")
     ?.addEventListener("click", exportFeePaymentsCSV);
 
+// ==========================================
+// CLASS FEE REPORTS
+// ==========================================
+
+async function loadClassFeeReport() {
+
+    const tableBody = document.getElementById(
+        "classFeeReportBody"
+    );
+
+    const statusElement = document.getElementById(
+        "classFeeReportStatus"
+    );
+
+    if (!tableBody) return;
+
+    tableBody.innerHTML = `
+        <tr>
+            <td colspan="8">Loading class reports...</td>
+        </tr>
+    `;
+
+    try {
+
+        // LOAD STUDENTS
+        const { data: students, error: studentsError } =
+            await supabaseClient
+                .from("students")
+                .select("id, class_name");
+
+        if (studentsError) throw studentsError;
+
+        // LOAD FEE STATEMENTS
+        const { data: statements, error: statementsError } =
+            await supabaseClient
+                .from("fee_statements")
+                .select("id, student_id, previous_balance");
+
+        if (statementsError) throw statementsError;
+
+        const statementList = statements || [];
+
+        const statementIds = statementList.map(
+            statement => statement.id
+        );
+
+        let items = [];
+        let payments = [];
+
+        if (statementIds.length > 0) {
+
+            const { data: itemData, error: itemError } =
+                await supabaseClient
+                    .from("fee_statement_items")
+                    .select("statement_id, amount")
+                    .in("statement_id", statementIds);
+
+            if (itemError) throw itemError;
+
+            items = itemData || [];
+
+            const { data: paymentData, error: paymentError } =
+                await supabaseClient
+                    .from("fee_payments")
+                    .select("statement_id, amount")
+                    .in("statement_id", statementIds);
+
+            if (paymentError) throw paymentError;
+
+            payments = paymentData || [];
+        }
+
+        // GROUP STUDENTS BY CLASS
+        const classReports = {};
+
+        (students || []).forEach(student => {
+
+            const className = student.class_name || "Unassigned";
+
+            if (!classReports[className]) {
+
+                classReports[className] = {
+                    students: 0,
+                    paid: 0,
+                    partial: 0,
+                    unpaid: 0,
+                    charged: 0,
+                    collected: 0,
+                    outstanding: 0
+                };
+
+            }
+
+            const report = classReports[className];
+
+            report.students++;
+
+            const studentStatements = statementList.filter(
+                statement => statement.student_id === student.id
+            );
+
+            let totalCharges = 0;
+            let totalPaid = 0;
+
+            studentStatements.forEach(statement => {
+
+                totalCharges += Number(
+                    statement.previous_balance || 0
+                );
+
+                items
+                    .filter(item => item.statement_id === statement.id)
+                    .forEach(item => {
+                        totalCharges += Number(item.amount || 0);
+                    });
+
+                payments
+                    .filter(payment => payment.statement_id === statement.id)
+                    .forEach(payment => {
+                        totalPaid += Number(payment.amount || 0);
+                    });
+
+            });
+
+            const outstanding = Math.max(
+                0,
+                totalCharges - totalPaid
+            );
+
+            report.charged += totalCharges;
+            report.collected += totalPaid;
+            report.outstanding += outstanding;
+
+            if (studentStatements.length > 0) {
+
+                if (outstanding <= 0) {
+                    report.paid++;
+
+                } else if (totalPaid > 0) {
+                    report.partial++;
+
+                } else {
+                    report.unpaid++;
+                }
+
+            }
+
+        });
+
+        // FORMAT CURRENCY
+        const formatMoney = amount =>
+            "KSh " + amount.toLocaleString("en-KE", {
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2
+            });
+
+        const classNames = Object.keys(classReports).sort(
+            (a, b) => a.localeCompare(b, undefined, {
+                numeric: true
+            })
+        );
+
+        tableBody.innerHTML = "";
+
+        if (classNames.length === 0) {
+
+            tableBody.innerHTML = `
+                <tr>
+                    <td colspan="8">No student records found.</td>
+                </tr>
+            `;
+
+        } else {
+
+            classNames.forEach(className => {
+
+                const report = classReports[className];
+
+                const row = document.createElement("tr");
+
+                row.innerHTML = `
+                    <td><strong>${className}</strong></td>
+                    <td>${report.students}</td>
+                    <td>${report.paid}</td>
+                    <td>${report.partial}</td>
+                    <td>${report.unpaid}</td>
+                    <td>${formatMoney(report.charged)}</td>
+                    <td>${formatMoney(report.collected)}</td>
+                    <td>${formatMoney(report.outstanding)}</td>
+                `;
+
+                tableBody.appendChild(row);
+
+            });
+
+        }
+
+        // UPDATE SUMMARY CARDS
+        const totalStudents = (students || []).length;
+
+        const totalCollected = Object.values(classReports)
+            .reduce((sum, report) => sum + report.collected, 0);
+
+        const totalOutstanding = Object.values(classReports)
+            .reduce((sum, report) => sum + report.outstanding, 0);
+
+        document.getElementById("classFeeTotalClasses").textContent =
+            classNames.length;
+
+        document.getElementById("classFeeTotalStudents").textContent =
+            totalStudents;
+
+        document.getElementById("classFeeTotalCollected").textContent =
+            formatMoney(totalCollected);
+
+        document.getElementById("classFeeTotalOutstanding").textContent =
+            formatMoney(totalOutstanding);
+
+        if (statusElement) {
+            statusElement.textContent =
+                "Class financial reports updated successfully.";
+        }
+
+    } catch (error) {
+
+        console.error("CLASS FEE REPORT ERROR:", error);
+
+        tableBody.innerHTML = `
+            <tr>
+                <td colspan="8">
+                    Unable to load class reports.
+                </td>
+            </tr>
+        `;
+
+        if (statusElement) {
+            statusElement.textContent =
+                "Error loading reports: " + error.message;
+        }
+
+    }
+
+}
+
+// REFRESH CLASS REPORT
+document.getElementById("refreshClassFeeReport")
+    ?.addEventListener("click", loadClassFeeReport);
+
 
 // ==========================================
 // FEE MANAGEMENT PAGE STARTUP
