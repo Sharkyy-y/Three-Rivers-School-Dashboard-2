@@ -14230,3 +14230,232 @@ body:has(#feeStudentsContainer) #feeStatementModal .modal-content {
         width: 100%;
     }
 }
+
+/* ==========================================
+   FEE MANAGEMENT CATEGORY NAVIGATION
+   ========================================== */
+
+.fee-category-dashboard {
+    margin-top: 25px;
+    animation: feeFadeIn 0.35s ease;
+}
+
+.fee-category-heading {
+    margin-bottom: 25px;
+}
+
+.fee-category-heading h2 {
+    color: #173f34;
+    font-size: 24px;
+    margin-bottom: 7px;
+}
+
+.fee-category-heading p {
+    color: #7b8790;
+    font-size: 13px;
+    line-height: 1.6;
+}
+
+.fee-category-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 20px;
+}
+
+.fee-category-card {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    min-height: 230px;
+    padding: 24px;
+    overflow: hidden;
+
+    border: 1px solid #e7ece8;
+    border-radius: 19px;
+    background: linear-gradient(145deg, #ffffff, #fbfdfb);
+
+    text-align: left;
+    font-family: inherit;
+    cursor: pointer;
+
+    transition: transform 0.25s ease,
+                box-shadow 0.25s ease,
+                border-color 0.25s ease;
+}
+
+.fee-category-card::after {
+    content: "";
+    position: absolute;
+    width: 120px;
+    height: 120px;
+    right: -45px;
+    top: -45px;
+    border-radius: 50%;
+    background: var(--fee-accent-soft);
+    opacity: 0.8;
+}
+
+.fee-category-card:hover {
+    transform: translateY(-6px);
+    border-color: var(--fee-accent);
+    box-shadow: 0 14px 32px rgba(23, 63, 52, 0.10);
+}
+
+.fee-category-card:focus-visible {
+    outline: 3px solid var(--fee-accent);
+    outline-offset: 4px;
+}
+
+.fee-category-card:nth-child(1) {
+    --fee-accent: #15966b;
+    --fee-accent-soft: #e2f7ed;
+}
+
+.fee-category-card:nth-child(2) {
+    --fee-accent: #3978d5;
+    --fee-accent-soft: #e6efff;
+}
+
+.fee-category-card:nth-child(3) {
+    --fee-accent: #8961d5;
+    --fee-accent-soft: #f0eaff;
+}
+
+.fee-category-card:nth-child(4) {
+    --fee-accent: #d58b27;
+    --fee-accent-soft: #fff1dc;
+}
+
+.fee-category-card:nth-child(5) {
+    --fee-accent: #1599a0;
+    --fee-accent-soft: #e0f7f6;
+}
+
+.fee-category-icon {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    width: 55px;
+    height: 55px;
+    margin-bottom: 20px;
+
+    border-radius: 15px;
+    background: var(--fee-accent-soft);
+    color: var(--fee-accent);
+    font-size: 25px;
+}
+
+.fee-category-label {
+    position: relative;
+    z-index: 1;
+    margin-bottom: 7px;
+
+    color: var(--fee-accent);
+    font-size: 10px;
+    font-weight: 800;
+    letter-spacing: 1.2px;
+    text-transform: uppercase;
+}
+
+.fee-category-card h3 {
+    position: relative;
+    z-index: 1;
+    margin-bottom: 9px;
+
+    color: #203b31;
+    font-size: 18px;
+    font-weight: 750;
+}
+
+.fee-category-card p {
+    position: relative;
+    z-index: 1;
+    margin-bottom: 20px;
+
+    color: #7b8790;
+    font-size: 12px;
+    line-height: 1.7;
+}
+
+.fee-category-arrow {
+    position: relative;
+    z-index: 1;
+    margin-top: auto;
+
+    color: var(--fee-accent);
+    font-size: 12px;
+    font-weight: 800;
+}
+
+.fee-category-card.active {
+    border-color: var(--fee-accent);
+    box-shadow: 0 0 0 3px var(--fee-accent-soft);
+}
+
+.fee-category-view {
+    margin-top: 20px;
+    animation: feeFadeIn 0.3s ease;
+}
+
+.fee-category-back {
+    display: inline-flex;
+    align-items: center;
+    gap: 9px;
+
+    margin-bottom: 22px;
+    padding: 11px 17px;
+
+    border: 1px solid #dce8e0;
+    border-radius: 10px;
+
+    background: #ffffff;
+    color: #24634c;
+
+    font-family: inherit;
+    font-size: 13px;
+    font-weight: 700;
+    cursor: pointer;
+
+    transition: background 0.2s ease,
+                transform 0.2s ease;
+}
+
+.fee-category-back:hover {
+    background: #eaf5ee;
+    transform: translateX(-3px);
+}
+
+@keyframes feeFadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(8px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@media (max-width: 1050px) {
+    .fee-category-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+
+@media (max-width: 650px) {
+    .fee-category-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .fee-category-card {
+        min-height: 210px;
+    }
+
+    .fee-category-heading h2 {
+        font-size: 21px;
+    }
+}
