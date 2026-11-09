@@ -13707,3 +13707,179 @@ body:has(#feeStudentsContainer) #feeStatementModal .modal-content {
         font-size: 21px;
     }
 }
+
+/* ==========================================
+   PAYMENT REPORTS & EXPORTS - PREMIUM DESIGN
+========================================== */
+
+.fee-export-section {
+    margin-top: 35px;
+    margin-bottom: 35px;
+}
+
+.fee-export-section > h2 {
+    color: #173b32;
+    font-size: 25px;
+    font-weight: 800;
+    margin-bottom: 8px;
+}
+
+.fee-export-section > p {
+    color: #7b8b85;
+    font-size: 13px;
+    margin-bottom: 22px;
+}
+
+/* EXPORT CARD */
+
+.fee-export-card {
+    position: relative;
+    overflow: hidden;
+    background: linear-gradient(145deg, #ffffff, #f8fcf9);
+    border: 1px solid #e2eee7;
+    border-radius: 20px;
+    padding: 28px;
+    box-shadow: 0 12px 35px rgba(22, 75, 55, 0.07);
+}
+
+.fee-export-card::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 5px;
+    background: linear-gradient(90deg, #087b53, #36bd86, #e4b45c);
+}
+
+/* EXPORT HEADER */
+
+.fee-export-card h3 {
+    color: #173f34;
+    font-size: 19px;
+    font-weight: 800;
+    margin-bottom: 9px;
+}
+
+.fee-export-card p {
+    color: #7b8b85;
+    font-size: 13px;
+    line-height: 1.7;
+}
+
+/* EXPORT ICON */
+
+.fee-export-card .fee-export-icon {
+    width: 58px;
+    height: 58px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(145deg, #e2f7eb, #c9eed9);
+    border: 1px solid #c6e9d5;
+    border-radius: 16px;
+    font-size: 27px;
+    margin-bottom: 19px;
+    box-shadow: 0 7px 16px rgba(8, 123, 83, 0.08);
+}
+
+/* DATE FILTERS */
+
+.fee-export-card label {
+    display: block;
+    color: #38584b;
+    font-size: 12px;
+    font-weight: 700;
+    margin-bottom: 8px;
+}
+
+.fee-export-card input[type="date"] {
+    width: 100%;
+    min-height: 46px;
+    padding: 11px 13px;
+    border: 1px solid #dce9e1;
+    border-radius: 10px;
+    background: #ffffff;
+    color: #244638;
+    font-size: 13px;
+    outline: none;
+    transition: 0.2s ease;
+}
+
+.fee-export-card input[type="date"]:focus {
+    border-color: #0d9368;
+    box-shadow: 0 0 0 3px rgba(13, 147, 104, 0.10);
+}
+
+.fee-export-card input[type="date"]:hover {
+    border-color: #9bcdb3;
+}
+
+/* EXPORT BUTTON */
+
+#exportFeePaymentsButton {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 9px;
+    min-height: 47px;
+    padding: 12px 22px;
+    margin-top: 18px;
+    background: linear-gradient(135deg, #087b53, #0b9b68);
+    color: #ffffff;
+    border: none;
+    border-radius: 11px;
+    font-size: 13px;
+    font-weight: 800;
+    cursor: pointer;
+    box-shadow: 0 7px 17px rgba(8, 123, 83, 0.19);
+    transition: all 0.25s ease;
+}
+
+#exportFeePaymentsButton:hover {
+    background: linear-gradient(135deg, #066342, #087b53);
+    transform: translateY(-2px);
+    box-shadow: 0 11px 22px rgba(8, 123, 83, 0.25);
+}
+
+#exportFeePaymentsButton:active {
+    transform: translateY(0);
+}
+
+#exportFeePaymentsButton:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    transform: none;
+}
+
+/* EXPORT STATUS */
+
+#feeExportStatus {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 16px;
+    padding: 11px 14px;
+    background: #f0f8f3;
+    border: 1px solid #e0eee5;
+    border-radius: 9px;
+    color: #577365;
+    font-size: 11px;
+    line-height: 1.6;
+}
+
+/* RESPONSIVE */
+
+@media (max-width: 600px) {
+    .fee-export-card {
+        padding: 19px;
+    }
+
+    .fee-export-section > h2 {
+        font-size: 21px;
+    }
+
+    #exportFeePaymentsButton {
+        width: 100%;
+    }
+}
