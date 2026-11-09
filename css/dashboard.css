@@ -14459,3 +14459,112 @@ body:has(#feeStudentsContainer) #feeStatementModal .modal-content {
         font-size: 21px;
     }
 }
+
+/* ==========================================
+   LARGE, COLOURFUL FEE CATEGORY CARDS
+   ========================================== */
+
+.fee-category-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 25px;
+}
+
+.fee-category-card {
+    min-height: 290px;
+    padding: 30px;
+    border-radius: 23px;
+    border-width: 1px;
+}
+
+.fee-category-card:nth-child(1) {
+    background: linear-gradient(135deg, #e0f8eb, #c5f0d9);
+    border-color: #a5dfbd;
+    --fee-accent: #087b4d;
+    --fee-accent-soft: #b4e9ca;
+}
+
+.fee-category-card:nth-child(2) {
+    background: linear-gradient(135deg, #e5efff, #cbdfff);
+    border-color: #b5cefa;
+    --fee-accent: #245bb5;
+    --fee-accent-soft: #b9d2ff;
+}
+
+.fee-category-card:nth-child(3) {
+    background: linear-gradient(135deg, #f0eaff, #dfd0ff);
+    border-color: #d0bdf8;
+    --fee-accent: #7042bd;
+    --fee-accent-soft: #d5c2ff;
+}
+
+.fee-category-card:nth-child(4) {
+    background: linear-gradient(135deg, #fff2dc, #ffe1b5);
+    border-color: #f3d29e;
+    --fee-accent: #a9650b;
+    --fee-accent-soft: #ffdda7;
+}
+
+.fee-category-card:nth-child(5) {
+    background: linear-gradient(135deg, #dcf7f5, #bdece9);
+    border-color: #a9dedb;
+    --fee-accent: #087d82;
+    --fee-accent-soft: #b0e7e3;
+}
+
+.fee-category-card:hover {
+    transform: translateY(-7px);
+    box-shadow: 0 17px 35px rgba(23, 63, 52, 0.14);
+}
+
+.fee-category-icon {
+    width: 68px;
+    height: 68px;
+    border-radius: 19px;
+    font-size: 31px;
+    margin-bottom: 22px;
+}
+
+.fee-category-label {
+    font-size: 12px;
+    letter-spacing: 1.4px;
+    margin-bottom: 10px;
+}
+
+.fee-category-card h3 {
+    font-size: 23px;
+    margin-bottom: 12px;
+}
+
+.fee-category-card p {
+    font-size: 15px;
+    line-height: 1.8;
+    color: #40564d;
+    margin-bottom: 22px;
+}
+
+.fee-category-arrow {
+    font-size: 15px;
+}
+
+.fee-category-heading h2 {
+    font-size: 28px;
+}
+
+.fee-category-heading p {
+    font-size: 15px;
+}
+
+@media (max-width: 650px) {
+    .fee-category-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .fee-category-card {
+        min-height: 260px;
+        padding: 25px;
+    }
+
+    .fee-category-card h3 {
+        font-size: 21px;
+    }
+}
