@@ -19612,6 +19612,312 @@ if (feePaymentStatusFilter) {
     );
 }
 
+
+// ==========================================
+// FINANCIAL AUDIT TRAIL
+// ==========================================
+
+let feeAuditLogsCache = [];
+
+async function loadFeeAuditLogs() {
+
+    const tableBody = document.getElementById("feeAuditLogsBody");
+    const countElement = document.getElementById("feeAuditLogsCount");
+
+    if (!tableBody) return;
+
+    tableBody.innerHTML = `
+        <tr>
+            <td colspan="6">Loading financial audit records...</td>
+        </tr>
+    `;
+
+    try {
+
+        // LOAD AUDIT RECORDS
+        const { data: logs, error: logsError } =
+            await supabaseClient
+                .from("fee_audit_logs")
+                .select("*")
+                .order("performed_at", { ascending: false })
+                .limit(500);
+
+        if (logsError) throw logsError;
+
+        feeAuditLogsCache = logs || [];
+
+        // LOAD RELATED STUDENT RECORDS
+        const studentIds = [
+            ...new Set(
+                feeAuditLogsCache
+                    .map(log => log.student_id)
+                    .filter(Boolean)
+            )
+        ];
+
+        let students = [];
+
+        if (studentIds.length > 0) {
+
+            const { data, error } = await supabaseClient
+                .from("students")
+                .select("id, full_name, admission_number, class_name")
+                .in("id", studentIds);
+
+            if (error) throw error;
+
+            students = data || [];
+        }
+
+        // LOAD ADMIN PROFILES
+        const adminIds = [
+            ...new Set(
+                feeAuditLogsCache
+                    .map(log => log.performed_by)
+                    .filter(Boolean)
+            )
+        ];
+
+        let admins = [];
+
+        if (adminIds.length > 0) {
+
+            const { data, error } = await supabaseClient
+                .from("profiles")
+                .select("id, full_name, email")
+                .in("id", adminIds);
+
+            if (error) throw error;
+
+            admins = data || [];
+        }
+
+        // ATTACH RELATED INFORMATION
+        feeAuditLogsCache = feeAuditLogsCache.map(log => ({
+            ...log,
+            student: students.find(
+                student => student.id === log.student_id
+            ),
+            admin: admins.find(
+                admin => admin.id === log.performed_by
+            )
+        }));
+
+        renderFeeAuditLogs();
+
+    } catch (error) {
+
+        console.error("FEE AUDIT LOADING ERROR:", error);
+
+        tableBody.innerHTML = `
+            <tr>
+                <td colspan="6">
+                    Unable to load audit records: ${error.message}
+                </td>
+            </tr>
+        `;
+
+        if (countElement) {
+            countElement.textContent = "Unable to load records";
+        }
+    }
+}
+
+
+// ==========================================
+// RENDER AUDIT RECORDS
+// ==========================================
+
+function renderFeeAuditLogs() {
+
+    const tableBody = document.getElementById("feeAuditLogsBody");
+    const countElement = document.getElementById("feeAuditLogsCount");
+
+    if (!tableBody) return;
+
+    const search =
+        document.getElementById("feeAuditSearch")?.value
+            .trim().toLowerCase() || "";
+
+    const action =
+        document.getElementById("feeAuditAction")?.value || "all";
+
+    const entity =
+        document.getElementById("feeAuditEntity")?.value || "all";
+
+    const fromDate =
+        document.getElementById("feeAuditDate")?.value || "";
+
+    const filteredLogs = feeAuditLogsCache.filter(log => {
+
+        const student = log.student;
+
+        const matchesSearch =
+            !search ||
+            (student?.full_name || "").toLowerCase().includes(search) ||
+            (student?.admission_number || "").toLowerCase().includes(search) ||
+            (student?.class_name || "").toLowerCase().includes(search);
+
+        const matchesAction =
+            action === "all" || log.action === action;
+
+        const matchesEntity =
+            entity === "all" || log.entity_type === entity;
+
+        const logDate = log.performed_at
+            ? log.performed_at.substring(0, 10)
+            : "";
+
+        const matchesDate =
+            !fromDate || logDate >= fromDate;
+
+        return matchesSearch &&
+            matchesAction &&
+            matchesEntity &&
+            matchesDate;
+    });
+
+    tableBody.innerHTML = "";
+
+    if (countElement) {
+        countElement.textContent =
+            `${filteredLogs.length} audit record(s)`;
+    }
+
+    if (filteredLogs.length === 0) {
+
+        tableBody.innerHTML = `
+            <tr>
+                <td colspan="6">
+                    No matching financial activity found.
+                </td>
+            </tr>
+        `;
+
+        return;
+    }
+
+    filteredLogs.forEach(log => {
+
+        const row = document.createElement("tr");
+
+        const date = log.performed_at
+            ? new Date(log.performed_at).toLocaleString("en-KE")
+            : "Unknown date";
+
+        const studentName =
+            log.student?.full_name || "Student record unavailable";
+
+        const admission =
+            log.student?.admission_number || "—";
+
+        const adminName =
+            log.admin?.full_name ||
+            log.admin?.email ||
+            "User record unavailable";
+
+        const recordNames = {
+            fee_statements: "Fee Statement",
+            fee_statement_items: "Fee Charge",
+            fee_payments: "Payment"
+        };
+
+        const actionLabels = {
+            INSERT: "Created",
+            UPDATE: "Updated",
+            DELETE: "Deleted"
+        };
+
+        row.innerHTML = `
+            <td>${date}</td>
+            <td></td>
+            <td>${recordNames[log.entity_type] || log.entity_type}</td>
+            <td>${actionLabels[log.action] || log.action}</td>
+            <td></td>
+            <td></td>
+        `;
+
+        row.cells[1].textContent =
+            `${studentName} (${admission})`;
+
+        row.cells[4].textContent = adminName;
+
+        const detailsButton = document.createElement("button");
+        detailsButton.type = "button";
+        detailsButton.textContent = "View Details";
+        detailsButton.className = "fee-audit-details-button";
+
+        row.cells[5].appendChild(detailsButton);
+
+        // DETAILS ROW
+        const detailsRow = document.createElement("tr");
+        detailsRow.style.display = "none";
+
+        const detailsCell = document.createElement("td");
+        detailsCell.colSpan = 6;
+
+        const detailsContainer = document.createElement("div");
+        detailsContainer.className = "fee-audit-details-content";
+
+        const detailsHeading = document.createElement("strong");
+        detailsHeading.textContent = "Change Information";
+
+        const detailsText = document.createElement("pre");
+
+        detailsText.textContent = JSON.stringify({
+            old_data: log.old_data,
+            new_data: log.new_data
+        }, null, 2);
+
+        detailsContainer.append(
+            detailsHeading,
+            detailsText
+        );
+
+        detailsCell.appendChild(detailsContainer);
+        detailsRow.appendChild(detailsCell);
+
+        detailsButton.addEventListener("click", () => {
+
+            const isHidden = detailsRow.style.display === "none";
+
+            detailsRow.style.display = isHidden ? "table-row" : "none";
+
+            detailsButton.textContent =
+                isHidden ? "Hide Details" : "View Details";
+        });
+
+        tableBody.append(row, detailsRow);
+    });
+}
+
+
+// ==========================================
+// AUDIT FILTER EVENTS
+// ==========================================
+
+[
+    "feeAuditSearch",
+    "feeAuditAction",
+    "feeAuditEntity",
+    "feeAuditDate"
+].forEach(id => {
+
+    document.getElementById(id)
+        ?.addEventListener("input", renderFeeAuditLogs);
+
+    document.getElementById(id)
+        ?.addEventListener("change", renderFeeAuditLogs);
+
+});
+
+
+// REFRESH AUDIT RECORDS
+
+document.getElementById("refreshFeeAuditLogs")
+    ?.addEventListener("click", loadFeeAuditLogs);
+
+
 // ==========================================
 // FEE MANAGEMENT PAGE STARTUP
 // ==========================================
