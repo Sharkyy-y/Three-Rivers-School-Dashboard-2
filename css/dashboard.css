@@ -13397,3 +13397,94 @@ body:has(#feeStudentsContainer) #feeStatementModal .modal-content {
         font-size: 21px;
     }
 }
+
+
+/* ==========================================
+   AUDIT BEFORE & AFTER COMPARISON
+========================================== */
+
+.fee-audit-details-content {
+    padding: 24px;
+    background: #f3f8f5;
+    border: 1px solid #e0ebe3;
+    border-radius: 14px;
+}
+
+.fee-audit-details-content h3 {
+    margin: 0 0 20px;
+    color: #173d30;
+    font-size: 18px;
+}
+
+.fee-audit-comparison-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 18px;
+}
+
+.fee-audit-snapshot {
+    padding: 20px;
+    border-radius: 13px;
+    background: white;
+    border: 1px solid #e3eae5;
+    min-width: 0;
+}
+
+.fee-audit-snapshot.before {
+    border-top: 4px solid #d69a3b;
+}
+
+.fee-audit-snapshot.after {
+    border-top: 4px solid #159568;
+}
+
+.fee-audit-snapshot h4 {
+    margin: 0 0 16px;
+    font-size: 12px;
+    letter-spacing: 1px;
+    color: #52645a;
+}
+
+.fee-audit-snapshot.before h4 {
+    color: #a66c16;
+}
+
+.fee-audit-snapshot.after h4 {
+    color: #13845b;
+}
+
+.fee-audit-field-row {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    padding: 12px 0;
+    border-bottom: 1px solid #edf1ee;
+}
+
+.fee-audit-field-row:last-child {
+    border-bottom: none;
+}
+
+.fee-audit-field-row span {
+    color: #849188;
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: capitalize;
+}
+
+.fee-audit-field-row strong {
+    color: #263b30;
+    font-size: 13px;
+    overflow-wrap: anywhere;
+    white-space: pre-wrap;
+}
+
+.fee-audit-snapshot.after .fee-audit-field-row strong {
+    color: #126b4b;
+}
+
+@media (max-width: 700px) {
+    .fee-audit-comparison-grid {
+        grid-template-columns: 1fr;
+    }
+}
