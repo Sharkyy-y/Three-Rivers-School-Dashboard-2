@@ -444,6 +444,92 @@
 </section>
 
         <!-- ======================================
+     CLASS FEE REPORTS
+======================================= -->
+
+<section class="fee-class-report-section">
+
+    <div class="fee-class-report-header">
+        <div>
+            <span>FINANCIAL ANALYTICS</span>
+            <h2>Class Fee Reports</h2>
+            <p>Compare fee collection and outstanding balances across classes.</p>
+        </div>
+    </div>
+
+    <div class="fee-class-report-card">
+
+        <div class="fee-class-report-top">
+            <div>
+                <h3>Class Financial Overview</h3>
+                <p>Payment performance by class.</p>
+            </div>
+
+            <button type="button" id="refreshClassFeeReport">
+                ↻ Refresh Report
+            </button>
+        </div>
+
+        <div class="fee-class-report-summary">
+
+            <div>
+                <span>Total Classes</span>
+                <strong id="classFeeTotalClasses">0</strong>
+            </div>
+
+            <div>
+                <span>Total Students</span>
+                <strong id="classFeeTotalStudents">0</strong>
+            </div>
+
+            <div>
+                <span>Total Collected</span>
+                <strong id="classFeeTotalCollected">KSh 0</strong>
+            </div>
+
+            <div>
+                <span>Total Outstanding</span>
+                <strong id="classFeeTotalOutstanding">KSh 0</strong>
+            </div>
+
+        </div>
+
+        <div class="fee-class-report-table-wrapper">
+
+            <table class="fee-class-report-table">
+
+                <thead>
+                    <tr>
+                        <th>Class</th>
+                        <th>Students</th>
+                        <th>Fully Paid</th>
+                        <th>Partially Paid</th>
+                        <th>Unpaid</th>
+                        <th>Total Charged</th>
+                        <th>Collected</th>
+                        <th>Outstanding</th>
+                    </tr>
+                </thead>
+
+                <tbody id="classFeeReportBody">
+                    <tr>
+                        <td colspan="8">Class reports will appear here.</td>
+                    </tr>
+                </tbody>
+
+            </table>
+
+        </div>
+
+        <p id="classFeeReportStatus">
+            Loading class financial information...
+        </p>
+
+    </div>
+
+</section>
+
+        <!-- ======================================
              CREATE FEE STATEMENT MODAL
         ======================================= -->
 
