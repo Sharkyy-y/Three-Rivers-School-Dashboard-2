@@ -19849,7 +19849,11 @@ function renderFeeAuditLogs() {
 
         row.cells[5].appendChild(detailsButton);
 
-        // DETAILS ROW
+        
+        // ==========================================
+        // PROFESSIONAL AUDIT DETAILS PANEL
+        // ==========================================
+
         const detailsRow = document.createElement("tr");
         detailsRow.style.display = "none";
 
@@ -19859,29 +19863,185 @@ function renderFeeAuditLogs() {
         const detailsContainer = document.createElement("div");
         detailsContainer.className = "fee-audit-details-content";
 
-        const detailsHeading = document.createElement("strong");
-        detailsHeading.textContent = "Change Information";
+        const heading = document.createElement("h3");
 
-        const detailsText = document.createElement("pre");
+        heading.textContent =
+            log.action === "UPDATE"
+                ? "Record Changes"
+                : log.action === "INSERT"
+                    ? "New Record Created"
+                    : "Deleted Record Information";
 
-        detailsText.textContent = JSON.stringify({
-            old_data: log.old_data,
-            new_data: log.new_data
-        }, null, 2);
+        detailsContainer.appendChild(heading);
 
-        detailsContainer.append(
-            detailsHeading,
-            detailsText
-        );
+        const oldData = log.old_data || {};
+        const newData = log.new_data || {};
+
+        // FRIENDLY FIELD NAMES
+        const fieldLabels = {
+            academic_year: "Academic Year",
+            term: "Term",
+            previous_balance: "Previous Balance",
+            due_date: "Payment Due Date",
+            notes: "Additional Notes",
+            description: "Charge Description",
+            amount: "Amount",
+            payment_date: "Payment Date",
+            payment_method: "Payment Method",
+            reference_number: "Reference Number",
+            recorded_by: "Recorded By",
+            created_by: "Created By",
+            created_at: "Created At"
+        };
+
+        // HIDE TECHNICAL DATABASE IDENTIFIERS
+        const hiddenFields = [
+            "id",
+            "student_id",
+            "statement_id"
+        ];
+
+        const formatFieldValue = (key, value) => {
+
+            if (value === null || value === undefined || value === "") {
+                return "Not provided";
+            }
+
+            if (
+                ["amount", "previous_balance"].includes(key)
+                && !isNaN(Number(value))
+            ) {
+                return "KSh " + Number(value).toLocaleString("en-KE", {
+                    minimumFractionDigits: 2,
+                    maximumFractionDigits: 2
+                });
+            }
+
+            if (
+                ["due_date", "payment_date", "created_at"].includes(key)
+            ) {
+                const date = new Date(value);
+
+                if (!isNaN(date.getTime())) {
+                    return date.toLocaleString("en-KE");
+                }
+            }
+
+            if (typeof value === "object") {
+                return JSON.stringify(value, null, 2);
+            }
+
+            return String(value);
+        };
+
+        // IDENTIFY CHANGED FIELDS
+        let fields = [];
+
+        if (log.action === "UPDATE") {
+
+            fields = [
+                ...new Set([
+                    ...Object.keys(oldData),
+                    ...Object.keys(newData)
+                ])
+            ].filter(key => {
+
+                return (
+                    !hiddenFields.includes(key) &&
+                    JSON.stringify(oldData[key]) !==
+                    JSON.stringify(newData[key])
+                );
+            });
+
+        } else {
+
+            const sourceData =
+                log.action === "INSERT" ? newData : oldData;
+
+            fields = Object.keys(sourceData).filter(
+                key => !hiddenFields.includes(key)
+            );
+        }
+
+        // CREATE BEFORE / AFTER CARDS
+        const comparisonGrid = document.createElement("div");
+        comparisonGrid.className = "fee-audit-comparison-grid";
+
+        const createSnapshotCard = (title, data, type) => {
+
+            const card = document.createElement("div");
+            card.className = "fee-audit-snapshot " + type;
+
+            const cardHeading = document.createElement("h4");
+            cardHeading.textContent = title;
+
+            card.appendChild(cardHeading);
+
+            fields.forEach(key => {
+
+                const fieldRow = document.createElement("div");
+                fieldRow.className = "fee-audit-field-row";
+
+                const label = document.createElement("span");
+                label.textContent =
+                    fieldLabels[key] ||
+                    key.replace(/_/g, " ").replace(/\b\w/g, letter =>
+                        letter.toUpperCase()
+                    );
+
+                const value = document.createElement("strong");
+                value.textContent = formatFieldValue(key, data[key]);
+
+                fieldRow.append(label, value);
+                card.appendChild(fieldRow);
+            });
+
+            return card;
+        };
+
+        if (log.action === "UPDATE") {
+
+            comparisonGrid.append(
+                createSnapshotCard("BEFORE", oldData, "before"),
+                createSnapshotCard("AFTER", newData, "after")
+            );
+
+        } else if (log.action === "INSERT") {
+
+            comparisonGrid.appendChild(
+                createSnapshotCard("CREATED INFORMATION", newData, "after")
+            );
+
+        } else {
+
+            comparisonGrid.appendChild(
+                createSnapshotCard("DELETED INFORMATION", oldData, "before")
+            );
+        }
+
+        if (fields.length === 0) {
+
+            const emptyMessage = document.createElement("p");
+            emptyMessage.textContent =
+                "No field-level differences were detected.";
+
+            detailsContainer.appendChild(emptyMessage);
+
+        } else {
+
+            detailsContainer.appendChild(comparisonGrid);
+        }
 
         detailsCell.appendChild(detailsContainer);
         detailsRow.appendChild(detailsCell);
 
         detailsButton.addEventListener("click", () => {
 
-            const isHidden = detailsRow.style.display === "none";
+            const isHidden =
+                detailsRow.style.display === "none";
 
-            detailsRow.style.display = isHidden ? "table-row" : "none";
+            detailsRow.style.display =
+                isHidden ? "table-row" : "none";
 
             detailsButton.textContent =
                 isHidden ? "Hide Details" : "View Details";
