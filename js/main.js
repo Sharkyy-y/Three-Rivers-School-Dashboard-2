@@ -21120,6 +21120,101 @@ function printTermFinancialReport() {
         printWindow.print();
     };
 }
+
+// ==========================================
+// FEE MANAGEMENT CATEGORY NAVIGATION
+// ==========================================
+
+const feeCategoryDashboard = document.querySelector(
+    ".fee-category-dashboard"
+);
+
+const feeCategoryCards = document.querySelectorAll(
+    ".fee-category-card"
+);
+
+const feeCategoryViews = document.querySelectorAll(
+    ".fee-category-view"
+);
+
+const feeCategoryBackButtons = document.querySelectorAll(
+    ".fee-category-back"
+);
+
+
+// OPEN SELECTED CATEGORY
+
+feeCategoryCards.forEach(card => {
+
+    card.addEventListener("click", () => {
+
+        const target = card.dataset.feeTarget;
+
+        const selectedView = document.querySelector(
+            `.fee-category-view[data-fee-view="${target}"]`
+        );
+
+        if (!selectedView) return;
+
+        // Hide category landing page
+        feeCategoryDashboard.style.display = "none";
+
+        // Hide all category views
+        feeCategoryViews.forEach(view => {
+            view.style.display = "none";
+        });
+
+        // Show selected category
+        selectedView.style.display = "block";
+
+        // Update active card
+        feeCategoryCards.forEach(item => {
+            item.classList.remove("active");
+        });
+
+        card.classList.add("active");
+
+        // Scroll to the selected category
+        document.querySelector(".admin-dashboard-header")
+            ?.scrollIntoView({
+                behavior: "smooth",
+                block: "start"
+            });
+
+    });
+
+});
+
+
+// RETURN TO CATEGORY LANDING PAGE
+
+feeCategoryBackButtons.forEach(button => {
+
+    button.addEventListener("click", () => {
+
+        // Hide all category views
+        feeCategoryViews.forEach(view => {
+            view.style.display = "none";
+        });
+
+        // Show category landing page
+        feeCategoryDashboard.style.display = "block";
+
+        // Remove active card styling
+        feeCategoryCards.forEach(card => {
+            card.classList.remove("active");
+        });
+
+        // Return to category cards
+        feeCategoryDashboard.scrollIntoView({
+            behavior: "smooth",
+            block: "start"
+        });
+
+    });
+
+});
+
 // ==========================================
 // FEE MANAGEMENT PAGE STARTUP
 // ==========================================
