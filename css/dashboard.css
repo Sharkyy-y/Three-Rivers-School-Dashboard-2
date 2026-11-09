@@ -13883,3 +13883,350 @@ body:has(#feeStudentsContainer) #feeStatementModal .modal-content {
         width: 100%;
     }
 }
+
+/* ==========================================
+   TERMLY FINANCIAL SUMMARIES
+========================================== */
+
+.term-financial-section {
+    margin: 35px 0;
+}
+
+.term-financial-header {
+    margin-bottom: 20px;
+}
+
+.term-financial-header span {
+    color: #0d9368;
+    font-size: 10px;
+    font-weight: 800;
+    letter-spacing: 1.8px;
+}
+
+.term-financial-header h2 {
+    color: #173b32;
+    font-size: 25px;
+    margin: 8px 0;
+}
+
+.term-financial-header p {
+    color: #7b8b85;
+    font-size: 13px;
+}
+
+.term-financial-card {
+    background: linear-gradient(145deg, #fff, #f8fcf9);
+    border: 1px solid #e2eee7;
+    border-radius: 20px;
+    padding: 27px;
+    box-shadow: 0 12px 35px rgba(22, 75, 55, 0.07);
+}
+
+.term-financial-card-heading {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 25px;
+}
+
+.term-financial-card-heading h3 {
+    color: #173f34;
+    font-size: 18px;
+    margin-bottom: 7px;
+}
+
+.term-financial-card-heading p {
+    color: #82928a;
+    font-size: 12px;
+}
+
+.term-financial-card-heading > span {
+    width: 52px;
+    height: 52px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #e4f5eb;
+    border-radius: 15px;
+    font-size: 25px;
+}
+
+.term-financial-filters {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 18px;
+    margin-bottom: 20px;
+}
+
+.term-financial-filters label {
+    display: block;
+    color: #38584b;
+    font-size: 12px;
+    font-weight: 700;
+    margin-bottom: 9px;
+}
+
+.term-financial-filters select {
+    width: 100%;
+    min-height: 47px;
+    padding: 12px;
+    background: #fff;
+    border: 1px solid #dce9e1;
+    border-radius: 10px;
+    color: #244638;
+    font-size: 13px;
+    outline: none;
+}
+
+.term-financial-filters select:focus {
+    border-color: #0d9368;
+    box-shadow: 0 0 0 3px rgba(13, 147, 104, 0.10);
+}
+
+.term-financial-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+}
+
+.term-financial-actions button {
+    min-height: 46px;
+    padding: 12px 20px;
+    border: none;
+    border-radius: 10px;
+    font-size: 12px;
+    font-weight: 800;
+    cursor: pointer;
+    transition: 0.2s ease;
+}
+
+#generateTermFinancialReport {
+    background: linear-gradient(135deg, #087b53, #0b9b68);
+    color: white;
+    box-shadow: 0 7px 17px rgba(8, 123, 83, 0.18);
+}
+
+#printTermFinancialReport {
+    background: #fff3df;
+    color: #96651b;
+    border: 1px solid #f1dfbc;
+}
+
+.term-financial-actions button:hover {
+    transform: translateY(-2px);
+}
+
+#termFinancialReportStatus {
+    margin-top: 17px;
+    color: #82928a;
+    font-size: 12px;
+}
+
+/* GENERATED REPORT */
+
+#termFinancialReportOutput {
+    margin-top: 30px;
+    padding-top: 27px;
+    border-top: 1px solid #e5eee8;
+}
+
+.term-report-title {
+    text-align: center;
+    margin-bottom: 25px;
+    padding: 22px;
+    background: linear-gradient(135deg, #173f34, #087b53);
+    border-radius: 14px;
+    color: white;
+}
+
+.term-report-title h3 {
+    font-size: 19px;
+    letter-spacing: 1.5px;
+    margin-bottom: 8px;
+}
+
+.term-report-title h4 {
+    font-size: 15px;
+    font-weight: 600;
+    margin-bottom: 7px;
+}
+
+.term-report-title p {
+    font-size: 11px;
+    color: #d7eee1;
+}
+
+/* SUMMARY CARDS */
+
+.term-report-summary-grid {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 14px;
+    margin-bottom: 25px;
+}
+
+.term-report-stat {
+    padding: 19px;
+    border-radius: 13px;
+    border: 1px solid transparent;
+    transition: 0.2s ease;
+}
+
+.term-report-stat:hover {
+    transform: translateY(-3px);
+}
+
+.term-report-stat span {
+    display: block;
+    color: #73817e;
+    font-size: 11px;
+    font-weight: 700;
+    margin-bottom: 10px;
+}
+
+.term-report-stat strong {
+    display: block;
+    color: #183d32;
+    font-size: 19px;
+    overflow-wrap: anywhere;
+}
+
+.term-report-stat.charged {
+    background: #edf5ff;
+    border-color: #dceaff;
+}
+
+.term-report-stat.collected {
+    background: #e9f8ef;
+    border-color: #d5efdf;
+}
+
+.term-report-stat.outstanding {
+    background: #fff3e7;
+    border-color: #ffe5ca;
+}
+
+.term-report-stat.students {
+    background: #f2edff;
+    border-color: #e5dcff;
+}
+
+/* PAYMENT PERFORMANCE */
+
+.term-report-performance {
+    padding: 22px;
+    background: #f8fbf9;
+    border: 1px solid #e6eee8;
+    border-radius: 14px;
+    margin-bottom: 25px;
+}
+
+.term-report-performance h3,
+.term-report-class-breakdown h3 {
+    color: #173f34;
+    font-size: 16px;
+    margin-bottom: 17px;
+}
+
+.term-report-performance-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 14px;
+}
+
+.term-report-performance-grid > div {
+    background: white;
+    padding: 17px;
+    border: 1px solid #e8eee9;
+    border-radius: 11px;
+}
+
+.term-report-performance-grid span {
+    display: block;
+    color: #819087;
+    font-size: 11px;
+    margin-bottom: 8px;
+}
+
+.term-report-performance-grid strong {
+    color: #087b53;
+    font-size: 23px;
+}
+
+/* CLASS BREAKDOWN TABLE */
+
+.term-report-table-wrapper {
+    width: 100%;
+    overflow-x: auto;
+    border: 1px solid #e7eee9;
+    border-radius: 12px;
+}
+
+.term-report-table {
+    width: 100%;
+    min-width: 850px;
+    border-collapse: collapse;
+    background: white;
+}
+
+.term-report-table thead {
+    background: #173f34;
+    color: white;
+}
+
+.term-report-table th {
+    padding: 14px 12px;
+    text-align: left;
+    font-size: 11px;
+    white-space: nowrap;
+}
+
+.term-report-table td {
+    padding: 15px 12px;
+    border-bottom: 1px solid #edf2ee;
+    color: #52635b;
+    font-size: 12px;
+    white-space: nowrap;
+}
+
+.term-report-table tbody tr:hover {
+    background: #f2faf5;
+}
+
+.term-report-table tbody tr:last-child td {
+    border-bottom: none;
+}
+
+.term-report-table td strong {
+    color: #087b53;
+}
+
+/* RESPONSIVE */
+
+@media (max-width: 950px) {
+    .term-report-summary-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 600px) {
+    .term-financial-card {
+        padding: 17px;
+    }
+
+    .term-financial-filters {
+        grid-template-columns: 1fr;
+    }
+
+    .term-report-summary-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .term-report-performance-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .term-financial-actions button {
+        width: 100%;
+    }
+}
