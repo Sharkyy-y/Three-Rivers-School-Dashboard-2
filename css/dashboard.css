@@ -14648,3 +14648,158 @@ body:has(#feeStudentsContainer) #feeStatementModal .modal-content {
         font-size: 55px;
     }
 }
+
+/* ==========================================
+   LIVE FINANCIAL SNAPSHOT
+   ========================================== */
+
+.fee-live-snapshot {
+    margin: 28px 0 32px;
+    padding: 26px;
+    border: 1px solid #e5ebe6;
+    border-radius: 22px;
+    background: linear-gradient(145deg, #ffffff, #f7faf7);
+    box-shadow: 0 8px 24px rgba(23, 63, 52, 0.06);
+}
+
+.fee-live-snapshot-heading {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 15px;
+    margin-bottom: 23px;
+}
+
+.fee-live-snapshot-heading > div > span {
+    color: #16835c;
+    font-size: 10px;
+    font-weight: 800;
+    letter-spacing: 1.6px;
+}
+
+.fee-live-snapshot-heading h3 {
+    margin: 7px 0;
+    color: #173f34;
+    font-size: 23px;
+}
+
+.fee-live-snapshot-heading p {
+    color: #77857d;
+    font-size: 13px;
+    line-height: 1.6;
+}
+
+.fee-live-indicator {
+    flex-shrink: 0;
+    padding: 9px 13px;
+    border-radius: 30px;
+    background: #e5f7ec;
+    color: #12804d;
+    font-size: 10px;
+    font-weight: 800;
+}
+
+.fee-live-snapshot-grid {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 17px;
+}
+
+.fee-live-card {
+    display: flex;
+    align-items: flex-start;
+    gap: 15px;
+    min-width: 0;
+    min-height: 145px;
+    padding: 22px 17px;
+    border: 1px solid transparent;
+    border-radius: 17px;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.fee-live-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 10px 22px rgba(23, 63, 52, 0.09);
+}
+
+.fee-live-card.collected {
+    background: #e5f7ec;
+    border-color: #c4ead2;
+    color: #087b4d;
+}
+
+.fee-live-card.outstanding {
+    background: #fff0e5;
+    border-color: #f5d8c2;
+    color: #b75c20;
+}
+
+.fee-live-card.paid {
+    background: #e9efff;
+    border-color: #d1dcfa;
+    color: #365db5;
+}
+
+.fee-live-card.pending {
+    background: #f1eaff;
+    border-color: #dfd0fa;
+    color: #7850b9;
+}
+
+.fee-live-card-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    width: 46px;
+    height: 46px;
+    border-radius: 13px;
+    background: rgba(255, 255, 255, 0.7);
+    font-size: 23px;
+}
+
+.fee-live-card small {
+    display: block;
+    margin: 3px 0 9px;
+    font-size: 10px;
+    font-weight: 800;
+    letter-spacing: 0.7px;
+}
+
+.fee-live-card h3 {
+    overflow-wrap: anywhere;
+    font-size: 20px;
+    font-weight: 800;
+    line-height: 1.3;
+}
+
+.fee-live-card p {
+    margin-top: 7px;
+    color: #66756d;
+    font-size: 11px;
+}
+
+@media (max-width: 1100px) {
+    .fee-live-snapshot-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+
+@media (max-width: 600px) {
+    .fee-live-snapshot {
+        padding: 19px;
+    }
+
+    .fee-live-snapshot-heading {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+
+    .fee-live-snapshot-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .fee-live-card {
+        min-height: 120px;
+    }
+}
