@@ -46,7 +46,6 @@
 
     </aside>
 
-
     <!-- MAIN CONTENT -->
     <main class="admin-dashboard-page">
 
@@ -62,222 +61,152 @@
 
         </section>
 
+
         <!-- ======================================
-     FEE MANAGEMENT CATEGORY NAVIGATION
-======================================= -->
+             FEE MANAGEMENT CATEGORY NAVIGATION
+        ======================================= -->
 
-<section class="fee-category-dashboard">
+        <section class="fee-category-dashboard">
 
-    <div class="fee-category-heading">
-        <span>FINANCE COMMAND CENTRE</span>
-        <h2>Manage School Finances</h2>
-        <p>Select a category to access its tools and information.</p>
-    </div>
-
-    <div class="fee-category-grid">
-
-        <button class="fee-category-card active"
-            data-fee-target="payment" type="button">
-            <span class="fee-category-icon">💳</span>
-            <span class="fee-category-label">PAYMENTS</span>
-            <strong>Payment Overview</strong>
-            <small>Student fee records and payment status</small>
-            <span class="fee-category-arrow">Explore →</span>
-        </button>
-
-        <button class="fee-category-card"
-            data-fee-target="control" type="button">
-            <span class="fee-category-icon">🛡️</span>
-            <span class="fee-category-label">SECURITY & CONTROL</span>
-            <strong>Financial Control</strong>
-            <small>Audit trails and financial activities</small>
-            <span class="fee-category-arrow">Explore →</span>
-        </button>
-
-        <button class="fee-category-card"
-            data-fee-target="reporting" type="button">
-            <span class="fee-category-icon">📊</span>
-            <span class="fee-category-label">EXPORT CENTRE</span>
-            <strong>Financial Reporting</strong>
-            <small>Payment reports and downloadable records</small>
-            <span class="fee-category-arrow">Explore →</span>
-        </button>
-
-        <button class="fee-category-card"
-            data-fee-target="classes" type="button">
-            <span class="fee-category-icon">🏫</span>
-            <span class="fee-category-label">CLASS ANALYTICS</span>
-            <strong>Class Fee Reports</strong>
-            <small>Compare collections across all classes</small>
-            <span class="fee-category-arrow">Explore →</span>
-        </button>
-
-        <button class="fee-category-card"
-            data-fee-target="terms" type="button">
-            <span class="fee-category-icon">📈</span>
-            <span class="fee-category-label">TERM PERFORMANCE</span>
-            <strong>Termly Financial Summaries</strong>
-            <small>Generate and print academic term reports</small>
-            <span class="fee-category-arrow">Explore →</span>
-        </button>
-
-    </div>
-
-</section>
-
-        <div class="fee-category-view" data-fee-view="payment" style="display: none;">
-
-    <button type="button" class="fee-category-back">
-        ← Back to Fee Management
-    </button>
-
-        
-<!-- ======================================
-     FEE PAYMENT OVERVIEW
-======================================= -->
-
-<section class="fee-overview-section">
-
-    <div class="fee-overview-heading">
-        <div>
-            <h2>Payment Overview</h2>
-            <p>A quick summary of student fee payments.</p>
-        </div>
-        <span class="fee-overview-icon">📊</span>
-    </div>
-
-    <div class="fee-overview-grid">
-
-        <!-- FULLY PAID -->
-        <div class="fee-overview-card fee-overview-paid">
-            <div class="fee-overview-card-icon">✓</div>
-            <div>
-                <span>Fully Paid</span>
-                <h2 id="feeOverviewPaid">0</h2>
-                <small>Students</small>
-            </div>
-        </div>
-
-        <!-- PARTIALLY PAID -->
-        <div class="fee-overview-card fee-overview-partial">
-            <div class="fee-overview-card-icon">◐</div>
-            <div>
-                <span>Partially Paid</span>
-                <h2 id="feeOverviewPartial">0</h2>
-                <small>Students</small>
-            </div>
-        </div>
-
-        <!-- UNPAID -->
-        <div class="fee-overview-card fee-overview-unpaid">
-            <div class="fee-overview-card-icon">!</div>
-            <div>
-                <span>Unpaid</span>
-                <h2 id="feeOverviewUnpaid">0</h2>
-                <small>Students</small>
-            </div>
-        </div>
-
-        <!-- TOTAL COLLECTED -->
-        <div class="fee-overview-card fee-overview-collected">
-            <div class="fee-overview-card-icon">KSh</div>
-            <div>
-                <span>Total Collected</span>
-                <h2 id="feeOverviewCollected">KSh 0</h2>
-                <small>Payments received</small>
-            </div>
-        </div>
-
-    </div>
-
-</section>
-        
-        <!-- STUDENT DIRECTORY -->
-        <section class="student-directory-card">
-
-            <div class="directory-header">
-
-                <div class="directory-title">
-
-                    <div class="directory-icon">F</div>
-
-                    <div>
-                        <h2>Student Fee Records</h2>
-
-                        <p>
-                            Search and select a student to manage
-                            their fee statement.
-                        </p>
-                    </div>
-
-                </div>
-
+            <div class="fee-category-heading">
+                <span>FINANCE COMMAND CENTRE</span>
+                <h2>Manage School Finances</h2>
+                <p>Select a category to access its tools and information.</p>
             </div>
 
+            <div class="fee-category-grid">
 
-            <!-- SEARCH -->
-            <div class="student-search-box">
+                <button class="fee-category-card"
+                    data-fee-target="payment" type="button">
 
-                <span class="search-icon">⌕</span>
+                    <span class="fee-category-icon">💳</span>
+                    <span class="fee-category-label">PAYMENTS</span>
+                    <strong>Payment Overview</strong>
+                    <small>Student fee records and payment status</small>
+                    <span class="fee-category-arrow">Explore →</span>
 
-                <input
-                    type="text"
-                    id="feeStudentSearch"
-                    placeholder="Search by student name, admission number or class..."
-                    autocomplete="off"
-                >
+                </button>
 
-            </div>
+                <button class="fee-category-card"
+                    data-fee-target="control" type="button">
 
-            <!-- PAYMENT STATUS FILTER -->
-<div class="fee-status-filter">
+                    <span class="fee-category-icon">🛡️</span>
+                    <span class="fee-category-label">SECURITY & CONTROL</span>
+                    <strong>Financial Control</strong>
+                    <small>Audit trails and financial activities</small>
+                    <span class="fee-category-arrow">Explore →</span>
 
-    <label for="feePaymentStatusFilter">
-        Filter by Payment Status
-    </label>
+                </button>
 
-    <select id="feePaymentStatusFilter">
-        <option value="all">All Students</option>
-        <option value="paid">Fully Paid</option>
-        <option value="partial">Partially Paid</option>
-        <option value="unpaid">Unpaid</option>
-        <option value="none">No Statement</option>
-    </select>
+                <button class="fee-category-card"
+                    data-fee-target="reporting" type="button">
 
-</div>
+                    <span class="fee-category-icon">📊</span>
+                    <span class="fee-category-label">EXPORT CENTRE</span>
+                    <strong>Financial Reporting</strong>
+                    <small>Payment reports and downloadable records</small>
+                    <span class="fee-category-arrow">Explore →</span>
 
+                </button>
 
-            <!-- STUDENT COUNT -->
-            <div class="student-directory-summary">
+                <button class="fee-category-card"
+                    data-fee-target="classes" type="button">
 
-                <div>
-                    <strong id="feeStudentCount">
-                        Loading students...
-                    </strong>
+                    <span class="fee-category-icon">🏫</span>
+                    <span class="fee-category-label">CLASS ANALYTICS</span>
+                    <strong>Class Fee Reports</strong>
+                    <small>Compare collections across all classes</small>
+                    <span class="fee-category-arrow">Explore →</span>
 
-                    <span>registered students</span>
-                </div>
+                </button>
 
-            </div>
+                <button class="fee-category-card"
+                    data-fee-target="terms" type="button">
 
+                    <span class="fee-category-icon">📈</span>
+                    <span class="fee-category-label">TERM PERFORMANCE</span>
+                    <strong>Termly Financial Summaries</strong>
+                    <small>Generate and print academic term reports</small>
+                    <span class="fee-category-arrow">Explore →</span>
 
-            <!-- STUDENT RESULTS -->
-            <div id="feeStudentsContainer">
-
-                <div class="students-loading">
-                    <div class="loading-circle"></div>
-                    <span>Loading students...</span>
-                </div>
+                </button>
 
             </div>
 
         </section>
 
 
-        <!-- SELECTED STUDENT WORKSPACE -->
-        <section id="feeStudentWorkspace" style="display: none;">
+        <!-- ======================================
+             CATEGORY 1: PAYMENT OVERVIEW
+        ======================================= -->
 
-            <div class="student-directory-card">
+        <div class="fee-category-view"
+            data-fee-view="payment"
+            style="display: none;">
+
+            <button type="button" class="fee-category-back">
+                ← Back to Fee Management
+            </button>
+
+
+            <!-- FEE PAYMENT OVERVIEW -->
+
+            <section class="fee-overview-section">
+
+                <div class="fee-overview-heading">
+                    <div>
+                        <h2>Payment Overview</h2>
+                        <p>A quick summary of student fee payments.</p>
+                    </div>
+                    <span class="fee-overview-icon">📊</span>
+                </div>
+
+                <div class="fee-overview-grid">
+
+                    <div class="fee-overview-card fee-overview-paid">
+                        <div class="fee-overview-card-icon">✓</div>
+                        <div>
+                            <span>Fully Paid</span>
+                            <h2 id="feeOverviewPaid">0</h2>
+                            <small>Students</small>
+                        </div>
+                    </div>
+
+                    <div class="fee-overview-card fee-overview-partial">
+                        <div class="fee-overview-card-icon">◐</div>
+                        <div>
+                            <span>Partially Paid</span>
+                            <h2 id="feeOverviewPartial">0</h2>
+                            <small>Students</small>
+                        </div>
+                    </div>
+
+                    <div class="fee-overview-card fee-overview-unpaid">
+                        <div class="fee-overview-card-icon">!</div>
+                        <div>
+                            <span>Unpaid</span>
+                            <h2 id="feeOverviewUnpaid">0</h2>
+                            <small>Students</small>
+                        </div>
+                    </div>
+
+                    <div class="fee-overview-card fee-overview-collected">
+                        <div class="fee-overview-card-icon">KSh</div>
+                        <div>
+                            <span>Total Collected</span>
+                            <h2 id="feeOverviewCollected">KSh 0</h2>
+                            <small>Payments received</small>
+                        </div>
+                    </div>
+
+                </div>
+
+            </section>
+
+
+            <!-- STUDENT DIRECTORY -->
+
+            <section class="student-directory-card">
 
                 <div class="directory-header">
 
@@ -286,500 +215,275 @@
                         <div class="directory-icon">F</div>
 
                         <div>
-                            <h2 id="feeSelectedStudentName">
-                                Selected Student
-                            </h2>
-
-                            <p id="feeSelectedStudentDetails">
-                                Student fee information
-                            </p>
-                        </div>
-
-                    </div>
-
-                </div>
-
-
-                <!-- FEE SUMMARY -->
-                <div class="admin-stats-grid">
-
-                    <div class="admin-stat-card">
-                        <div class="admin-stat-icon">C</div>
-
-                        <div>
-                            <h2 id="feeTotalCharges">KSh 0</h2>
-                            <p>Total Charges</p>
-                        </div>
-                    </div>
-
-                    <div class="admin-stat-card">
-                        <div class="admin-stat-icon">P</div>
-
-                        <div>
-                            <h2 id="feeTotalPaid">KSh 0</h2>
-                            <p>Total Paid</p>
-                        </div>
-                    </div>
-
-                    <div class="admin-stat-card">
-                        <div class="admin-stat-icon">B</div>
-
-                        <div>
-                            <h2 id="feeOutstandingBalance">KSh 0</h2>
-                            <p>Outstanding Balance</p>
-                        </div>
-                    </div>
-
-                </div>
-
-
-                <!-- FEE STATEMENTS -->
-                <div class="admin-dashboard-section">
-
-                    <div class="admin-section-header">
-
-                        <div>
-                            <h2>Fee Statements</h2>
+                            <h2>Student Fee Records</h2>
 
                             <p>
-                                Statements recorded for this student.
+                                Search and select a student to manage
+                                their fee statement.
                             </p>
                         </div>
 
-                        <button
-                            type="button"
-                            id="createFeeStatementButton"
-                            class="add-student-button"
-                        >
-                            + Create Statement
-                        </button>
+                    </div>
+
+                </div>
+
+
+                <!-- SEARCH -->
+
+                <div class="student-search-box">
+
+                    <span class="search-icon">⌕</span>
+
+                    <input
+                        type="text"
+                        id="feeStudentSearch"
+                        placeholder="Search by student name, admission number or class..."
+                        autocomplete="off"
+                    >
+
+                </div>
+
+
+                <!-- PAYMENT STATUS FILTER -->
+
+                <div class="fee-status-filter">
+
+                    <label for="feePaymentStatusFilter">
+                        Filter by Payment Status
+                    </label>
+
+                    <select id="feePaymentStatusFilter">
+                        <option value="all">All Students</option>
+                        <option value="paid">Fully Paid</option>
+                        <option value="partial">Partially Paid</option>
+                        <option value="unpaid">Unpaid</option>
+                        <option value="none">No Statement</option>
+                    </select>
+
+                </div>
+
+
+                <!-- STUDENT COUNT -->
+
+                <div class="student-directory-summary">
+
+                    <div>
+                        <strong id="feeStudentCount">
+                            Loading students...
+                        </strong>
+
+                        <span>registered students</span>
+                    </div>
+
+                </div>
+
+
+                <!-- STUDENT RESULTS -->
+
+                <div id="feeStudentsContainer">
+
+                    <div class="students-loading">
+                        <div class="loading-circle"></div>
+                        <span>Loading students...</span>
+                    </div>
+
+                </div>
+
+            </section>
+
+
+            <!-- SELECTED STUDENT WORKSPACE -->
+
+            <section id="feeStudentWorkspace" style="display: none;">
+
+                <div class="student-directory-card">
+
+                    <div class="directory-header">
+
+                        <div class="directory-title">
+
+                            <div class="directory-icon">F</div>
+
+                            <div>
+                                <h2 id="feeSelectedStudentName">
+                                    Selected Student
+                                </h2>
+
+                                <p id="feeSelectedStudentDetails">
+                                    Student fee information
+                                </p>
+                            </div>
+
+                        </div>
 
                     </div>
 
-                    <div id="feeStatementsContainer">
 
-                        <p class="students-loading">
-                            Select a student to view fee statements.
-                        </p>
+                    <!-- FEE SUMMARY -->
+
+                    <div class="admin-stats-grid">
+
+                        <div class="admin-stat-card">
+                            <div class="admin-stat-icon">C</div>
+
+                            <div>
+                                <h2 id="feeTotalCharges">KSh 0</h2>
+                                <p>Total Charges</p>
+                            </div>
+                        </div>
+
+                        <div class="admin-stat-card">
+                            <div class="admin-stat-icon">P</div>
+
+                            <div>
+                                <h2 id="feeTotalPaid">KSh 0</h2>
+                                <p>Total Paid</p>
+                            </div>
+                        </div>
+
+                        <div class="admin-stat-card">
+                            <div class="admin-stat-icon">B</div>
+
+                            <div>
+                                <h2 id="feeOutstandingBalance">KSh 0</h2>
+                                <p>Outstanding Balance</p>
+                            </div>
+                        </div>
+
+                    </div>
+
+
+                    <!-- FEE STATEMENTS -->
+
+                    <div class="admin-dashboard-section">
+
+                        <div class="admin-section-header">
+
+                            <div>
+                                <h2>Fee Statements</h2>
+
+                                <p>
+                                    Statements recorded for this student.
+                                </p>
+                            </div>
+
+                            <button
+                                type="button"
+                                id="createFeeStatementButton"
+                                class="add-student-button"
+                            >
+                                + Create Statement
+                            </button>
+
+                        </div>
+
+                        <div id="feeStatementsContainer">
+
+                            <p class="students-loading">
+                                Select a student to view fee statements.
+                            </p>
+
+                        </div>
 
                     </div>
 
                 </div>
 
-            </div>
-
-        </section>
-
-            <div class="fee-category-view" data-fee-view="control" style="display: none;">
-
-    <button type="button" class="fee-category-back">
-        ← Back to Fee Management
-    </button>
-
-        
-<!-- ======================================
-     FINANCIAL AUDIT TRAIL
-======================================= -->
-
-<section class="fee-audit-section">
-
-    <div class="fee-audit-header">
-        <div>
-            <span class="fee-audit-eyebrow">FINANCIAL CONTROL</span>
-            <h2>Financial Audit Trail</h2>
-            <p>Track changes and activities across fee records.</p>
-        </div>
-
-        <button type="button" id="refreshFeeAuditLogs"
-            class="fee-audit-refresh">
-            ↻ Refresh Logs
-        </button>
-    </div>
-
-    <!-- FILTERS -->
-    <div class="fee-audit-filters">
-
-        <div>
-            <label for="feeAuditSearch">Search Student</label>
-            <input type="text" id="feeAuditSearch"
-                placeholder="Student name or admission number...">
-        </div>
-
-        <div>
-            <label for="feeAuditAction">Action</label>
-            <select id="feeAuditAction">
-                <option value="all">All Actions</option>
-                <option value="INSERT">Created</option>
-                <option value="UPDATE">Updated</option>
-                <option value="DELETE">Deleted</option>
-            </select>
-        </div>
-
-        <div>
-            <label for="feeAuditEntity">Record Type</label>
-            <select id="feeAuditEntity">
-                <option value="all">All Records</option>
-                <option value="fee_statements">Fee Statements</option>
-                <option value="fee_statement_items">Fee Charges</option>
-                <option value="fee_payments">Payments</option>
-            </select>
-        </div>
-
-        <div>
-            <label for="feeAuditDate">From Date</label>
-            <input type="date" id="feeAuditDate">
-        </div>
-
-    </div>
-
-    <!-- AUDIT TABLE -->
-    <div class="fee-audit-table-wrapper">
-
-        <table class="fee-audit-table">
-
-            <thead>
-                <tr>
-                    <th>Date & Time</th>
-                    <th>Student</th>
-                    <th>Record</th>
-                    <th>Action</th>
-                    <th>Performed By</th>
-                    <th>Details</th>
-                </tr>
-            </thead>
-
-            <tbody id="feeAuditLogsBody">
-                <tr>
-                    <td colspan="6">
-                        Audit records will appear here.
-                    </td>
-                </tr>
-            </tbody>
-
-        </table>
-
-    </div>
-
-    <div id="feeAuditLogsCount" class="fee-audit-count">
-        0 audit records
-    </div>
-
-</section>
-
-                <div class="fee-category-view" data-fee-view="reporting" style="display: none;">
-
-    <button type="button" class="fee-category-back">
-        ← Back to Fee Management
-    </button>
-
-<!-- ======================================
-     FINANCIAL REPORTS & EXPORTS
-======================================= -->
-
-<section class="fee-export-section">
-
-    <div class="fee-export-header">
-        <div>
-            <span>FINANCIAL REPORTING</span>
-            <h2>Payment Reports & Exports</h2>
-            <p>View and download recorded school fee payments.</p>
-        </div>
-    </div>
-
-    <div class="fee-export-card">
-
-        <div class="fee-export-icon">📊</div>
-
-        <div class="fee-export-info">
-            <h3>Payment Records Export</h3>
-            <p>
-                Download payment records with student details,
-                payment dates, amounts and payment references.
-            </p>
-        </div>
-
-        <div class="fee-export-controls">
-
-            <div>
-                <label for="feeExportStartDate">From Date</label>
-                <input type="date" id="feeExportStartDate">
-            </div>
-
-            <div>
-                <label for="feeExportEndDate">To Date</label>
-                <input type="date" id="feeExportEndDate">
-            </div>
+            </section>
 
         </div>
 
-        <button type="button" id="exportFeePaymentsButton">
-            ↓ Export Payment Records (CSV)
-        </button>
-
-        <p id="feeExportStatus">
-            Select a date range or leave dates empty to export all records.
-        </p>
-
-    </div>
-
-</section>
-
-<div class="fee-category-view" data-fee-view="classes" style="display: none;">
-
-    <button type="button" class="fee-category-back">
-        ← Back to Fee Management
-    </button>
-                    
-        <!-- ======================================
-     CLASS FEE REPORTS
-======================================= -->
-
-<section class="fee-class-report-section">
-
-    <div class="fee-class-report-header">
-        <div>
-            <span>FINANCIAL ANALYTICS</span>
-            <h2>Class Fee Reports</h2>
-            <p>Compare fee collection and outstanding balances across classes.</p>
-        </div>
-    </div>
-
-    <div class="fee-class-report-card">
-
-        <div class="fee-class-report-top">
-            <div>
-                <h3>Class Financial Overview</h3>
-                <p>Payment performance by class.</p>
-            </div>
-
-            <button type="button" id="refreshClassFeeReport">
-                ↻ Refresh Report
-            </button>
-        </div>
-
-        <div class="fee-class-report-summary">
-
-            <div>
-                <span>Total Classes</span>
-                <strong id="classFeeTotalClasses">0</strong>
-            </div>
-
-            <div>
-                <span>Total Students</span>
-                <strong id="classFeeTotalStudents">0</strong>
-            </div>
-
-            <div>
-                <span>Total Collected</span>
-                <strong id="classFeeTotalCollected">KSh 0</strong>
-            </div>
-
-            <div>
-                <span>Total Outstanding</span>
-                <strong id="classFeeTotalOutstanding">KSh 0</strong>
-            </div>
-
-        </div>
-
-        <div class="fee-class-report-table-wrapper">
-
-            <table class="fee-class-report-table">
-
-                <thead>
-                    <tr>
-                        <th>Class</th>
-                        <th>Students</th>
-                        <th>Fully Paid</th>
-                        <th>Partially Paid</th>
-                        <th>Unpaid</th>
-                        <th>Total Charged</th>
-                        <th>Collected</th>
-                        <th>Outstanding</th>
-                    </tr>
-                </thead>
-
-                <tbody id="classFeeReportBody">
-                    <tr>
-                        <td colspan="8">Class reports will appear here.</td>
-                    </tr>
-                </tbody>
-
-            </table>
-
-        </div>
-
-        <p id="classFeeReportStatus">
-            Loading class financial information...
-        </p>
-
-    </div>
-
-</section>
-
-    <div class="fee-category-view" data-fee-view="terms" style="display: none;">
-
-    <button type="button" class="fee-category-back">
-        ← Back to Fee Management
-    </button>
 
         <!-- ======================================
-     TERMLY FINANCIAL SUMMARIES
-======================================= -->
+             CATEGORY 2: FINANCIAL CONTROL
+        ======================================= -->
 
-<section class="term-financial-section">
+        <div class="fee-category-view"
+            data-fee-view="control"
+            style="display: none;">
 
-    <div class="term-financial-header">
-        <div>
-            <span>FINANCIAL PERFORMANCE</span>
-            <h2>Termly Financial Summaries</h2>
-            <p>Generate detailed financial reports for each academic term.</p>
-        </div>
-    </div>
-
-    <div class="term-financial-card">
-
-        <div class="term-financial-card-heading">
-            <div>
-                <h3>Generate Financial Report</h3>
-                <p>Select an academic year and term to view the financial performance.</p>
-            </div>
-            <span>📈</span>
-        </div>
-
-        <!-- REPORT FILTERS -->
-        <div class="term-financial-filters">
-
-            <div>
-                <label for="termReportAcademicYear">
-                    Academic Year
-                </label>
-
-                <select id="termReportAcademicYear">
-                    <option value="">Loading academic years...</option>
-                </select>
-            </div>
-
-            <div>
-                <label for="termReportTerm">
-                    Academic Term
-                </label>
-
-                <select id="termReportTerm">
-                    <option value="">Select term</option>
-                    <option value="Term 1">Term 1</option>
-                    <option value="Term 2">Term 2</option>
-                    <option value="Term 3">Term 3</option>
-                </select>
-            </div>
-
-        </div>
-
-        <div class="term-financial-actions">
-
-            <button type="button" id="generateTermFinancialReport">
-                📊 Generate Financial Report
+            <button type="button" class="fee-category-back">
+                ← Back to Fee Management
             </button>
 
-           <button
-    type="button"
-    id="printTermFinancialReport"
-    onclick="printTermFinancialReport()"
-    style="display: none;"
->
-    🖨️ Print / Save as PDF
-</button>
-        </div>
 
-        <p id="termFinancialReportStatus">
-            Select an academic year and term to begin.
-        </p>
+            <!-- FINANCIAL AUDIT TRAIL -->
 
-        <!-- GENERATED REPORT -->
-        <div id="termFinancialReportOutput" style="display: none;">
+            <section class="fee-audit-section">
 
-            <div class="term-report-title">
-                <h3>THREE RIVERS ACADEMY</h3>
-                <h4 id="termReportHeading">Financial Summary</h4>
-                <p id="termReportGeneratedDate"></p>
-            </div>
+                <div class="fee-audit-header">
+                    <div>
+                        <span class="fee-audit-eyebrow">FINANCIAL CONTROL</span>
+                        <h2>Financial Audit Trail</h2>
+                        <p>Track changes and activities across fee records.</p>
+                    </div>
 
-            <!-- SUMMARY CARDS -->
-            <div class="term-report-summary-grid">
-
-                <div class="term-report-stat charged">
-                    <span>Total Charged</span>
-                    <strong id="termReportTotalCharged">KSh 0</strong>
+                    <button type="button" id="refreshFeeAuditLogs"
+                        class="fee-audit-refresh">
+                        ↻ Refresh Logs
+                    </button>
                 </div>
 
-                <div class="term-report-stat collected">
-                    <span>Total Collected</span>
-                    <strong id="termReportTotalCollected">KSh 0</strong>
-                </div>
 
-                <div class="term-report-stat outstanding">
-                    <span>Outstanding Balance</span>
-                    <strong id="termReportOutstanding">KSh 0</strong>
-                </div>
+                <!-- FILTERS -->
 
-                <div class="term-report-stat students">
-                    <span>Students Billed</span>
-                    <strong id="termReportStudents">0</strong>
-                </div>
-
-            </div>
-
-            <!-- PAYMENT PERFORMANCE -->
-            <div class="term-report-performance">
-
-                <h3>Payment Performance</h3>
-
-                <div class="term-report-performance-grid">
+                <div class="fee-audit-filters">
 
                     <div>
-                        <span>Fully Paid</span>
-                        <strong id="termReportPaid">0</strong>
+                        <label for="feeAuditSearch">Search Student</label>
+                        <input type="text" id="feeAuditSearch"
+                            placeholder="Student name or admission number...">
                     </div>
 
                     <div>
-                        <span>Partially Paid</span>
-                        <strong id="termReportPartial">0</strong>
+                        <label for="feeAuditAction">Action</label>
+                        <select id="feeAuditAction">
+                            <option value="all">All Actions</option>
+                            <option value="INSERT">Created</option>
+                            <option value="UPDATE">Updated</option>
+                            <option value="DELETE">Deleted</option>
+                        </select>
                     </div>
 
                     <div>
-                        <span>Unpaid</span>
-                        <strong id="termReportUnpaid">0</strong>
+                        <label for="feeAuditEntity">Record Type</label>
+                        <select id="feeAuditEntity">
+                            <option value="all">All Records</option>
+                            <option value="fee_statements">Fee Statements</option>
+                            <option value="fee_statement_items">Fee Charges</option>
+                            <option value="fee_payments">Payments</option>
+                        </select>
+                    </div>
+
+                    <div>
+                        <label for="feeAuditDate">From Date</label>
+                        <input type="date" id="feeAuditDate">
                     </div>
 
                 </div>
 
-            </div>
 
-            <!-- CLASS BREAKDOWN -->
-            <div class="term-report-class-breakdown">
+                <!-- AUDIT TABLE -->
 
-                <h3>Class Financial Breakdown</h3>
+                <div class="fee-audit-table-wrapper">
 
-                <div class="term-report-table-wrapper">
-
-                    <table class="term-report-table">
+                    <table class="fee-audit-table">
 
                         <thead>
                             <tr>
-                                <th>Class</th>
-                                <th>Students</th>
-                                <th>Fully Paid</th>
-                                <th>Partially Paid</th>
-                                <th>Unpaid</th>
-                                <th>Total Charged</th>
-                                <th>Collected</th>
-                                <th>Outstanding</th>
+                                <th>Date & Time</th>
+                                <th>Student</th>
+                                <th>Record</th>
+                                <th>Action</th>
+                                <th>Performed By</th>
+                                <th>Details</th>
                             </tr>
                         </thead>
 
-                        <tbody id="termReportClassBody">
+                        <tbody id="feeAuditLogsBody">
                             <tr>
-                                <td colspan="8">
-                                    Generate a report to view class details.
+                                <td colspan="6">
+                                    Audit records will appear here.
                                 </td>
                             </tr>
                         </tbody>
@@ -788,13 +492,380 @@
 
                 </div>
 
-            </div>
+                <div id="feeAuditLogsCount" class="fee-audit-count">
+                    0 audit records
+                </div>
+
+            </section>
 
         </div>
 
-    </div>
 
-</section>
+        <!-- ======================================
+             CATEGORY 3: FINANCIAL REPORTING
+        ======================================= -->
+
+        <div class="fee-category-view"
+            data-fee-view="reporting"
+            style="display: none;">
+
+            <button type="button" class="fee-category-back">
+                ← Back to Fee Management
+            </button>
+
+
+            <!-- FINANCIAL REPORTS & EXPORTS -->
+
+            <section class="fee-export-section">
+
+                <div class="fee-export-header">
+                    <div>
+                        <span>FINANCIAL REPORTING</span>
+                        <h2>Payment Reports & Exports</h2>
+                        <p>View and download recorded school fee payments.</p>
+                    </div>
+                </div>
+
+                <div class="fee-export-card">
+
+                    <div class="fee-export-icon">📊</div>
+
+                    <div class="fee-export-info">
+                        <h3>Payment Records Export</h3>
+                        <p>
+                            Download payment records with student details,
+                            payment dates, amounts and payment references.
+                        </p>
+                    </div>
+
+                    <div class="fee-export-controls">
+
+                        <div>
+                            <label for="feeExportStartDate">From Date</label>
+                            <input type="date" id="feeExportStartDate">
+                        </div>
+
+                        <div>
+                            <label for="feeExportEndDate">To Date</label>
+                            <input type="date" id="feeExportEndDate">
+                        </div>
+
+                    </div>
+
+                    <button type="button" id="exportFeePaymentsButton">
+                        ↓ Export Payment Records (CSV)
+                    </button>
+
+                    <p id="feeExportStatus">
+                        Select a date range or leave dates empty to export all records.
+                    </p>
+
+                </div>
+
+            </section>
+
+        </div>
+
+
+        <!-- ======================================
+             CATEGORY 4: CLASS FEE REPORTS
+        ======================================= -->
+
+        <div class="fee-category-view"
+            data-fee-view="classes"
+            style="display: none;">
+
+            <button type="button" class="fee-category-back">
+                ← Back to Fee Management
+            </button>
+
+
+            <!-- CLASS FEE REPORTS -->
+
+            <section class="fee-class-report-section">
+
+                <div class="fee-class-report-header">
+                    <div>
+                        <span>FINANCIAL ANALYTICS</span>
+                        <h2>Class Fee Reports</h2>
+                        <p>Compare fee collection and outstanding balances across classes.</p>
+                    </div>
+                </div>
+
+                <div class="fee-class-report-card">
+
+                    <div class="fee-class-report-top">
+                        <div>
+                            <h3>Class Financial Overview</h3>
+                            <p>Payment performance by class.</p>
+                        </div>
+
+                        <button type="button" id="refreshClassFeeReport">
+                            ↻ Refresh Report
+                        </button>
+                    </div>
+
+                    <div class="fee-class-report-summary">
+
+                        <div>
+                            <span>Total Classes</span>
+                            <strong id="classFeeTotalClasses">0</strong>
+                        </div>
+
+                        <div>
+                            <span>Total Students</span>
+                            <strong id="classFeeTotalStudents">0</strong>
+                        </div>
+
+                        <div>
+                            <span>Total Collected</span>
+                            <strong id="classFeeTotalCollected">KSh 0</strong>
+                        </div>
+
+                        <div>
+                            <span>Total Outstanding</span>
+                            <strong id="classFeeTotalOutstanding">KSh 0</strong>
+                        </div>
+
+                    </div>
+
+                    <div class="fee-class-report-table-wrapper">
+
+                        <table class="fee-class-report-table">
+
+                            <thead>
+                                <tr>
+                                    <th>Class</th>
+                                    <th>Students</th>
+                                    <th>Fully Paid</th>
+                                    <th>Partially Paid</th>
+                                    <th>Unpaid</th>
+                                    <th>Total Charged</th>
+                                    <th>Collected</th>
+                                    <th>Outstanding</th>
+                                </tr>
+                            </thead>
+
+                            <tbody id="classFeeReportBody">
+                                <tr>
+                                    <td colspan="8">Class reports will appear here.</td>
+                                </tr>
+                            </tbody>
+
+                        </table>
+
+                    </div>
+
+                    <p id="classFeeReportStatus">
+                        Loading class financial information...
+                    </p>
+
+                </div>
+
+            </section>
+
+        </div>
+
+
+        <!-- ======================================
+             CATEGORY 5: TERMLY FINANCIAL SUMMARIES
+        ======================================= -->
+
+        <div class="fee-category-view"
+            data-fee-view="terms"
+            style="display: none;">
+
+            <button type="button" class="fee-category-back">
+                ← Back to Fee Management
+            </button>
+
+
+            <!-- TERMLY FINANCIAL SUMMARIES -->
+
+            <section class="term-financial-section">
+
+                <div class="term-financial-header">
+                    <div>
+                        <span>FINANCIAL PERFORMANCE</span>
+                        <h2>Termly Financial Summaries</h2>
+                        <p>Generate detailed financial reports for each academic term.</p>
+                    </div>
+                </div>
+
+                <div class="term-financial-card">
+
+                    <div class="term-financial-card-heading">
+                        <div>
+                            <h3>Generate Financial Report</h3>
+                            <p>Select an academic year and term to view the financial performance.</p>
+                        </div>
+                        <span>📈</span>
+                    </div>
+
+
+                    <!-- REPORT FILTERS -->
+
+                    <div class="term-financial-filters">
+
+                        <div>
+                            <label for="termReportAcademicYear">
+                                Academic Year
+                            </label>
+
+                            <select id="termReportAcademicYear">
+                                <option value="">Loading academic years...</option>
+                            </select>
+                        </div>
+
+                        <div>
+                            <label for="termReportTerm">
+                                Academic Term
+                            </label>
+
+                            <select id="termReportTerm">
+                                <option value="">Select term</option>
+                                <option value="Term 1">Term 1</option>
+                                <option value="Term 2">Term 2</option>
+                                <option value="Term 3">Term 3</option>
+                            </select>
+                        </div>
+
+                    </div>
+
+
+                    <div class="term-financial-actions">
+
+                        <button type="button" id="generateTermFinancialReport">
+                            📊 Generate Financial Report
+                        </button>
+
+                        <button
+                            type="button"
+                            id="printTermFinancialReport"
+                            onclick="printTermFinancialReport()"
+                            style="display: none;"
+                        >
+                            🖨️ Print / Save as PDF
+                        </button>
+
+                    </div>
+
+                    <p id="termFinancialReportStatus">
+                        Select an academic year and term to begin.
+                    </p>
+
+
+                    <!-- GENERATED REPORT -->
+
+                    <div id="termFinancialReportOutput" style="display: none;">
+
+                        <div class="term-report-title">
+                            <h3>THREE RIVERS ACADEMY</h3>
+                            <h4 id="termReportHeading">Financial Summary</h4>
+                            <p id="termReportGeneratedDate"></p>
+                        </div>
+
+
+                        <!-- SUMMARY CARDS -->
+
+                        <div class="term-report-summary-grid">
+
+                            <div class="term-report-stat charged">
+                                <span>Total Charged</span>
+                                <strong id="termReportTotalCharged">KSh 0</strong>
+                            </div>
+
+                            <div class="term-report-stat collected">
+                                <span>Total Collected</span>
+                                <strong id="termReportTotalCollected">KSh 0</strong>
+                            </div>
+
+                            <div class="term-report-stat outstanding">
+                                <span>Outstanding Balance</span>
+                                <strong id="termReportOutstanding">KSh 0</strong>
+                            </div>
+
+                            <div class="term-report-stat students">
+                                <span>Students Billed</span>
+                                <strong id="termReportStudents">0</strong>
+                            </div>
+
+                        </div>
+
+
+                        <!-- PAYMENT PERFORMANCE -->
+
+                        <div class="term-report-performance">
+
+                            <h3>Payment Performance</h3>
+
+                            <div class="term-report-performance-grid">
+
+                                <div>
+                                    <span>Fully Paid</span>
+                                    <strong id="termReportPaid">0</strong>
+                                </div>
+
+                                <div>
+                                    <span>Partially Paid</span>
+                                    <strong id="termReportPartial">0</strong>
+                                </div>
+
+                                <div>
+                                    <span>Unpaid</span>
+                                    <strong id="termReportUnpaid">0</strong>
+                                </div>
+
+                            </div>
+
+                        </div>
+
+
+                        <!-- CLASS BREAKDOWN -->
+
+                        <div class="term-report-class-breakdown">
+
+                            <h3>Class Financial Breakdown</h3>
+
+                            <div class="term-report-table-wrapper">
+
+                                <table class="term-report-table">
+
+                                    <thead>
+                                        <tr>
+                                            <th>Class</th>
+                                            <th>Students</th>
+                                            <th>Fully Paid</th>
+                                            <th>Partially Paid</th>
+                                            <th>Unpaid</th>
+                                            <th>Total Charged</th>
+                                            <th>Collected</th>
+                                            <th>Outstanding</th>
+                                        </tr>
+                                    </thead>
+
+                                    <tbody id="termReportClassBody">
+                                        <tr>
+                                            <td colspan="8">
+                                                Generate a report to view class details.
+                                            </td>
+                                        </tr>
+                                    </tbody>
+
+                                </table>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </section>
+
+        </div>
+
 
         <!-- ======================================
              CREATE FEE STATEMENT MODAL
@@ -809,20 +880,21 @@
             <div class="fee-modal-content">
 
                 <!-- MODAL HEADER -->
+
                 <div class="fee-modal-header">
 
                     <div>
                         <h2>Create Fee Statement</h2>
 
                         <p>
-    Add charges for the selected student.
-</p>
+                            Add charges for the selected student.
+                        </p>
 
-<div class="fee-modal-student-chip">
-    <span>Creating statement for</span>
-    <strong id="feeModalStudentName">Selected Student</strong>
-</div>
-                        
+                        <div class="fee-modal-student-chip">
+                            <span>Creating statement for</span>
+                            <strong id="feeModalStudentName">Selected Student</strong>
+                        </div>
+
                     </div>
 
                     <button
@@ -837,9 +909,11 @@
 
 
                 <!-- FORM -->
+
                 <form id="feeStatementForm">
 
                     <!-- ACADEMIC DETAILS -->
+
                     <div class="fee-form-grid">
 
                         <div class="form-group">
@@ -922,6 +996,7 @@
 
 
                     <!-- FEE CHARGES -->
+
                     <div class="fee-items-heading">
 
                         <div>
@@ -943,6 +1018,7 @@
 
 
                     <!-- DYNAMIC FEE ITEMS -->
+
                     <div id="feeItemsContainer">
 
                         <div class="fee-item-row">
@@ -976,6 +1052,7 @@
 
 
                     <!-- NOTES -->
+
                     <div class="fee-form-group">
 
                         <label for="feeStatementNotes">
@@ -989,42 +1066,45 @@
                         ></textarea>
 
                     </div>
-                  
-<!-- FEE STATEMENT FINANCIAL SUMMARY -->
-<div class="fee-preview-card">
 
-    <div class="fee-preview-heading">
-        <div>
-            <h3>Statement Summary</h3>
-            <p>Review the amounts before saving.</p>
-        </div>
-        <span>💰</span>
-    </div>
 
-    <div class="fee-preview-row">
-        <span>Previous Balance</span>
-        <strong id="feePreviewPreviousBalance">KSh 0.00</strong>
-    </div>
+                    <!-- FEE STATEMENT FINANCIAL SUMMARY -->
 
-    <div class="fee-preview-row">
-        <span>New Charges</span>
-        <strong id="feePreviewNewCharges">KSh 0.00</strong>
-    </div>
+                    <div class="fee-preview-card">
 
-    <div class="fee-preview-divider"></div>
+                        <div class="fee-preview-heading">
+                            <div>
+                                <h3>Statement Summary</h3>
+                                <p>Review the amounts before saving.</p>
+                            </div>
+                            <span>💰</span>
+                        </div>
 
-    <div class="fee-preview-total">
-        <div>
-            <span>Total Amount Payable</span>
-            <small>Previous balance + new charges</small>
-        </div>
-        <strong id="feePreviewTotalPayable">KSh 0.00</strong>
-    </div>
+                        <div class="fee-preview-row">
+                            <span>Previous Balance</span>
+                            <strong id="feePreviewPreviousBalance">KSh 0.00</strong>
+                        </div>
 
-</div>
+                        <div class="fee-preview-row">
+                            <span>New Charges</span>
+                            <strong id="feePreviewNewCharges">KSh 0.00</strong>
+                        </div>
+
+                        <div class="fee-preview-divider"></div>
+
+                        <div class="fee-preview-total">
+                            <div>
+                                <span>Total Amount Payable</span>
+                                <small>Previous balance + new charges</small>
+                            </div>
+                            <strong id="feePreviewTotalPayable">KSh 0.00</strong>
+                        </div>
+
+                    </div>
 
 
                     <!-- FORM ACTIONS -->
+
                     <div class="fee-modal-actions">
 
                         <button
@@ -1049,110 +1129,111 @@
 
         </div>
 
-        
-<!-- ==========================================
-     RECORD FEE PAYMENT MODAL
-========================================== -->
 
-<div id="feePaymentModal" class="fee-modal" style="display:none;">
+        <!-- ==========================================
+             RECORD FEE PAYMENT MODAL
+        ========================================== -->
 
-    <div class="fee-modal-content">
+        <div id="feePaymentModal" class="fee-modal" style="display:none;">
 
-        <div class="fee-modal-header">
-            <div>
-                <h2>Record Payment</h2>
-                <p>Record a payment for this student's fee statement.</p>
+            <div class="fee-modal-content">
+
+                <div class="fee-modal-header">
+                    <div>
+                        <h2>Record Payment</h2>
+                        <p>Record a payment for this student's fee statement.</p>
+                    </div>
+
+                    <button type="button" id="closeFeePaymentModal">
+                        ×
+                    </button>
+                </div>
+
+                <form id="feePaymentForm">
+
+                    <div class="form-group">
+                        <label>Fee Statement</label>
+                        <select id="paymentStatementSelect" required>
+                            <option value="">Select fee statement</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Amount Paid (KSh)</label>
+                        <input
+                            type="number"
+                            id="paymentAmount"
+                            min="0.01"
+                            step="0.01"
+                            placeholder="Enter amount paid"
+                            required
+                        >
+                    </div>
+
+                    <div class="form-group">
+                        <label>Payment Date</label>
+                        <input
+                            type="date"
+                            id="paymentDate"
+                            required
+                        >
+                    </div>
+
+                    <div class="form-group">
+                        <label>Payment Method</label>
+                        <select id="paymentMethod" required>
+                            <option value="">Select payment method</option>
+                            <option value="M-Pesa">M-Pesa</option>
+                            <option value="Bank Transfer">Bank Transfer</option>
+                            <option value="Cash">Cash</option>
+                            <option value="Cheque">Cheque</option>
+                            <option value="Other">Other</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Reference Number</label>
+                        <input
+                            type="text"
+                            id="paymentReference"
+                            placeholder="e.g. M-Pesa transaction code"
+                        >
+                    </div>
+
+                    <div class="form-group">
+                        <label>Notes (Optional)</label>
+                        <textarea
+                            id="paymentNotes"
+                            rows="3"
+                            placeholder="Additional payment information..."
+                        ></textarea>
+                    </div>
+
+                    <div class="fee-modal-actions">
+
+                        <button
+                            type="button"
+                            id="cancelFeePayment"
+                            class="secondary-button"
+                        >
+                            Cancel
+                        </button>
+
+                        <button
+                            type="submit"
+                            id="saveFeePayment"
+                            class="primary-button"
+                        >
+                            Save Payment
+                        </button>
+
+                    </div>
+
+                </form>
+
             </div>
 
-            <button type="button" id="closeFeePaymentModal">
-                ×
-            </button>
         </div>
-
-        <form id="feePaymentForm">
-
-            <div class="form-group">
-                <label>Fee Statement</label>
-                <select id="paymentStatementSelect" required>
-                    <option value="">Select fee statement</option>
-                </select>
-            </div>
-
-            <div class="form-group">
-                <label>Amount Paid (KSh)</label>
-                <input
-                    type="number"
-                    id="paymentAmount"
-                    min="0.01"
-                    step="0.01"
-                    placeholder="Enter amount paid"
-                    required
-                >
-            </div>
-
-            <div class="form-group">
-                <label>Payment Date</label>
-                <input
-                    type="date"
-                    id="paymentDate"
-                    required
-                >
-            </div>
-
-            <div class="form-group">
-                <label>Payment Method</label>
-                <select id="paymentMethod" required>
-                    <option value="">Select payment method</option>
-                    <option value="M-Pesa">M-Pesa</option>
-                    <option value="Bank Transfer">Bank Transfer</option>
-                    <option value="Cash">Cash</option>
-                    <option value="Cheque">Cheque</option>
-                    <option value="Other">Other</option>
-                </select>
-            </div>
-
-            <div class="form-group">
-                <label>Reference Number</label>
-                <input
-                    type="text"
-                    id="paymentReference"
-                    placeholder="e.g. M-Pesa transaction code"
-                >
-            </div>
-
-            <div class="form-group">
-                <label>Notes (Optional)</label>
-                <textarea
-                    id="paymentNotes"
-                    rows="3"
-                    placeholder="Additional payment information..."
-                ></textarea>
-            </div>
-
-            <div class="fee-modal-actions">
-                <button
-                    type="button"
-                    id="cancelFeePayment"
-                    class="secondary-button"
-                >
-                    Cancel
-                </button>
-
-                <button
-                    type="submit"
-                    id="saveFeePayment"
-                    class="primary-button"
-                >
-                    Save Payment
-                </button>
-            </div>
-
-        </form>
-
-    </div>
-
-</div>
-
 
     </main>
 
@@ -1160,6 +1241,7 @@
 
 
 <!-- SUPABASE -->
+
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
 <script src="js/main.js"></script>
