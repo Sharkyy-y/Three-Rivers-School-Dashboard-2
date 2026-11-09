@@ -20077,6 +20077,260 @@ function renderFeeAuditLogs() {
 document.getElementById("refreshFeeAuditLogs")
     ?.addEventListener("click", loadFeeAuditLogs);
 
+// ==========================================
+// FINANCIAL REPORTS - PAYMENT CSV EXPORT
+// ==========================================
+
+async function exportFeePaymentsCSV() {
+
+    const exportButton = document.getElementById(
+        "exportFeePaymentsButton"
+    );
+
+    const statusElement = document.getElementById(
+        "feeExportStatus"
+    );
+
+    const startDate = document.getElementById(
+        "feeExportStartDate"
+    )?.value;
+
+    const endDate = document.getElementById(
+        "feeExportEndDate"
+    )?.value;
+
+    if (startDate && endDate && startDate > endDate) {
+        alert("The start date cannot be after the end date.");
+        return;
+    }
+
+    exportButton.disabled = true;
+    exportButton.textContent = "Preparing Export...";
+
+    statusElement.textContent = "Loading payment records...";
+
+    try {
+
+        // LOAD ALL PAYMENT RECORDS IN PAGES
+        let payments = [];
+        let page = 0;
+        const pageSize = 1000;
+
+        while (true) {
+
+            let query = supabaseClient
+                .from("fee_payments")
+                .select(`
+                    id,
+                    statement_id,
+                    amount,
+                    payment_date,
+                    payment_method,
+                    reference_number,
+                    notes,
+                    recorded_by
+                `)
+                .order("payment_date", { ascending: false })
+                .range(page * pageSize, (page + 1) * pageSize - 1);
+
+            if (startDate) {
+                query = query.gte("payment_date", startDate);
+            }
+
+            if (endDate) {
+                query = query.lte("payment_date", endDate);
+            }
+
+            const { data, error } = await query;
+
+            if (error) throw error;
+
+            payments.push(...(data || []));
+
+            if (!data || data.length < pageSize) break;
+
+            page++;
+        }
+
+        if (payments.length === 0) {
+            statusElement.textContent =
+                "No payment records found for the selected dates.";
+
+            return;
+        }
+
+        // LOAD RELATED STATEMENTS
+        const statementIds = [
+            ...new Set(payments.map(payment => payment.statement_id))
+        ];
+
+        const { data: statements, error: statementError } =
+            await supabaseClient
+                .from("fee_statements")
+                .select("id, student_id, academic_year, term")
+                .in("id", statementIds);
+
+        if (statementError) throw statementError;
+
+        const statementMap = new Map(
+            (statements || []).map(statement => [
+                statement.id,
+                statement
+            ])
+        );
+
+        // LOAD STUDENTS
+        const studentIds = [
+            ...new Set((statements || []).map(statement => statement.student_id))
+        ];
+
+        const { data: students, error: studentError } =
+            await supabaseClient
+                .from("students")
+                .select("id, full_name, admission_number, class_name")
+                .in("id", studentIds);
+
+        if (studentError) throw studentError;
+
+        const studentMap = new Map(
+            (students || []).map(student => [
+                student.id,
+                student
+            ])
+        );
+
+        // LOAD ADMINISTRATORS WHO RECORDED PAYMENTS
+        const recorderIds = [
+            ...new Set(
+                payments
+                    .map(payment => payment.recorded_by)
+                    .filter(Boolean)
+            )
+        ];
+
+        let profiles = [];
+
+        if (recorderIds.length > 0) {
+
+            const { data, error } = await supabaseClient
+                .from("profiles")
+                .select("id, full_name")
+                .in("id", recorderIds);
+
+            if (error) throw error;
+
+            profiles = data || [];
+        }
+
+        const profileMap = new Map(
+            profiles.map(profile => [
+                profile.id,
+                profile.full_name
+            ])
+        );
+
+        // PREPARE CSV VALUES
+        const escapeCSV = value => {
+
+            let text = String(value ?? "");
+
+            // Prevent spreadsheet formula interpretation
+            if (/^[=+\-@]/.test(text)) {
+                text = "'" + text;
+            }
+
+            return '"' + text.replace(/"/g, '""') + '"';
+        };
+
+        const headers = [
+            "Student Name",
+            "Admission Number",
+            "Class",
+            "Academic Year",
+            "Term",
+            "Payment Date",
+            "Amount (KSh)",
+            "Payment Method",
+            "Reference Number",
+            "Notes",
+            "Recorded By"
+        ];
+
+        const rows = payments.map(payment => {
+
+            const statement = statementMap.get(payment.statement_id);
+            const student = statement
+                ? studentMap.get(statement.student_id)
+                : null;
+
+            return [
+                student?.full_name || "Unknown Student",
+                student?.admission_number || "",
+                student?.class_name || "",
+                statement?.academic_year || "",
+                statement?.term || "",
+                payment.payment_date || "",
+                Number(payment.amount || 0).toFixed(2),
+                payment.payment_method || "",
+                payment.reference_number || "",
+                payment.notes || "",
+                profileMap.get(payment.recorded_by) || "Unavailable"
+            ];
+        });
+
+        const csvContent = [
+            headers,
+            ...rows
+        ].map(row => row.map(escapeCSV).join(",")).join("\r\n");
+
+        // DOWNLOAD CSV
+        const blob = new Blob(
+            ["\uFEFF" + csvContent],
+            { type: "text/csv;charset=utf-8;" }
+        );
+
+        const url = URL.createObjectURL(blob);
+
+        const downloadLink = document.createElement("a");
+
+        downloadLink.href = url;
+        downloadLink.download =
+            "Three_Rivers_Payment_Records_" +
+            new Date().toISOString().split("T")[0] +
+            ".csv";
+
+        document.body.appendChild(downloadLink);
+        downloadLink.click();
+        downloadLink.remove();
+
+        URL.revokeObjectURL(url);
+
+        statusElement.textContent =
+            `Successfully exported ${payments.length} payment records.`;
+
+    } catch (error) {
+
+        console.error("PAYMENT EXPORT ERROR:", error);
+
+        statusElement.textContent =
+            "Export failed: " + error.message;
+
+        alert("Unable to export payment records: " + error.message);
+
+    } finally {
+
+        exportButton.disabled = false;
+        exportButton.textContent = "↓ Export Payment Records (CSV)";
+
+    }
+}
+
+
+// CONNECT EXPORT BUTTON
+
+document.getElementById("exportFeePaymentsButton")
+    ?.addEventListener("click", exportFeePaymentsCSV);
+
 
 // ==========================================
 // FEE MANAGEMENT PAGE STARTUP
