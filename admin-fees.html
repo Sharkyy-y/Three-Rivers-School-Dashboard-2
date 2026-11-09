@@ -530,6 +530,177 @@
 </section>
 
         <!-- ======================================
+     TERMLY FINANCIAL SUMMARIES
+======================================= -->
+
+<section class="term-financial-section">
+
+    <div class="term-financial-header">
+        <div>
+            <span>FINANCIAL PERFORMANCE</span>
+            <h2>Termly Financial Summaries</h2>
+            <p>Generate detailed financial reports for each academic term.</p>
+        </div>
+    </div>
+
+    <div class="term-financial-card">
+
+        <div class="term-financial-card-heading">
+            <div>
+                <h3>Generate Financial Report</h3>
+                <p>Select an academic year and term to view the financial performance.</p>
+            </div>
+            <span>📈</span>
+        </div>
+
+        <!-- REPORT FILTERS -->
+        <div class="term-financial-filters">
+
+            <div>
+                <label for="termReportAcademicYear">
+                    Academic Year
+                </label>
+
+                <select id="termReportAcademicYear">
+                    <option value="">Loading academic years...</option>
+                </select>
+            </div>
+
+            <div>
+                <label for="termReportTerm">
+                    Academic Term
+                </label>
+
+                <select id="termReportTerm">
+                    <option value="">Select term</option>
+                    <option value="Term 1">Term 1</option>
+                    <option value="Term 2">Term 2</option>
+                    <option value="Term 3">Term 3</option>
+                </select>
+            </div>
+
+        </div>
+
+        <div class="term-financial-actions">
+
+            <button type="button" id="generateTermFinancialReport">
+                📊 Generate Financial Report
+            </button>
+
+            <button type="button" id="printTermFinancialReport"
+                style="display: none;">
+                🖨️ Print / Save as PDF
+            </button>
+
+        </div>
+
+        <p id="termFinancialReportStatus">
+            Select an academic year and term to begin.
+        </p>
+
+        <!-- GENERATED REPORT -->
+        <div id="termFinancialReportOutput" style="display: none;">
+
+            <div class="term-report-title">
+                <h3>THREE RIVERS ACADEMY</h3>
+                <h4 id="termReportHeading">Financial Summary</h4>
+                <p id="termReportGeneratedDate"></p>
+            </div>
+
+            <!-- SUMMARY CARDS -->
+            <div class="term-report-summary-grid">
+
+                <div class="term-report-stat charged">
+                    <span>Total Charged</span>
+                    <strong id="termReportTotalCharged">KSh 0</strong>
+                </div>
+
+                <div class="term-report-stat collected">
+                    <span>Total Collected</span>
+                    <strong id="termReportTotalCollected">KSh 0</strong>
+                </div>
+
+                <div class="term-report-stat outstanding">
+                    <span>Outstanding Balance</span>
+                    <strong id="termReportOutstanding">KSh 0</strong>
+                </div>
+
+                <div class="term-report-stat students">
+                    <span>Students Billed</span>
+                    <strong id="termReportStudents">0</strong>
+                </div>
+
+            </div>
+
+            <!-- PAYMENT PERFORMANCE -->
+            <div class="term-report-performance">
+
+                <h3>Payment Performance</h3>
+
+                <div class="term-report-performance-grid">
+
+                    <div>
+                        <span>Fully Paid</span>
+                        <strong id="termReportPaid">0</strong>
+                    </div>
+
+                    <div>
+                        <span>Partially Paid</span>
+                        <strong id="termReportPartial">0</strong>
+                    </div>
+
+                    <div>
+                        <span>Unpaid</span>
+                        <strong id="termReportUnpaid">0</strong>
+                    </div>
+
+                </div>
+
+            </div>
+
+            <!-- CLASS BREAKDOWN -->
+            <div class="term-report-class-breakdown">
+
+                <h3>Class Financial Breakdown</h3>
+
+                <div class="term-report-table-wrapper">
+
+                    <table class="term-report-table">
+
+                        <thead>
+                            <tr>
+                                <th>Class</th>
+                                <th>Students</th>
+                                <th>Fully Paid</th>
+                                <th>Partially Paid</th>
+                                <th>Unpaid</th>
+                                <th>Total Charged</th>
+                                <th>Collected</th>
+                                <th>Outstanding</th>
+                            </tr>
+                        </thead>
+
+                        <tbody id="termReportClassBody">
+                            <tr>
+                                <td colspan="8">
+                                    Generate a report to view class details.
+                                </td>
+                            </tr>
+                        </tbody>
+
+                    </table>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</section>
+
+        <!-- ======================================
              CREATE FEE STATEMENT MODAL
         ======================================= -->
 
