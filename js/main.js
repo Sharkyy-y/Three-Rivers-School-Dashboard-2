@@ -21018,6 +21018,205 @@ document.getElementById("generateTermFinancialReport")
     ?.addEventListener("click", generateTermFinancialReport);
 
 // ==========================================
+// PRINT TERMLY FINANCIAL REPORT
+// ==========================================
+
+document.getElementById("printTermFinancialReport")
+    ?.addEventListener("click", function () {
+
+        const report = document.getElementById(
+            "termFinancialReportOutput"
+        );
+
+        if (!report || report.style.display === "none") {
+            alert("Please generate a financial report first.");
+            return;
+        }
+
+        const printWindow = window.open("", "_blank");
+
+        if (!printWindow) {
+            alert("Please allow pop-ups to print the report.");
+            return;
+        }
+
+        const reportContent = report.innerHTML;
+
+        printWindow.document.write(`
+            <!DOCTYPE html>
+            <html>
+            <head>
+                <title>Termly Financial Summary</title>
+
+                <meta charset="UTF-8">
+
+                <style>
+
+                    * {
+                        box-sizing: border-box;
+                    }
+
+                    body {
+                        font-family: Arial, sans-serif;
+                        color: #263b32;
+                        padding: 30px;
+                        background: white;
+                    }
+
+                    .term-report-title {
+                        text-align: center;
+                        background: #173f34;
+                        color: white;
+                        padding: 25px;
+                        border-radius: 10px;
+                        margin-bottom: 25px;
+                    }
+
+                    .term-report-title h3 {
+                        font-size: 22px;
+                        letter-spacing: 1.5px;
+                    }
+
+                    .term-report-title h4 {
+                        margin-top: 10px;
+                    }
+
+                    .term-report-title p {
+                        margin-top: 8px;
+                    }
+
+                    .term-report-summary-grid {
+                        display: grid;
+                        grid-template-columns: repeat(4, 1fr);
+                        gap: 12px;
+                        margin-bottom: 25px;
+                    }
+
+                    .term-report-stat {
+                        padding: 17px;
+                        border-radius: 10px;
+                        border: 1px solid #dce9e1;
+                    }
+
+                    .term-report-stat span,
+                    .term-report-stat strong {
+                        display: block;
+                        margin-bottom: 9px;
+                    }
+
+                    .term-report-stat strong {
+                        font-size: 16px;
+                    }
+
+                    .charged {
+                        background: #edf5ff;
+                    }
+
+                    .collected {
+                        background: #e9f8ef;
+                    }
+
+                    .outstanding {
+                        background: #fff3e7;
+                    }
+
+                    .students {
+                        background: #f2edff;
+                    }
+
+                    .term-report-performance {
+                        margin-bottom: 25px;
+                    }
+
+                    .term-report-performance-grid {
+                        display: grid;
+                        grid-template-columns: repeat(3, 1fr);
+                        gap: 12px;
+                    }
+
+                    .term-report-performance-grid > div {
+                        padding: 15px;
+                        border: 1px solid #ddd;
+                        border-radius: 8px;
+                    }
+
+                    .term-report-performance-grid span,
+                    .term-report-performance-grid strong {
+                        display: block;
+                        margin-bottom: 8px;
+                    }
+
+                    .term-report-table-wrapper {
+                        width: 100%;
+                    }
+
+                    .term-report-table {
+                        width: 100%;
+                        border-collapse: collapse;
+                        font-size: 9px;
+                    }
+
+                    .term-report-table th {
+                        background: #173f34;
+                        color: white;
+                        padding: 10px 6px;
+                        text-align: left;
+                    }
+
+                    .term-report-table td {
+                        padding: 9px 6px;
+                        border-bottom: 1px solid #ddd;
+                    }
+
+                    h3 {
+                        margin-bottom: 15px;
+                    }
+
+                    @page {
+                        size: A4 landscape;
+                        margin: 12mm;
+                    }
+
+                    @media print {
+                        body {
+                            padding: 0;
+                        }
+
+                        .term-report-title {
+                            print-color-adjust: exact;
+                            -webkit-print-color-adjust: exact;
+                        }
+
+                        .term-report-stat,
+                        .term-report-table th {
+                            print-color-adjust: exact;
+                            -webkit-print-color-adjust: exact;
+                        }
+                    }
+
+                </style>
+
+            </head>
+
+            <body>
+
+                ${reportContent}
+
+                <script>
+                    window.onload = function () {
+                        window.print();
+                    };
+                <\/script>
+
+            </body>
+            </html>
+        `);
+
+        printWindow.document.close();
+
+    });
+
+// ==========================================
 // FEE MANAGEMENT PAGE STARTUP
 // ==========================================
 
