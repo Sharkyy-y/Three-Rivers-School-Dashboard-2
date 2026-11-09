@@ -79,6 +79,62 @@
     </p>
 </div>
 
+            <!-- LIVE FINANCIAL SNAPSHOT -->
+
+<section class="fee-live-snapshot">
+
+    <div class="fee-live-snapshot-heading">
+        <div>
+            <span>LIVE FINANCIAL POSITION</span>
+            <h3>School Finances at a Glance</h3>
+            <p>A real-time overview of the school's fee collection position.</p>
+        </div>
+
+        <span class="fee-live-indicator">● LIVE OVERVIEW</span>
+    </div>
+
+    <div class="fee-live-snapshot-grid">
+
+        <div class="fee-live-card collected">
+            <span class="fee-live-card-icon">💰</span>
+            <div>
+                <small>TOTAL COLLECTED</small>
+                <h3 id="feeSnapshotCollected">Loading...</h3>
+                <p>Payments received</p>
+            </div>
+        </div>
+
+        <div class="fee-live-card outstanding">
+            <span class="fee-live-card-icon">📉</span>
+            <div>
+                <small>OUTSTANDING FEES</small>
+                <h3 id="feeSnapshotOutstanding">Loading...</h3>
+                <p>Balances remaining</p>
+            </div>
+        </div>
+
+        <div class="fee-live-card paid">
+            <span class="fee-live-card-icon">✓</span>
+            <div>
+                <small>FULLY PAID</small>
+                <h3 id="feeSnapshotPaid">Loading...</h3>
+                <p>Students fully settled</p>
+            </div>
+        </div>
+
+        <div class="fee-live-card pending">
+            <span class="fee-live-card-icon">⏳</span>
+            <div>
+                <small>PENDING BALANCES</small>
+                <h3 id="feeSnapshotPending">Loading...</h3>
+                <p>Students with balances</p>
+            </div>
+        </div>
+
+    </div>
+
+</section>
+
             <div class="fee-category-grid">
 
                 <button class="fee-category-card"
