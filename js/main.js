@@ -9556,7 +9556,30 @@ async function loadTeacherGrades() {
             }
         );
 
+        // REFRESH GRADEBOOK WHEN FILTERS CHANGE
+        [
+            "teacherFilterYear",
+            "teacherFilterTerm",
+            "teacherFilterExam"
+        ].forEach(filterId => {
 
+            const filter =
+                document.getElementById(filterId);
+
+            if (filter) {
+                filter.addEventListener("change", function () {
+
+                    const subjectId = subjectSelect.value;
+
+                    if (subjectId) {
+                        loadTeacherSubjectGrades(subjectId);
+                    }
+
+                });
+            }
+
+        });
+        
         console.log(
             "TEACHER GRADES READY:",
             teacher
