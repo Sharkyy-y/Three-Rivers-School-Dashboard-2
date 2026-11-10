@@ -9311,94 +9311,58 @@ if (
 // TEACHER GRADES
 // ==========================================
 
+
 async function loadTeacherGrades() {
 
     console.log("Loading teacher grades...");
 
     const subjectSelect =
-        document.getElementById(
-            "teacherGradeSubject"
-        );
+        document.getElementById("teacherGradeSubject");
 
     const gradesContainer =
-        document.getElementById(
-            "teacherGradesContainer"
-        );
+        document.getElementById("teacherGradesContainer");
 
     const statusElement =
-        document.getElementById(
-            "teacherGradeStatus"
-        );
+        document.getElementById("teacherGradeStatus");
 
-
-    if (
-        !subjectSelect ||
-        !gradesContainer
-    ) {
+    if (!subjectSelect || !gradesContainer) {
         return;
     }
 
-
     try {
 
-        // ==========================================
         // GET CURRENT USER
-        // ==========================================
 
         const {
-            data: {
-                user
-            },
+            data: { user },
             error: userError
-        } =
-            await supabaseClient.auth.getUser();
+        } = await supabaseClient.auth.getUser();
 
-
-        if (
-            userError ||
-            !user
-        ) {
+        if (userError || !user) {
 
             console.error(
                 "Teacher grades user error:",
                 userError
             );
 
-            window.location.href =
-                "login.html";
-
+            window.location.href = "login.html";
             return;
         }
 
 
-        // ==========================================
         // GET TEACHER PROFILE
-        // ==========================================
 
         const {
             data: teacher,
             error: teacherError
-        } =
-            await supabaseClient
-                .from("profiles")
-                .select(
-                    "id, full_name, role"
-                )
-                .eq(
-                    "id",
-                    user.id
-                )
-                .eq(
-                    "role",
-                    "teacher"
-                )
-                .single();
+        } = await supabaseClient
+            .from("profiles")
+            .select("id, full_name, role")
+            .eq("id", user.id)
+            .eq("role", "teacher")
+            .single();
 
-
-        if (
-            teacherError ||
-            !teacher
-        ) {
+        if (teacherError || !teacher) {
 
             console.error(
                 "Teacher profile error:",
@@ -9412,29 +9376,22 @@ async function loadTeacherGrades() {
         }
 
 
-        // ==========================================
         // GET TEACHER SUBJECTS
-        // ==========================================
 
         const {
             data: teacherSubjects,
             error: subjectsError
-        } =
-            await supabaseClient
-                .from("teacher_subjects")
-                .select(`
-                    subject_id,
-                    subjects (
-                        id,
-                        name,
-                        code
-                    )
-                `)
-                .eq(
-                    "teacher_id",
-                    teacher.id
-                );
-
+        } = await supabaseClient
+            .from("teacher_subjects")
+            .select(`
+                subject_id,
+                subjects (
+                    id,
+                    name,
+                    code
+                )
+            `)
+            .eq("teacher_id", teacher.id);
 
         if (subjectsError) {
 
@@ -9444,30 +9401,20 @@ async function loadTeacherGrades() {
             );
 
             subjectSelect.innerHTML =
-                `<option value="">
-                    Unable to load subjects
-                </option>`;
+                `<option value="">Unable to load subjects</option>`;
 
             return;
         }
 
-
-        const subjects =
-            teacherSubjects || [];
+        const subjects = teacherSubjects || [];
 
 
-        // ==========================================
         // NO SUBJECTS
-        // ==========================================
 
-        if (
-            subjects.length === 0
-        ) {
+        if (subjects.length === 0) {
 
             subjectSelect.innerHTML =
-                `<option value="">
-                    No subjects assigned
-                </option>`;
+                `<option value="">No subjects assigned</option>`;
 
             statusElement.textContent =
                 "No subjects have been assigned to you yet.";
@@ -9476,71 +9423,46 @@ async function loadTeacherGrades() {
         }
 
 
-        // ==========================================
         // POPULATE SUBJECT DROPDOWN
-        // ==========================================
 
         subjectSelect.innerHTML =
-            `<option value="">
-                Select a subject
-            </option>`;
+            `<option value="">Select a subject</option>`;
 
+        subjects.forEach(item => {
 
-        subjects.forEach(
-            item => {
+            const subject = item.subjects;
 
-                const subject =
-                    item.subjects;
-
-                if (!subject) {
-                    return;
-                }
-
-                const option =
-                    document.createElement(
-                        "option"
-                    );
-
-                option.value =
-                    subject.id;
-
-                option.textContent =
-                    subject.code
-                        ? `${subject.name} (${subject.code})`
-                        : subject.name;
-
-                subjectSelect.appendChild(
-                    option
-                );
-
+            if (!subject) {
+                return;
             }
-        );
+
+            const option = document.createElement("option");
+
+            option.value = subject.id;
+
+            option.textContent = subject.code
+                ? `${subject.name} (${subject.code})`
+                : subject.name;
+
+            subjectSelect.appendChild(option);
+
+        });
 
 
-        // ==========================================
         // SUBJECT CHANGE
-        // ==========================================
-
-             try {
 
         subjectSelect.addEventListener(
             "change",
             function () {
 
-                const subjectId =
-                    this.value;
+                const subjectId = this.value;
 
                 if (!subjectId) {
 
                     gradesContainer.innerHTML = `
                         <div class="teacher-grades-empty">
-
                             <h3>No subject selected</h3>
-
-                            <p>
-                                Select a subject above to view grades.
-                            </p>
-
+                            <p>Select a subject above to view grades.</p>
                         </div>
                     `;
 
@@ -9550,16 +9472,12 @@ async function loadTeacherGrades() {
                     return;
                 }
 
-
-                loadTeacherSubjectGrades(
-                    subjectId
-                );
+                loadTeacherSubjectGrades(subjectId);
 
             }
         );
 
-     
-    catch (error) {
+    } catch (error) {
 
         console.error(
             "Teacher grades error:",
