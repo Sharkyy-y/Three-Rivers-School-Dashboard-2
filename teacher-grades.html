@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -28,64 +29,39 @@
 
 <div class="dashboard-layout">
 
-    <!-- ==========================================
-         SIDEBAR
-    =========================================== -->
+    <!-- SIDEBAR -->
 
     <aside class="sidebar">
 
         <div class="sidebar-logo">
-
             <h2>Student Portal</h2>
-
             <p>Teacher Portal</p>
-
         </div>
-
 
         <nav class="sidebar-nav">
 
-            <a href="teacher-dashboard.html">
-                🏠 Dashboard
-            </a>
+            <a href="teacher-dashboard.html">🏠 Dashboard</a>
 
-            <a href="teacher-students.html">
-                👥 My Students
-            </a>
+            <a href="teacher-students.html">👥 My Students</a>
 
             <a
                 href="teacher-grades.html"
                 class="active"
-            >
-                📊 Grades
-            </a>
+            >📊 Grades</a>
 
-            <a href="teacher-conduct.html">
-                ⚠️ Conduct
-            </a>
+            <a href="teacher-conduct.html">⚠️ Conduct</a>
 
-            <a href="teacher-assignments.html">
-                📝 Assignments
-            </a>
+            <a href="teacher-assignments.html">📝 Assignments</a>
 
-            <a href="teacher-announcements.html">
-                📢 Announcements
-            </a>
+            <a href="teacher-announcements.html">📢 Announcements</a>
 
-            <a href="teacher-timetable.html">
-                🗓️ Timetable
-            </a>
+            <a href="teacher-timetable.html">🗓️ Timetable</a>
 
-            <a href="teacher-duty.html">
-                👨‍🏫 Teachers on Duty
-            </a>
+            <a href="teacher-duty.html">👨‍🏫 Teachers on Duty</a>
 
-            <a href="teacher-profile.html">
-                👤 My Profile
-            </a>
+            <a href="teacher-profile.html">👤 My Profile</a>
 
         </nav>
-
 
         <div class="sidebar-logout">
 
@@ -101,16 +77,11 @@
     </aside>
 
 
-    <!-- ==========================================
-         MAIN CONTENT
-    =========================================== -->
+    <!-- MAIN CONTENT -->
 
     <main class="admin-dashboard-page teacher-grades-page">
 
-
-        <!-- ======================================
-             PAGE HEADER
-        ======================================= -->
+        <!-- PAGE HEADER -->
 
         <section class="teacher-grades-hero">
 
@@ -120,9 +91,7 @@
                     ACADEMIC MANAGEMENT
                 </span>
 
-                <h1>
-                    Student Grades
-                </h1>
+                <h1>Student Grades</h1>
 
                 <p>
                     Review, update and monitor academic
@@ -138,9 +107,7 @@
         </section>
 
 
-        <!-- ======================================
-             SUBJECT SELECTION
-        ======================================= -->
+        <!-- SUBJECT SELECTION -->
 
         <section class="admin-dashboard-section teacher-grade-control">
 
@@ -152,9 +119,7 @@
                         SUBJECT
                     </span>
 
-                    <h2>
-                        Select Subject
-                    </h2>
+                    <h2>Select Subject</h2>
 
                     <p>
                         Choose one of your assigned subjects
@@ -165,7 +130,6 @@
 
             </div>
 
-
             <div class="teacher-subject-selector">
 
                 <div class="teacher-subject-icon">
@@ -174,9 +138,7 @@
 
                 <div class="teacher-subject-select-wrapper">
 
-                    <label
-                        for="teacherGradeSubject"
-                    >
+                    <label for="teacherGradeSubject">
                         Assigned Subject
                     </label>
 
@@ -198,9 +160,7 @@
         </section>
 
 
-        <!-- ======================================
-             PERFORMANCE OVERVIEW
-        ======================================= -->
+        <!-- PERFORMANCE OVERVIEW -->
 
         <section class="teacher-performance-overview">
 
@@ -211,19 +171,14 @@
                 </div>
 
                 <div>
-
-                    <span>
-                        Students Graded
-                    </span>
+                    <span>Students Graded</span>
 
                     <strong id="teacherStudentsGraded">
                         —
                     </strong>
-
                 </div>
 
             </div>
-
 
             <div class="teacher-performance-card">
 
@@ -232,19 +187,14 @@
                 </div>
 
                 <div>
-
-                    <span>
-                        Class Average
-                    </span>
+                    <span>Class Average</span>
 
                     <strong id="teacherClassAverage">
                         —
                     </strong>
-
                 </div>
 
             </div>
-
 
             <div class="teacher-performance-card">
 
@@ -253,19 +203,14 @@
                 </div>
 
                 <div>
-
-                    <span>
-                        Highest Score
-                    </span>
+                    <span>Highest Score</span>
 
                     <strong id="teacherHighestScore">
                         —
                     </strong>
-
                 </div>
 
             </div>
-
 
             <div class="teacher-performance-card">
 
@@ -274,186 +219,286 @@
                 </div>
 
                 <div>
-
-                    <span>
-                        Lowest Score
-                    </span>
+                    <span>Lowest Score</span>
 
                     <strong id="teacherLowestScore">
                         —
                     </strong>
-
                 </div>
 
             </div>
 
         </section>
 
-        
-<!-- ======================================
-     RECORD A NEW ASSESSMENT
-======================================= -->
 
-<section class="admin-dashboard-section teacher-assessment-entry">
+        <!-- RECORD A NEW ASSESSMENT -->
 
-    <div class="admin-section-header">
-        <div>
-            <span class="teacher-section-label">NEW ASSESSMENT</span>
-            <h2>Record Student Marks</h2>
-            <p>
-                Select a student from your enrolled class to record their academic results.
-            </p>
-        </div>
-    </div>
+        <section class="admin-dashboard-section teacher-assessment-entry">
 
-    <!-- STUDENT SELECTION -->
-    <div class="teacher-student-selection-area">
-        <div class="teacher-assessment-step">
-            <span>01</span>
-            <div>
-                <h3>Select a Student</h3>
-                <p>Choose the student whose marks you want to enter.</p>
-            </div>
-        </div>
+            <div class="admin-section-header">
 
-        <div
-            id="teacherAssessmentStudentList"
-            aria-live="polite"
-        >
-            <p>Select a subject above to load enrolled students.</p>
-        </div>
-    </div>
-
-    <!-- MARKS ENTRY: HIDDEN UNTIL A STUDENT IS SELECTED -->
-    <form id="teacherAssessmentForm" hidden>
-
-        <div class="teacher-selected-student-panel">
-            <div class="teacher-assessment-step">
-                <span>02</span>
                 <div>
-                    <h3>Enter Academic Results</h3>
-                    <p>Recording marks for the selected student.</p>
-                </div>
-            </div>
 
-            <div class="teacher-selected-student-info">
-                <div class="teacher-selected-student-avatar">👨‍🎓</div>
-                <div>
-                    <strong id="teacherSelectedStudentName">Student Name</strong>
-                    <p id="teacherSelectedStudentDetails">Admission number • Class</p>
-                </div>
-            </div>
+                    <span class="teacher-section-label">
+                        NEW ASSESSMENT
+                    </span>
 
-            <div class="teacher-assessment-details">
+                    <h2>Record Student Marks</h2>
 
-                <div class="teacher-assessment-field">
-                    <label for="teacherAcademicYear">Academic Year</label>
-                    <input
-                        type="number"
-                        id="teacherAcademicYear"
-                        min="2000"
-                        max="2100"
-                        value="2026"
-                        required
-                    >
-                </div>
+                    <p>
+                        Select a student from your enrolled class
+                        to record their academic results.
+                    </p>
 
-                <div class="teacher-assessment-field">
-                    <label for="teacherTerm">Academic Term</label>
-                    <select id="teacherTerm" required>
-                        <option value="">Select Term</option>
-                        <option value="1">1st Term</option>
-                        <option value="2">2nd Term</option>
-                        <option value="3">3rd Term</option>
-                    </select>
-                </div>
-
-                <div class="teacher-assessment-field">
-                    <label for="teacherExamType">Examination Type</label>
-                    <select id="teacherExamType" required>
-                        <option value="">Select Exam Type</option>
-                        <option value="Opener">Opener</option>
-                        <option value="Midterm">Midterm</option>
-                        <option value="Internal Test">Internal Test</option>
-                        <option value="End Term">End Term</option>
-                    </select>
-                </div>
-
-                <div class="teacher-assessment-field">
-                    <label for="teacherAssessmentName">Assessment Reference (Optional)</label>
-                    <input
-                        type="text"
-                        id="teacherAssessmentName"
-                        placeholder="e.g. Algebra Test 1"
-                        maxlength="100"
-                    >
-                </div>
-
-                <div class="teacher-assessment-field">
-                    <label for="teacherAssessmentMaxScore">Maximum Marks</label>
-                    <input
-                        type="number"
-                        id="teacherAssessmentMaxScore"
-                        min="0.01"
-                        step="any"
-                        value="100"
-                        required
-                    >
                 </div>
 
             </div>
 
-            <div class="teacher-single-student-mark">
-                <label for="teacherSelectedStudentScore">Student's Score</label>
-                <input
-                    type="number"
-                    id="teacherSelectedStudentScore"
-                    min="0"
-                    step="any"
-                    placeholder="Enter marks"
-                    required
+
+            <!-- STUDENT SELECTION -->
+
+            <div class="teacher-student-selection-area">
+
+                <div class="teacher-assessment-step">
+
+                    <span>01</span>
+
+                    <div>
+                        <h3>Select a Student</h3>
+
+                        <p>
+                            Choose the student whose marks you want to enter.
+                        </p>
+                    </div>
+
+                </div>
+
+                <div
+                    id="teacherAssessmentStudentList"
+                    aria-live="polite"
                 >
 
-                <label for="teacherSelectedStudentComment">Teacher's Comment (Optional)</label>
-                <textarea
-                    id="teacherSelectedStudentComment"
-                    rows="3"
-                    maxlength="500"
-                    placeholder="Add feedback about this student's performance..."
-                ></textarea>
+                    <p>
+                        Select a subject above to load enrolled students.
+                    </p>
+
+                </div>
+
             </div>
 
-            <div class="teacher-assessment-actions">
-                <button
-                    type="button"
-                    id="teacherCancelStudentSelection"
-                    class="btn btn-secondary"
-                >
-                    Choose Another Student
-                </button>
 
-                <button
-                    type="submit"
-                    id="teacherSaveAssessmentButton"
-                    class="btn btn-primary"
-                >
-                    Save Student Marks
-                </button>
-            </div>
+            <!-- INDIVIDUAL STUDENT MARKS FORM -->
 
-            <p
-                id="teacherAssessmentMessage"
-                role="status"
-                aria-live="polite"
-            ></p>
-        </div>
+            <form id="teacherAssessmentForm" hidden>
 
-    </form>
+                <div class="teacher-selected-student-panel">
 
-</section>
-        <!-- ======================================
-             GRADES
-        ======================================= -->
+                    <div class="teacher-assessment-step">
+
+                        <span>02</span>
+
+                        <div>
+                            <h3>Enter Academic Results</h3>
+
+                            <p>
+                                Recording marks for the selected student.
+                            </p>
+                        </div>
+
+                    </div>
+
+
+                    <div class="teacher-selected-student-info">
+
+                        <div class="teacher-selected-student-avatar">
+                            👨‍🎓
+                        </div>
+
+                        <div>
+
+                            <strong id="teacherSelectedStudentName">
+                                Student Name
+                            </strong>
+
+                            <p id="teacherSelectedStudentDetails">
+                                Admission number • Class
+                            </p>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="teacher-assessment-details">
+
+                        <div class="teacher-assessment-field">
+
+                            <label for="teacherAcademicYear">
+                                Academic Year
+                            </label>
+
+                            <input
+                                type="number"
+                                id="teacherAcademicYear"
+                                min="2000"
+                                max="2100"
+                                value="2026"
+                                required
+                            >
+
+                        </div>
+
+
+                        <div class="teacher-assessment-field">
+
+                            <label for="teacherTerm">
+                                Academic Term
+                            </label>
+
+                            <select
+                                id="teacherTerm"
+                                required
+                            >
+
+                                <option value="">
+                                    Select Term
+                                </option>
+
+                                <option value="1">1st Term</option>
+                                <option value="2">2nd Term</option>
+                                <option value="3">3rd Term</option>
+
+                            </select>
+
+                        </div>
+
+
+                        <div class="teacher-assessment-field">
+
+                            <label for="teacherExamType">
+                                Examination Type
+                            </label>
+
+                            <select
+                                id="teacherExamType"
+                                required
+                            >
+
+                                <option value="">
+                                    Select Exam Type
+                                </option>
+
+                                <option value="Opener">Opener</option>
+                                <option value="Midterm">Midterm</option>
+                                <option value="Internal Test">Internal Test</option>
+                                <option value="End Term">End Term</option>
+
+                            </select>
+
+                        </div>
+
+
+                        <div class="teacher-assessment-field">
+
+                            <label for="teacherAssessmentName">
+                                Assessment Reference (Optional)
+                            </label>
+
+                            <input
+                                type="text"
+                                id="teacherAssessmentName"
+                                placeholder="e.g. Algebra Test 1"
+                                maxlength="100"
+                            >
+
+                        </div>
+
+
+                        <div class="teacher-assessment-field">
+
+                            <label for="teacherAssessmentMaxScore">
+                                Maximum Marks
+                            </label>
+
+                            <input
+                                type="number"
+                                id="teacherAssessmentMaxScore"
+                                min="0.01"
+                                step="any"
+                                value="100"
+                                required
+                            >
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="teacher-single-student-mark">
+
+                        <label for="teacherSelectedStudentScore">
+                            Student's Score
+                        </label>
+
+                        <input
+                            type="number"
+                            id="teacherSelectedStudentScore"
+                            min="0"
+                            step="any"
+                            placeholder="Enter marks"
+                            required
+                        >
+
+
+                        <label for="teacherSelectedStudentComment">
+                            Teacher's Comment (Optional)
+                        </label>
+
+                        <textarea
+                            id="teacherSelectedStudentComment"
+                            rows="3"
+                            maxlength="500"
+                            placeholder="Add feedback about this student's performance..."
+                        ></textarea>
+
+                    </div>
+
+
+                    <div class="teacher-assessment-actions">
+
+                        <button
+                            type="button"
+                            id="teacherCancelStudentSelection"
+                            class="btn btn-secondary"
+                        >
+                            Choose Another Student
+                        </button>
+
+                        <button
+                            type="submit"
+                            id="teacherSaveAssessmentButton"
+                            class="btn btn-primary"
+                        >
+                            Save Student Marks
+                        </button>
+
+                    </div>
+
+
+                    <p
+                        id="teacherAssessmentMessage"
+                        role="status"
+                        aria-live="polite"
+                    ></p>
+
+                </div>
+
+            </form>
+
+        </section>
+
+
+        <!-- GRADEBOOK -->
 
         <section class="admin-dashboard-section teacher-gradebook-section">
 
@@ -465,9 +510,7 @@
                         GRADEBOOK
                     </span>
 
-                    <h2>
-                        Student Performance
-                    </h2>
+                    <h2>Student Performance</h2>
 
                     <p id="teacherGradeStatus">
                         Select a subject to view grades.
@@ -481,37 +524,6 @@
 
             </div>
 
-            
-<div class="teacher-grade-filters">
-    <div>
-        <label for="teacherFilterYear">Academic Year</label>
-        <select id="teacherFilterYear">
-            <option value="">All Years</option>
-        </select>
-    </div>
-
-    <div>
-        <label for="teacherFilterTerm">Academic Term</label>
-        <select id="teacherFilterTerm">
-            <option value="">All Terms</option>
-            <option value="1">Term 1</option>
-            <option value="2">Term 2</option>
-            <option value="3">Term 3</option>
-        </select>
-    </div>
-
-    <div>
-        <label for="teacherFilterExam">Examination Type</label>
-        <select id="teacherFilterExam">
-            <option value="">All Examinations</option>
-            <option value="Opener">Opener</option>
-            <option value="Midterm">Midterm</option>
-            <option value="Internal Test">Internal Test</option>
-            <option value="End Term">End Term</option>
-        </select>
-    </div>
-</div>
-
 
             <div
                 id="teacherGradesContainer"
@@ -524,9 +536,7 @@
                         📚
                     </div>
 
-                    <h3>
-                        No subject selected
-                    </h3>
+                    <h3>No subject selected</h3>
 
                     <p>
                         Select a subject above to view
@@ -539,23 +549,18 @@
 
         </section>
 
-
     </main>
 
 </div>
 
 
-<!-- ==========================================
-     SUPABASE
-=========================================== -->
+<!-- SUPABASE -->
 
 <script
     src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2">
 </script>
 
-
 <script src="js/main.js"></script>
 
 </body>
-
 </html>
