@@ -9600,55 +9600,102 @@ async function loadTeacherSubjectGrades(subjectId) {
 
     try {
 
-        // ==========================================
-        // GET GRADES
-        // ==========================================
+       // ==========================================
+// GET CURRENTLY ENROLLED STUDENTS
+// ==========================================
 
-        const {
-            data: grades,
-            error: gradesError
-        } = await supabaseClient
-            .from("grades")
-            .select(`
-                id,
-                student_id,
-                subject_id,
-                assessment,
-                score,
-                max_score,
-                comments,
-                created_at
-            `)
-            .eq("subject_id", subjectId)
-            .order("created_at", {
-                ascending: false
-            });
+const {
+    data: enrollments,
+    error: enrollmentError
+} = await supabaseClient
+    .from("student_subjects")
+    .select("student_id")
+    .eq("subject_id", subjectId);
 
+if (enrollmentError) {
+    console.error(
+        "Teacher enrollment query error:",
+        enrollmentError
+    );
 
-        if (gradesError) {
+    gradesContainer.innerHTML = `
+        <div class="teacher-grades-empty">
+            <h3>Unable to load enrolments</h3>
+            <p>${enrollmentError.message}</p>
+        </div>
+    `;
 
-            console.error(
-                "Teacher grades query error:",
-                gradesError
-            );
+    statusElement.textContent =
+        "Unable to load current subject enrolments.";
 
-            gradesContainer.innerHTML = `
-                <div class="teacher-grades-empty">
+    return;
+}
 
-                    <h3>Unable to load grades</h3>
+const enrolledStudentIds = [
+    ...new Set(
+        (enrollments || [])
+            .map(item => item.student_id)
+            .filter(Boolean)
+    )
+];
 
-                    <p>
-                        ${gradesError.message}
-                    </p>
+if (enrolledStudentIds.length === 0) {
+    gradesContainer.innerHTML = `
+        <div class="teacher-grades-empty">
+            <h3>No students enrolled</h3>
+            <p>There are currently no students assigned to this subject.</p>
+        </div>
+    `;
 
-                </div>
-            `;
+    statusElement.textContent =
+        "No students currently enrolled.";
 
-            statusElement.textContent =
-                "There was a problem loading the grades.";
+    return;
+}
 
-            return;
-        }
+// ==========================================
+// GET GRADES FOR CURRENTLY ENROLLED STUDENTS
+// ==========================================
+
+const {
+    data: grades,
+    error: gradesError
+} = await supabaseClient
+    .from("grades")
+    .select(`
+        id,
+        student_id,
+        subject_id,
+        assessment,
+        score,
+        max_score,
+        comments,
+        created_at
+    `)
+    .eq("subject_id", subjectId)
+    .in("student_id", enrolledStudentIds)
+    .order("created_at", {
+        ascending: false
+    });
+
+if (gradesError) {
+    console.error(
+        "Teacher grades query error:",
+        gradesError
+    );
+
+    gradesContainer.innerHTML = `
+        <div class="teacher-grades-empty">
+            <h3>Unable to load grades</h3>
+            <p>${gradesError.message}</p>
+        </div>
+    `;
+
+    statusElement.textContent =
+        "There was a problem loading the grades.";
+
+    return;
+}
 
 
         // ==========================================
