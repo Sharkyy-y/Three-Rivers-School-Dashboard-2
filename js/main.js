@@ -9657,29 +9657,51 @@ if (enrolledStudentIds.length === 0) {
 // GET GRADES FOR CURRENTLY ENROLLED STUDENTS
 // ==========================================
 
+const selectedYear =
+    document.getElementById("teacherFilterYear")?.value;
+
+const selectedTerm =
+    document.getElementById("teacherFilterTerm")?.value;
+
+const selectedExam =
+    document.getElementById("teacherFilterExam")?.value;
+
+let gradeQuery = supabaseClient
+    .from("grades")
+    .select(`
+        id,
+        student_id,
+        subject_id,
+        assessment,
+        score,
+        max_score,
+        comments,
+        academic_year,
+        term,
+        exam_type,
+        created_at
+    `)
+    .eq("subject_id", subjectId)
+    .in("student_id", enrolledStudentIds);
+
+if (selectedYear) {
+    gradeQuery = gradeQuery.eq("academic_year", Number(selectedYear));
+}
+
+if (selectedTerm) {
+    gradeQuery = gradeQuery.eq("term", Number(selectedTerm));
+}
+
+if (selectedExam) {
+    gradeQuery = gradeQuery.eq("exam_type", selectedExam);
+}
+
 const {
     data: grades,
     error: gradesError
-} = await supabaseClient
-    .from("grades")
-   .select(`
-    id,
-    student_id,
-    subject_id,
-    assessment,
-    score,
-    max_score,
-    comments,
-    academic_year,
-    term,
-    exam_type,
-    created_at
-`)
-    .eq("subject_id", subjectId)
-    .in("student_id", enrolledStudentIds)
-    .order("created_at", {
-        ascending: false
-    });
+} = await gradeQuery.order("created_at", {
+    ascending: false
+});
 
 if (gradesError) {
     console.error(
