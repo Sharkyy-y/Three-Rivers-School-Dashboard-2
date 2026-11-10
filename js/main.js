@@ -15,6 +15,82 @@ const supabaseClient =
     );
 
 
+
+// ==========================================
+// ADMIN MFA STATE
+// ==========================================
+
+let pendingAdminMfaFactorId = null;
+
+
+// ==========================================
+// DASHBOARD REDIRECT
+// ==========================================
+
+function redirectToDashboard(role) {
+
+    const dashboards = {
+        admin: "admin-dashboard.html",
+        teacher: "teacher-dashboard.html",
+        student: "student-dashboard.html",
+        parent: "parent-dashboard.html"
+    };
+
+    if (dashboards[role]) {
+        window.location.href = dashboards[role];
+    }
+}
+
+
+// ==========================================
+// ADMIN MFA VERIFICATION
+// ==========================================
+
+async function verifyAdminMfa(inputId) {
+
+    const message =
+        document.getElementById("login-message");
+
+    const code =
+        document.getElementById(inputId).value.trim();
+
+    if (!/^\d{6}$/.test(code)) {
+        message.textContent =
+            "Enter a valid six-digit code.";
+        return;
+    }
+
+    const { data: challenge, error: challengeError } =
+        await supabaseClient.auth.mfa.challenge({
+            factorId: pendingAdminMfaFactorId
+        });
+
+    if (challengeError) {
+        message.textContent = challengeError.message;
+        return;
+    }
+
+    const { error: verifyError } =
+        await supabaseClient.auth.mfa.verify({
+            factorId: pendingAdminMfaFactorId,
+            challengeId: challenge.id,
+            code: code
+        });
+
+    if (verifyError) {
+        message.textContent =
+            "Verification failed. Check your code and try again.";
+        console.error("MFA verification:", verifyError);
+        return;
+    }
+
+    message.textContent =
+        "Verification successful. Opening administrator dashboard...";
+
+    redirectToDashboard("admin");
+}
+
+
 // ==========================================
 // LOGIN
 // ==========================================
@@ -31,13 +107,10 @@ if (loginForm) {
             event.preventDefault();
 
             const email =
-                document.getElementById("email")
-                    .value
-                    .trim();
+                document.getElementById("email").value.trim();
 
             const password =
-                document.getElementById("password")
-                    .value;
+                document.getElementById("password").value;
 
             const roleInput =
                 document.querySelector(
@@ -45,185 +118,204 @@ if (loginForm) {
                 );
 
             const selectedRole =
-                roleInput
-                    ? roleInput.value
-                    : "student";
+                roleInput ? roleInput.value : "student";
 
             const message =
-                document.getElementById(
-                    "login-message"
-                );
+                document.getElementById("login-message");
 
+            message.textContent = "Signing in...";
 
-            if (message) {
-                message.textContent =
-                    "Signing in...";
-            }
-
-
-            console.log(
-                "Login started..."
-            );
-
-
-            // ----------------------------------
-            // SIGN IN WITH SUPABASE
-            // ----------------------------------
-
-            const {
-                data,
-                error
-            } =
+            const { data, error } =
                 await supabaseClient.auth.signInWithPassword({
                     email: email,
                     password: password
                 });
 
-
-            console.log(
-                "Supabase response:",
-                data
-            );
-
-            console.log(
-                "Supabase error:",
-                error
-            );
-
-
-            // ----------------------------------
-            // LOGIN ERROR
-            // ----------------------------------
-
             if (error) {
-
-                console.error(
-                    "Login error:",
-                    error
-                );
-
-                if (message) {
-                    message.textContent =
-                        error.message;
-                }
-
+                message.textContent = error.message;
                 return;
             }
 
-
-            // ----------------------------------
-            // GET USER PROFILE
-            // ----------------------------------
-
-            const {
-                data: profile,
-                error: profileError
-            } =
+            const { data: profile, error: profileError } =
                 await supabaseClient
                     .from("profiles")
                     .select("*")
-                    .eq(
-                        "id",
-                        data.user.id
-                    )
+                    .eq("id", data.user.id)
                     .single();
 
-
-            if (profileError) {
-
-                console.error(
-                    "Profile error:",
-                    profileError
-                );
-
-                if (message) {
-                    message.textContent =
-                        "Login worked, but your profile could not be found.";
-                }
-
+            if (profileError || !profile) {
+                message.textContent =
+                    "Your account profile could not be found.";
+                await supabaseClient.auth.signOut();
                 return;
             }
 
-
-            console.log(
-                "Profile:",
-                profile
-            );
-
-
-            // ----------------------------------
-            // CHECK ACCOUNT TYPE
-            // ----------------------------------
-
-            if (
-                profile.role !==
-                selectedRole
-            ) {
-
-                if (message) {
-                    message.textContent =
-                        "The selected account type does not match this account.";
-                }
+            if (profile.role !== selectedRole) {
+                message.textContent =
+                    "The selected account type does not match this account.";
 
                 await supabaseClient.auth.signOut();
+                return;
+            }
+
+
+            // ==================================
+            // ADMIN MFA
+            // ==================================
+
+            if (profile.role === "admin") {
+
+                message.textContent =
+                    "Checking administrator security...";
+
+                const { data: factors, error: factorsError } =
+                    await supabaseClient.auth.mfa.listFactors();
+
+                if (factorsError) {
+                    message.textContent =
+                        "Could not check administrator security.";
+
+                    await supabaseClient.auth.signOut();
+                    return;
+                }
+
+                const verifiedFactor =
+                    factors.totp.find(
+                        factor => factor.status === "verified"
+                    );
+
+                const setupPanel =
+                    document.getElementById("adminMfaSetup");
+
+                const verifyPanel =
+                    document.getElementById("adminMfaVerify");
+
+                if (verifiedFactor) {
+
+                    pendingAdminMfaFactorId =
+                        verifiedFactor.id;
+
+                    loginForm.hidden = true;
+                    verifyPanel.hidden = false;
+                    setupPanel.hidden = true;
+
+                    message.textContent =
+                        "Enter your authenticator verification code.";
+
+                    return;
+                }
+
+
+                // REMOVE ABANDONED UNVERIFIED SETUP
+
+                const unfinishedFactor =
+                    factors.all.find(
+                        factor =>
+                            factor.factor_type === "totp" &&
+                            factor.status === "unverified"
+                    );
+
+                if (unfinishedFactor) {
+
+                    const { error: removeError } =
+                        await supabaseClient.auth.mfa.unenroll({
+                            factorId: unfinishedFactor.id
+                        });
+
+                    if (removeError) {
+                        message.textContent =
+                            "Could not restart MFA setup.";
+
+                        await supabaseClient.auth.signOut();
+                        return;
+                    }
+                }
+
+
+                // ENROLL NEW AUTHENTICATOR
+
+                const { data: enrollment, error: enrollmentError } =
+                    await supabaseClient.auth.mfa.enroll({
+                        factorType: "totp",
+                        friendlyName: "Three Rivers Administrator"
+                    });
+
+                if (enrollmentError) {
+                    message.textContent =
+                        enrollmentError.message;
+
+                    await supabaseClient.auth.signOut();
+                    return;
+                }
+
+                pendingAdminMfaFactorId = enrollment.id;
+
+                document.getElementById("adminMfaQr").src =
+                    enrollment.totp.qr_code;
+
+                document.getElementById("adminMfaSecret").textContent =
+                    enrollment.totp.secret;
+
+                loginForm.hidden = true;
+                setupPanel.hidden = false;
+                verifyPanel.hidden = true;
+
+                message.textContent =
+                    "Scan the QR code and enter your authenticator code.";
 
                 return;
             }
 
 
-            // ----------------------------------
-            // LOGIN SUCCESS
-            // ----------------------------------
+            // ==================================
+            // OTHER ACCOUNT TYPES
+            // ==================================
 
-            console.log(
-                "Login successful!"
-            );
+            message.textContent =
+                "Login successful. Loading dashboard...";
 
+            redirectToDashboard(profile.role);
 
-            if (message) {
-                message.textContent =
-                    "Login successful. Loading dashboard...";
-            }
-
-
-          // ----------------------------------
-// GO TO CORRECT DASHBOARD
-// ----------------------------------
-
-if (profile.role === "admin") {
-
-    window.location.href =
-        "admin-dashboard.html";
-
-} else if (profile.role === "teacher") {
-
-    window.location.href =
-        "teacher-dashboard.html";
-
-} else if (profile.role === "student") {
-
-    window.location.href =
-        "student-dashboard.html";
-
-} else if (profile.role === "parent") {
-
-    window.location.href =
-        "parent-dashboard.html";
-
-} else {
-
-    console.error(
-        "Unknown account role:",
-        profile.role
+        }
     );
-
-    if (message) {
-        message.textContent =
-            "Your account role is not configured.";
-    }
-
 }
-            
+
+
+// ==========================================
+// ENABLE ADMIN MFA
+// ==========================================
+
+const enableAdminMfa =
+    document.getElementById("adminMfaEnable");
+
+if (enableAdminMfa) {
+
+    enableAdminMfa.addEventListener(
+        "click",
+        async function () {
+
+            await verifyAdminMfa("adminMfaSetupCode");
+
+        }
+    );
+}
+
+
+// ==========================================
+// VERIFY ADMIN LOGIN
+// ==========================================
+
+const verifyAdminMfaButton =
+    document.getElementById("adminMfaVerifyButton");
+
+if (verifyAdminMfaButton) {
+
+    verifyAdminMfaButton.addEventListener(
+        "click",
+        async function () {
+
+            await verifyAdminMfa("adminMfaCode");
+
         }
     );
 }
