@@ -9662,16 +9662,19 @@ const {
     error: gradesError
 } = await supabaseClient
     .from("grades")
-    .select(`
-        id,
-        student_id,
-        subject_id,
-        assessment,
-        score,
-        max_score,
-        comments,
-        created_at
-    `)
+   .select(`
+    id,
+    student_id,
+    subject_id,
+    assessment,
+    score,
+    max_score,
+    comments,
+    academic_year,
+    term,
+    exam_type,
+    created_at
+`)
     .eq("subject_id", subjectId)
     .in("student_id", enrolledStudentIds)
     .order("created_at", {
