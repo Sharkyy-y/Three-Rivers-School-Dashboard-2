@@ -15510,143 +15510,338 @@ async function initTeacherGradeEntry() {
     });
 
     // Load students when the teacher selects a subject.
-    async function loadAssessmentStudents() {
-        const subjectId = subjectSelect.value;
+let selectedStudent = null;
 
-        studentList.replaceChildren();
+const selectedStudentName = document.getElementById(
+    "teacherSelectedStudentName"
+);
 
-        if (!subjectId) {
-            studentList.textContent =
-                "Select a subject above to load its enrolled students.";
+const selectedStudentDetails = document.getElementById(
+    "teacherSelectedStudentDetails"
+);
 
-            return;
-        }
+const selectedStudentScore = document.getElementById(
+    "teacherSelectedStudentScore"
+);
 
-        studentList.textContent = "Loading enrolled students...";
+const selectedStudentComment = document.getElementById(
+    "teacherSelectedStudentComment"
+);
 
-        assessmentMessage.textContent = "";
+const cancelStudentButton = document.getElementById(
+    "teacherCancelStudentSelection"
+);
 
-        const { data: enrollments, error: enrollmentError } =
-            await supabaseClient
-                .from("student_subjects")
-                .select("student_id")
-                .eq("subject_id", subjectId);
+const saveButton = document.getElementById(
+    "teacherSaveAssessmentButton"
+);
 
-        if (enrollmentError) {
-            console.error("Student enrollments:", enrollmentError);
+// Start with the marks form hidden.
+assessmentForm.hidden = true;
 
-            studentList.textContent =
-                "Could not load enrolled students. Check your Supabase permissions.";
+function closeStudentForm() {
+    selectedStudent = null;
+    assessmentForm.hidden = true;
+    assessmentForm.reset();
 
-            return;
-        }
+    document.getElementById("teacherAcademicYear").value = 2026;
+    maxScoreInput.value = 100;
 
-        const studentIds = [
-            ...new Set(
-                (enrollments || [])
-                    .map(item => item.student_id)
-                    .filter(Boolean)
-            )
-        ];
+    assessmentMessage.textContent = "";
 
-        if (studentIds.length === 0) {
-            studentList.textContent =
-                "No students are enrolled in this subject yet.";
+    studentList.querySelectorAll(
+        ".teacher-assessment-student"
+    ).forEach(card => {
+        card.classList.remove("selected");
+    });
+}
 
-            return;
-        }
+async function loadAssessmentStudents() {
+    const subjectId = subjectSelect.value;
 
-        const { data: students, error: studentsError } =
-            await supabaseClient
-                .from("students")
-                .select("id, full_name, admission_number, class_name")
-                .in("id", studentIds)
-                .order("full_name");
+    closeStudentForm();
+    studentList.replaceChildren();
 
-        if (studentsError) {
-            console.error("Enrolled students:", studentsError);
+    delete studentList.dataset.subjectId;
 
-            studentList.textContent =
-                "Could not load student details. Check the teacher's student-view permissions.";
+    if (!subjectId) {
+        studentList.textContent =
+            "Select a subject above to load its enrolled students.";
+        return;
+    }
 
-            return;
-        }
+    studentList.textContent = "Loading enrolled students...";
 
-        studentList.replaceChildren();
+    const { data: enrollments, error: enrollmentError } =
+        await supabaseClient
+            .from("student_subjects")
+            .select("student_id")
+            .eq("subject_id", subjectId);
 
-        const heading = document.createElement("h3");
-        heading.textContent =
-            `Enrolled Students (${students.length})`;
+    if (enrollmentError) {
+        console.error("Student enrollments:", enrollmentError);
 
-        studentList.appendChild(heading);
+        studentList.textContent =
+            "Could not load enrolled students. Check your Supabase permissions.";
+        return;
+    }
 
-        students.forEach(student => {
-            const row = document.createElement("div");
-            row.className = "teacher-assessment-student";
+    const studentIds = [
+        ...new Set(
+            (enrollments || [])
+                .map(item => item.student_id)
+                .filter(Boolean)
+        )
+    ];
 
-            const identity = document.createElement("div");
-            identity.className = "teacher-assessment-student-info";
+    if (studentIds.length === 0) {
+        studentList.textContent =
+            "No students are enrolled in this subject yet.";
+        return;
+    }
 
-            const name = document.createElement("strong");
-            name.textContent = student.full_name || "Unnamed student";
+    const { data: students, error: studentsError } =
+        await supabaseClient
+            .from("students")
+            .select("id, full_name, admission_number, class_name")
+            .in("id", studentIds)
+            .order("full_name");
 
-            const details = document.createElement("p");
-            details.textContent = [
+    if (studentsError) {
+        console.error("Enrolled students:", studentsError);
+
+        studentList.textContent =
+            "Could not load student details.";
+        return;
+    }
+
+    studentList.replaceChildren();
+
+    const heading = document.createElement("h3");
+    heading.textContent =
+        `Enrolled Students (${students.length})`;
+
+    studentList.appendChild(heading);
+
+    const instruction = document.createElement("p");
+    instruction.textContent =
+        "Click a student's card to open their marks-entry form.";
+
+    studentList.appendChild(instruction);
+
+    students.forEach(student => {
+        const card = document.createElement("button");
+
+        card.type = "button";
+        card.className = "teacher-assessment-student";
+        card.dataset.studentId = student.id;
+
+        const identity = document.createElement("div");
+        identity.className = "teacher-assessment-student-info";
+
+        const name = document.createElement("strong");
+        name.textContent = student.full_name || "Unnamed student";
+
+        const details = document.createElement("p");
+        details.textContent = [
+            student.admission_number || "No admission number",
+            student.class_name || "No class"
+        ].join(" • ");
+
+        const action = document.createElement("span");
+        action.className = "teacher-student-select-action";
+        action.textContent = "Select Student →";
+
+        identity.append(name, details);
+        card.append(identity, action);
+
+        card.addEventListener("click", () => {
+            selectedStudent = student;
+
+            studentList.querySelectorAll(
+                ".teacher-assessment-student"
+            ).forEach(otherCard => {
+                otherCard.classList.toggle(
+                    "selected",
+                    otherCard === card
+                );
+            });
+
+            selectedStudentName.textContent =
+                student.full_name || "Unnamed student";
+
+            selectedStudentDetails.textContent = [
                 student.admission_number || "No admission number",
                 student.class_name || "No class"
             ].join(" • ");
 
-            identity.append(name, details);
+            assessmentMessage.textContent = "";
+            assessmentForm.hidden = false;
 
-            const scoreField = document.createElement("div");
-            scoreField.className = "teacher-assessment-score-field";
+            selectedStudentScore.value = "";
+            selectedStudentComment.value = "";
 
-            const scoreLabel = document.createElement("label");
-            scoreLabel.textContent = "Score";
-            scoreLabel.htmlFor = `teacher-score-${student.id}`;
+            assessmentForm.scrollIntoView({
+                behavior: "smooth",
+                block: "start"
+            });
 
-            const scoreInput = document.createElement("input");
-            scoreInput.type = "number";
-            scoreInput.id = `teacher-score-${student.id}`;
-            scoreInput.className = "teacher-student-score";
-            scoreInput.dataset.studentId = student.id;
-            scoreInput.min = "0";
-            scoreInput.step = "any";
-            scoreInput.placeholder = "Enter marks";
-            scoreInput.setAttribute(
-                "aria-label",
-                `Score for ${student.full_name || "student"}`
-            );
-
-            scoreField.append(scoreLabel, scoreInput);
-
-            const commentField = document.createElement("div");
-            commentField.className = "teacher-assessment-comment-field";
-
-            const commentLabel = document.createElement("label");
-            commentLabel.textContent = "Comment (optional)";
-            commentLabel.htmlFor = `teacher-comment-${student.id}`;
-
-            const commentInput = document.createElement("input");
-            commentInput.type = "text";
-            commentInput.id = `teacher-comment-${student.id}`;
-            commentInput.className = "teacher-student-comment";
-            commentInput.dataset.studentId = student.id;
-            commentInput.maxLength = 500;
-            commentInput.placeholder = "Feedback for this student";
-
-            commentField.append(commentLabel, commentInput);
-
-            row.append(identity, scoreField, commentField);
-            studentList.appendChild(row);
+            selectedStudentScore.focus();
         });
 
-        // Store the subject's enrolled students for validation on save.
-        studentList.dataset.subjectId = subjectId;
+        studentList.appendChild(card);
+    });
+
+    studentList.dataset.subjectId = subjectId;
+}
+
+subjectSelect.addEventListener(
+    "change",
+    loadAssessmentStudents
+);
+
+// Allow the teacher to return to student selection.
+cancelStudentButton.addEventListener("click", closeStudentForm);
+
+// Save marks for the selected student only.
+assessmentForm.addEventListener("submit", async function (event) {
+    event.preventDefault();
+
+    assessmentMessage.textContent = "";
+
+    const subjectId = subjectSelect.value;
+
+    if (
+        !selectedStudent ||
+        studentList.dataset.subjectId !== subjectId
+    ) {
+        assessmentMessage.textContent =
+            "Please select a student first.";
+        return;
     }
 
-    subjectSelect.addEventListener("change", loadAssessmentStudents);
+    const academicYear = Number(
+        document.getElementById("teacherAcademicYear").value
+    );
 
+    const term = Number(
+        document.getElementById("teacherTerm").value
+    );
+
+    const examType = document.getElementById(
+        "teacherExamType"
+    ).value;
+
+    const assessmentReference = document.getElementById(
+        "teacherAssessmentName"
+    ).value.trim();
+
+    const assessmentName = assessmentReference ||
+        `${examType} - Term ${term} ${academicYear}`;
+
+    const maxScore = Number(maxScoreInput.value);
+    const score = Number(selectedStudentScore.value);
+
+    if (
+        !Number.isInteger(academicYear) ||
+        academicYear < 2000 ||
+        academicYear > 2100 ||
+        ![1, 2, 3].includes(term) ||
+        !["Opener", "Midterm", "Internal Test", "End Term"].includes(examType)
+    ) {
+        assessmentMessage.textContent =
+            "Please select a valid academic year, term and examination type.";
+        return;
+    }
+
+    if (!Number.isFinite(maxScore) || maxScore <= 0) {
+        assessmentMessage.textContent =
+            "Maximum marks must be greater than zero.";
+        return;
+    }
+
+    if (
+        selectedStudentScore.value.trim() === "" ||
+        !Number.isFinite(score) ||
+        score < 0 ||
+        score > maxScore
+    ) {
+        assessmentMessage.textContent =
+            `Enter a valid score between 0 and ${maxScore}.`;
+        selectedStudentScore.focus();
+        return;
+    }
+
+    // Check whether this student already has this assessment.
+    const {
+        data: existingGrades,
+        error: duplicateCheckError
+    } = await supabaseClient
+        .from("grades")
+        .select("id")
+        .eq("student_id", selectedStudent.id)
+        .eq("subject_id", subjectId)
+        .eq("academic_year", academicYear)
+        .eq("term", term)
+        .eq("exam_type", examType)
+        .ilike("assessment", assessmentName);
+
+    if (duplicateCheckError) {
+        console.error("Duplicate assessment check:", duplicateCheckError);
+
+        assessmentMessage.textContent =
+            "Could not check existing assessments. Nothing was saved.";
+        return;
+    }
+
+    if (existingGrades && existingGrades.length > 0) {
+        assessmentMessage.textContent =
+            "This student already has marks for this assessment. Check the gradebook before saving again.";
+        return;
+    }
+
+    saveButton.disabled = true;
+    saveButton.textContent = "Saving marks...";
+
+    try {
+        const { error: saveError } = await supabaseClient
+            .from("grades")
+            .insert({
+                student_id: selectedStudent.id,
+                subject_id: subjectId,
+                assessment: assessmentName,
+                academic_year: academicYear,
+                term: term,
+                exam_type: examType,
+                score: score,
+                max_score: maxScore,
+                comments: selectedStudentComment.value.trim() || null
+            });
+
+        if (saveError) {
+            console.error("Saving student grade:", saveError);
+
+            assessmentMessage.textContent =
+                "Marks were not saved. Check the console for the Supabase error.";
+            return;
+        }
+
+        assessmentMessage.textContent =
+            `Successfully saved ${score}/${maxScore} for ${selectedStudent.full_name}.`;
+
+        selectedStudentScore.value = "";
+        selectedStudentComment.value = "";
+
+        if (typeof loadTeacherGrades === "function") {
+            await loadTeacherGrades();
+        }
+
+    } finally {
+        saveButton.disabled = false;
+        saveButton.textContent = "Save Student Marks";
+    }
+});
+}
    
     // Save marks for the selected assessment.
     assessmentForm.addEventListener("submit", async function (event) {
