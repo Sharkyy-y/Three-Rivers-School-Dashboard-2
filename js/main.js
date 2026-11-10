@@ -15655,18 +15655,39 @@ async function initTeacherGradeEntry() {
 
         assessmentMessage.textContent = "";
 
-        const subjectId = subjectSelect.value;
-        const assessmentName = document
-            .getElementById("teacherAssessmentName")
-            .value.trim();
+       const subjectId = subjectSelect.value;
 
-        const maxScore = Number(maxScoreInput.value);
+const academicYear = Number(
+    document.getElementById("teacherAcademicYear").value
+);
 
-        if (!subjectId || !assessmentName) {
-            assessmentMessage.textContent =
-                "Please select a subject and enter an assessment name.";
-            return;
-        }
+const term = Number(
+    document.getElementById("teacherTerm").value
+);
+
+const examType = document.getElementById("teacherExamType").value;
+
+const assessmentReference = document
+    .getElementById("teacherAssessmentName")
+    .value.trim();
+
+const assessmentName = assessmentReference ||
+    `${examType} - Term ${term} ${academicYear}`;
+
+const maxScore = Number(maxScoreInput.value);
+        
+       if (
+    !subjectId ||
+    !Number.isInteger(academicYear) ||
+    academicYear < 2000 ||
+    academicYear > 2100 ||
+    ![1, 2, 3].includes(term) ||
+    !["Opener", "Midterm", "Internal Test", "End Term"].includes(examType)
+) {
+    assessmentMessage.textContent =
+        "Please select a valid subject, academic year, term and exam type.";
+    return;
+}
 
         if (!Number.isFinite(maxScore) || maxScore <= 0) {
             assessmentMessage.textContent =
@@ -15718,15 +15739,19 @@ async function initTeacherGradeEntry() {
                 break;
             }
 
-            rows.push({
-                student_id: input.dataset.studentId,
-                subject_id: subjectId,
-                assessment: assessmentName,
-                score: score,
-                max_score: maxScore,
-                comments: commentsByStudent.get(input.dataset.studentId) || null
-            });
-        }
+          rows.push({
+    student_id: input.dataset.studentId,
+    subject_id: subjectId,
+    assessment: assessmentName,
+    academic_year: academicYear,
+    term: term,
+    exam_type: examType,
+    score: score,
+    max_score: maxScore,
+    comments: commentsByStudent.get(input.dataset.studentId) || null
+});
+
+            } // End of for loop
 
         if (invalidScore) {
             assessmentMessage.textContent =
@@ -15740,13 +15765,16 @@ async function initTeacherGradeEntry() {
             return;
         }
 
-        // Prevent accidental duplicate assessment entries.
-        const { data: existingGrades, error: duplicateCheckError } =
-            await supabaseClient
-                .from("grades")
-                .select("student_id")
-                .eq("subject_id", subjectId)
-                .ilike("assessment", assessmentName);
+        // Prevent duplicate entries within the same academic assessment.
+const { data: existingGrades, error: duplicateCheckError } =
+    await supabaseClient
+        .from("grades")
+        .select("student_id")
+        .eq("subject_id", subjectId)
+        .eq("academic_year", academicYear)
+        .eq("term", term)
+        .eq("exam_type", examType)
+        .ilike("assessment", assessmentName);
 
         if (duplicateCheckError) {
             console.error("Duplicate assessment check:", duplicateCheckError);
