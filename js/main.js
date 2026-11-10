@@ -9521,6 +9521,8 @@ async function loadTeacherGrades() {
         // SUBJECT CHANGE
         // ==========================================
 
+             try {
+
         subjectSelect.addEventListener(
             "change",
             function () {
