@@ -789,45 +789,101 @@
         </section>
 
 
-        <!-- PROFILE VIEW -->
-        <section class="parent-view" id="parentViewProfile">
+        
+<!-- PROFILE VIEW -->
+<section class="parent-view" id="parentViewProfile">
 
-            <div class="parent-page-heading">
+    <div class="parent-page-heading">
 
-                <span class="parent-section-label">
-                    ACCOUNT SETTINGS
-                </span>
+        <span class="parent-section-label">
+            ACCOUNT SETTINGS
+        </span>
 
-                <h2>My Profile</h2>
+        <h2>My Profile</h2>
 
-                <p>
-                    Your parent or guardian account information.
-                </p>
+        <p>
+            Your parent or guardian account information.
+        </p>
 
+    </div>
+
+    <div class="parent-panel">
+
+        <h3>Parent Account</h3>
+
+        <p>
+            <strong>Name:</strong>
+            <span id="parentProfileName">Loading...</span>
+        </p>
+
+        <p>
+            <strong>Email:</strong>
+            <span id="parentProfileEmail">Loading...</span>
+        </p>
+
+        <p>
+            <strong>Account type:</strong>
+            Parent / Guardian
+        </p>
+
+    </div>
+
+    <!-- PASSWORD CHANGE -->
+    <div class="parent-panel parent-password-panel">
+
+        <h3>Account Security</h3>
+
+        <p>Keep your account secure by updating your password.</p>
+
+        <form id="parentChangePasswordForm">
+
+            <div class="form-group">
+                <label for="parentCurrentPassword">Current Password</label>
+                <input
+                    type="password"
+                    id="parentCurrentPassword"
+                    required
+                    autocomplete="current-password"
+                    placeholder="Enter your current password"
+                >
             </div>
 
-            <div class="parent-panel">
-
-                <h3>Parent Account</h3>
-
-                <p>
-                    <strong>Name:</strong>
-                    <span id="parentProfileName">Loading...</span>
-                </p>
-
-                <p>
-                    <strong>Email:</strong>
-                    <span id="parentProfileEmail">Loading...</span>
-                </p>
-
-                <p>
-                    <strong>Account type:</strong>
-                    Parent / Guardian
-                </p>
-
+            <div class="form-group">
+                <label for="parentNewPassword">New Password</label>
+                <input
+                    type="password"
+                    id="parentNewPassword"
+                    required
+                    minlength="8"
+                    autocomplete="new-password"
+                    placeholder="At least 8 characters"
+                >
             </div>
 
-        </section>
+            <div class="form-group">
+                <label for="parentConfirmPassword">Confirm New Password</label>
+                <input
+                    type="password"
+                    id="parentConfirmPassword"
+                    required
+                    minlength="8"
+                    autocomplete="new-password"
+                    placeholder="Enter your new password again"
+                >
+            </div>
+
+            <button type="submit" id="parentChangePasswordButton">
+                Update Password
+            </button>
+
+            <p id="parentPasswordMessage" role="status"></p>
+
+        </form>
+
+    </div>
+
+</section>
+
 
 
         <!-- FOOTER -->
