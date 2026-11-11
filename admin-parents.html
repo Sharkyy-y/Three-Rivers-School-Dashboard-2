@@ -1,0 +1,945 @@
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Parent Management | Three Rivers Academy</title>
+
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/dashboard.css">
+
+    <style>
+        .parents-page {
+            padding: 30px;
+            min-width: 0;
+        }
+
+        .parents-hero {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 20px;
+            padding: 28px;
+            margin-bottom: 25px;
+            border-radius: 18px;
+            color: white;
+            background: linear-gradient(120deg, #14532d, #166534, #15803d);
+            box-shadow: 0 8px 24px rgba(20, 83, 45, 0.15);
+        }
+
+        .parents-hero-left {
+            display: flex;
+            align-items: center;
+            gap: 18px;
+        }
+
+        .parents-hero-icon {
+            width: 65px;
+            height: 65px;
+            display: grid;
+            place-items: center;
+            border-radius: 18px;
+            background: rgba(255,255,255,0.16);
+            font-size: 30px;
+        }
+
+        .parents-hero h1 {
+            margin: 0 0 7px;
+            font-size: 27px;
+        }
+
+        .parents-hero p {
+            margin: 0;
+            color: rgba(255,255,255,0.8);
+        }
+
+        .parents-admin-badge {
+            display: flex;
+            align-items: center;
+            gap: 11px;
+            padding: 10px 16px;
+            border-radius: 30px;
+            background: rgba(255,255,255,0.14);
+        }
+
+        .parents-admin-avatar {
+            width: 38px;
+            height: 38px;
+            display: grid;
+            place-items: center;
+            border-radius: 50%;
+            background: white;
+            color: #166534;
+            font-weight: 800;
+        }
+
+        .parents-admin-badge strong,
+        .parents-admin-badge span {
+            display: block;
+        }
+
+        .parents-admin-badge span {
+            font-size: 12px;
+            opacity: 0.8;
+        }
+
+        .parents-stats {
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 18px;
+            margin-bottom: 25px;
+        }
+
+        .parents-stat {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            padding: 22px;
+            border-radius: 16px;
+            background: white;
+            border: 1px solid #e5e7eb;
+            box-shadow: 0 3px 12px rgba(0,0,0,0.035);
+        }
+
+        .parents-stat-icon {
+            width: 48px;
+            height: 48px;
+            display: grid;
+            place-items: center;
+            border-radius: 14px;
+            background: #dcfce7;
+            font-size: 22px;
+        }
+
+        .parents-stat strong {
+            display: block;
+            font-size: 25px;
+            color: #14532d;
+        }
+
+        .parents-stat span {
+            color: #6b7280;
+            font-size: 13px;
+        }
+
+        .parents-directory {
+            padding: 25px;
+            border-radius: 18px;
+            background: white;
+            border: 1px solid #e5e7eb;
+            box-shadow: 0 4px 18px rgba(0,0,0,0.035);
+        }
+
+        .parents-directory-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 15px;
+            flex-wrap: wrap;
+            margin-bottom: 22px;
+        }
+
+        .parents-directory-title {
+            display: flex;
+            align-items: center;
+            gap: 13px;
+        }
+
+        .parents-directory-title h2 {
+            margin: 0 0 5px;
+            font-size: 20px;
+        }
+
+        .parents-directory-title p {
+            margin: 0;
+            color: #6b7280;
+            font-size: 13px;
+        }
+
+        .parents-directory-icon {
+            width: 45px;
+            height: 45px;
+            display: grid;
+            place-items: center;
+            background: #dcfce7;
+            border-radius: 13px;
+            font-size: 21px;
+        }
+
+        .parents-secure-label {
+            padding: 8px 12px;
+            border-radius: 30px;
+            background: #f0fdf4;
+            border: 1px solid #bbf7d0;
+            color: #15803d;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .parents-search-row {
+            display: flex;
+            align-items: center;
+            gap: 13px;
+            flex-wrap: wrap;
+            margin-bottom: 20px;
+        }
+
+        .parents-search {
+            position: relative;
+            flex: 1;
+            min-width: 220px;
+        }
+
+        .parents-search span {
+            position: absolute;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #9ca3af;
+            font-size: 19px;
+        }
+
+        .parents-search input {
+            width: 100%;
+            box-sizing: border-box;
+            padding: 13px 15px 13px 43px;
+            border: 1px solid #e5e7eb;
+            border-radius: 11px;
+            outline: none;
+            font-size: 14px;
+        }
+
+        .parents-search input:focus {
+            border-color: #16a34a;
+            box-shadow: 0 0 0 3px rgba(22,163,74,0.1);
+        }
+
+        .parents-filter {
+            padding: 12px 14px;
+            border: 1px solid #e5e7eb;
+            border-radius: 10px;
+            background: white;
+            color: #374151;
+            font-size: 13px;
+            cursor: pointer;
+        }
+
+        .parents-refresh-button {
+            padding: 12px 17px;
+            border: 0;
+            border-radius: 10px;
+            background: #166534;
+            color: white;
+            font-weight: 700;
+            cursor: pointer;
+        }
+
+        .parents-list-summary {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 10px;
+            padding: 15px 0;
+            margin-bottom: 12px;
+            border-top: 1px solid #f1f5f9;
+            border-bottom: 1px solid #f1f5f9;
+        }
+
+        .parents-list-summary strong {
+            color: #14532d;
+            font-size: 15px;
+        }
+
+        .parents-list-summary span {
+            color: #6b7280;
+            font-size: 13px;
+        }
+
+        #parentsContainer {
+            min-height: 160px;
+        }
+
+        .parents-loading {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 12px;
+            padding: 55px 20px;
+            color: #6b7280;
+        }
+
+        .parents-spinner {
+            width: 23px;
+            height: 23px;
+            border: 3px solid #dcfce7;
+            border-top-color: #15803d;
+            border-radius: 50%;
+            animation: parentsSpin 0.8s linear infinite;
+        }
+
+        @keyframes parentsSpin {
+            to { transform: rotate(360deg); }
+        }
+
+        .parents-message {
+            margin-top: 15px;
+            font-size: 13px;
+            font-weight: 600;
+        }
+
+        /* MODALS */
+
+        .parents-modal {
+            display: none;
+            position: fixed;
+            inset: 0;
+            z-index: 1000;
+            padding: 20px;
+            background: rgba(15, 23, 42, 0.6);
+            overflow-y: auto;
+        }
+
+        .parents-modal-content {
+            width: 100%;
+            max-width: 650px;
+            margin: 45px auto;
+            padding: 25px;
+            border-radius: 17px;
+            background: white;
+            box-shadow: 0 15px 45px rgba(0,0,0,0.18);
+        }
+
+        .parents-modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            gap: 15px;
+            margin-bottom: 22px;
+        }
+
+        .parents-modal-header h2 {
+            margin: 0 0 6px;
+            color: #14532d;
+        }
+
+        .parents-modal-header p {
+            margin: 0;
+            color: #6b7280;
+            font-size: 13px;
+        }
+
+        .parents-modal-close {
+            border: 0;
+            background: #f3f4f6;
+            width: 36px;
+            height: 36px;
+            border-radius: 9px;
+            font-size: 23px;
+            cursor: pointer;
+        }
+
+        .parents-form-grid {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 17px;
+        }
+
+        .parents-form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 7px;
+        }
+
+        .parents-form-group label {
+            font-size: 13px;
+            font-weight: 700;
+            color: #374151;
+        }
+
+        .parents-form-group input {
+            width: 100%;
+            box-sizing: border-box;
+            padding: 12px;
+            border: 1px solid #d1d5db;
+            border-radius: 9px;
+            font-size: 14px;
+        }
+
+        .parents-form-group input:focus {
+            outline: none;
+            border-color: #16a34a;
+            box-shadow: 0 0 0 3px rgba(22,163,74,0.1);
+        }
+
+        .parents-modal-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-top: 23px;
+        }
+
+        .parents-secondary-button,
+        .parents-primary-button {
+            padding: 12px 18px;
+            border-radius: 9px;
+            font-weight: 700;
+            cursor: pointer;
+        }
+
+        .parents-secondary-button {
+            border: 1px solid #d1d5db;
+            background: white;
+            color: #374151;
+        }
+
+        .parents-primary-button {
+            border: 0;
+            background: #166534;
+            color: white;
+        }
+
+        #parentLinksStudentList {
+            display: grid;
+            gap: 12px;
+            margin-top: 18px;
+        }
+
+        @media (max-width: 850px) {
+            .parents-stats {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+            }
+        }
+
+        @media (max-width: 600px) {
+            .parents-page {
+                padding: 15px;
+            }
+
+            .parents-hero {
+                align-items: flex-start;
+                flex-direction: column;
+                padding: 20px;
+            }
+
+            .parents-hero h1 {
+                font-size: 22px;
+            }
+
+            .parents-stats {
+                grid-template-columns: 1fr;
+            }
+
+            .parents-directory {
+                padding: 17px;
+            }
+
+            .parents-search-row {
+                align-items: stretch;
+                flex-direction: column;
+            }
+
+            .parents-search {
+                width: 100%;
+            }
+
+            .parents-filter,
+            .parents-refresh-button {
+                width: 100%;
+            }
+
+            .parents-form-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="dashboard-layout">
+
+    <!-- SIDEBAR -->
+
+    <aside class="sidebar">
+
+        <div class="sidebar-logo">
+            <h2>Student Portal</h2>
+            <p>Administration</p>
+        </div>
+
+        <nav class="sidebar-nav">
+
+            <a href="admin-dashboard.html">
+                🏠 Dashboard
+            </a>
+
+            <a href="admin-students.html">
+                👥 Students
+            </a>
+
+            <a href="admin-parents.html" class="active">
+                👨‍👩‍👧 Parents
+            </a>
+
+            <a href="admin-teachers.html">
+                👨‍🏫 Teachers
+            </a>
+
+            <a href="admin-timetable.html">
+                🗓️ Timetable
+            </a>
+
+            <a href="admin-grades.html">
+                📊 Grades
+            </a>
+
+            <a href="admin-fees.html">
+                💰 Fee Management
+            </a>
+
+            <a href="admin-attendance.html">
+                ✅ Attendance
+            </a>
+
+            <a href="admin-conduct.html">
+                ⚠️ Conduct
+            </a>
+
+            <a href="admin-announcements.html">
+                📢 Announcements
+            </a>
+
+            <a href="admin-credentials.html">
+                🔐 Login Credentials
+            </a>
+
+        </nav>
+
+        <button id="logoutButton" class="logout-button">
+            🚪 Logout
+        </button>
+
+    </aside>
+
+
+    <!-- MAIN CONTENT -->
+
+    <main class="parents-page">
+
+        <!-- PAGE HEADER -->
+
+        <section class="parents-hero">
+
+            <div class="parents-hero-left">
+
+                <div class="parents-hero-icon">
+                    👨‍👩‍👧
+                </div>
+
+                <div>
+                    <h1>Parent Management</h1>
+
+                    <p>
+                        Manage parent accounts, family information
+                        and linked students.
+                    </p>
+                </div>
+
+            </div>
+
+            <div class="parents-admin-badge">
+
+                <div class="parents-admin-avatar">
+                    A
+                </div>
+
+                <div>
+                    <strong>Administrator</strong>
+                    <span>Parent Administration</span>
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- OVERVIEW STATISTICS -->
+
+        <section class="parents-stats">
+
+            <div class="parents-stat">
+
+                <div class="parents-stat-icon">👨‍👩‍👧</div>
+
+                <div>
+                    <strong id="parentsCount">—</strong>
+                    <span>Total Parents</span>
+                </div>
+
+            </div>
+
+            <div class="parents-stat">
+
+                <div class="parents-stat-icon">🎓</div>
+
+                <div>
+                    <strong id="parentLinkedCount">—</strong>
+                    <span>Parents With Linked Students</span>
+                </div>
+
+            </div>
+
+            <div class="parents-stat">
+
+                <div class="parents-stat-icon">🔗</div>
+
+                <div>
+                    <strong id="parentUnlinkedCount">—</strong>
+                    <span>Parents Without Linked Students</span>
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- PARENT DIRECTORY -->
+
+        <section class="parents-directory">
+
+            <div class="parents-directory-header">
+
+                <div class="parents-directory-title">
+
+                    <div class="parents-directory-icon">
+                        👥
+                    </div>
+
+                    <div>
+                        <h2>Parent Directory</h2>
+
+                        <p>
+                            Search, view and manage registered parent accounts.
+                        </p>
+                    </div>
+
+                </div>
+
+                <div class="parents-secure-label">
+                    🛡️ Administrator access only
+                </div>
+
+            </div>
+
+
+            <!-- SEARCH AND FILTERS -->
+
+            <div class="parents-search-row">
+
+                <div class="parents-search">
+
+                    <span>⌕</span>
+
+                    <input
+                        type="text"
+                        id="parentSearch"
+                        placeholder="Search by name, username, phone or email..."
+                        autocomplete="off"
+                    >
+
+                </div>
+
+                <select id="parentFilter" class="parents-filter">
+
+                    <option value="all">All Parents</option>
+                    <option value="linked">With Linked Students</option>
+                    <option value="unlinked">Without Linked Students</option>
+
+                </select>
+
+                <button
+                    type="button"
+                    id="refreshParentsButton"
+                    class="parents-refresh-button"
+                >
+                    ↻ Refresh
+                </button>
+
+            </div>
+
+
+            <!-- DIRECTORY SUMMARY -->
+
+            <div class="parents-list-summary">
+
+                <strong id="parentsListTitle">
+                    All Parents
+                </strong>
+
+                <span>
+                    <span id="parentsVisibleCount">Loading...</span>
+                    registered parents
+                </span>
+
+            </div>
+
+
+            <!-- PARENT RECORDS -->
+
+            <div id="parentsContainer">
+
+                <div class="parents-loading">
+
+                    <div class="parents-spinner"></div>
+
+                    <span>Loading parent accounts...</span>
+
+                </div>
+
+            </div>
+
+            <p
+                id="parentsDirectoryMessage"
+                class="parents-message"
+                role="status"
+            ></p>
+
+        </section>
+
+    </main>
+
+</div>
+
+
+<!-- EDIT PARENT MODAL -->
+
+<div
+    id="editParentModal"
+    class="parents-modal"
+    role="dialog"
+    aria-modal="true"
+    aria-labelledby="editParentTitle"
+>
+
+    <div class="parents-modal-content">
+
+        <div class="parents-modal-header">
+
+            <div>
+                <h2 id="editParentTitle">Edit Parent Details</h2>
+
+                <p>
+                    Update the parent's personal and contact information.
+                </p>
+            </div>
+
+            <button
+                type="button"
+                id="closeEditParentModal"
+                class="parents-modal-close"
+                aria-label="Close"
+            >
+                ×
+            </button>
+
+        </div>
+
+
+        <form id="editParentForm">
+
+            <input
+                type="hidden"
+                id="editParentId"
+            >
+
+            <div class="parents-form-grid">
+
+                <div class="parents-form-group">
+
+                    <label for="editParentName">
+                        Full Name *
+                    </label>
+
+                    <input
+                        type="text"
+                        id="editParentName"
+                        required
+                    >
+
+                </div>
+
+                <div class="parents-form-group">
+
+                    <label for="editParentUsername">
+                        Username *
+                    </label>
+
+                    <input
+                        type="text"
+                        id="editParentUsername"
+                        minlength="3"
+                        maxlength="30"
+                        required
+                    >
+
+                </div>
+
+                <div class="parents-form-group">
+
+                    <label for="editParentPhone">
+                        Phone Number
+                    </label>
+
+                    <input
+                        type="tel"
+                        id="editParentPhone"
+                    >
+
+                </div>
+
+                <div class="parents-form-group">
+
+                    <label for="editParentEmail">
+                        Recovery Email
+                    </label>
+
+                    <input
+                        type="email"
+                        id="editParentEmail"
+                    >
+
+                </div>
+
+            </div>
+
+            <p
+                id="editParentMessage"
+                class="parents-message"
+                role="status"
+            ></p>
+
+            <div class="parents-modal-actions">
+
+                <button
+                    type="button"
+                    id="cancelEditParent"
+                    class="parents-secondary-button"
+                >
+                    Cancel
+                </button>
+
+                <button
+                    type="submit"
+                    class="parents-primary-button"
+                >
+                    Save Changes
+                </button>
+
+            </div>
+
+        </form>
+
+    </div>
+
+</div>
+
+
+<!-- MANAGE LINKED STUDENTS MODAL -->
+
+<div
+    id="manageParentLinksModal"
+    class="parents-modal"
+    role="dialog"
+    aria-modal="true"
+    aria-labelledby="manageParentLinksTitle"
+>
+
+    <div class="parents-modal-content">
+
+        <div class="parents-modal-header">
+
+            <div>
+                <h2 id="manageParentLinksTitle">
+                    Manage Linked Students
+                </h2>
+
+                <p>
+                    <strong id="manageParentLinksName"></strong>
+                </p>
+            </div>
+
+            <button
+                type="button"
+                id="closeParentLinksModal"
+                class="parents-modal-close"
+                aria-label="Close"
+            >
+                ×
+            </button>
+
+        </div>
+
+        <input
+            type="hidden"
+            id="manageParentLinksId"
+        >
+
+        <p style="color:#6b7280;font-size:13px;">
+            Select the students connected to this parent.
+            Each student can have their own relationship designation.
+        </p>
+
+        <div id="parentLinksStudentList">
+
+            <div class="parents-loading">
+                Loading students...
+            </div>
+
+        </div>
+
+        <p
+            id="parentLinksMessage"
+            class="parents-message"
+            role="status"
+        ></p>
+
+        <div class="parents-modal-actions">
+
+            <button
+                type="button"
+                id="cancelParentLinks"
+                class="parents-secondary-button"
+            >
+                Cancel
+            </button>
+
+            <button
+                type="button"
+                id="saveParentLinks"
+                class="parents-primary-button"
+            >
+                Save Student Links
+            </button>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- SCRIPTS -->
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<script src="js/main.js"></script>
+
+<script src="js/admin-parents.js"></script>
+
+</body>
+</html>
