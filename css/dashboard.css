@@ -16054,3 +16054,33 @@ body.parent-portal:has(#parentViewProfile.active) .parent-main-content {
         width: 100%;
     }
 }
+
+
+/* ==========================================
+   PARENT PROFILE - SIDEBAR POSITION FIX
+   ========================================== */
+
+@media (min-width: 751px) {
+    body.parent-portal:has(#parentViewProfile.active)
+    .dashboard-layout > main.parent-main-content {
+        margin-left: 245px !important;
+        width: calc(100% - 245px) !important;
+        max-width: calc(100% - 245px) !important;
+        min-width: 0 !important;
+        flex: 0 0 calc(100% - 245px) !important;
+        position: relative !important;
+        box-sizing: border-box !important;
+    }
+}
+
+@media (max-width: 750px) {
+    body.parent-portal:has(#parentViewProfile.active)
+    .dashboard-layout > main.parent-main-content {
+        margin-left: 65px !important;
+        width: calc(100% - 65px) !important;
+        max-width: calc(100% - 65px) !important;
+        min-width: 0 !important;
+        flex: 0 0 calc(100% - 65px) !important;
+        box-sizing: border-box !important;
+    }
+}
