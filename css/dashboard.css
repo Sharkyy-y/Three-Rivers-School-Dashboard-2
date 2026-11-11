@@ -15825,3 +15825,232 @@ body:has(#feeStudentsContainer) #feeStatementModal .modal-content {
         padding: 16px !important;
     }
 }
+
+
+/* ==========================================
+   THREE RIVERS PARENT PORTAL
+   MY PROFILE - PREMIUM ACCOUNT SETTINGS
+   ========================================== */
+
+/* Fix sidebar overlap only while My Profile is active */
+body.parent-portal:has(#parentViewProfile.active) .parent-main-content {
+    position: relative !important;
+    margin-left: 294px !important;
+    width: calc(100% - 294px) !important;
+    max-width: calc(100% - 294px) !important;
+    min-width: 0 !important;
+    box-sizing: border-box !important;
+    padding: 32px !important;
+    overflow-x: hidden;
+}
+
+#parentViewProfile {
+    width: 100%;
+    max-width: 1100px;
+    margin: 0 auto;
+    box-sizing: border-box;
+}
+
+/* Profile heading */
+#parentViewProfile .parent-page-heading {
+    padding: 28px 30px;
+    margin-bottom: 25px;
+    border-radius: 18px;
+    background: linear-gradient(120deg, #123b30, #24664d);
+    box-shadow: 0 10px 25px rgba(18, 59, 48, 0.10);
+}
+
+#parentViewProfile .parent-page-heading .parent-section-label {
+    color: #e5c982;
+    font-size: 11px;
+    letter-spacing: 1.8px;
+}
+
+#parentViewProfile .parent-page-heading h2 {
+    color: #ffffff;
+    font-size: 28px;
+    margin: 9px 0;
+}
+
+#parentViewProfile .parent-page-heading p {
+    color: #d5e7dc;
+    font-size: 14px;
+    line-height: 1.7;
+}
+
+/* Profile and security cards */
+#parentViewProfile .parent-panel {
+    position: relative;
+    width: 100%;
+    padding: 28px;
+    margin-bottom: 22px;
+    border: 1px solid #e3ebe5;
+    border-radius: 18px;
+    background: #ffffff;
+    box-shadow: 0 7px 22px rgba(18, 59, 48, 0.045);
+    box-sizing: border-box;
+}
+
+#parentViewProfile .parent-panel h3 {
+    color: #173f34;
+    font-size: 19px;
+    margin: 0 0 20px;
+}
+
+#parentViewProfile .parent-panel > p {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    padding: 14px 16px;
+    margin: 10px 0;
+    border: 1px solid #edf1ed;
+    border-radius: 11px;
+    background: #f8faf8;
+    color: #64756b;
+    font-size: 13px;
+    line-height: 1.6;
+}
+
+#parentViewProfile .parent-panel > p strong {
+    min-width: 115px;
+    color: #345747;
+}
+
+#parentViewProfile .parent-panel > p span {
+    color: #173f34;
+    font-weight: 600;
+    overflow-wrap: anywhere;
+}
+
+/* Password security card */
+#parentViewProfile .parent-password-panel {
+    border-top: 4px solid #198754;
+}
+
+#parentViewProfile .parent-password-panel > p {
+    display: block;
+    padding: 0;
+    margin: -10px 0 23px;
+    border: 0;
+    background: transparent;
+    color: #7a8980;
+    font-size: 13px;
+}
+
+/* Password form */
+#parentViewProfile #parentChangePasswordForm {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 17px;
+    max-width: 650px;
+}
+
+#parentViewProfile #parentChangePasswordForm .form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    min-width: 0;
+}
+
+#parentViewProfile #parentChangePasswordForm label {
+    color: #345747;
+    font-size: 13px;
+    font-weight: 700;
+}
+
+#parentViewProfile #parentChangePasswordForm input {
+    display: block;
+    width: 100%;
+    min-width: 0;
+    height: 48px;
+    padding: 0 15px;
+    border: 1px solid #dce7df;
+    border-radius: 10px;
+    outline: none;
+    background: #fbfdfb;
+    color: #173f34;
+    font-family: inherit;
+    font-size: 14px;
+    box-sizing: border-box;
+    transition: border-color .2s, box-shadow .2s;
+}
+
+#parentViewProfile #parentChangePasswordForm input:focus {
+    border-color: #198754;
+    box-shadow: 0 0 0 3px rgba(25, 135, 84, .12);
+    background: #ffffff;
+}
+
+#parentViewProfile #parentChangePasswordForm input::placeholder {
+    color: #a2afa6;
+}
+
+/* Update button */
+#parentViewProfile #parentChangePasswordButton {
+    width: fit-content;
+    min-width: 180px;
+    min-height: 46px;
+    padding: 12px 22px;
+    border: 0;
+    border-radius: 10px;
+    background: linear-gradient(120deg, #198754, #116b43);
+    color: #ffffff;
+    font-family: inherit;
+    font-size: 13px;
+    font-weight: 700;
+    cursor: pointer;
+    box-shadow: 0 5px 13px rgba(25, 135, 84, .17);
+    transition: transform .2s, box-shadow .2s;
+}
+
+#parentViewProfile #parentChangePasswordButton:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 17px rgba(25, 135, 84, .23);
+}
+
+#parentViewProfile #parentChangePasswordButton:disabled {
+    opacity: .65;
+    cursor: not-allowed;
+    transform: none;
+}
+
+/* Password status message */
+#parentViewProfile #parentPasswordMessage {
+    min-height: 20px;
+    margin: 0;
+    font-size: 13px;
+    font-weight: 600;
+    line-height: 1.6;
+}
+
+/* Tablet and mobile */
+@media (max-width: 750px) {
+    body.parent-portal:has(#parentViewProfile.active) .parent-main-content {
+        margin-left: 65px !important;
+        width: calc(100% - 65px) !important;
+        max-width: calc(100% - 65px) !important;
+        padding: 20px 15px !important;
+    }
+
+    #parentViewProfile .parent-page-heading {
+        padding: 23px 20px;
+    }
+
+    #parentViewProfile .parent-panel {
+        padding: 20px;
+    }
+}
+
+@media (max-width: 480px) {
+    #parentViewProfile .parent-page-heading h2 {
+        font-size: 23px;
+    }
+
+    #parentViewProfile .parent-panel {
+        padding: 17px;
+    }
+
+    #parentViewProfile #parentChangePasswordButton {
+        width: 100%;
+    }
+}
