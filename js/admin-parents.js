@@ -12,6 +12,14 @@ let adminParentsStatistics = {
     parents_without_students: 0
 };
 
+// ==========================================
+// HELPERS
+// ==========================================
+
+function parentElement(id) {
+    return document.getElementById(id);
+}
+
 function escapeParentHTML(value) {
     return String(value ?? "").replace(/[&<>"']/g, char => ({
         "&": "&amp;",
@@ -20,10 +28,6 @@ function escapeParentHTML(value) {
         '"': "&quot;",
         "'": "&#39;"
     })[char]);
-}
-
-function parentElement(id) {
-    return document.getElementById(id);
 }
 
 function setParentText(id, value) {
@@ -35,11 +39,10 @@ function setParentText(id, value) {
 }
 
 // ==========================================
-// STYLES
+// PAGE STYLES
 // ==========================================
 
 function addParentDirectoryStyles() {
-
     if (parentElement("adminParentDirectoryStyles")) return;
 
     const style = document.createElement("style");
@@ -55,7 +58,7 @@ function addParentDirectoryStyles() {
             margin-bottom: 15px;
             border: 1px solid #e5e7eb;
             border-radius: 15px;
-            background: #fff;
+            background: #ffffff;
             transition: box-shadow .2s, transform .2s;
         }
 
@@ -151,29 +154,26 @@ function addParentDirectoryStyles() {
             color: #92400e;
         }
 
-        .parent-record-actions {
+        .parent-card-actions {
             display: flex;
+            gap: 9px;
             flex-wrap: wrap;
-            gap: 8px;
-            margin-top: 14px;
+            margin-top: 16px;
         }
 
         .parent-action-button {
+            padding: 9px 15px;
             border: 0;
             border-radius: 8px;
-            padding: 9px 13px;
-            cursor: pointer;
+            background: #166534;
+            color: white;
             font-size: 12px;
             font-weight: 700;
+            cursor: pointer;
         }
 
-        .parent-edit-button {
-            background: #dcfce7;
-            color: #166534;
-        }
-
-        .parent-edit-button:hover {
-            background: #bbf7d0;
+        .parent-action-button:hover {
+            background: #14532d;
         }
 
         .parent-directory-empty {
@@ -187,11 +187,6 @@ function addParentDirectoryStyles() {
             margin-bottom: 8px;
         }
 
-        .parent-modal-message {
-            margin-top: 12px;
-            font-size: 13px;
-        }
-
         @media (max-width: 700px) {
             .parent-record-card {
                 grid-template-columns: 1fr;
@@ -203,11 +198,10 @@ function addParentDirectoryStyles() {
 }
 
 // ==========================================
-// LOAD PARENTS
+// LOAD PARENT DIRECTORY
 // ==========================================
 
 async function loadAdminParents() {
-
     const container = parentElement("parentsContainer");
     const refreshButton = parentElement("refreshParentsButton");
     const message = parentElement("parentsDirectoryMessage");
@@ -215,8 +209,9 @@ async function loadAdminParents() {
     if (!container) return;
 
     container.innerHTML = `
-        <div class="parent-directory-empty">
-            Loading parent accounts...
+        <div class="parents-loading">
+            <div class="parents-spinner"></div>
+            <span>Loading parent accounts...</span>
         </div>
     `;
 
@@ -231,7 +226,6 @@ async function loadAdminParents() {
     }
 
     try {
-
         const {
             data: { user },
             error: userError
@@ -253,15 +247,16 @@ async function loadAdminParents() {
             );
 
         if (error) {
-            console.error(error);
+            console.error("PARENT DIRECTORY ERROR:", error);
+
             throw new Error(
                 data?.error ||
                 error.message ||
-                "Unable to contact parent management service."
+                "Unable to contact the parent management service."
             );
         }
 
-        if (!data?.success) {
+        if (!data || !data.success) {
             throw new Error(
                 data?.error || "Unable to load parent accounts."
             );
@@ -280,11 +275,8 @@ async function loadAdminParents() {
         updateParentStatistics();
         renderAdminParents();
 
-        console.log("PARENT DIRECTORY LOADED:", adminParents);
-
     } catch (error) {
-
-        console.error("PARENT DIRECTORY ERROR:", error);
+        console.error("ADMIN PARENT DIRECTORY ERROR:", error);
 
         container.innerHTML = `
             <div class="parent-directory-empty">
@@ -301,7 +293,6 @@ async function loadAdminParents() {
         }
 
     } finally {
-
         if (refreshButton) {
             refreshButton.disabled = false;
             refreshButton.textContent = "↻ Refresh";
@@ -310,11 +301,10 @@ async function loadAdminParents() {
 }
 
 // ==========================================
-// STATISTICS
+// UPDATE STATISTICS
 // ==========================================
 
 function updateParentStatistics() {
-
     setParentText(
         "parentsCount",
         adminParentsStatistics.total_parents ?? adminParents.length
@@ -332,11 +322,10 @@ function updateParentStatistics() {
 }
 
 // ==========================================
-// RENDER DIRECTORY
+// RENDER PARENT DIRECTORY
 // ==========================================
 
 function renderAdminParents() {
-
     const container = parentElement("parentsContainer");
 
     if (!container) return;
@@ -353,7 +342,6 @@ function renderAdminParents() {
         : "all";
 
     const visibleParents = adminParents.filter(parent => {
-
         const students = Array.isArray(parent.linked_students)
             ? parent.linked_students
             : [];
@@ -394,7 +382,6 @@ function renderAdminParents() {
     );
 
     if (visibleParents.length === 0) {
-
         container.innerHTML = `
             <div class="parent-directory-empty">
                 <h3>No parents found</h3>
@@ -412,7 +399,6 @@ function renderAdminParents() {
     }
 
     container.innerHTML = visibleParents.map(parent => {
-
         const students = Array.isArray(parent.linked_students)
             ? parent.linked_students
             : [];
@@ -427,14 +413,17 @@ function renderAdminParents() {
                     <strong>
                         ${escapeParentHTML(student.full_name || "Unnamed student")}
                     </strong>
+
                     <span>
                         Admission:
                         ${escapeParentHTML(student.admission_number || "—")}
                     </span>
+
                     <span>
                         Class:
                         ${escapeParentHTML(student.class_name || "Not assigned")}
                     </span>
+
                     <span>
                         Relationship:
                         ${escapeParentHTML(student.relationship || "Not specified")}
@@ -486,17 +475,19 @@ function renderAdminParents() {
                             }
                         </span>
 
-                        <div class="parent-record-actions">
+                        <div class="parent-card-actions">
                             <button
                                 type="button"
-                                class="parent-action-button parent-edit-button"
-                                data-parent-edit="${escapeParentHTML(parent.id)}"
+                                class="parent-action-button"
+                                data-parent-action="edit"
+                                data-parent-id="${escapeParentHTML(parent.id)}"
                             >
                                 ✏️ Edit Parent
                             </button>
                         </div>
 
                     </div>
+
                 </div>
 
                 <div class="parent-record-students">
@@ -506,29 +497,20 @@ function renderAdminParents() {
 
             </article>
         `;
-
     }).join("");
 }
 
 // ==========================================
-// OPEN EDIT MODAL
+// OPEN EDIT PARENT MODAL
 // ==========================================
 
 function openEditParentModal(parentId) {
-
     const parent = adminParents.find(
-        item => item.id === parentId
+        item => String(item.id) === String(parentId)
     );
 
     if (!parent) {
-        alert("Parent account not found.");
-        return;
-    }
-
-    const modal = parentElement("editParentModal");
-
-    if (!modal) {
-        alert("Edit Parent modal could not be found.");
+        alert("Parent account could not be found.");
         return;
     }
 
@@ -545,68 +527,61 @@ function openEditParentModal(parentId) {
         message.style.color = "";
     }
 
-    modal.style.display = "flex";
+    parentElement("editParentModal").style.display = "block";
 }
 
-// ==========================================
-// CLOSE EDIT MODAL
-// ==========================================
-
 function closeEditParentModal() {
-
     const modal = parentElement("editParentModal");
 
     if (modal) {
         modal.style.display = "none";
     }
-
-    const form = parentElement("editParentForm");
-
-    if (form) {
-        form.reset();
-    }
 }
 
 // ==========================================
-// SAVE PARENT CHANGES
+// SAVE EDITED PARENT
 // ==========================================
 
-async function saveParentChanges(event) {
-
+async function saveEditedParent(event) {
     event.preventDefault();
 
-    const parentId = parentElement("editParentId").value;
-    const fullName = parentElement("editParentName").value.trim();
-    const username = parentElement("editParentUsername").value.trim();
-    const phone = parentElement("editParentPhone").value.trim();
-    const email = parentElement("editParentEmail").value.trim();
+    const form = parentElement("editParentForm");
+    const saveButton = form.querySelector(
+        'button[type="submit"]'
+    );
 
     const message = parentElement("editParentMessage");
-    const submitButton = parentElement("editParentForm")
-        ?.querySelector('[type="submit"]');
 
-    if (message) {
-        message.textContent = "Saving changes...";
-        message.style.color = "#64748b";
+    const parentId = parentElement("editParentId").value;
+
+    const updatedParent = {
+        parent_id: parentId,
+        full_name: parentElement("editParentName").value.trim(),
+        username: parentElement("editParentUsername").value.trim(),
+        phone: parentElement("editParentPhone").value.trim(),
+        email: parentElement("editParentEmail").value.trim()
+    };
+
+    if (!updatedParent.full_name || !updatedParent.username) {
+        message.textContent = "Full name and username are required.";
+        message.style.color = "#dc2626";
+        return;
     }
 
-    if (submitButton) {
-        submitButton.disabled = true;
-    }
+    saveButton.disabled = true;
+    saveButton.textContent = "Saving...";
+
+    message.textContent = "Updating parent information...";
+    message.style.color = "#64748b";
 
     try {
-
         const { data, error } =
             await supabaseClient.functions.invoke(
                 "manage-parents",
                 {
                     body: {
                         action: "update",
-                        parent_id: parentId,
-                        full_name: fullName,
-                        username,
-                        phone: phone || null,
-                        email: email || null
+                        ...updatedParent
                     }
                 }
             );
@@ -615,57 +590,48 @@ async function saveParentChanges(event) {
             throw new Error(
                 data?.error ||
                 error.message ||
-                "Unable to update parent."
+                "Unable to update parent information."
             );
         }
 
-        if (!data?.success) {
+        if (!data || !data.success) {
             throw new Error(
-                data?.error || "Parent update failed."
+                data?.error || "Parent information could not be updated."
             );
         }
-
-        if (message) {
-            message.textContent =
-                "Parent details updated successfully.";
-
-            message.style.color = "#15803d";
-        }
-
-        // Update the local directory record.
 
         const index = adminParents.findIndex(
-            parent => parent.id === parentId
+            parent => String(parent.id) === String(parentId)
         );
 
         if (index !== -1) {
             adminParents[index] = {
                 ...adminParents[index],
-                ...data.parent
+                full_name: updatedParent.full_name,
+                username: updatedParent.username,
+                phone: updatedParent.phone,
+                email: updatedParent.email
             };
         }
 
-        updateParentStatistics();
         renderAdminParents();
+
+        message.textContent = "Parent information updated successfully.";
+        message.style.color = "#15803d";
 
         setTimeout(() => {
             closeEditParentModal();
         }, 900);
 
     } catch (error) {
+        console.error("UPDATE PARENT ERROR:", error);
 
-        console.error("PARENT UPDATE ERROR:", error);
-
-        if (message) {
-            message.textContent = error.message;
-            message.style.color = "#dc2626";
-        }
+        message.textContent = error.message;
+        message.style.color = "#dc2626";
 
     } finally {
-
-        if (submitButton) {
-            submitButton.disabled = false;
-        }
+        saveButton.disabled = false;
+        saveButton.textContent = "Save Changes";
     }
 }
 
@@ -673,66 +639,41 @@ async function saveParentChanges(event) {
 // EVENT LISTENERS
 // ==========================================
 
-const parentSearchInput = parentElement("parentSearch");
-
-if (parentSearchInput) {
-    parentSearchInput.addEventListener(
-        "input",
-        renderAdminParents
-    );
-}
-
-const parentFilterInput = parentElement("parentFilter");
-
-if (parentFilterInput) {
-    parentFilterInput.addEventListener(
-        "change",
-        renderAdminParents
-    );
-}
-
-const refreshParentsButton = parentElement("refreshParentsButton");
-
-if (refreshParentsButton) {
-    refreshParentsButton.addEventListener(
-        "click",
-        loadAdminParents
-    );
-}
-
-// Edit button event delegation.
-
+// Parent card actions
 const parentsContainer = parentElement("parentsContainer");
 
 if (parentsContainer) {
     parentsContainer.addEventListener("click", event => {
-
-        const button = event.target.closest("[data-parent-edit]");
+        const button = event.target.closest(
+            "[data-parent-action]"
+        );
 
         if (!button) return;
 
-        openEditParentModal(button.dataset.parentEdit);
+        const action = button.dataset.parentAction;
+        const parentId = button.dataset.parentId;
+
+        if (action === "edit") {
+            openEditParentModal(parentId);
+        }
     });
 }
 
-// Edit form submission.
-
+// Edit form
 const editParentForm = parentElement("editParentForm");
 
 if (editParentForm) {
     editParentForm.addEventListener(
         "submit",
-        saveParentChanges
+        saveEditedParent
     );
 }
 
-// Close and cancel buttons.
-
+// Close edit modal
 [
     "closeEditParentModal",
     "cancelEditParent"
 ].forEach(id => {
-
     const button = parentElement(id);
 
     if (button) {
@@ -743,13 +684,52 @@ if (editParentForm) {
     }
 });
 
+// Close modal when clicking outside
+const editParentModal = parentElement("editParentModal");
+
+if (editParentModal) {
+    editParentModal.addEventListener("click", event => {
+        if (event.target === editParentModal) {
+            closeEditParentModal();
+        }
+    });
+}
+
+// Search
+const parentSearchInput = parentElement("parentSearch");
+
+if (parentSearchInput) {
+    parentSearchInput.addEventListener(
+        "input",
+        renderAdminParents
+    );
+}
+
+// Filter
+const parentFilterInput = parentElement("parentFilter");
+
+if (parentFilterInput) {
+    parentFilterInput.addEventListener(
+        "change",
+        renderAdminParents
+    );
+}
+
+// Refresh
+const refreshParentsButton = parentElement("refreshParentsButton");
+
+if (refreshParentsButton) {
+    refreshParentsButton.addEventListener(
+        "click",
+        loadAdminParents
+    );
+}
+
 // ==========================================
-// START
+// START PARENT MANAGEMENT
 // ==========================================
 
-if (
-    window.location.pathname.includes("admin-parents.html")
-) {
+if (window.location.pathname.includes("admin-parents.html")) {
     addParentDirectoryStyles();
     loadAdminParents();
 }
