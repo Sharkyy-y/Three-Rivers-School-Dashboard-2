@@ -7,11 +7,12 @@ document.addEventListener("DOMContentLoaded", async function () {
 
     if (!form || !childrenSelect || !message || !result) return;
 
-    const submitButton = form.querySelector(
-        'button[type="submit"]'
-    );
+    const submitButton = form.querySelector('button[type="submit"]');
+    const passwordField = document.getElementById("createdParentPassword");
+    const copyButton = document.getElementById("copyParentPassword");
 
-    // Load students belonging to the administrator's school.
+    if (!passwordField || !copyButton) return;
+
     async function loadStudents() {
         childrenSelect.innerHTML =
             '<option disabled>Loading students...</option>';
@@ -48,14 +49,18 @@ document.addEventListener("DOMContentLoaded", async function () {
             childrenSelect.innerHTML =
                 '<option disabled>Could not load students.</option>';
 
-            message.textContent =
-                "Unable to load students. Refresh the page and try again.";
+            throw error;
         }
     }
 
-    await loadStudents();
+    try {
+        await loadStudents();
+    } catch (error) {
+        message.textContent =
+            "Unable to load students. Refresh the page and try again.";
+        message.style.color = "#dc2626";
+    }
 
-    // Create parent account.
     form.addEventListener("submit", async function (event) {
         event.preventDefault();
 
@@ -77,9 +82,7 @@ document.addEventListener("DOMContentLoaded", async function () {
         const relationship =
             document.getElementById("parentRelationship").value;
 
-        const childIds = Array.from(
-            childrenSelect.selectedOptions
-        )
+        const childIds = Array.from(childrenSelect.selectedOptions)
             .filter(option => option.value)
             .map(option => option.value);
 
@@ -117,19 +120,16 @@ document.addEventListener("DOMContentLoaded", async function () {
             }
 
             const { data, error } =
-                await supabaseClient.functions.invoke(
-                    "create-parent",
-                    {
-                        body: {
-                            full_name: fullName,
-                            username,
-                            phone: phone || null,
-                            email: email || null,
-                            relationship,
-                            childIds
-                        }
+                await supabaseClient.functions.invoke("create-parent", {
+                    body: {
+                        full_name: fullName,
+                        username,
+                        phone: phone || null,
+                        email: email || null,
+                        relationship,
+                        childIds
                     }
-                );
+                });
 
             if (error) {
                 let details = error.message;
@@ -148,21 +148,25 @@ document.addEventListener("DOMContentLoaded", async function () {
                 throw new Error(details);
             }
 
-            if (!data || !data.success) {
+            if (!data || !data.success || !data.temporary_password) {
                 throw new Error(
-                    data?.error || "Parent account creation failed."
+                    data?.error ||
+                    "The account was created, but no temporary password was returned. Check the account before retrying."
                 );
             }
 
+            // IMPORTANT: Reset the form BEFORE filling the result fields.
+            form.reset();
+
+            // Display the returned account details.
             document.getElementById("createdParentName").textContent =
                 data.full_name;
 
             document.getElementById("createdParentUsername").textContent =
                 data.username;
 
-            const passwordField = document.getElementById("createdParentPassword");
-passwordField.value = data.temporary_password;
-passwordField.style.display = "block";
+            passwordField.value = data.temporary_password;
+            passwordField.style.display = "block";
 
             result.hidden = false;
 
@@ -171,9 +175,15 @@ passwordField.style.display = "block";
 
             message.style.color = "#15803d";
 
-            form.reset();
-
-            await loadStudents();
+            // Reload the student list.
+            try {
+                await loadStudents();
+            } catch (reloadError) {
+                console.error(
+                    "Student list reload error:",
+                    reloadError
+                );
+            }
 
         } catch (error) {
             console.error("Create parent error:", error);
@@ -189,25 +199,32 @@ passwordField.style.display = "block";
         }
     });
 
-    // Copy temporary password.
-    document.getElementById("copyParentPassword")
-        .addEventListener("click", async function () {
-            const password =
-                document.getElementById("createdParentPassword").value;
+    copyButton.addEventListener("click", async function () {
+        const password = passwordField.value;
 
-            try {
-                await navigator.clipboard.writeText(password);
+        if (!password) {
+            message.textContent = "No temporary password is available.";
+            message.style.color = "#dc2626";
+            return;
+        }
 
-                this.textContent = "Copied!";
-                
-                setTimeout(() => {
-                    this.textContent = "Copy Temporary Password";
-                }, 2000);
+        try {
+            await navigator.clipboard.writeText(password);
 
-            } catch (error) {
-                message.textContent =
-                    "Copy failed. Select and copy the password manually.";
-                message.style.color = "#dc2626";
-            }
-        });
+            this.textContent = "Copied!";
+
+            setTimeout(() => {
+                this.textContent = "Copy Temporary Password";
+            }, 2000);
+
+        } catch (error) {
+            passwordField.focus();
+            passwordField.select();
+
+            message.textContent =
+                "Automatic copying failed. Use Ctrl+C to copy the selected password.";
+
+            message.style.color = "#dc2626";
+        }
+    });
 });
