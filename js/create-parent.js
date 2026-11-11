@@ -160,8 +160,9 @@ document.addEventListener("DOMContentLoaded", async function () {
             document.getElementById("createdParentUsername").textContent =
                 data.username;
 
-            document.getElementById("createdParentPassword").value =
-                data.temporary_password;
+            const passwordField = document.getElementById("createdParentPassword");
+passwordField.value = data.temporary_password;
+passwordField.style.display = "block";
 
             result.hidden = false;
 
