@@ -15828,36 +15828,34 @@ body:has(#feeStudentsContainer) #feeStatementModal .modal-content {
 
 
 
+
 /* ==========================================
-   PARENT MY PROFILE - DEFINITIVE LAYOUT FIX
+   PARENT MY PROFILE - SIDEBAR POSITION FIX
    ========================================== */
 
 @media (min-width: 751px) {
     body.parent-portal:has(#parentViewProfile.active)
     .dashboard-layout > main.parent-main-content {
-        display: block !important;
         position: relative !important;
-        margin-left: 245px !important;
-        width: calc(100% - 245px) !important;
-        max-width: calc(100% - 245px) !important;
+        margin-left: 294px !important;
+        width: calc(100% - 294px) !important;
+        max-width: calc(100% - 294px) !important;
         min-width: 0 !important;
-        flex: 0 0 calc(100% - 245px) !important;
-        padding: 30px !important;
+        flex: 0 0 calc(100% - 294px) !important;
         box-sizing: border-box !important;
-        overflow-x: hidden !important;
+        padding: 30px !important;
     }
 }
 
 @media (max-width: 750px) {
     body.parent-portal:has(#parentViewProfile.active)
     .dashboard-layout > main.parent-main-content {
-        display: block !important;
         margin-left: 65px !important;
         width: calc(100% - 65px) !important;
         max-width: calc(100% - 65px) !important;
         flex: 0 0 calc(100% - 65px) !important;
-        padding: 18px !important;
         box-sizing: border-box !important;
+        padding: 18px !important;
     }
 }
 
