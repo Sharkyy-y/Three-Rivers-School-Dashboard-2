@@ -15783,3 +15783,45 @@ body:has(#feeStudentsContainer) #feeStatementModal .modal-content {
         width: 100%;
     }
 }
+
+
+/* ==========================================
+   ADMIN PARENTS - SIDEBAR OVERLAP FIX
+========================================== */
+
+/* Desktop */
+@media (min-width: 751px) {
+
+    .dashboard-layout > .parents-page {
+        position: relative !important;
+        margin-left: 294px !important;
+        width: calc(100% - 294px) !important;
+        max-width: calc(100% - 294px) !important;
+        min-width: 0 !important;
+        flex: 0 0 calc(100% - 294px) !important;
+        box-sizing: border-box !important;
+        padding: 30px !important;
+    }
+
+    .dashboard-layout > .sidebar {
+        width: 294px !important;
+    }
+}
+
+/* Mobile and tablet */
+@media (max-width: 750px) {
+
+    .dashboard-layout > .sidebar {
+        width: 65px !important;
+    }
+
+    .dashboard-layout > .parents-page {
+        margin-left: 65px !important;
+        width: calc(100% - 65px) !important;
+        max-width: calc(100% - 65px) !important;
+        min-width: 0 !important;
+        flex: 0 0 calc(100% - 65px) !important;
+        box-sizing: border-box !important;
+        padding: 16px !important;
+    }
+}
