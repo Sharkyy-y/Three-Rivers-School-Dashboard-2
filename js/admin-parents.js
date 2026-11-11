@@ -5,15 +5,12 @@
 // ==========================================
 
 let adminParents = [];
+
 let adminParentsStatistics = {
     total_parents: 0,
     parents_with_students: 0,
     parents_without_students: 0
 };
-
-// ==========================================
-// HELPERS
-// ==========================================
 
 function escapeParentHTML(value) {
     return String(value ?? "").replace(/[&<>"']/g, char => ({
@@ -38,7 +35,7 @@ function setParentText(id, value) {
 }
 
 // ==========================================
-// PAGE STYLES
+// STYLES
 // ==========================================
 
 function addParentDirectoryStyles() {
@@ -58,7 +55,7 @@ function addParentDirectoryStyles() {
             margin-bottom: 15px;
             border: 1px solid #e5e7eb;
             border-radius: 15px;
-            background: #ffffff;
+            background: #fff;
             transition: box-shadow .2s, transform .2s;
         }
 
@@ -154,6 +151,31 @@ function addParentDirectoryStyles() {
             color: #92400e;
         }
 
+        .parent-record-actions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 14px;
+        }
+
+        .parent-action-button {
+            border: 0;
+            border-radius: 8px;
+            padding: 9px 13px;
+            cursor: pointer;
+            font-size: 12px;
+            font-weight: 700;
+        }
+
+        .parent-edit-button {
+            background: #dcfce7;
+            color: #166534;
+        }
+
+        .parent-edit-button:hover {
+            background: #bbf7d0;
+        }
+
         .parent-directory-empty {
             padding: 45px 20px;
             text-align: center;
@@ -163,6 +185,11 @@ function addParentDirectoryStyles() {
         .parent-directory-empty h3 {
             color: #334155;
             margin-bottom: 8px;
+        }
+
+        .parent-modal-message {
+            margin-top: 12px;
+            font-size: 13px;
         }
 
         @media (max-width: 700px) {
@@ -176,7 +203,7 @@ function addParentDirectoryStyles() {
 }
 
 // ==========================================
-// LOAD PARENT DIRECTORY
+// LOAD PARENTS
 // ==========================================
 
 async function loadAdminParents() {
@@ -188,9 +215,8 @@ async function loadAdminParents() {
     if (!container) return;
 
     container.innerHTML = `
-        <div class="parents-loading">
-            <div class="parents-spinner"></div>
-            <span>Loading parent accounts...</span>
+        <div class="parent-directory-empty">
+            Loading parent accounts...
         </div>
     `;
 
@@ -206,8 +232,6 @@ async function loadAdminParents() {
 
     try {
 
-        // Confirm an active administrator session.
-
         const {
             data: { user },
             error: userError
@@ -218,32 +242,26 @@ async function loadAdminParents() {
             return;
         }
 
-        // Secure server-side directory request.
-        // The Edge Function verifies the admin role
-        // and derives the school from the admin profile.
-
-        const {
-            data,
-            error
-        } = await supabaseClient.functions.invoke(
-            "manage-parents",
-            {
-                body: {
-                    action: "list"
+        const { data, error } =
+            await supabaseClient.functions.invoke(
+                "manage-parents",
+                {
+                    body: {
+                        action: "list"
+                    }
                 }
-            }
-        );
+            );
 
         if (error) {
-            console.error("PARENT DIRECTORY FUNCTION ERROR:", error);
+            console.error(error);
             throw new Error(
                 data?.error ||
                 error.message ||
-                "Unable to contact the parent management service."
+                "Unable to contact parent management service."
             );
         }
 
-        if (!data || !data.success) {
+        if (!data?.success) {
             throw new Error(
                 data?.error || "Unable to load parent accounts."
             );
@@ -262,14 +280,11 @@ async function loadAdminParents() {
         updateParentStatistics();
         renderAdminParents();
 
-        console.log(
-            "PARENT DIRECTORY LOADED:",
-            adminParents.length
-        );
+        console.log("PARENT DIRECTORY LOADED:", adminParents);
 
     } catch (error) {
 
-        console.error("ADMIN PARENT DIRECTORY ERROR:", error);
+        console.error("PARENT DIRECTORY ERROR:", error);
 
         container.innerHTML = `
             <div class="parent-directory-empty">
@@ -295,7 +310,7 @@ async function loadAdminParents() {
 }
 
 // ==========================================
-// UPDATE STATISTICS
+// STATISTICS
 // ==========================================
 
 function updateParentStatistics() {
@@ -317,7 +332,7 @@ function updateParentStatistics() {
 }
 
 // ==========================================
-// RENDER PARENT DIRECTORY
+// RENDER DIRECTORY
 // ==========================================
 
 function renderAdminParents() {
@@ -357,16 +372,10 @@ function renderAdminParents() {
             parent.email,
             ...students.map(student => student.full_name),
             ...students.map(student => student.admission_number)
-        ]
-            .join(" ")
-            .toLowerCase();
+        ].join(" ").toLowerCase();
 
-        const matchesSearch = searchableText.includes(search);
-
-        return matchesFilter && matchesSearch;
+        return matchesFilter && searchableText.includes(search);
     });
-
-    // Update heading.
 
     const titles = {
         all: "All Parents",
@@ -383,8 +392,6 @@ function renderAdminParents() {
         "parentsVisibleCount",
         visibleParents.length
     );
-
-    // Empty directory.
 
     if (visibleParents.length === 0) {
 
@@ -404,8 +411,6 @@ function renderAdminParents() {
         return;
     }
 
-    // Render parent cards.
-
     container.innerHTML = visibleParents.map(parent => {
 
         const students = Array.isArray(parent.linked_students)
@@ -422,17 +427,14 @@ function renderAdminParents() {
                     <strong>
                         ${escapeParentHTML(student.full_name || "Unnamed student")}
                     </strong>
-
                     <span>
                         Admission:
                         ${escapeParentHTML(student.admission_number || "—")}
                     </span>
-
                     <span>
                         Class:
                         ${escapeParentHTML(student.class_name || "Not assigned")}
                     </span>
-
                     <span>
                         Relationship:
                         ${escapeParentHTML(student.relationship || "Not specified")}
@@ -484,16 +486,22 @@ function renderAdminParents() {
                             }
                         </span>
 
-                    </div>
+                        <div class="parent-record-actions">
+                            <button
+                                type="button"
+                                class="parent-action-button parent-edit-button"
+                                data-parent-edit="${escapeParentHTML(parent.id)}"
+                            >
+                                ✏️ Edit Parent
+                            </button>
+                        </div>
 
+                    </div>
                 </div>
 
                 <div class="parent-record-students">
-
                     <h4>Linked Students</h4>
-
                     ${studentHTML}
-
                 </div>
 
             </article>
@@ -503,7 +511,166 @@ function renderAdminParents() {
 }
 
 // ==========================================
-// SEARCH
+// OPEN EDIT MODAL
+// ==========================================
+
+function openEditParentModal(parentId) {
+
+    const parent = adminParents.find(
+        item => item.id === parentId
+    );
+
+    if (!parent) {
+        alert("Parent account not found.");
+        return;
+    }
+
+    const modal = parentElement("editParentModal");
+
+    if (!modal) {
+        alert("Edit Parent modal could not be found.");
+        return;
+    }
+
+    parentElement("editParentId").value = parent.id;
+    parentElement("editParentName").value = parent.full_name || "";
+    parentElement("editParentUsername").value = parent.username || "";
+    parentElement("editParentPhone").value = parent.phone || "";
+    parentElement("editParentEmail").value = parent.email || "";
+
+    const message = parentElement("editParentMessage");
+
+    if (message) {
+        message.textContent = "";
+        message.style.color = "";
+    }
+
+    modal.style.display = "flex";
+}
+
+// ==========================================
+// CLOSE EDIT MODAL
+// ==========================================
+
+function closeEditParentModal() {
+
+    const modal = parentElement("editParentModal");
+
+    if (modal) {
+        modal.style.display = "none";
+    }
+
+    const form = parentElement("editParentForm");
+
+    if (form) {
+        form.reset();
+    }
+}
+
+// ==========================================
+// SAVE PARENT CHANGES
+// ==========================================
+
+async function saveParentChanges(event) {
+
+    event.preventDefault();
+
+    const parentId = parentElement("editParentId").value;
+    const fullName = parentElement("editParentName").value.trim();
+    const username = parentElement("editParentUsername").value.trim();
+    const phone = parentElement("editParentPhone").value.trim();
+    const email = parentElement("editParentEmail").value.trim();
+
+    const message = parentElement("editParentMessage");
+    const submitButton = parentElement("editParentForm")
+        ?.querySelector('[type="submit"]');
+
+    if (message) {
+        message.textContent = "Saving changes...";
+        message.style.color = "#64748b";
+    }
+
+    if (submitButton) {
+        submitButton.disabled = true;
+    }
+
+    try {
+
+        const { data, error } =
+            await supabaseClient.functions.invoke(
+                "manage-parents",
+                {
+                    body: {
+                        action: "update",
+                        parent_id: parentId,
+                        full_name: fullName,
+                        username,
+                        phone: phone || null,
+                        email: email || null
+                    }
+                }
+            );
+
+        if (error) {
+            throw new Error(
+                data?.error ||
+                error.message ||
+                "Unable to update parent."
+            );
+        }
+
+        if (!data?.success) {
+            throw new Error(
+                data?.error || "Parent update failed."
+            );
+        }
+
+        if (message) {
+            message.textContent =
+                "Parent details updated successfully.";
+
+            message.style.color = "#15803d";
+        }
+
+        // Update the local directory record.
+
+        const index = adminParents.findIndex(
+            parent => parent.id === parentId
+        );
+
+        if (index !== -1) {
+            adminParents[index] = {
+                ...adminParents[index],
+                ...data.parent
+            };
+        }
+
+        updateParentStatistics();
+        renderAdminParents();
+
+        setTimeout(() => {
+            closeEditParentModal();
+        }, 900);
+
+    } catch (error) {
+
+        console.error("PARENT UPDATE ERROR:", error);
+
+        if (message) {
+            message.textContent = error.message;
+            message.style.color = "#dc2626";
+        }
+
+    } finally {
+
+        if (submitButton) {
+            submitButton.disabled = false;
+        }
+    }
+}
+
+// ==========================================
+// EVENT LISTENERS
 // ==========================================
 
 const parentSearchInput = parentElement("parentSearch");
@@ -515,10 +682,6 @@ if (parentSearchInput) {
     );
 }
 
-// ==========================================
-// FILTER
-// ==========================================
-
 const parentFilterInput = parentElement("parentFilter");
 
 if (parentFilterInput) {
@@ -527,10 +690,6 @@ if (parentFilterInput) {
         renderAdminParents
     );
 }
-
-// ==========================================
-// REFRESH
-// ==========================================
 
 const refreshParentsButton = parentElement("refreshParentsButton");
 
@@ -541,15 +700,56 @@ if (refreshParentsButton) {
     );
 }
 
+// Edit button event delegation.
+
+const parentsContainer = parentElement("parentsContainer");
+
+if (parentsContainer) {
+    parentsContainer.addEventListener("click", event => {
+
+        const button = event.target.closest("[data-parent-edit]");
+
+        if (!button) return;
+
+        openEditParentModal(button.dataset.parentEdit);
+    });
+}
+
+// Edit form submission.
+
+const editParentForm = parentElement("editParentForm");
+
+if (editParentForm) {
+    editParentForm.addEventListener(
+        "submit",
+        saveParentChanges
+    );
+}
+
+// Close and cancel buttons.
+
+[
+    "closeEditParentModal",
+    "cancelEditParent"
+].forEach(id => {
+
+    const button = parentElement(id);
+
+    if (button) {
+        button.addEventListener(
+            "click",
+            closeEditParentModal
+        );
+    }
+});
+
 // ==========================================
-// START PARENT MANAGEMENT
+// START
 // ==========================================
 
 if (
     window.location.pathname.includes("admin-parents.html")
 ) {
-
     addParentDirectoryStyles();
     loadAdminParents();
-
 }
