@@ -15372,96 +15372,65 @@ if (
 // DELETE STUDENT
 // ==========================================
 
+
 async function deleteStudent(studentId) {
 
-    const confirmed =
-        confirm(
-            "Are you sure you want to permanently delete this student?\n\n" +
-            "This will remove the student's school record and login account."
-        );
+    const confirmed = confirm(
+        "Are you sure you want to deactivate this student?\n\n" +
+        "The student will lose access to their account, but all academic, attendance and financial records will be preserved."
+    );
 
-    if (!confirmed) {
-        return;
-    }
+    if (!confirmed) return;
 
     try {
 
-        // ==========================================
-        // SHOW DELETING MESSAGE
-        // ==========================================
+        alert("Deactivating student...");
 
-        alert("Deleting student...");
-
-        // ==========================================
-        // CALL EDGE FUNCTION
-        // ==========================================
-
-        const {
-            data,
-            error
-        } =
+        const { data, error } =
             await supabaseClient.functions.invoke(
                 "delete-student",
                 {
                     body: {
-                        studentId:
-                            studentId
+                        studentId: studentId
                     }
                 }
             );
 
         if (error) {
-
-            console.error(
-                "DELETE STUDENT ERROR:",
-                error
-            );
+            console.error("DEACTIVATE STUDENT ERROR:", error);
 
             alert(
-                "Unable to delete student:\n" +
+                "Unable to deactivate student:\n" +
                 error.message
             );
 
             return;
         }
 
-        if (
-            !data ||
-            !data.success
-        ) {
-
-            console.error(
-                "DELETE STUDENT RESPONSE:",
-                data
-            );
+        if (!data || !data.success) {
+            console.error("DEACTIVATE STUDENT RESPONSE:", data);
 
             alert(
                 data?.error ||
-                "Unable to delete student."
+                "Unable to deactivate student."
             );
 
             return;
         }
 
-        // ==========================================
-        // REFRESH STUDENT LIST
-        // ==========================================
-
         await loadAdminStudents();
 
         alert(
-            "Student deleted successfully."
+            data.message ||
+            "Student deactivated successfully."
         );
 
     } catch (error) {
 
-        console.error(
-            "DELETE STUDENT EXCEPTION:",
-            error
-        );
+        console.error("DEACTIVATE STUDENT EXCEPTION:", error);
 
         alert(
-            "Something went wrong while deleting the student."
+            "Something went wrong while deactivating the student."
         );
 
     }
