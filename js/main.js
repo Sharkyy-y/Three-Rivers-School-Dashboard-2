@@ -5239,8 +5239,8 @@ if (
 // ==========================================
 
 
-async function loadAdminTeachers() {
 
+async function loadAdminTeachers() {
     const teachersContainer =
         document.getElementById("teachersContainer");
 
@@ -5253,7 +5253,6 @@ async function loadAdminTeachers() {
         "<p>Loading teachers...</p>";
 
     try {
-
         const {
             data: teachers,
             error
@@ -5294,7 +5293,6 @@ async function loadAdminTeachers() {
         teachersContainer.innerHTML = "";
 
         teacherList.forEach(teacher => {
-
             const card = document.createElement("div");
 
             card.className = "student-admin-card";
@@ -5327,14 +5325,12 @@ async function loadAdminTeachers() {
                     <button
                         class="secondary-button"
                         type="button"
-                        disabled
-                        style="opacity:0.65;cursor:not-allowed;">
-                        Deactivated
+                        onclick="reactivateTeacher('${teacher.id}')">
+                        Reactivate
                     </button>
                 `;
 
             card.innerHTML = `
-
                 <div class="student-admin-info">
 
                     <div class="student-admin-avatar">
@@ -5399,16 +5395,13 @@ async function loadAdminTeachers() {
             `;
 
             teachersContainer.appendChild(card);
-
         });
 
     } catch (error) {
-
         console.error("ADMIN TEACHERS ERROR:", error);
 
         teachersContainer.innerHTML =
             "<p>Unable to load teachers. Please refresh the page.</p>";
-
     }
 }
 
