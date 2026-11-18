@@ -9166,6 +9166,49 @@ if (logoutButton) {
 }
 
 // ==========================================
+// TEACHER LOGOUT
+// ==========================================
+
+const teacherLogoutButton =
+    document.getElementById("teacherLogoutButton");
+
+if (
+    teacherLogoutButton &&
+    !teacherLogoutButton.dataset.initialized
+) {
+    teacherLogoutButton.dataset.initialized = "true";
+
+    teacherLogoutButton.addEventListener(
+        "click",
+        async function () {
+
+            teacherLogoutButton.disabled = true;
+            teacherLogoutButton.textContent = "Logging out...";
+
+            try {
+                const { error } =
+                    await supabaseClient.auth.signOut();
+
+                if (error) {
+                    throw error;
+                }
+
+                window.location.replace("login.html");
+
+            } catch (error) {
+
+                console.error("Teacher logout error:", error);
+
+                alert("Unable to log out. Please try again.");
+
+                teacherLogoutButton.disabled = false;
+                teacherLogoutButton.textContent = "🚪 Logout";
+            }
+        }
+    );
+}
+
+// ==========================================
 // TEACHER DASHBOARD
 // ==========================================
 
