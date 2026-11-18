@@ -5238,127 +5238,100 @@ if (
 // ADMIN - LOAD TEACHERS
 // ==========================================
 
+
 async function loadAdminTeachers() {
 
     const teachersContainer =
-        document.getElementById(
-            "teachersContainer"
-        );
+        document.getElementById("teachersContainer");
 
     const teachersCount =
-        document.getElementById(
-            "teachersCount"
-        );
+        document.getElementById("teachersCount");
 
-    if (!teachersContainer) {
-        return;
-    }
+    if (!teachersContainer) return;
 
     teachersContainer.innerHTML =
         "<p>Loading teachers...</p>";
 
-const {
-    data: {
-        user
-    },
-    error: userError
-} = await supabaseClient.auth.getUser();
+    try {
 
-console.log(
-    "CURRENT ADMIN AUTH USER ID:",
-    user?.id
-);
-
-console.log(
-    "CURRENT ADMIN AUTH EMAIL:",
-    user?.email
-);
-
-console.log(
-    "CURRENT ADMIN AUTH ERROR:",
-    userError
-);
-    
-    const {
-        data: teachers,
-        error
-    } = await supabaseClient
-        .from("teachers")
-        .select(
-            "id, full_name, email, phone, gender, date_of_birth, address"
-        )
-        .order(
-            "full_name",
-            {
-                ascending: true
-            }
-        );
-
-    console.log(
-    "ADMIN TEACHERS RESULT:",
-    teachers,
-    error
-);
-
-    if (error) {
-
-        console.error(
-            "ADMIN TEACHERS ERROR:",
+        const {
+            data: teachers,
             error
-        );
+        } = await supabaseClient
+            .from("teachers")
+            .select(`
+                id,
+                full_name,
+                email,
+                phone,
+                gender,
+                date_of_birth,
+                address,
+                is_active
+            `)
+            .order("full_name", {
+                ascending: true
+            });
 
-        teachersContainer.innerHTML =
-            "<p>Unable to load teachers.</p>";
+        if (error) throw error;
 
-        return;
-    }
+        const teacherList = teachers || [];
 
-    if (teachersCount) {
+        if (teachersCount) {
+            teachersCount.textContent =
+                `${teacherList.length} teacher${teacherList.length === 1 ? "" : "s"}`;
+        }
 
-        teachersCount.textContent =
-            `${teachers.length} teacher${teachers.length === 1 ? "" : "s"}`;
-
-    }
-
-    if (teachers.length === 0) {
-
-        teachersContainer.innerHTML =
-            `
-            <div class="empty-state">
-
-                <p>
-                    No teachers have been added yet.
-                </p>
-
-            </div>
+        if (teacherList.length === 0) {
+            teachersContainer.innerHTML = `
+                <div class="empty-state">
+                    <p>No teachers have been added yet.</p>
+                </div>
             `;
+            return;
+        }
 
-        return;
-    }
+        teachersContainer.innerHTML = "";
 
-    teachersContainer.innerHTML = "";
+        teacherList.forEach(teacher => {
 
-    teachers.forEach(
-        teacher => {
+            const card = document.createElement("div");
 
-            const card =
-                document.createElement("div");
+            card.className = "student-admin-card";
 
-            card.className =
-                "student-admin-card";
+            const isActive = teacher.is_active === true;
 
-            const initials =
-                teacher.full_name
-                    ? teacher.full_name
-                        .split(" ")
-                        .map(
-                            name =>
-                                name.charAt(0)
-                        )
-                        .slice(0, 2)
-                        .join("")
-                        .toUpperCase()
-                    : "T";
+            const initials = teacher.full_name
+                ? teacher.full_name
+                    .split(" ")
+                    .map(name => name.charAt(0))
+                    .slice(0, 2)
+                    .join("")
+                    .toUpperCase()
+                : "T";
+
+            const statusBadge = isActive
+                ? `<span style="color:#15803d;font-weight:600;">● Active</span>`
+                : `<span style="color:#dc2626;font-weight:600;">● Deactivated</span>`;
+
+            const statusButton = isActive
+                ? `
+                    <button
+                        class="delete-student-button"
+                        type="button"
+                        onclick="deleteTeacher('${teacher.id}')">
+                        Deactivate
+                    </button>
+                `
+                : `
+                    <button
+                        class="secondary-button"
+                        type="button"
+                        disabled
+                        style="opacity:0.65;cursor:not-allowed;">
+                        Deactivated
+                    </button>
+                `;
 
             card.innerHTML = `
 
@@ -5384,65 +5357,61 @@ console.log(
                             ${teacher.phone || "—"}
                         </p>
 
+                        <p>
+                            Account status: ${statusBadge}
+                        </p>
+
                     </div>
 
                 </div>
 
-<div class="student-admin-actions">
+                <div class="student-admin-actions">
 
-    <button
-        class="secondary-button"
-        type="button"
-        onclick="resetTeacherPassword('${teacher.id}')">
+                    <button
+                        class="secondary-button"
+                        type="button"
+                        onclick="resetTeacherPassword('${teacher.id}')"
+                        ${isActive ? "" : "disabled"}>
+                        Reset Password
+                    </button>
 
-        Reset Password
+                    <button
+                        class="edit-student-button"
+                        type="button"
+                        onclick="openEditTeacherModal('${teacher.id}')">
+                        Edit
+                    </button>
 
-    </button>
+                    <button
+                        class="secondary-button"
+                        type="button"
+                        onclick="openSubjectAssignment('teacher', {
+                            id: '${teacher.id}',
+                            name: '${teacher.full_name || ""}',
+                            email: '${teacher.email || ""}'
+                        })">
+                        Assign Subjects
+                    </button>
 
+                    ${statusButton}
 
-    <button
-        class="edit-student-button"
-        type="button"
-        onclick="openEditTeacherModal('${teacher.id}')">
-
-        Edit
-
-    </button>
-
-<button
-    class="secondary-button"
-    type="button"
-    onclick="openSubjectAssignment('teacher', {
-        id: '${teacher.id}',
-        name: '${teacher.full_name}',
-        email: '${teacher.email}'
-    })">
-
-    Assign Subjects
-
-</button>
-
-    <button
-        class="delete-student-button"
-        type="button"
-        onclick="deleteTeacher('${teacher.id}')">
-
-        Delete
-
-    </button>
-
-</div>
-            
+                </div>
             `;
 
-            teachersContainer.appendChild(
-                card
-            );
+            teachersContainer.appendChild(card);
 
-        }
-    );
+        });
 
+    } catch (error) {
+
+        console.error("ADMIN TEACHERS ERROR:", error);
+
+        teachersContainer.innerHTML =
+            "<p>Unable to load teachers. Please refresh the page.</p>";
+
+    }
 }
+
 
 // ==========================================
 // EDIT TEACHER
