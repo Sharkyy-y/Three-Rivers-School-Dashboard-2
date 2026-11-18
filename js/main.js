@@ -5535,6 +5535,7 @@ window.openEditTeacherModal = async function (teacherId) {
 // ==========================================
 
 
+
 window.deleteTeacher = async function (teacherId) {
 
     console.log("TEACHER DEACTIVATION REQUESTED:", teacherId);
@@ -5548,26 +5549,50 @@ window.deleteTeacher = async function (teacherId) {
 
     try {
 
-        const {
-            data,
-            error
-        } = await supabaseClient.functions.invoke(
-            "delete-teacher",
-            {
-                body: {
-                    teacherId: teacherId
+        const { data, error } =
+            await supabaseClient.functions.invoke(
+                "delete-teacher",
+                {
+                    body: {
+                        teacherId: teacherId
+                    }
                 }
-            }
-        );
+            );
 
         console.log("TEACHER DEACTIVATION RESULT:", data);
         console.log("TEACHER DEACTIVATION ERROR:", error);
 
         if (error) {
+
+            console.error("ERROR DETAILS:", {
+                name: error.name,
+                message: error.message,
+                context: error.context
+            });
+
+            let responseBody = null;
+
+            if (error.context) {
+                try {
+                    responseBody = await error.context.clone().json();
+                } catch {
+                    try {
+                        responseBody = await error.context.clone().text();
+                    } catch {
+                        responseBody = "Could not read response body.";
+                    }
+                }
+            }
+
+            console.error("EDGE FUNCTION RESPONSE BODY:", responseBody);
+
             alert(
-                "Unable to deactivate teacher:\n\n" +
-                error.message
+                "Deactivation error:\n\n" +
+                error.message +
+                "\n\nResponse:\n" +
+                JSON.stringify(responseBody, null, 2)
             );
+
             return;
         }
 
