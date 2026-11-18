@@ -96,6 +96,7 @@ async function verifyAdminMfa(inputId) {
  // LOGIN
  // ==========================================
 
+
 const loginForm =
     document.getElementById("loginForm");
 
@@ -126,216 +127,274 @@ if (loginForm) {
 
             message.textContent = "Signing in...";
 
-            const { data, error } =
-                await supabaseClient.auth.signInWithPassword({
-                    email: email,
-                    password: password
-                });
+            try {
 
-            if (error) {
-                message.textContent = error.message;
-                return;
-            }
+                // ==================================
+                // AUTHENTICATE
+                // ==================================
 
-            const { data: profile, error: profileError } =
-                await supabaseClient
+                const { data, error } =
+                    await supabaseClient.auth.signInWithPassword({
+                        email: email,
+                        password: password
+                    });
+
+                if (error) {
+                    message.textContent = error.message;
+                    return;
+                }
+
+                // ==================================
+                // LOAD PROFILE
+                // ==================================
+
+                const {
+                    data: profile,
+                    error: profileError
+                } = await supabaseClient
                     .from("profiles")
-                    .select("*")
+                    .select("id, role, school_id, is_active")
                     .eq("id", data.user.id)
-                    .single();
+                    .maybeSingle();
 
-            if (profileError || !profile) {
+                if (profileError || !profile) {
 
-                message.textContent =
-                    "Your account profile could not be found.";
+                    message.textContent =
+                        "Your account profile could not be found.";
 
-                await supabaseClient.auth.signOut();
-                return;
-            }
+                    await supabaseClient.auth.signOut();
+                    return;
+                }
 
-            if (profile.role !== selectedRole) {
-
-                message.textContent =
-                    "The selected account type does not match this account.";
-
-                await supabaseClient.auth.signOut();
-                return;
-            }
-
-            // ==================================
-            // STUDENT ACCOUNT STATUS CHECK
-            // ==================================
-
-            if (profile.role === "student") {
-
-                message.textContent =
-                    "Checking student account status...";
+                // ==================================
+                // CHECK PROFILE STATUS
+                // ==================================
 
                 if (profile.is_active !== true) {
 
-                    await supabaseClient.auth.signOut();
-
                     message.textContent =
-                        "Your student account has been deactivated. Please contact the school administrator.";
-
-                    return;
-                }
-
-                const {
-                    data: student,
-                    error: studentError
-                } = await supabaseClient
-                    .from("students")
-                    .select("id, is_active")
-                    .eq("user_id", data.user.id)
-                    .eq("school_id", profile.school_id)
-                    .maybeSingle();
-
-                if (studentError || !student) {
-
-                    await supabaseClient.auth.signOut();
-
-                    message.textContent =
-                        "Your student account could not be verified. Please contact the school administrator.";
-
-                    console.error(
-                        "Student account verification error:",
-                        studentError
-                    );
-
-                    return;
-                }
-
-                if (student.is_active !== true) {
-
-                    await supabaseClient.auth.signOut();
-
-                    message.textContent =
-                        "Your student account has been deactivated. Please contact the school administrator.";
-
-                    return;
-                }
-            }
-
-            // ==================================
-            // ADMIN MFA
-            // ==================================
-
-            if (profile.role === "admin") {
-
-                message.textContent =
-                    "Checking administrator security...";
-
-                const { data: factors, error: factorsError } =
-                    await supabaseClient.auth.mfa.listFactors();
-
-                if (factorsError) {
-
-                    message.textContent =
-                        "Could not check administrator security.";
+                        "Your account has been deactivated. Please contact the school administrator.";
 
                     await supabaseClient.auth.signOut();
                     return;
                 }
 
-                const verifiedFactor =
-                    factors.totp.find(
-                        factor => factor.status === "verified"
-                    );
+                // ==================================
+                // CHECK SELECTED ROLE
+                // ==================================
 
-                const setupPanel =
-                    document.getElementById("adminMfaSetup");
-
-                const verifyPanel =
-                    document.getElementById("adminMfaVerify");
-
-                if (verifiedFactor) {
-
-                    pendingAdminMfaFactorId =
-                        verifiedFactor.id;
-
-                    loginForm.hidden = true;
-                    verifyPanel.hidden = false;
-                    setupPanel.hidden = true;
+                if (profile.role !== selectedRole) {
 
                     message.textContent =
-                        "Enter your authenticator verification code.";
+                        "The selected account type does not match this account.";
 
+                    await supabaseClient.auth.signOut();
                     return;
                 }
 
-                // REMOVE ABANDONED UNVERIFIED SETUP
+                // ==================================
+                // CHECK STUDENT STATUS
+                // ==================================
 
-                const unfinishedFactor =
-                    factors.all.find(
-                        factor =>
-                            factor.factor_type === "totp" &&
-                            factor.status === "unverified"
-                    );
+                if (profile.role === "student") {
 
-                if (unfinishedFactor) {
+                    message.textContent =
+                        "Checking student account...";
 
-                    const { error: removeError } =
-                        await supabaseClient.auth.mfa.unenroll({
-                            factorId: unfinishedFactor.id
-                        });
+                    const {
+                        data: student,
+                        error: studentError
+                    } = await supabaseClient
+                        .from("students")
+                        .select("id, is_active")
+                        .eq("user_id", data.user.id)
+                        .eq("school_id", profile.school_id)
+                        .maybeSingle();
 
-                    if (removeError) {
+                    if (
+                        studentError ||
+                        !student ||
+                        student.is_active !== true
+                    ) {
 
                         message.textContent =
-                            "Could not restart MFA setup.";
+                            "Your student account has been deactivated or is unavailable. Please contact the school administrator.";
 
                         await supabaseClient.auth.signOut();
                         return;
                     }
                 }
 
-                // ENROLL NEW AUTHENTICATOR
+                // ==================================
+                // CHECK TEACHER STATUS
+                // ==================================
 
-                const { data: enrollment, error: enrollmentError } =
-                    await supabaseClient.auth.mfa.enroll({
+                if (profile.role === "teacher") {
+
+                    message.textContent =
+                        "Checking teacher account...";
+
+                    const {
+                        data: teacher,
+                        error: teacherError
+                    } = await supabaseClient
+                        .from("teachers")
+                        .select("id, is_active")
+                        .eq("id", data.user.id)
+                        .eq("school_id", profile.school_id)
+                        .maybeSingle();
+
+                    if (
+                        teacherError ||
+                        !teacher ||
+                        teacher.is_active !== true
+                    ) {
+
+                        message.textContent =
+                            "Your teacher account has been deactivated or is unavailable. Please contact the school administrator.";
+
+                        await supabaseClient.auth.signOut();
+                        return;
+                    }
+                }
+
+                // ==================================
+                // ADMIN MFA
+                // ==================================
+
+                if (profile.role === "admin") {
+
+                    message.textContent =
+                        "Checking administrator security...";
+
+                    const {
+                        data: factors,
+                        error: factorsError
+                    } = await supabaseClient.auth.mfa.listFactors();
+
+                    if (factorsError) {
+
+                        message.textContent =
+                            "Could not check administrator security.";
+
+                        await supabaseClient.auth.signOut();
+                        return;
+                    }
+
+                    const verifiedFactor =
+                        factors.totp.find(
+                            factor => factor.status === "verified"
+                        );
+
+                    const setupPanel =
+                        document.getElementById("adminMfaSetup");
+
+                    const verifyPanel =
+                        document.getElementById("adminMfaVerify");
+
+                    if (verifiedFactor) {
+
+                        pendingAdminMfaFactorId =
+                            verifiedFactor.id;
+
+                        loginForm.hidden = true;
+                        verifyPanel.hidden = false;
+                        setupPanel.hidden = true;
+
+                        message.textContent =
+                            "Enter your authenticator verification code.";
+
+                        return;
+                    }
+
+                    // REMOVE ABANDONED UNVERIFIED SETUP
+
+                    const unfinishedFactor =
+                        factors.all.find(
+                            factor =>
+                                factor.factor_type === "totp" &&
+                                factor.status === "unverified"
+                        );
+
+                    if (unfinishedFactor) {
+
+                        const {
+                            error: removeError
+                        } = await supabaseClient.auth.mfa.unenroll({
+                            factorId: unfinishedFactor.id
+                        });
+
+                        if (removeError) {
+
+                            message.textContent =
+                                "Could not restart MFA setup.";
+
+                            await supabaseClient.auth.signOut();
+                            return;
+                        }
+                    }
+
+                    // ENROLL NEW AUTHENTICATOR
+
+                    const {
+                        data: enrollment,
+                        error: enrollmentError
+                    } = await supabaseClient.auth.mfa.enroll({
                         factorType: "totp",
                         friendlyName: "Three Rivers Administrator"
                     });
 
-                if (enrollmentError) {
+                    if (enrollmentError) {
+
+                        message.textContent =
+                            enrollmentError.message;
+
+                        await supabaseClient.auth.signOut();
+                        return;
+                    }
+
+                    pendingAdminMfaFactorId =
+                        enrollment.id;
+
+                    document.getElementById("adminMfaQr").src =
+                        enrollment.totp.qr_code;
+
+                    document.getElementById("adminMfaSecret").textContent =
+                        enrollment.totp.secret;
+
+                    loginForm.hidden = true;
+                    setupPanel.hidden = false;
+                    verifyPanel.hidden = true;
 
                     message.textContent =
-                        enrollmentError.message;
+                        "Scan the QR code and enter your authenticator code.";
 
-                    await supabaseClient.auth.signOut();
                     return;
                 }
 
-                pendingAdminMfaFactorId = enrollment.id;
-
-                document.getElementById("adminMfaQr").src =
-                    enrollment.totp.qr_code;
-
-                document.getElementById("adminMfaSecret").textContent =
-                    enrollment.totp.secret;
-
-                loginForm.hidden = true;
-                setupPanel.hidden = false;
-                verifyPanel.hidden = true;
+                // ==================================
+                // OTHER ACCOUNT TYPES
+                // ==================================
 
                 message.textContent =
-                    "Scan the QR code and enter your authenticator code.";
+                    "Login successful. Loading dashboard...";
 
-                return;
+                redirectToDashboard(profile.role);
+
+            } catch (error) {
+
+                console.error("LOGIN ERROR:", error);
+
+                message.textContent =
+                    "An unexpected login error occurred. Please try again.";
+
+                await supabaseClient.auth.signOut();
+
             }
-
-            // ==================================
-            // OTHER ACCOUNT TYPES
-            // ==================================
-
-            message.textContent =
-                "Login successful. Loading dashboard...";
-
-            redirectToDashboard(profile.role);
 
         }
     );
+
 }
 
 
