@@ -5616,6 +5616,81 @@ window.deleteTeacher = async function (teacherId) {
     }
 };
 
+
+window.reactivateTeacher = async function (teacherId) {
+
+    const confirmed = confirm(
+        "Are you sure you want to reactivate this teacher?\n\n" +
+        "Their account access will be restored, and they will be able to log in again."
+    );
+
+    if (!confirmed) return;
+
+    try {
+        console.log("TEACHER REACTIVATION REQUESTED:", teacherId);
+
+        const { data, error } =
+            await supabaseClient.functions.invoke(
+                "reactivate-teacher",
+                {
+                    body: {
+                        teacherId: teacherId
+                    }
+                }
+            );
+
+        console.log("TEACHER REACTIVATION RESULT:", data);
+        console.log("TEACHER REACTIVATION ERROR:", error);
+
+        if (error) {
+            console.error("REACTIVATION ERROR DETAILS:", error);
+
+            let responseBody = null;
+
+            if (error.context) {
+                try {
+                    responseBody = await error.context.clone().json();
+                } catch {
+                    responseBody = "Could not read response body.";
+                }
+            }
+
+            alert(
+                "Reactivation error:\n\n" +
+                error.message +
+                "\n\nResponse:\n" +
+                JSON.stringify(responseBody, null, 2)
+            );
+
+            return;
+        }
+
+        if (!data || !data.success) {
+            alert(
+                data?.message ||
+                "Unable to reactivate this teacher."
+            );
+            return;
+        }
+
+        await loadAdminTeachers();
+
+        alert(
+            "Teacher reactivated successfully.\n\n" +
+            "Their account access has been restored."
+        );
+
+    } catch (error) {
+        console.error("TEACHER REACTIVATION ERROR:", error);
+
+        alert(
+            error.message ||
+            "An unexpected error occurred."
+        );
+    }
+};
+
+
 // ==========================================
 // RESET TEACHER PASSWORD
 // ==========================================
