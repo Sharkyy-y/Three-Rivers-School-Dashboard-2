@@ -91,9 +91,10 @@ async function verifyAdminMfa(inputId) {
 }
 
 
-// ==========================================
-// LOGIN
-// ==========================================
+
+ // ==========================================
+ // LOGIN
+ // ==========================================
 
 const loginForm =
     document.getElementById("loginForm");
@@ -144,13 +145,16 @@ if (loginForm) {
                     .single();
 
             if (profileError || !profile) {
+
                 message.textContent =
                     "Your account profile could not be found.";
+
                 await supabaseClient.auth.signOut();
                 return;
             }
 
             if (profile.role !== selectedRole) {
+
                 message.textContent =
                     "The selected account type does not match this account.";
 
@@ -158,6 +162,60 @@ if (loginForm) {
                 return;
             }
 
+            // ==================================
+            // STUDENT ACCOUNT STATUS CHECK
+            // ==================================
+
+            if (profile.role === "student") {
+
+                message.textContent =
+                    "Checking student account status...";
+
+                if (profile.is_active !== true) {
+
+                    await supabaseClient.auth.signOut();
+
+                    message.textContent =
+                        "Your student account has been deactivated. Please contact the school administrator.";
+
+                    return;
+                }
+
+                const {
+                    data: student,
+                    error: studentError
+                } = await supabaseClient
+                    .from("students")
+                    .select("id, is_active")
+                    .eq("user_id", data.user.id)
+                    .eq("school_id", profile.school_id)
+                    .maybeSingle();
+
+                if (studentError || !student) {
+
+                    await supabaseClient.auth.signOut();
+
+                    message.textContent =
+                        "Your student account could not be verified. Please contact the school administrator.";
+
+                    console.error(
+                        "Student account verification error:",
+                        studentError
+                    );
+
+                    return;
+                }
+
+                if (student.is_active !== true) {
+
+                    await supabaseClient.auth.signOut();
+
+                    message.textContent =
+                        "Your student account has been deactivated. Please contact the school administrator.";
+
+                    return;
+                }
+            }
 
             // ==================================
             // ADMIN MFA
@@ -172,6 +230,7 @@ if (loginForm) {
                     await supabaseClient.auth.mfa.listFactors();
 
                 if (factorsError) {
+
                     message.textContent =
                         "Could not check administrator security.";
 
@@ -205,7 +264,6 @@ if (loginForm) {
                     return;
                 }
 
-
                 // REMOVE ABANDONED UNVERIFIED SETUP
 
                 const unfinishedFactor =
@@ -223,6 +281,7 @@ if (loginForm) {
                         });
 
                     if (removeError) {
+
                         message.textContent =
                             "Could not restart MFA setup.";
 
@@ -230,7 +289,6 @@ if (loginForm) {
                         return;
                     }
                 }
-
 
                 // ENROLL NEW AUTHENTICATOR
 
@@ -241,6 +299,7 @@ if (loginForm) {
                     });
 
                 if (enrollmentError) {
+
                     message.textContent =
                         enrollmentError.message;
 
@@ -265,7 +324,6 @@ if (loginForm) {
 
                 return;
             }
-
 
             // ==================================
             // OTHER ACCOUNT TYPES
