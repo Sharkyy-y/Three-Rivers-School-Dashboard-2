@@ -5534,98 +5534,69 @@ window.openEditTeacherModal = async function (teacherId) {
 // DELETE TEACHER
 // ==========================================
 
+
 window.deleteTeacher = async function (teacherId) {
 
-    console.log(
-        "DELETE TEACHER CLICKED:",
-        teacherId
+    console.log("TEACHER DEACTIVATION REQUESTED:", teacherId);
+
+    const confirmed = confirm(
+        "Are you sure you want to deactivate this teacher?\n\n" +
+        "The teacher will lose access to their account, but their school records, grades and historical information will be preserved."
     );
 
-    const confirmed =
-        confirm(
-            "Are you sure you want to permanently delete this teacher?\n\n" +
-            "This will remove the teacher's school record and login account."
-        );
-
-    if (!confirmed) {
-        return;
-    }
+    if (!confirmed) return;
 
     try {
-
-        alert("Deleting teacher...");
 
         const {
             data,
             error
-        } = await supabaseClient
-            .functions
-            .invoke(
-                "delete-teacher",
-                {
-                    body: {
-                        teacherId: teacherId
-                    }
+        } = await supabaseClient.functions.invoke(
+            "delete-teacher",
+            {
+                body: {
+                    teacherId: teacherId
                 }
-            );
-
-        console.log(
-            "DELETE TEACHER DATA:",
-            data
+            }
         );
 
-        console.log(
-            "DELETE TEACHER ERROR:",
-            error
-        );
+        console.log("TEACHER DEACTIVATION RESULT:", data);
+        console.log("TEACHER DEACTIVATION ERROR:", error);
 
         if (error) {
-
             alert(
-                "Unable to delete teacher:\n\n" +
+                "Unable to deactivate teacher:\n\n" +
                 error.message
             );
-
             return;
         }
 
-        if (
-            !data ||
-            !data.success
-        ) {
-
+        if (!data || !data.success) {
             alert(
                 data?.error ||
-                "Unable to delete teacher."
+                "Unable to deactivate teacher."
             );
-
             return;
         }
 
         await loadAdminTeachers();
 
         alert(
-            "Teacher deleted successfully."
+            "Teacher deactivated successfully.\n\n" +
+            "Historical records have been preserved."
         );
 
     } catch (error) {
 
-        console.error(
-            "DELETE TEACHER ERROR:",
-            error
-        );
+        console.error("TEACHER DEACTIVATION ERROR:", error);
 
         alert(
             error.message ||
             "An unexpected error occurred."
         );
+
     }
 };
-
-// ==========================================
-// RESET TEACHER PASSWORD
-// ==========================================
-
 
 // ==========================================
 // RESET TEACHER PASSWORD
