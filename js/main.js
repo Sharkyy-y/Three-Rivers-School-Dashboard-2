@@ -4943,6 +4943,7 @@ if (document.getElementById("assignmentsPageContainer")) {
 // ADMIN - STUDENT MANAGEMENT
 // ==========================================
 
+
 async function loadAdminStudents() {
 
     const studentsContainer =
@@ -4963,130 +4964,154 @@ async function loadAdminStudents() {
             .order("full_name", { ascending: true });
 
     if (error) {
-
-        console.error(
-            "ADMIN STUDENTS ERROR:",
-            error
-        );
-
+        console.error("ADMIN STUDENTS ERROR:", error);
         studentsContainer.innerHTML =
             "<p>Unable to load students.</p>";
-
         return;
     }
 
-    studentCount.textContent =
-        `${students.length} student${students.length === 1 ? "" : "s"}`;
+    const studentList = students || [];
 
-    if (students.length === 0) {
+    if (studentCount) {
+        studentCount.textContent =
+            `${studentList.length} registered student${studentList.length === 1 ? "" : "s"}`;
+    }
 
+    if (studentList.length === 0) {
         studentsContainer.innerHTML =
             "<p>No students found.</p>";
-
         return;
     }
 
     studentsContainer.innerHTML = "";
 
-   students.forEach(student => {
+    studentList.forEach(student => {
 
-    const card = document.createElement("div");
+        const card = document.createElement("div");
+        card.className = "student-admin-card";
 
-    card.className = "student-admin-card";
+        const isActive = student.is_active !== false;
 
-    const initials = student.full_name
-        ? student.full_name
-            .split(" ")
-            .map(name => name.charAt(0))
-            .slice(0, 2)
-            .join("")
-            .toUpperCase()
-        : "S";
+        const initials = student.full_name
+            ? student.full_name
+                .split(" ")
+                .map(name => name.charAt(0))
+                .slice(0, 2)
+                .join("")
+                .toUpperCase()
+            : "S";
 
-    const photo = student.profile_photo_url
-        ? `
-            <img
-                src="${student.profile_photo_url}"
-                alt="${student.full_name || "Student"}"
-                class="student-admin-photo"
-            >
-        `
-        : `
-            <div class="student-admin-avatar">
-                ${initials}
-            </div>
-        `;
+        const photo = student.profile_photo_url
+            ? `
+                <img
+                    src="${student.profile_photo_url}"
+                    alt="${student.full_name || "Student"}"
+                    class="student-admin-photo"
+                >
+            `
+            : `
+                <div class="student-admin-avatar">
+                    ${initials}
+                </div>
+            `;
 
-    card.innerHTML = `
+        const statusBadge = isActive
+            ? `<span style="color:#15803d;font-weight:600;">● Active</span>`
+            : `<span style="color:#dc2626;font-weight:600;">● Deactivated</span>`;
 
-        <div class="student-admin-info">
+        const deactivationButton = isActive
+            ? `
+                <button
+                    class="delete-student-button"
+                    type="button"
+                    onclick="deleteStudent('${student.id}')">
+                    Deactivate
+                </button>
+            `
+            : `
+                <button
+                    class="secondary-button"
+                    type="button"
+                    disabled
+                    style="opacity:0.65;cursor:not-allowed;">
+                    Deactivated
+                </button>
+            `;
 
-            ${photo}
+        card.innerHTML = `
 
-            <div class="student-admin-details">
+            <div class="student-admin-info">
 
-                <h3>
-                    ${student.full_name || "Unnamed Student"}
-                </h3>
+                ${photo}
 
-                <div class="student-meta">
+                <div class="student-admin-details">
 
-                    <span>
-                        <strong>Admission:</strong>
-                        ${student.admission_number || "—"}
-                    </span>
+                    <h3>
+                        ${student.full_name || "Unnamed Student"}
+                    </h3>
 
-                    <span>
-                        <strong>Class:</strong>
-                        ${student.class_name || "—"}
-                    </span>
+                    <div class="student-meta">
+
+                        <span>
+                            <strong>Admission:</strong>
+                            ${student.admission_number || "—"}
+                        </span>
+
+                        <span>
+                            <strong>Class:</strong>
+                            ${student.class_name || "—"}
+                        </span>
+
+                    </div>
+
+                    <p>
+                        ${student.email || "No email available"}
+                    </p>
+
+                    <p>
+                        Account status: ${statusBadge}
+                    </p>
 
                 </div>
 
-                <p>
-                    ${student.email || "No email available"}
-                </p>
-
             </div>
 
-        </div>
+            <div class="student-admin-actions">
 
-       <div class="student-admin-actions">
+                <button
+                    class="edit-student-button"
+                    type="button"
+                    onclick="openEditStudentModal('${student.id}')">
+                    Edit
+                </button>
 
-    <button
-        class="edit-student-button"
-        onclick="openEditStudentModal('${student.id}')">
-        Edit
-    </button>
+                <button
+                    class="secondary-button"
+                    type="button"
+                    onclick="openSubjectAssignment('student', {
+                        id: '${student.id}',
+                        name: '${student.full_name}',
+                        admission_number: '${student.admission_number}'
+                    })">
+                    Assign Subjects
+                </button>
 
-<button
-    class="secondary-button"
-    type="button"
-    onclick="openSubjectAssignment('student', {
-        id: '${student.id}',
-        name: '${student.full_name}',
-        admission_number: '${student.admission_number}'
-    })">
-    Assign Subjects
-</button>
+                ${deactivationButton}
 
-    <button
-    class="delete-student-button"
-    onclick="deleteStudent('${student.id}')">
-    Delete
-</button>
+                <button
+                    class="reset-password-button"
+                    type="button"
+                    onclick="resetStudentPassword('${student.id}')"
+                    ${isActive ? "" : "disabled"}>
+                    Reset Password
+                </button>
 
-    <button
-        class="reset-password-button"
-        onclick="resetStudentPassword('${student.id}')">
-        Reset Password
-    </button>
+            </div>
+        `;
 
-</div>
-    `;
+        studentsContainer.appendChild(card);
 
-    studentsContainer.appendChild(card);
-});
+    });
 
 }
 
