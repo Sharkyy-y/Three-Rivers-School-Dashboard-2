@@ -2,124 +2,123 @@
 <html lang="en">
 
 <head>
-
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <meta name="viewport"
-          content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Sign in to Nexmesh Schools, the connected school management platform.">
 
-    <title>Login | Student Management Portal</title>
+    <meta name="theme-color" content="#102B3F">
+
+    <title>Sign In | Nexmesh Schools</title>
 
     <link rel="stylesheet" href="css/login.css">
     <link rel="icon" type="image/png" href="favicon.png">
-
 </head>
-
 
 <body>
 
     <div class="login-page">
 
-
-        <!-- LEFT SIDE -->
+        <!-- LEFT BRANDING PANEL -->
 
         <div class="login-info">
 
-            <div class="brand">
-
-                <div class="logo-icon">
-                    S
-                </div>
-
-                <span>
-                    Student Portal
-                </span>
-
-            </div>
-
+            <a href="index.html" class="brand">
+                <div class="logo-icon">N</div>
+                <span>Nexmesh <strong>Schools</strong></span>
+            </a>
 
             <div class="info-content">
 
                 <span class="small-title">
-                    WELCOME BACK
+                    THE CONNECTED SCHOOL MANAGEMENT PLATFORM
                 </span>
 
                 <h1>
                     Your school,
-                    connected.
+                    <span>connected.</span>
                 </h1>
 
                 <p>
-                    Access your academic information,
-                    announcements, assignments and
-                    school activities from one place.
+                    Access your school community through one secure platform.
+                    Manage learning, follow academic progress, share information
+                    and stay connected wherever you are.
                 </p>
+
+                <div class="login-benefits">
+                    <div>
+                        <span class="benefit-check">✓</span>
+                        Connected school management
+                    </div>
+
+                    <div>
+                        <span class="benefit-check">✓</span>
+                        Academic progress and communication
+                    </div>
+
+                    <div>
+                        <span class="benefit-check">✓</span>
+                        One platform for every school community
+                    </div>
+                </div>
 
             </div>
 
-
             <div class="info-footer">
-
-                <span>
-                    Admin
-                </span>
-
-                <span>
-                    Teacher
-                </span>
-
-                <span>
-                    Student
-                </span>
-
-                <span>
-                    Parent
-                </span>
-
+                <span>Administrator</span>
+                <span>Teacher</span>
+                <span>Student</span>
+                <span>Parent</span>
             </div>
 
         </div>
 
 
-
-        <!-- RIGHT SIDE -->
+        <!-- LOGIN PANEL -->
 
         <div class="login-section">
 
             <div class="login-box">
 
-                <a href="index.html"
-                   class="back-link">
+                <a href="index.html" class="back-link">
                     ← Back to website
                 </a>
 
+                <div class="mobile-brand">
+                    <div class="logo-icon">N</div>
+                    <span>Nexmesh <strong>Schools</strong></span>
+                </div>
 
                 <div class="login-heading">
 
-                    <h2>
-                        Sign in
-                    </h2>
+                    <span class="login-eyebrow">
+                        NEXMESH SCHOOLS PORTAL
+                    </span>
+
+                    <h2>Welcome back.</h2>
 
                     <p>
-                        Enter your account details
-                        to continue.
+                        Sign in using your school account to continue.
                     </p>
 
                 </div>
 
 
+                <!-- MAIN LOGIN FORM -->
+
                 <form id="loginForm">
 
                     <div class="form-group">
 
-                    <label for="email">Email address</label>
-<input
-    type="text"
-    id="email"
-    placeholder="you@example.com"
-    autocomplete="username"
-    required
->
+                        <label for="email">Email address</label>
+
+                        <input
+                            type="text"
+                            id="email"
+                            placeholder="you@example.com"
+                            autocomplete="username"
+                            required
+                        >
 
                     </div>
 
@@ -132,9 +131,12 @@
                                 Password
                             </label>
 
-                           <a href="parent-forgot-password.html" id="forgotPasswordLink">
-    Forgot password?
-</a>
+                            <a
+                                href="parent-forgot-password.html"
+                                id="forgotPasswordLink"
+                            >
+                                Forgot password?
+                            </a>
 
                         </div>
 
@@ -142,17 +144,18 @@
                             type="password"
                             id="password"
                             placeholder="Enter your password"
+                            autocomplete="current-password"
                             required
                         >
 
                     </div>
 
 
+                    <!-- ACCOUNT TYPE -->
+
                     <div class="role-group">
 
-                        <label>
-                            Account type
-                        </label>
+                        <label>Account type</label>
 
                         <div class="role-options">
 
@@ -165,9 +168,7 @@
                                     checked
                                 >
 
-                                <span>
-                                    Student
-                                </span>
+                                <span>Student</span>
 
                             </label>
 
@@ -180,9 +181,7 @@
                                     value="teacher"
                                 >
 
-                                <span>
-                                    Teacher
-                                </span>
+                                <span>Teacher</span>
 
                             </label>
 
@@ -195,9 +194,7 @@
                                     value="parent"
                                 >
 
-                                <span>
-                                    Parent
-                                </span>
+                                <span>Parent</span>
 
                             </label>
 
@@ -210,9 +207,7 @@
                                     value="admin"
                                 >
 
-                                <span>
-                                    Admin
-                                </span>
+                                <span>Administrator</span>
 
                             </label>
 
@@ -223,79 +218,80 @@
 
                     <button
                         type="submit"
-                        class="login-submit">
-
-                        Sign in
-
+                        class="login-submit"
+                    >
+                        Sign in to Nexmesh
                     </button>
 
                 </form>
 
-                
-<!-- ADMIN MFA ENROLLMENT -->
-<div id="adminMfaSetup" hidden>
 
-    <h2>Secure your administrator account</h2>
+                <!-- ADMIN MFA ENROLLMENT -->
 
-    <p>
-        Scan this QR code with your authenticator app.
-    </p>
+                <div id="adminMfaSetup" hidden>
 
-    <img
-        id="adminMfaQr"
-        alt="Authenticator setup QR code"
-        style="max-width:220px;"
-    >
+                    <h2>Secure your administrator account</h2>
 
-    <p>
-        If scanning doesn't work, enter this setup key manually:
-    </p>
+                    <p>
+                        Scan this QR code with your authenticator app.
+                    </p>
 
-    <p id="adminMfaSecret"></p>
+                    <img
+                        id="adminMfaQr"
+                        alt="Authenticator setup QR code"
+                        style="max-width:220px;"
+                    >
 
-    <label for="adminMfaSetupCode">
-        Enter your six-digit code
-    </label>
+                    <p>
+                        If scanning doesn't work, enter this setup key manually:
+                    </p>
 
-    <input
-        type="text"
-        id="adminMfaSetupCode"
-        inputmode="numeric"
-        autocomplete="one-time-code"
-        maxlength="6"
-        placeholder="000000"
-    >
+                    <p id="adminMfaSecret"></p>
 
-    <button type="button" id="adminMfaEnable">
-        Verify and enable MFA
-    </button>
+                    <label for="adminMfaSetupCode">
+                        Enter your six-digit code
+                    </label>
 
-</div>
+                    <input
+                        type="text"
+                        id="adminMfaSetupCode"
+                        inputmode="numeric"
+                        autocomplete="one-time-code"
+                        maxlength="6"
+                        placeholder="000000"
+                    >
+
+                    <button type="button" id="adminMfaEnable">
+                        Verify and enable MFA
+                    </button>
+
+                </div>
 
 
-<!-- ADMIN MFA LOGIN VERIFICATION -->
-<div id="adminMfaVerify" hidden>
+                <!-- ADMIN MFA LOGIN VERIFICATION -->
 
-    <h2>Two-step verification</h2>
+                <div id="adminMfaVerify" hidden>
 
-    <p>
-        Enter the six-digit code from your authenticator app.
-    </p>
+                    <h2>Two-step verification</h2>
 
-    <input
-        type="text"
-        id="adminMfaCode"
-        inputmode="numeric"
-        autocomplete="one-time-code"
-        maxlength="6"
-        placeholder="000000"
-    >
+                    <p>
+                        Enter the six-digit code from your authenticator app.
+                    </p>
 
-    <button type="button" id="adminMfaVerifyButton">
-        Verify and continue
-    </button>
+                    <input
+                        type="text"
+                        id="adminMfaCode"
+                        inputmode="numeric"
+                        autocomplete="one-time-code"
+                        maxlength="6"
+                        placeholder="000000"
+                    >
 
-</div>
+                    <button type="button" id="adminMfaVerifyButton">
+                        Verify and continue
+                    </button>
+
+                </div>
 
 
                 <p id="login-message" class="login-message"></p>
@@ -305,16 +301,23 @@
                     Contact your school administrator.
                 </p>
 
+                <div class="login-footer">
+                    <span>Powered by</span>
+                    <strong>Nexmesh Schools</strong>
+                </div>
+
             </div>
 
         </div>
 
     </div>
 
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>    
+
+    <!-- EXISTING AUTHENTICATION SCRIPTS -->
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="js/main.js"></script>
     <script src="js/parent-login.js"></script>
 
 </body>
-
 </html>
